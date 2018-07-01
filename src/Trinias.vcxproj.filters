@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Core.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="TextRenderer.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Core.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Window.h" />
+    <ClInclude Include="definitions.h" />
+    <ClInclude Include="easyloggingpp.h">
+      <Filter>dep</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="TextRenderer.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="EventManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="dep">
+      <UniqueIdentifier>{f09c0859-751d-4427-96b6-53a518c5d1d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="assets">
+      <UniqueIdentifier>{d2f0eced-2368-48f8-99ea-6626d36445e7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="font.bmp">
+      <Filter>assets</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
