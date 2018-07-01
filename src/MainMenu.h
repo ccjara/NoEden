@@ -4,9 +4,10 @@
 class MainMenu
 {
 private:
+    std::shared_ptr<EventHandler> onKeyPressedEventHandler;
     void onKeyPressed(const SDL_Event& e);
 public:
-    void attach(EventManager& eventManager);
+    MainMenu(EventManager& eventManager);
 };
 
 #endif

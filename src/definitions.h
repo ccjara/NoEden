@@ -8,4 +8,6 @@ struct Vector2
     T y;
 };
 
+using EventCallback = std::function<void(const SDL_Event& e)>;
+
 #endif

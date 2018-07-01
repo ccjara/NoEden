@@ -1,11 +1,14 @@
 #include "stdafx.h"
 
-Game::Game()
+Game::Game() :
+    mainMenu(sdlEventManager)
 {
-    mainMenu.attach(sdlEventManager);
 }
 
 void Game::handleSdlEvent(const SDL_Event& e)
 {
+    if (e.type == SDL_MOUSEMOTION) {
+        return;
+    }
     sdlEventManager.trigger(e);
 }

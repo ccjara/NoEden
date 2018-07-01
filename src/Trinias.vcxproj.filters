@@ -9,6 +9,8 @@
     <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="EventHandler.cpp" />
+    <ClCompile Include="EventManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core.h" />
@@ -23,6 +25,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="EventManager.h" />
+    <ClInclude Include="EventHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="dep">
