@@ -76,16 +76,70 @@ void TextRenderer::end() const
     glDisable(GL_TEXTURE_2D);
 }
 
-void TextRenderer::renderText(const std::string& text, const Vector2<GLfloat>& p) const
+void TextRenderer::renderText(const std::string& text, const Vector2<GLfloat>& p)
 {
+    colorStack = std::vector<SDL_Color>{ { 255, 255, 255, 255 } };
+    glColor4ub(255, 255, 255, 255);
+
+    uint32_t offset{ 0 };
+    auto length = text.size();
     auto pp{ p };
-    for (auto c : text) {
+    auto stepSize = 1;
+
+    for (auto iter = text.begin(); iter != text.end(); iter++) {
+        auto c = *iter;
+        
+        if (c == '|') {
+            iter++;
+
+            if (iter == text.end()) { // '|' at the end of string - ignore
+                break;
+            }
+
+            if (*iter == 'r') {
+                if (!colorStack.size()) {
+                    LOG(ERROR) << "Color stack would be empty if modifier was popped - ignoring";
+                    return;
+                }
+                colorStack.pop_back();
+                auto color = colorStack.back();
+                glColor4ub(color.r, color.g, color.b, color.a);
+                continue;
+            }
+            else if (*iter == 'c') {
+                iter++;
+                auto itModifierEnd = iter + 8;
+                if (iter == text.end() || itModifierEnd == text.end()) {
+                    LOG(ERROR) << "End of string found, expected modifier type";
+                    return;
+                }
+                auto colorStr = std::string(iter, itModifierEnd);
+                auto colorNum = std::stoul(colorStr, nullptr, 16);
+
+                SDL_Color color{
+                    (colorNum >> 24) & 0xFF,
+                    (colorNum >> 16) & 0xFF,
+                    (colorNum >> 8) & 0xFF,
+                    colorNum & 0xFF,
+                };
+
+                colorStack.push_back(color);
+                glColor4ub(color.r, color.g, color.b, color.a);
+
+                iter = itModifierEnd;
+                c = *iter;
+            } else if (*iter != '|') {
+                LOG(ERROR) << "Unknown modifier type " << *iter;
+                return;
+            }
+        }
+
         renderChar(c, pp);
         pp.x += charWidth;
     }
 }
 
-void TextRenderer::renderChar(const char c, const Vector2<GLfloat>& p) const
+void TextRenderer::renderChar(const char c, const Vector2<GLfloat>& p)
 {
     const uint32_t charsPerRow{ 16 };
     const auto textureX = static_cast<float_t> (c % charsPerRow) * charWidth;

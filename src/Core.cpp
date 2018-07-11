@@ -40,8 +40,13 @@ void Core::render()
 
     Vector2<GLfloat> p{ 10.0f, 10.0f };
 
+    // TODO: improve readability, e.g. "The [c:ff0000ff]quick[/] ..."
     renderer->text->begin();
-    renderer->text->renderText(std::string("The quick fox jumps over the lazy dog"), p);
+    std::string text("The |cff0000ffquick |c00ff00fffox|r jumps |cffff00ffover|r the lazy dog");
+    renderer->text->renderText(text, p);
+    text = std::string("The |cffffff22quick|r fox jumps over the |cffffff22lazy|r dog");
+    p.y += 30;
+    renderer->text->renderText(text, p);
     renderer->text->end();
 
     renderer->finishRendering();
