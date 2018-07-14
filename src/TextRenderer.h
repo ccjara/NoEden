@@ -1,15 +1,16 @@
 #ifndef __TEXT_RENDERER_H__
 #define __TEXT_RENDERER_H__
 
-struct Modifier {
-    uint32_t start;
-    uint32_t end;
-    SDL_Color color;
-};
-
 class TextRenderer
 {
 private:
+    enum Modifier : char {
+        Color = 'c',
+        Pipe = '|',
+        NewLine = 'n',
+        Reset = 'r',
+    };
+
     GLuint texture;
     float_t textureWidth;
     float_t textureHeight;

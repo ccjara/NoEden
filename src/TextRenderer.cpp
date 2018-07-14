@@ -81,45 +81,39 @@ void TextRenderer::renderText(const std::string& text, const Vector2<GLfloat>& p
     colorStack = std::vector<SDL_Color>{ { 255, 255, 255, 255 } };
     glColor4ub(255, 255, 255, 255);
 
-    uint32_t offset{ 0 };
-    auto length = text.size();
-    auto pp{ p };
-    auto stepSize = 1;
+    auto offset{ p };
 
     for (auto iter = text.begin(); iter != text.end(); iter++) {
-        auto c = *iter;
-        
-        if (c == '|') {
+        if (*iter == Modifier::Pipe) {
             iter++;
 
-            if (iter == text.end()) { // '|' at the end of string - ignore
-                break;
+            if (iter == text.end()) { // ignore modifiers at the end of the string
+                continue;
             }
 
-            if (*iter == 'r') {
+            switch (*iter) {
+            case Modifier::Reset:
                 if (!colorStack.size()) {
-                    LOG(ERROR) << "Color stack would be empty if modifier was popped - ignoring";
-                    return;
+                    LOG(ERROR) << "Color stack would be empty if modifier had been popped - ignoring";
+                    continue;
                 }
                 colorStack.pop_back();
                 auto color = colorStack.back();
                 glColor4ub(color.r, color.g, color.b, color.a);
                 continue;
-            }
-            else if (*iter == 'n') {
-                pp.x = p.x;
-                pp.y += 16; // TODO: line height?
+            case Modifier::NewLine:
+                offset.x = p.x;
+                offset.y += charHeight;
                 continue;
-            }
-            else if (*iter == 'c') {
-                iter++;
-                auto itModifierEnd = iter + 8;
-                if (iter == text.end() || itModifierEnd == text.end()) {
-                    LOG(ERROR) << "End of string found, expected modifier type";
-                    return;
+            case Modifier::Color: {
+                const auto itColorStart = iter + 1;
+                const auto itColorEnd = itColorStart + 8; // wrap around RRGGBBAA
+                if (iter == text.end() || itColorEnd == text.end()) {
+                    LOG(ERROR) << "End of string found, expected color code";
+                    continue;
                 }
-                auto colorStr = std::string(iter, itModifierEnd);
-                auto colorNum = std::stoul(colorStr, nullptr, 16);
+                const auto colorStr = std::string(itColorStart, itColorEnd);
+                const auto colorNum = std::stoul(colorStr, nullptr, 16);
 
                 SDL_Color color{
                     (colorNum >> 24) & 0xFF,
@@ -131,16 +125,19 @@ void TextRenderer::renderText(const std::string& text, const Vector2<GLfloat>& p
                 colorStack.push_back(color);
                 glColor4ub(color.r, color.g, color.b, color.a);
 
-                iter = itModifierEnd;
-                c = *iter;
-            } else if (*iter != '|') {
-                LOG(ERROR) << "Unknown modifier type " << *iter;
-                return;
+                iter = itColorEnd - 1;
+                continue;
+            }
+            case Modifier::Pipe:
+                break; // escaped pipe (||)
+            default:
+                LOG(WARNING) << "Unknown modifier " << *iter;
+                continue;
             }
         }
 
-        renderChar(c, pp);
-        pp.x += charWidth;
+        renderChar(*iter, offset);
+        offset.x += charWidth;
     }
 }
 
