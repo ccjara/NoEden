@@ -42,10 +42,11 @@ void Core::render()
 
     // TODO: improve readability, e.g. "The [c:ff0000ff]quick[/] ..."
     renderer->text->begin();
-    std::string text("The |cff0000ffquick |c00ff00fffox|r jumps |cffff00ffover|r the lazy dog");
-    renderer->text->renderText(text, p);
-    text = std::string("The |cffffff22quick|r fox jumps over the |cffffff22lazy|r dog");
-    p.y += 30;
+    std::string text(
+"The |cff0000ffquick |c00ff00fffox|r jumps |cffff00ffover|r the lazy dog|r|n\
+The |cffffff22clunky|r cat collides with the |cffffff22fat|r boar|n\
+This|nText|n|n|nHas |c00ff00ff4|r newlines in total."
+    );
     renderer->text->renderText(text, p);
     renderer->text->end();
 

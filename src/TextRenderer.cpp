@@ -106,6 +106,11 @@ void TextRenderer::renderText(const std::string& text, const Vector2<GLfloat>& p
                 glColor4ub(color.r, color.g, color.b, color.a);
                 continue;
             }
+            else if (*iter == 'n') {
+                pp.x = p.x;
+                pp.y += 16; // TODO: line height?
+                continue;
+            }
             else if (*iter == 'c') {
                 iter++;
                 auto itModifierEnd = iter + 8;
