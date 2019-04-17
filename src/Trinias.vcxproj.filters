@@ -11,6 +11,8 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="EventHandler.cpp" />
     <ClCompile Include="EventManager.cpp" />
+    <ClCompile Include="TextTester.h" />
+    <ClCompile Include="TextTester.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core.h" />

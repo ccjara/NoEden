@@ -11,6 +11,7 @@
 #include <iterator>
 #include <algorithm>
 #include <sstream>
+#include <string>
 #include <random>
 #include <chrono>
 
@@ -30,6 +31,7 @@
 #include "TextRenderer.h"
 #include "Renderer.h"
 #include "MainMenu.h"
+#include "TextTester.h"
 #include "Game.h"
 #include "Core.h"
 

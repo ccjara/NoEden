@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-TextRenderer::TextRenderer() : 
+TextRenderer::TextRenderer() :
     charWidth{ 8 },
     charHeight{ 12 }
 {
@@ -78,20 +78,25 @@ void TextRenderer::end() const
 
 void TextRenderer::renderText(const std::string& text, const Vector2<GLfloat>& p)
 {
+    if (!text.length()) {
+        return;
+    }
+
     colorStack = std::vector<SDL_Color>{ { 255, 255, 255, 255 } };
     glColor4ub(255, 255, 255, 255);
 
     auto offset{ p };
+    auto maxIndex = text.length() - 1;
+    
+    for (size_t index = 0; index <= maxIndex; index++) {
+        if (index != maxIndex && text[index] == Modifier::Pipe) {
+            index++;
 
-    for (auto iter = text.begin(); iter != text.end(); iter++) {
-        if (*iter == Modifier::Pipe) {
-            iter++;
-
-            if (iter == text.end()) { // ignore modifiers at the end of the string
-                continue;
+            if (index >= maxIndex) { // ignore modifiers at the end of the string
+                return;
             }
 
-            switch (*iter) {
+            switch (text[index]) {
             case Modifier::Reset:
                 if (!colorStack.size()) {
                     LOG(ERROR) << "Color stack would be empty if modifier had been popped - ignoring";
@@ -106,13 +111,14 @@ void TextRenderer::renderText(const std::string& text, const Vector2<GLfloat>& p
                 offset.y += charHeight;
                 continue;
             case Modifier::Color: {
-                const auto itColorStart = iter + 1;
-                const auto itColorEnd = itColorStart + 8; // wrap around RRGGBBAA
-                if (iter == text.end() || itColorEnd == text.end()) {
+                const auto channelLength = 8; // wrap around RRGGBBAA
+                const auto indexColorStart = index + 1;
+                const auto indexColorEnd = indexColorStart + channelLength - 1;
+                if (indexColorStart > maxIndex || indexColorEnd > maxIndex) {
                     LOG(ERROR) << "End of string found, expected color code";
                     continue;
                 }
-                const auto colorStr = std::string(itColorStart, itColorEnd);
+                const auto colorStr = text.substr(indexColorStart, channelLength);
                 const auto colorNum = std::stoul(colorStr, nullptr, 16);
 
                 SDL_Color color{
@@ -125,18 +131,18 @@ void TextRenderer::renderText(const std::string& text, const Vector2<GLfloat>& p
                 colorStack.push_back(color);
                 glColor4ub(color.r, color.g, color.b, color.a);
 
-                iter = itColorEnd - 1;
+                index = indexColorEnd;
                 continue;
             }
             case Modifier::Pipe:
                 break; // escaped pipe (||)
             default:
-                LOG(WARNING) << "Unknown modifier " << *iter;
+                LOG(WARNING) << "Unknown modifier '" << text[index] << '"';
                 continue;
             }
         }
 
-        renderChar(*iter, offset);
+        renderChar(text[index], offset);
         offset.x += charWidth;
     }
 }
