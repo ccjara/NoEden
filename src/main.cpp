@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#undef main
 
 INITIALIZE_EASYLOGGINGPP
 

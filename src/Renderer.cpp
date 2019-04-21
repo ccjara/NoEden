@@ -29,7 +29,8 @@ void Renderer::startRendering()
     glLoadIdentity();
     glViewport(0, 0, static_cast<GLsizei> (wSize.x), static_cast<GLsizei> (wSize.y));
     glOrtho(0.0f, static_cast<GLdouble> (wSize.x), static_cast<GLdouble> (wSize.y), 0.0f, 0.0f, 1.0f);
-    glTranslatef(0.5f, 0.5f, 0.0f);
+    // glTranslatef(0.5f, 0.5f, 0.0f);
+    glScalef(2.0f, 2.0f, 1.0f);
 }
 
 void Renderer::finishRendering()

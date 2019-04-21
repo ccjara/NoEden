@@ -97,7 +97,7 @@ void TextRenderer::renderText(const std::string& text, const Vector2<GLfloat>& p
             }
 
             switch (text[index]) {
-            case Modifier::Reset:
+            case Modifier::Reset: {
                 if (!colorStack.size()) {
                     LOG(ERROR) << "Color stack would be empty if modifier had been popped - ignoring";
                     continue;
@@ -106,6 +106,7 @@ void TextRenderer::renderText(const std::string& text, const Vector2<GLfloat>& p
                 auto color = colorStack.back();
                 glColor4ub(color.r, color.g, color.b, color.a);
                 continue;
+            }
             case Modifier::NewLine:
                 offset.x = p.x;
                 offset.y += charHeight;

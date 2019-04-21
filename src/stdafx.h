@@ -1,6 +1,8 @@
 #ifndef __STDAFX_H__
 #define __STDAFX_H__
 
+#define NOMINMAX
+
 #include <cstdint>
 #include <iostream>
 #include <cmath>
@@ -15,10 +17,8 @@
 #include <random>
 #include <chrono>
 
-#define NOMINMAX
-
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 #include "easyloggingpp.h"
 
