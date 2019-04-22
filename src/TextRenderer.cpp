@@ -151,8 +151,9 @@ void TextRenderer::renderText(const std::string& text, const Vector2<GLfloat>& p
 void TextRenderer::renderChar(const char c, const Vector2<GLfloat>& p)
 {
     const uint32_t charsPerRow{ 16 };
-    const auto textureX = static_cast<float_t> (c % charsPerRow) * charWidth;
-    const auto textureY = static_cast<float_t> (c / charsPerRow) * charHeight;
+    const auto uc = static_cast<unsigned char> (c);
+    const auto textureX = static_cast<float_t> (uc % charsPerRow) * charWidth;
+    const auto textureY = static_cast<float_t> (uc / charsPerRow) * charHeight;
 
     const GLfloat u1{ 1.0f / textureWidth * textureX };
     const GLfloat u2{ 1.0f / textureWidth * (textureX + charWidth) };
