@@ -27,6 +27,23 @@
 #include "EventHandler.h"
 #include "EventManager.h"
 
+#include "IdGenerator.h"
+#include "StaticId.h"
+
+
+// ECS
+// TODO: Components, Systems
+
+#include "EntityAbstract.h"
+#include "Entity.h"
+#include "Entities.h"
+
+#include "Wall.h"
+//
+
+#include "Object.h"
+#include "Layer.h"
+#include "RoomGen.h"
 #include "Window.h"
 #include "TextRenderer.h"
 #include "Renderer.h"

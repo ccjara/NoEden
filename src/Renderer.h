@@ -1,8 +1,7 @@
 #ifndef __RENDERER_H__
 #define __RENDERER_H__
 
-class Renderer
-{
+class Renderer {
 private:
     SDL_GLContext glContext;
     std::shared_ptr<Window> window;
@@ -15,6 +14,7 @@ public:
     void bind(std::shared_ptr<Window> w);
     void startRendering();
     void finishRendering();
+    void run(Entities *entities);
 };
 
 #endif

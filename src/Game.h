@@ -8,6 +8,10 @@ private:
 
     MainMenu mainMenu;
     std::unique_ptr<TextTester> test;
+
+    std::unique_ptr<Layer> layer;
+
+    std::unique_ptr<Entities> entities;
 public:
     Game();
     void handleSdlEvent(const SDL_Event& e);

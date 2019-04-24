@@ -37,3 +37,11 @@ void Renderer::finishRendering()
 {
     SDL_GL_SwapWindow(window->getHandle());
 }
+
+void Renderer::run(Entities *entities) {
+    startRendering();
+
+    
+
+    finishRendering();
+}

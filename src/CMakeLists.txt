@@ -12,11 +12,16 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 add_executable(
     Trinias
     Core.cpp
+    EntityAbstract.cpp
     EventHandler.cpp
     EventManager.cpp
     Game.cpp
+    IdGenerator.cpp
+    Layer.cpp
     MainMenu.cpp
     Renderer.cpp
+    RoomGen.cpp
+    StaticId.cpp
     TextRenderer.cpp
     TextTester.cpp
     Window.cpp
