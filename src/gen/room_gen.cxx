@@ -1,122 +1,142 @@
 #include "room_gen.hxx"
 
-void room_gen::generate(layer& layer, uint32_t max_depth) {
-    auto rng { get_rng() };
+void room_gen::generate(layer& layer, const room_gen_config& config) {
+    const auto ls { layer.get_size() };
+    if (!ls.area()) {
+        return;
+    }
 
-    layer.clear();
+    std::uniform_int_distribution<uint32_t> binary_dist { 0, 1 };
+    std::uniform_int_distribution<uint32_t> room_size_dist {
+        config.min_room_size_xy,
+        config.max_room_size_xy
+    };
 
-    std::uniform_int_distribution<uint32_t> room_count_rng(1, 11);
+    using room_t = rect<uint32_t>;
 
-    const auto dim { layer.get_dimensions() };
+    std::vector<room_t> rooms;
 
-    // partition
-    test_partition.pos = vector2<uint32_t> {0, 0 };
-    test_partition.size = dim;
-    test_partition.first = nullptr;
-    test_partition.second = nullptr;
-    test_partition.depth = 0;
+    for (uint32_t attempt = 1; attempt <= config.max_room_attempts; attempt++) {
+        auto square_length { room_size_dist(rng) * 2 + 1 };
 
-    const auto MAX_DEPTH { max_depth };
-    const auto PADDING { 1u };
-    const auto MIN_ROOM_LENGTH { 1u + 2 * PADDING };
+        size<uint32_t> room_size { square_length, square_length };
 
-    std::uniform_int_distribution<uint8_t> dist_coinflip(0, 1);
+        std::uniform_int_distribution<uint32_t> odd_dist {
+            0,
+            1 + static_cast<uint32_t> (square_length / 2)
+        };
 
-    std::function<void(partition&)> subdivide = [&](partition &part) {
-        if (part.depth >= MAX_DEPTH) {
-            return;
-        }
-        // random subdivision
-        const auto direction {dist_coinflip(rng) == 0 ? direction::horizontal : direction::vertical };
-        const auto length {direction == direction::horizontal ? part.size.y : part.size.x };
-
-        if (length < 2 * MIN_ROOM_LENGTH * PADDING) {
-            return;
-        }
-
-        const auto center { static_cast<uint32_t> (length / 2) };
-
-        std::poisson_distribution<uint32_t> center_deviation_dist(center);
-
-        auto divisionOffset { center_deviation_dist(rng) };
-
-        // every division must produce two rooms of at least MIN_ROOM_LENGTH
-        // this constraints extreme outliers of the distribution function
-        // FIXME: this is buggy
-        divisionOffset = std::max(MIN_ROOM_LENGTH, divisionOffset);
-        divisionOffset = std::min(length - MIN_ROOM_LENGTH, divisionOffset);
-
-        divisionOffset = center;
-
-        part.first = std::make_unique<partition>();
-        part.second = std::make_unique<partition>();
-
-        part.first->depth = part.second->depth = part.depth + 1;
-        part.first->pos = part.pos;
-
-        if (direction == direction::horizontal) {
-            part.first->size = { part.size.x, divisionOffset };
-            part.second->pos = { part.pos.x, part.pos.y + divisionOffset };
-            part.second->size = { part.size.x, part.size.y - divisionOffset };
+        if (binary_dist(rng) == 0) {
+            room_size.width += odd_dist(rng) * 2;
         } else {
-            part.first->size = { divisionOffset, part.size.y };
-            part.second->pos = { part.pos.x + divisionOffset, part.pos.y };
-            part.second->size = { part.size.x - divisionOffset, part.size.y };
-        }
-        subdivide(*part.first);
-        subdivide(*part.second);
-    };
-    subdivide(test_partition);
-
-    // 1. shrink partition rect by random amount
-    // 2. determine maximum free space between new rect from (0, 0) to the partition rect boundary
-    // 3. randomize position offset based on threshold determined in step 2
-    std::function<void(/*const*/ partition&)> carve_room = [&](/*const*/ partition &part) {
-        if (part.first && part.second) { // ignore non-leaf partitions
-            carve_room(*part.first);
-            carve_room(*part.second);
-            return;
+            room_size.height += odd_dist(rng) * 2;
         }
 
-        std::uniform_int_distribution<uint32_t> aDist(MIN_ROOM_LENGTH, part.size.x - 2u * PADDING);
-        std::uniform_int_distribution<uint32_t> bDist(MIN_ROOM_LENGTH, part.size.y - 2u * PADDING);
+        const auto max_x { static_cast<uint32_t> (ls.width - room_size.width) / 2 - 2 };
+        const auto max_y { static_cast<uint32_t> (ls.height - room_size.height) / 2 - 2 };
+        std::uniform_int_distribution<uint32_t> x_dist { 0, max_x };
+        std::uniform_int_distribution<uint32_t> y_dist { 0, max_y };
 
-        LOG(DEBUG) << "a: [" << MIN_ROOM_LENGTH << "; " << part.size.x - 2u * PADDING << "]"
-        << "b: " << "[" << MIN_ROOM_LENGTH << "; " << part.size.y - 2u * PADDING << "]";
+        position<uint32_t> pos { x_dist(rng) * 2 + 1, y_dist(rng) * 2 + 1 };
+        room_t new_room { pos, room_size };
+        room_t new_room_padded { new_room };
 
-        uint32_t a { 0u };
-        uint32_t b { 0u };
-        do {
-            a = aDist(rng);
-            b = bDist(rng);
-        } while (
-            false // std::max(a, b) / std::min(a, b) < 3 // TODO sensible ratio
-        );
+        new_room_padded.expand(1);
 
-        LOG(DEBUG) << "OLD: " << part.size.x << "x" << part.size.y << "\tNEW: "
-                              << a << "x" << b;
-
-        std::uniform_int_distribution<uint32_t> mxDist(PADDING, part.size.x - (a + PADDING));
-        std::uniform_int_distribution<uint32_t> myDist(PADDING, part.size.y - (b + PADDING));
-
-        part.size.x = a;
-        part.size.y = b;
-
-        part.pos.x += mxDist(rng);
-        part.pos.y += myDist(rng);
-
-        /*
-        for (uint32_t y = topLeft.y; y <= bottomRight.y; y++) {
-            for (uint32_t x = topLeft.x; x <= bottomRight.x; x++) {
-                if (x >= part.pos.x + part.size.x || y >= part.pos.y + part.size.y) {
-                    continue; // do not place on the partition boundary
-                }
-                auto o = new Object(); // TODO: refactor Layer data handling
-                o->isVoid = false;
-                layer.put(Vector2i(x, y), o);
+        if (std::none_of(
+            rooms.begin(),
+            rooms.end(),
+            [&new_room_padded](const room_t& existing_room) {
+                return new_room_padded.intersects_with(existing_room);
             }
+        )) {
+            rooms.push_back(std::move(new_room));
         }
-        */
+    }
+
+    for (const auto& room: rooms) {
+        room.scan([&room, &layer](position<uint32_t> p) {
+            object obj;
+            obj.is_void = false;
+            obj.is_solid = room.edges(p);
+
+            layer.store(p, std::move(obj));
+        });
+    }
+
+    // carve some tunnels
+    std::vector<room_t> unconnected_rooms { rooms };
+
+    std::shuffle(unconnected_rooms.begin(), unconnected_rooms.end(), rng);
+
+    const auto unfold_perimeter = [](const room_t& room) {
+        std::vector<position<uint32_t>> points;
+        // Optimize: (walks the entire area, not just the perimeter)
+        room.scan([&room, &points](position<uint32_t> p) {
+            if (room.edges(p) && !room.has_corner_at(p)) {
+                points.push_back(p);
+            }
+        });
+        return points;
     };
-    carve_room(test_partition);
+
+    while (unconnected_rooms.size() >= 2) {
+        room_t r1 { unconnected_rooms.back() };
+        unconnected_rooms.pop_back();
+        room_t r2 { unconnected_rooms.back() };
+        unconnected_rooms.pop_back();
+
+        const auto r1_perimeter { unfold_perimeter(r1) };
+        const auto r2_perimeter { unfold_perimeter(r2) };
+
+        if (!r1_perimeter.size() || !r2_perimeter.size()) {
+            LOG(ERROR) << "NO PERIMETER???";
+            break;
+        }
+
+        std::uniform_int_distribution<uint32_t> r1_perim_dist {
+            0,
+            static_cast<uint32_t> (r1_perimeter.size() - 1)
+        };
+        std::uniform_int_distribution<uint32_t> r2_perim_dist {
+            0,
+            static_cast<uint32_t> (r2_perimeter.size() - 1)
+        };
+
+        auto r1_door_pos { r1_perimeter[r1_perim_dist(rng)] };
+        auto r2_door_pos { r2_perimeter[r2_perim_dist(rng)] };
+
+        object obj_r1_center;
+        obj_r1_center.is_void = false;
+        obj_r1_center.debug_char = 'C';
+        layer.store(r1.center(), std::move(obj_r1_center));
+        object obj_r2_center;
+        obj_r2_center.is_void = false;
+        obj_r2_center.debug_char = 'C';
+        layer.store(r2.center(), std::move(obj_r2_center));
+
+        object obj_door1;
+        obj_door1.is_void = false;
+        obj_door1.is_solid = false;
+        obj_door1.debug_char = '1';
+        layer.store(r1_door_pos, std::move(obj_door1));
+
+        object obj_door2;
+        obj_door2.is_void = false;
+        obj_door2.is_solid = false;
+        obj_door2.debug_char = '2';
+        layer.store(r2_door_pos, std::move(obj_door2));
+    }
+}
+
+void room_gen::generate_test_arena(layer& layer) {
+    rect<uint32_t> room { { 3, 3 }, { 53, 31 } };
+
+    room.scan([&room, &layer](position<uint32_t> p) {
+        object obj;
+        obj.is_void = false;
+        obj.is_solid = room.edges(p);
+
+        layer.store(p, std::move(obj));
+    });
 }

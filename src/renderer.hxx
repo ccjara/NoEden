@@ -19,6 +19,8 @@ public:
     void bind(std::shared_ptr<window> w);
     void start_rendering();
     void finish_rendering();
+
+    void project();
 };
 
 #endif

@@ -7,21 +7,20 @@
 
 class layer {
 private:
-    vector2<uint32_t> dimensions;
-    object null_object;
+    size<uint32_t> m_size;
 
     [[nodiscard]] inline bool validate_index(size_t index) const noexcept;
-    [[nodiscard]] inline size_t to_index(vector2<uint32_t> pos) noexcept;
+    [[nodiscard]] inline size_t to_index(position<uint32_t> pos) noexcept;
 public:
-    std::vector<std::unique_ptr<object>> data;
+    std::vector<object> objects;
 
-    explicit layer(vector2<uint32_t> dimensions);
+    explicit layer(size<uint32_t> s);
 
-    void store(vector2<uint32_t> pos, object&& o);
-    const object& get(vector2<uint32_t> pos);
+    void store(position<uint32_t> pos, object&& o);
+    const object& get(position<uint32_t> pos);
     void clear();
 
-    const vector2<uint32_t>& get_dimensions() noexcept;
+    const size<uint32_t>& get_size() noexcept;
 };
 
 #endif

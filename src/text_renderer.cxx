@@ -50,13 +50,6 @@ void text_renderer::load()
         LOG(ERROR) << "Could not generate texture from text surface (" << glError << ")";
         throw;
     }
-
-    glError = glGetError();
-    if (glError) {
-        LOG(ERROR) << "Could not map text surface to texture (" << glError << ")";
-        throw;
-    }
-
     tex_width = static_cast<float_t> (text_surface->w);
     tex_height = static_cast<float_t> (text_surface->h);
 
@@ -65,6 +58,7 @@ void text_renderer::load()
 
 void text_renderer::begin() const
 {
+    glBindTexture(GL_TEXTURE_2D, texture);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -76,6 +70,7 @@ void text_renderer::end() const
     glEnd();
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 // FIXME: crashes in |c

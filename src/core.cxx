@@ -3,7 +3,7 @@
 core::core() :
     renderer_ptr(std::make_unique<renderer>()),
     game_ptr(std::make_unique<game>()),
-    window_ptr(std::make_shared<window>(window_size { 800, 600 })) {
+    window_ptr(std::make_shared<window>(window_size { 1920, 1080 })) {
 
     renderer_ptr->bind(window_ptr);
 }
@@ -36,6 +36,8 @@ void core::render() {
 
 void core::run() {
     is_running = true;
+
+    game_ptr->setup();
 
     while (is_running) {
         process_events();

@@ -1,7 +1,7 @@
 #include "rng.hxx"
 
-std::mt19937& get_rng() {
+rng_t& get_rng() {
     thread_local static std::random_device rd;
-    thread_local static std::mt19937 mt { rd() };
+    thread_local static rng_t mt { rd() };
     return mt;
 }

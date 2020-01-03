@@ -5,27 +5,23 @@
 
 #include "../layer.hxx"
 
-namespace {
-    enum class direction {
-        horizontal,
-        vertical,
-    };
-}
-
-struct partition {
-    vector2<uint32_t> pos = vector2<uint32_t> {0, 0 };
-    vector2<uint32_t> size = vector2<uint32_t> {0, 0 };
-    std::unique_ptr<partition> first = nullptr;
-    std::unique_ptr<partition> second = nullptr;
-    uint32_t depth = 0;
+struct room_gen_config {
+    uint32_t max_room_attempts { 50 };
+    uint32_t min_room_size_xy { 3 };
+    uint32_t max_room_size_xy { 5 };
 };
 
 class room_gen
 {
+private:
+    rng_t rng;
 public:
-    partition test_partition;
+    room_gen() : rng(get_rng()) {
+    }
 
-    void generate(layer& layer, uint32_t max_depth);
+    void generate(layer& layer, const room_gen_config& config);
+
+    void generate_test_arena(layer& layer);
 };
 
 #endif
