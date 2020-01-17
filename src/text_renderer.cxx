@@ -37,11 +37,11 @@ void text_renderer::load()
     glTexImage2D(
         GL_TEXTURE_2D,
         0,
-        GL_RGBA,
+        GL_RGB,
         static_cast<GLsizei> (text_surface->w),
         static_cast<GLsizei> (text_surface->h),
         0,
-        GL_BGRA,
+        GL_BGR,
         GL_UNSIGNED_BYTE,
         text_surface->pixels
     );

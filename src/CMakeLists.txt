@@ -18,3 +18,4 @@ target_precompile_headers(jaralyn_static PRIVATE stdafx.hxx)
 
 target_link_libraries(jaralyn_static SDL2::SDL2)
 target_link_libraries(jaralyn_static ${OPENGL_LIBRARIES})
+target_link_libraries(jaralyn_static ${GLEW_LIBRARIES})

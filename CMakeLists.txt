@@ -6,6 +6,7 @@ set(OpenGL_GL_PREFERENCE GLVND)
 
 find_package(SDL2 REQUIRED COMPONENTS SDL2::SDL2)
 find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
 
 include_directories(jaralyn deps)
 include_directories(jaralyn ${SDL2_INCLUDE_DIRS})

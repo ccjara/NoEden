@@ -21,6 +21,8 @@ void renderer::bind(std::shared_ptr<window> w) {
     gl_context = SDL_GL_CreateContext(w->get_handle());
     SDL_GL_SetSwapInterval(0);
 
+    glewInit();
+
     text->load();
 }
 

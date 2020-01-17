@@ -25,9 +25,9 @@
 
 #include <exception>
 
+#include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
-#include <GLES3/gl3.h>
 
 #include <ctpl/ctpl.hxx>
 #include <entt/entt.hxx>
