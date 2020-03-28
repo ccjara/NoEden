@@ -1,8 +1,6 @@
 #ifndef JARALYN_TEXT_RENDERER_HXX
 #define JARALYN_TEXT_RENDERER_HXX
 
-#include "ide_pch.hxx"
-
 class text_renderer
 {
 private:

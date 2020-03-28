@@ -1,8 +1,6 @@
 #ifndef JARALYN_CORE_HXX
 #define JARALYN_CORE_HXX
 
-#include "ide_pch.hxx"
-
 #include "renderer.hxx"
 #include "window.hxx"
 #include "game.hxx"

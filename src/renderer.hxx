@@ -1,8 +1,6 @@
 #ifndef JARALYN_RENDERER_HXX
 #define JARALYN_RENDERER_HXX
 
-#include "ide_pch.hxx"
-
 #include "window.hxx"
 #include "text_renderer.hxx"
 

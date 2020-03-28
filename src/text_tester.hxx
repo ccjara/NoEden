@@ -1,8 +1,6 @@
 #ifndef JARALYN_TEXT_TESTER_HXX
 #define JARALYN_TEXT_TESTER_HXX
 
-#include "ide_pch.hxx"
-
 class text_tester {
 private:
     std::string input;

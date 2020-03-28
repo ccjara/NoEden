@@ -2,17 +2,24 @@ cmake_minimum_required(VERSION 3.16)
 project(jaralyn)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_GENERATOR_PLATFORM x64)
 set(OpenGL_GL_PREFERENCE GLVND)
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 find_package(SDL2 REQUIRED COMPONENTS SDL2::SDL2)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 
-include_directories(jaralyn deps)
-include_directories(jaralyn ${SDL2_INCLUDE_DIRS})
-include_directories(jaralyn ${OPENGL_INCLUDE_DIRS})
+include_directories(
+	jaralyn
+	deps
+	${SDL2_INCLUDE_DIRS}
+	${OPENGL_INCLUDE_DIRS}
+	${GLEW_INCLUDE_DIRS}
+)
 
 add_subdirectory(src)
-add_subdirectory(bin)
-add_subdirectory(test)
-

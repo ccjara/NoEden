@@ -1,8 +1,6 @@
 #ifndef JARALYN_ROOM_GEN_HXX
 #define JARALYN_ROOM_GEN_HXX
 
-#include "../ide_pch.hxx"
-
 #include "../layer.hxx"
 
 struct room_gen_config {

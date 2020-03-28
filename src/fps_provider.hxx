@@ -1,8 +1,6 @@
 #ifndef JARALYN_FPS_PROVIDER_HXX
 #define JARALYN_FPS_PROVIDER_HXX
 
-#include "ide_pch.hxx"
-
 constexpr std::chrono::milliseconds FPS_INTERVAL { 1000 };
 
 class fps_provider {

@@ -1,7 +1,9 @@
 cmake-build-debug
+bin
 
 .idea
 .vscode
+.vs
 
 *.gch
 *.log

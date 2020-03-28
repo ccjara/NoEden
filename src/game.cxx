@@ -54,9 +54,9 @@ void game::render(renderer& rnd) {
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0f, 1920, 1080, 0.0f, 0.0f, 1.0f);
-    glViewport(0, 0, 1920, 1080);
-    glScalef(2.0f, 2.0f, 1.0f);
+    glOrtho(0.0f, 800, 600, 0.0f, 0.0f, 1.0f);
+    glViewport(0, 0, 800, 600);
+    glScalef(1.0f, 1.0f, 1.0f);
 
     rnd.text->begin();
 

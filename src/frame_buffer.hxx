@@ -1,8 +1,6 @@
 #ifndef JARALYN_FRAME_BUFFER_HXX
 #define JARALYN_FRAME_BUFFER_HXX
 
-#include "ide_pch.hxx"
-
 class frame_buffer {
 private:
     GLuint name { 0 };

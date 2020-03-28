@@ -1,8 +1,6 @@
 #ifndef JARALYN_LAYER_HXX
 #define JARALYN_LAYER_HXX
 
-#include "ide_pch.hxx"
-
 #include "object.hxx"
 
 class layer {

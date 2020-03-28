@@ -1,7 +1,7 @@
-add_library(
-    jaralyn_static
-    STATIC
+add_executable(
+    jaralyn
     gen/rng.cxx
+    ../deps/easyloggingpp/easyloggingpp.cxx
     fps_provider.hxx
     core.cxx
     game.cxx
@@ -12,10 +12,11 @@ add_library(
     text_tester.cxx
     window.cxx
     frame_buffer.cxx
+    main.cxx
 )
 
-target_precompile_headers(jaralyn_static PRIVATE stdafx.hxx)
+target_link_libraries(jaralyn SDL2::SDL2)
+target_link_libraries(jaralyn ${OPENGL_LIBRARIES})
+target_link_libraries(jaralyn GLEW::GLEW)
 
-target_link_libraries(jaralyn_static SDL2::SDL2)
-target_link_libraries(jaralyn_static ${OPENGL_LIBRARIES})
-target_link_libraries(jaralyn_static ${GLEW_LIBRARIES})
+target_precompile_headers(jaralyn PRIVATE stdafx.hxx)

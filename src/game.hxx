@@ -1,8 +1,6 @@
 #ifndef JARALYN_GAME_HXX
 #define JARALYN_GAME_HXX
 
-#include "ide_pch.hxx"
-
 #include "frame_buffer.hxx"
 #include "fps_provider.hxx"
 #include "gen/room_gen.hxx"

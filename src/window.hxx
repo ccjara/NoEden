@@ -1,8 +1,6 @@
 #ifndef JARALYN_WINDOW_HXX
 #define JARALYN_WINDOW_HXX
 
-#include "ide_pch.hxx"
-
 using window_size = vector2<uint32_t>;
 
 class window
