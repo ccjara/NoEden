@@ -32,7 +32,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
-#include <ctpl/ctpl.hxx>
 #include <entt/entt.hxx>
 #include <easyloggingpp/easyloggingpp.hxx>
 

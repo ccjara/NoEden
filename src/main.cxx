@@ -1,22 +1,22 @@
-#include "core.hxx"
+#include "engine/engine.hxx"
+#include "systems/gfx/gfx_system.hxx"
+#include "systems/input/input_system.hxx"
 
 INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char* argv[]) {
     SDL_SetMainReady();
 
-    el::Configurations conf { "logger.cfg" };
-    el::Loggers::reconfigureLogger("default", conf);
+    input_system input;
+    gfx_system gfx;
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        LOG(ERROR) << "SDL could not initialize! (" << SDL_GetError() << ")";
-        return 1;
-    }
+    engine eng;
 
-    core c;
-    c.run();
-
-    SDL_Quit();
+    eng.startup();
+    eng.register_system(&input);
+    eng.register_system(&gfx);
+    eng.run();
+    eng.shutdown();
 
     return 0;
 }

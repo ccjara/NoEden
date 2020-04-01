@@ -2,9 +2,7 @@
 
 game::game() :
     layer_ptr(std::make_unique<layer>(size<uint32_t> { 100, 75 })),
-    test(std::make_unique<text_tester>()),
     sdl_event_sink(sdl_event_signal) {
-    sdl_event_sink.connect<&text_tester::on_sdl_event>(test.get());
     gen.generate_test_arena(*layer_ptr);
 }
 

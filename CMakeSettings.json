@@ -11,11 +11,6 @@
             "buildCommandArgs": "-v",
             "ctestCommandArgs": "",
             "variables": [
-                {
-                    "name": "CMAKE_INSTALL_PREFIX",
-                    "value": "D:/dev/jaralyn/cmake-debug-build",
-                    "type": "PATH"
-                }
             ]
         }
     ]

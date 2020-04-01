@@ -56,7 +56,7 @@ void room_gen::generate(layer& layer, const room_gen_config& config) {
 
     for (const auto& room: rooms) {
         room.scan([&room, &layer](position<uint32_t> p) {
-            object obj;
+            object_deprecated obj;
             obj.is_void = false;
             obj.is_solid = room.edges(p);
 
@@ -106,22 +106,22 @@ void room_gen::generate(layer& layer, const room_gen_config& config) {
         auto r1_door_pos { r1_perimeter[r1_perim_dist(rng)] };
         auto r2_door_pos { r2_perimeter[r2_perim_dist(rng)] };
 
-        object obj_r1_center;
+        object_deprecated obj_r1_center;
         obj_r1_center.is_void = false;
         obj_r1_center.debug_char = 'C';
         layer.store(r1.center(), std::move(obj_r1_center));
-        object obj_r2_center;
+        object_deprecated obj_r2_center;
         obj_r2_center.is_void = false;
         obj_r2_center.debug_char = 'C';
         layer.store(r2.center(), std::move(obj_r2_center));
 
-        object obj_door1;
+        object_deprecated obj_door1;
         obj_door1.is_void = false;
         obj_door1.is_solid = false;
         obj_door1.debug_char = '1';
         layer.store(r1_door_pos, std::move(obj_door1));
 
-        object obj_door2;
+        object_deprecated obj_door2;
         obj_door2.is_void = false;
         obj_door2.is_solid = false;
         obj_door2.debug_char = '2';
@@ -133,7 +133,7 @@ void room_gen::generate_test_arena(layer& layer) {
     rect<uint32_t> room { { 3, 3 }, { 53, 31 } };
 
     room.scan([&room, &layer](position<uint32_t> p) {
-        object obj;
+        object_deprecated obj;
         obj.is_void = false;
         obj.is_solid = room.edges(p);
 

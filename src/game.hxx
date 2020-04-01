@@ -4,7 +4,6 @@
 #include "frame_buffer.hxx"
 #include "fps_provider.hxx"
 #include "gen/room_gen.hxx"
-#include "text_tester.hxx"
 #include "renderer.hxx"
 #include "layer.hxx"
 
@@ -18,7 +17,6 @@ private:
     entt::sigh<void(const SDL_Event&)> sdl_event_signal;
     entt::sink<void(const SDL_Event&)> sdl_event_sink;
 
-    std::unique_ptr<text_tester> test;
     std::unique_ptr<layer> layer_ptr;
 
     std::unique_ptr<frame_buffer> fb;

@@ -5,7 +5,7 @@ layer::layer(size<uint32_t> s) :
     objects(s.area(), null_object) {
 }
 
-void layer::store(position<uint32_t> pos, object&& o) {
+void layer::store(position<uint32_t> pos, object_deprecated&& o) {
     const auto index { to_index(pos) };
 
     if (!validate_index(index)) {
@@ -22,7 +22,7 @@ void layer::clear() {
     std::fill(objects.begin(), objects.end(), null_object);
 }
 
-const object& layer::get(position<uint32_t> pos) {
+const object_deprecated& layer::get(position<uint32_t> pos) {
     auto index = to_index(pos);
 
     if (!validate_index(index)) {
