@@ -37,6 +37,4 @@
 
 #include "definitions.hxx"
 
-#include "gen/rng.hxx"
-
 #endif

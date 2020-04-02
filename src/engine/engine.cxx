@@ -1,5 +1,9 @@
 #include "engine.hxx"
 
+engine::engine(scene_resolver* const resolver) :
+    scene_loader_(std::make_unique<scene_loader>(resolver)) {
+}
+
 void engine::startup() noexcept {
     resource_->startup();
     env_->startup(*resource_);
@@ -15,6 +19,8 @@ void engine::shutdown() noexcept {
 }
 
 void engine::run() {
+    scene_loader_->load_initial_scene();
+
     while (env_->is_running()) {
         platform_->process_events(*env_);
 
@@ -26,6 +32,4 @@ void engine::register_system(game_system* sys) {
     sys->attach(*platform_->events_);
 
     systems_.push_back(sys);
-
-    sys->on_load(managers_);
 }

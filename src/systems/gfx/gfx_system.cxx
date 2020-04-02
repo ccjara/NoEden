@@ -1,9 +1,15 @@
 #include "gfx_system.hxx"
 
-void gfx_system::on_load(const manager_provider& managers_) {
-    glewInit();
+namespace detail {
+    gfx_system_impl::gfx_system_impl(const window *w) {
+        glewInit();
 
-    window_ = &managers_.platform->get_window();
+        window_ = w;
 
-    renderer_->bind(window_);
+        renderer_->bind(window_);
+    }
+
+    void gfx_system_impl::public_poc_method() {
+        LOG(DEBUG) << __FUNCTION__ << ": Hellow";
+    }
 }

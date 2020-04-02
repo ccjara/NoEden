@@ -1,4 +1,4 @@
-#include "../game_system.hxx"
+#include "../../engine/framework/game_system.hxx"
 #include "../../engine/managers/platform/platform_events.hxx"
 #include "mouse.hxx"
 

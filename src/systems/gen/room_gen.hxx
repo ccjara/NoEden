@@ -1,7 +1,8 @@
 #ifndef JARALYN_ROOM_GEN_HXX
 #define JARALYN_ROOM_GEN_HXX
 
-#include "../layer.hxx"
+#include "rng.hxx"
+#include "../../layer.hxx"
 
 struct room_gen_config {
     uint32_t max_room_attempts { 50 };

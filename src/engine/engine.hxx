@@ -7,7 +7,9 @@
 #include "managers/task/task_manager.hxx"
 #include "managers/manager_provider.hxx"
 
-#include "../systems/game_system.hxx"
+#include "framework/game_system.hxx"
+#include "framework/scene_loader.hxx"
+#include "framework/scene_resolver.hxx"
 
 class engine {
 private:
@@ -15,6 +17,7 @@ private:
     std::unique_ptr<env_manager> env_ = std::make_unique<env_manager>();
     std::unique_ptr<platform_manager> platform_ = std::make_unique<platform_manager>();
     std::unique_ptr<task_manager> task_ = std::make_unique<task_manager>();
+    std::unique_ptr<scene_loader> scene_loader_;
 
     manager_provider managers_ = {
         resource_.get(),
@@ -25,6 +28,8 @@ private:
 
     std::vector<game_system*> systems_;
 public:
+    engine(scene_resolver* const resolver);
+
     /**
      * @brief Registers a game system to be used during runtime.
      *

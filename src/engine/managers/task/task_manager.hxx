@@ -4,7 +4,7 @@
 #include "../manager.hxx"
 #include "../platform/platform_manager.hxx"
 #include "../../framework/task.hxx"
-#include "../../../systems/game_system.hxx"
+#include "../../framework/game_system.hxx"
 
 class game_system;
 
