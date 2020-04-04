@@ -7,6 +7,9 @@
 #include "task/task_manager.hxx"
 
 class task_manager;
+class platform_manager;
+class env_manager;
+class resource_manager;
 
 struct manager_provider {
     resource_manager* const resource;

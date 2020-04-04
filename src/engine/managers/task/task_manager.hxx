@@ -6,7 +6,7 @@
 #include "../../framework/task.hxx"
 #include "../../framework/game_system.hxx"
 
-class game_system;
+class platform_manager;
 
 class task_manager : public manager<task_manager> {
 private:
@@ -24,7 +24,7 @@ public:
     void startup(const platform_manager& platform);
     void shutdown();
 
-    void process(std::vector<game_system*> systems);
+    void process(const system_map_t& systems);
 
     task_manager() = default;
     task_manager(const task_manager&) = delete;

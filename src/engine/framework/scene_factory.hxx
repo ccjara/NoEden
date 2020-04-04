@@ -1,9 +1,9 @@
-#ifndef JARALYN_SCENE_RESOLVER_HXX
-#define JARALYN_SCENE_RESOLVER_HXX
+#ifndef JARALYN_SCENE_FACTORY_HXX
+#define JARALYN_SCENE_FACTORY_HXX
 
 #include "scene.hxx"
 
-class scene_resolver {
+class scene_factory {
 public:
     /**
      * @brief Instantiates a scene based on the given scene id
@@ -12,7 +12,7 @@ public:
      * Prior to executing the game loop and may be called by the engine
      * to commence a scene switch, which may occur based on game state changes.
      */
-    virtual std::unique_ptr<scene> resolve_scene_by_id(scene_id_t id) = 0;
+    [[nodiscard]] virtual std::unique_ptr<scene> create(scene_id_t id) = 0;
 
     /**
      * @brief Returns the initial, game specific scene to load
@@ -22,16 +22,15 @@ public:
     virtual scene_id_t get_initial_scene_id() const noexcept = 0;
 
     /**
-     * @brief Resolves the initially configured scene.
+     * @brief Creates the initially configured scene.
      *
-     * This is a shortcut to pairing get_initial_scene_id() and 
-     * resolve_scene_by_id().
+     * This is a shortcut to pairing get_initial_scene_id() and create().
      */
-    std::unique_ptr<scene> resolve_initial_scene() {
-        return resolve_scene_by_id(get_initial_scene_id());
+    std::unique_ptr<scene> create_initial_scene() {
+        return create(get_initial_scene_id());
     }
 
-    virtual ~scene_resolver() = default;
+    virtual ~scene_factory() = default;
 };
 
 #endif

@@ -1,13 +1,19 @@
 #include "engine.hxx"
 
-engine::engine(scene_resolver* const resolver) :
-    scene_loader_(std::make_unique<scene_loader>(resolver)) {
+engine::engine(
+    system_factory* const sys_factory,
+    scene_factory* const sc_factory
+) :
+    sys_factory_ { sys_factory },
+    scene_loader_ { std::make_unique<scene_loader>(sc_factory, platform_.get()) } {
+    assert(sys_factory_);
+    assert(sc_factory);
 }
 
 void engine::startup() noexcept {
     resource_->startup();
     env_->startup(*resource_);
-    platform_->startup(*env_);
+    platform_->startup(sys_factory_, &managers_);
     task_->startup(*platform_);
 }
 
@@ -24,12 +30,6 @@ void engine::run() {
     while (env_->is_running()) {
         platform_->process_events(*env_);
 
-        task_->process(systems_);
+        task_->process(platform_->systems());
     }
-}
-
-void engine::register_system(game_system* sys) {
-    sys->attach(*platform_->events_);
-
-    systems_.push_back(sys);
 }

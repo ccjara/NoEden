@@ -2,9 +2,9 @@
 #define JARALYN_GAME_SYSTEM_HXX
 
 #include "task.hxx"
-#include "../managers/manager_provider.hxx"
 
 using system_id_t = int32_t;
+
 class game_system {
 protected:
     std::vector<std::unique_ptr<task>> tasks_;
@@ -19,5 +19,7 @@ public:
 
     virtual ~game_system() = default;
 };
+
+using system_map_t = std::map<system_id_t, std::unique_ptr<game_system>>;
 
 #endif

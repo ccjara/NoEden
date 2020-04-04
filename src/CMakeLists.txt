@@ -10,7 +10,8 @@ add_executable(
     "engine/framework/object.cxx"
     "engine/framework/scene.cxx"
     "engine/framework/scene_loader.cxx"
-    "engine/framework/scene_resolver.hxx"
+    "engine/framework/scene_factory.hxx"
+    "engine/framework/system_factory.hxx"
     "engine/framework/task.hxx"
     "engine/managers/env/env_manager.cxx"
     "engine/managers/env/root_config.hxx"
@@ -21,18 +22,17 @@ add_executable(
     "engine/managers/task/task_manager.cxx"
     "scenes/dungeon_scene.hxx"
     "scenes/scene_constants.hxx"
-    "scenes/scene_resolver_impl.cxx"
+    "scenes/scene_factory_impl.cxx"
     "systems/gen/room_gen.cxx"
     "systems/gen/rng.cxx"
-    "systems/gfx/gfx_module.cxx"
     
     "systems/gfx/gfx_system.cxx"
     "systems/gfx/renderer.cxx"
     "systems/gfx/text_renderer.cxx"
     "systems/input/input_system.cxx"
     "systems/input/mouse.cxx"
-    "systems/system_module.hxx"
-)
+    "systems/system_factory_impl.cxx"
+ )
 target_link_libraries(jaralyn SDL2::SDL2)
 target_link_libraries(jaralyn ${OPENGL_LIBRARIES})
 target_link_libraries(jaralyn GLEW::GLEW)

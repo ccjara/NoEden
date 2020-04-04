@@ -4,8 +4,14 @@ uint32_t platform_manager::max_threads() const noexcept {
     return max_threads_;
 }
 
-void platform_manager::startup(const env_manager& env) {
-    const auto& env_cfg { env.config() };
+void platform_manager::startup(system_factory* const sys_factory, manager_provider* const managers) {
+    assert(sys_factory);
+    assert(managers);
+
+    managers_ = managers;
+    sys_factory_ = sys_factory;
+
+    const auto& env_cfg { managers_->env->config() };
     el::Configurations conf{ "logger.cfg" };
     el::Loggers::reconfigureLogger("default", conf);
 
@@ -20,6 +26,18 @@ void platform_manager::startup(const env_manager& env) {
 
 void platform_manager::shutdown() noexcept {
     SDL_Quit();
+}
+
+void platform_manager::load_system(system_id_t id) {
+    if (systems_.find(id) != systems_.end()) {
+        LOG(ERROR) << "System " << id << " is already loaded";
+        throw;
+    }
+    auto sys { sys_factory_->create(id, *managers_) };
+
+    sys->attach(*events_);
+
+    systems_[id] = std::move(sys);
 }
 
 void platform_manager::process_events(env_manager& env) {
@@ -54,4 +72,8 @@ void platform_manager::process_events(env_manager& env) {
 
 const window& platform_manager::get_window() const noexcept {
     return *window_;
+}
+
+const system_map_t& platform_manager::systems() const noexcept {
+    return systems_;
 }

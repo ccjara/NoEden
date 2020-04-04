@@ -55,11 +55,11 @@ void task_manager::worker() {
     }
 }
 
-void task_manager::process(std::vector<game_system*> systems) {
+void task_manager::process(const system_map_t& systems) {
     {
         std::lock_guard<std::mutex> lock { worker_mutex_ };
-        for (auto system : systems) {
-            auto& system_tasks { system->submit_tasks() };
+        for (auto& system_entry : systems) {
+            auto& system_tasks { system_entry.second->submit_tasks() };
 
             for (auto& t : system_tasks) {
                 tasks_.push_back(std::move(t));

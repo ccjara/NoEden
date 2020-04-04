@@ -10,9 +10,10 @@ class scene {
 protected:
 	scene_id_t scene_id { 0 };
 	std::vector<object> objects_;
-	std::vector<system_id_t> required_systems_;
 public:
 	virtual ~scene() = default;
+
+	virtual const std::list<system_id_t> list_required_systems() const = 0;
 };
 
 #endif

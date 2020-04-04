@@ -8,8 +8,9 @@
 #include "managers/manager_provider.hxx"
 
 #include "framework/game_system.hxx"
+#include "framework/system_factory.hxx"
 #include "framework/scene_loader.hxx"
-#include "framework/scene_resolver.hxx"
+#include "framework/scene_factory.hxx"
 
 class engine {
 private:
@@ -26,22 +27,9 @@ private:
         task_.get(),
     };
 
-    std::vector<game_system*> systems_;
+    system_factory* const sys_factory_;
 public:
-    engine(scene_resolver* const resolver);
-
-    /**
-     * @brief Registers a game system to be used during runtime.
-     *
-     * The given pointer must outlive the engine as it does not take ownership.
-     *
-     * You may override the attach method of the system to attach
-     * to platform specific events (for example to react to raw
-     * mouse motion for your input system)
-     *
-     * @see game_system::attach()
-     */
-    void register_system(game_system* sys);
+    engine(system_factory* const sys_factory, scene_factory* const sc_factory);
 
     /**
      * @brief Starts all engine subsystems
