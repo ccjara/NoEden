@@ -4,12 +4,10 @@ uint32_t platform_manager::max_threads() const noexcept {
     return max_threads_;
 }
 
-void platform_manager::startup(system_factory* const sys_factory, manager_provider* const managers) {
-    assert(sys_factory);
+void platform_manager::startup(manager_provider* const managers) {
     assert(managers);
 
     managers_ = managers;
-    sys_factory_ = sys_factory;
 
     const auto& env_cfg { managers_->env->config() };
     el::Configurations conf{ "logger.cfg" };
@@ -28,9 +26,18 @@ void platform_manager::shutdown() noexcept {
     SDL_Quit();
 }
 
+void platform_manager::assign_system_factory(system_factory* sys_factory) {
+    assert(sys_factory);
+    sys_factory_ = sys_factory;
+}
+
 void platform_manager::load_system(system_id_t id) {
     if (systems_.find(id) != systems_.end()) {
         LOG(ERROR) << "System " << id << " is already loaded";
+        throw;
+    }
+    if (!sys_factory_) {
+        LOG(ERROR) << "No system factory assigned";
         throw;
     }
     auto sys { sys_factory_->create(id, *managers_) };
@@ -40,12 +47,12 @@ void platform_manager::load_system(system_id_t id) {
     systems_[id] = std::move(sys);
 }
 
-void platform_manager::process_events(env_manager& env) {
+void platform_manager::process_events() {
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0) {
         switch (e.type) {
         case SDL_QUIT:
-            return env.stop();
+            return managers_->env->stop();
         case SDL_WINDOWEVENT:
             if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
                 window_->resize({

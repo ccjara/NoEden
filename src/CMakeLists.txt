@@ -32,7 +32,7 @@ add_executable(
     "systems/input/input_system.cxx"
     "systems/input/mouse.cxx"
     "systems/system_factory_impl.cxx"
- )
+  "engine/managers/manager_provider.cxx")
 target_link_libraries(jaralyn SDL2::SDL2)
 target_link_libraries(jaralyn ${OPENGL_LIBRARIES})
 target_link_libraries(jaralyn GLEW::GLEW)

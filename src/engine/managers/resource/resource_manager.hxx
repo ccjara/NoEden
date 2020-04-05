@@ -1,11 +1,10 @@
 #ifndef JARALYN_RESOURCE_MANAGER_HXX
 #define JARALYN_RESOURCE_MANAGER_HXX
 
-#include "../manager.hxx"
-
-class resource_manager : public manager<resource_manager> {
+class resource_manager {
 private:
-    friend class engine;
+    friend class manager_provider;
+
     void startup();
     void shutdown() noexcept;
 public:

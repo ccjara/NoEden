@@ -12,9 +12,7 @@ int main(int argc, char* argv[]) {
 
     engine eng(&sys_factory, &scene_factory);
 
-    eng.startup();
     eng.run();
-    eng.shutdown();
 
     return 0;
 }

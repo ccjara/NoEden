@@ -1,15 +1,16 @@
 #ifndef JARALYN_TASK_MANAGER_HXX
 #define JARALYN_TASK_MANAGER_HXX
 
-#include "../manager.hxx"
 #include "../platform/platform_manager.hxx"
 #include "../../framework/task.hxx"
 #include "../../framework/game_system.hxx"
 
 class platform_manager;
 
-class task_manager : public manager<task_manager> {
+class task_manager {
 private:
+    friend class manager_provider;
+
     std::mutex worker_mutex_;
     std::mutex scheduler_mutex_;
     std::condition_variable worker_cv_;
@@ -20,10 +21,10 @@ private:
     bool is_running { true };
 
     void worker();
-public:
+
     void startup(const platform_manager& platform);
     void shutdown();
-
+public:
     void process(const system_map_t& systems);
 
     task_manager() = default;

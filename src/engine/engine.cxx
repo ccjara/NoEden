@@ -5,31 +5,23 @@ engine::engine(
     scene_factory* const sc_factory
 ) :
     sys_factory_ { sys_factory },
-    scene_loader_ { std::make_unique<scene_loader>(sc_factory, platform_.get()) } {
-    assert(sys_factory_);
+    scene_loader_ { sc_factory, managers_.platform.get() } {
+    assert(sys_factory);
     assert(sc_factory);
-}
 
-void engine::startup() noexcept {
-    resource_->startup();
-    env_->startup(*resource_);
-    platform_->startup(sys_factory_, &managers_);
-    task_->startup(*platform_);
-}
-
-void engine::shutdown() noexcept {
-    task_->shutdown();
-    platform_->shutdown();
-    env_->shutdown();
-    resource_->shutdown();
+    managers_.platform->assign_system_factory(sys_factory_);
 }
 
 void engine::run() {
-    scene_loader_->load_initial_scene();
+    managers_.startup();
 
-    while (env_->is_running()) {
-        platform_->process_events(*env_);
+    scene_loader_.load_initial_scene();
 
-        task_->process(platform_->systems());
+    while (managers_.env->is_running()) {
+        managers_.platform->process_events();
+
+        managers_.task->process(managers_.platform->systems());
     }
+
+    managers_.shutdown();
 }
