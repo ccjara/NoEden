@@ -5,11 +5,13 @@
 #include "env/env_manager.hxx"
 #include "platform/platform_manager.hxx"
 #include "task/task_manager.hxx"
+#include "state/state_manager.hxx"
 
 class task_manager;
 class platform_manager;
 class env_manager;
 class resource_manager;
+class state_manager;
 
 struct manager_provider {
 private:
@@ -21,6 +23,7 @@ public:
     const std::unique_ptr<env_manager> env = std::make_unique<env_manager>();
     const std::unique_ptr<platform_manager> platform = std::make_unique<platform_manager>();
     const std::unique_ptr<task_manager> task = std::make_unique<task_manager>();
+    const std::unique_ptr<state_manager> state = std::make_unique<state_manager>();
 
     /**
      * @brief Starts all manager subsystems

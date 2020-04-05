@@ -25,6 +25,6 @@ namespace detail {
         void on_mouse_move(const mouse_move_event& e);
         void on_mouse_click(const mouse_click_event& e);
     public:
-        virtual void attach(entt::dispatcher& dispatcher) override;
+        virtual void attach_platform(entt::dispatcher& dispatcher) override;
     };
 }

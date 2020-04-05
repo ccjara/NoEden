@@ -11,3 +11,7 @@ void universal_scene::extend(const system_scene* sys_scene) {
     assert(sys_scene);
     extensions_.push_back(sys_scene);
 }
+
+void universal_scene::create_object(object&& obj) {
+    objects_[obj.type()].emplace_back(&obj);
+}

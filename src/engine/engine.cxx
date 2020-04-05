@@ -21,6 +21,8 @@ void engine::run() {
         managers_.platform->process_events();
 
         managers_.task->process(managers_.platform->systems());
+
+        managers_.state->distribute_changes();
     }
 
     managers_.shutdown();

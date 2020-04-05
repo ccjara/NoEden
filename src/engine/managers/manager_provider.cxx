@@ -7,11 +7,13 @@ void manager_provider::startup() {
     env->startup(*resource);
     platform->startup(this);
     task->startup(*platform);
+    state->startup();
 }
 
 void manager_provider::shutdown() {
     is_running = false;
 
+    state->shutdown();
     task->shutdown();
     platform->shutdown();
     env->shutdown();

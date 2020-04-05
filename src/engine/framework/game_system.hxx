@@ -3,6 +3,7 @@
 
 #include "task.hxx"
 #include "system_scene.hxx"
+#include "../managers/state/change_controller.hxx"
 
 class game_system {
 protected:
@@ -11,7 +12,9 @@ protected:
     std::vector<std::unique_ptr<task>> tasks_;
 public:
     std::vector<std::unique_ptr<task>>& submit_tasks();
-    virtual void attach(entt::dispatcher& dispatcher);
+    virtual void attach_platform(entt::dispatcher& dispatcher);
+
+    virtual void attach(change_controller& controller);
 
     /**
      * @brief A globally unique identifier across all game systems

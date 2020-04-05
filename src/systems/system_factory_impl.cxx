@@ -6,6 +6,8 @@ std::unique_ptr<game_system> system_factory_impl::create(system_id_t id, const m
         return create_gfx_system(managers);
     case system_id::input:
         return create_input_system(managers);
+    case system_id::player:
+        return create_player_system(managers);
     default:
         LOG(ERROR) << "Unexpected system id " << id;
         throw;
@@ -24,4 +26,8 @@ std::unique_ptr<game_system> system_factory_impl::create_gfx_system(const manage
 
 std::unique_ptr<game_system> system_factory_impl::create_input_system(const manager_provider& managers) {
     return std::make_unique<detail::input_system_impl>();
+}
+
+std::unique_ptr<game_system> system_factory_impl::create_player_system(const manager_provider& managers) {
+    return std::make_unique<detail::player_system_impl>();
 }

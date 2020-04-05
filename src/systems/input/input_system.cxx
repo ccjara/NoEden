@@ -16,7 +16,7 @@ namespace detail {
         tasks_.push_back(std::make_unique<test_task>());
     }
 
-    void input_system_impl::attach(entt::dispatcher& dispatcher) {
+    void input_system_impl::attach_platform(entt::dispatcher& dispatcher) {
         LOG(INFO) << "Input system now listening to platform events";
 
         dispatcher.sink<mouse_move_event>().connect<&input_system_impl::on_mouse_move>(this);
