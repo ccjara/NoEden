@@ -1,7 +1,7 @@
 #include "system_factory_impl.hxx"
 
 std::unique_ptr<game_system> system_factory_impl::create(system_id_t id, const manager_provider& managers) {
-    switch (static_cast<system_id>(id)) {
+    switch (id) {
     case system_id::gfx:
         return create_gfx_system(managers);
     case system_id::input:

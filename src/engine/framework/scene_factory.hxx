@@ -1,18 +1,18 @@
 #ifndef JARALYN_SCENE_FACTORY_HXX
 #define JARALYN_SCENE_FACTORY_HXX
 
-#include "scene.hxx"
+#include "universal_scene.hxx"
 
 class scene_factory {
 public:
     /**
-     * @brief Instantiates a scene based on the given scene id
+     * @brief Instantiates a universal_scene based on the given scene id
      *
      * The scene id is implementation specific. This method will be called
      * Prior to executing the game loop and may be called by the engine
      * to commence a scene switch, which may occur based on game state changes.
      */
-    [[nodiscard]] virtual std::unique_ptr<scene> create(scene_id_t id) = 0;
+    [[nodiscard]] virtual std::unique_ptr<universal_scene> create(scene_id_t id) = 0;
 
     /**
      * @brief Returns the initial, game specific scene to load
@@ -26,7 +26,7 @@ public:
      *
      * This is a shortcut to pairing get_initial_scene_id() and create().
      */
-    std::unique_ptr<scene> create_initial_scene() {
+    std::unique_ptr<universal_scene> create_initial_scene() {
         return create(get_initial_scene_id());
     }
 

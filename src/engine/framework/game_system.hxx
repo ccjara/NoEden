@@ -2,11 +2,12 @@
 #define JARALYN_GAME_SYSTEM_HXX
 
 #include "task.hxx"
-
-using system_id_t = int32_t;
+#include "system_scene.hxx"
 
 class game_system {
 protected:
+    system_scene scene_;
+
     std::vector<std::unique_ptr<task>> tasks_;
 public:
     std::vector<std::unique_ptr<task>>& submit_tasks();
@@ -16,6 +17,8 @@ public:
      * @brief A globally unique identifier across all game systems
      */
     virtual system_id_t id() const noexcept = 0;
+
+    const system_scene& scene() const noexcept;
 
     virtual ~game_system() = default;
 };

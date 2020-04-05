@@ -31,7 +31,7 @@ void platform_manager::assign_system_factory(system_factory* sys_factory) {
     sys_factory_ = sys_factory;
 }
 
-void platform_manager::load_system(system_id_t id) {
+const game_system& platform_manager::load_system(system_id_t id) {
     if (systems_.find(id) != systems_.end()) {
         LOG(ERROR) << "System " << id << " is already loaded";
         throw;
@@ -45,6 +45,8 @@ void platform_manager::load_system(system_id_t id) {
     sys->attach(*events_);
 
     systems_[id] = std::move(sys);
+
+    return *systems_[id];
 }
 
 void platform_manager::process_events() {

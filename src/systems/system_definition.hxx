@@ -3,10 +3,10 @@
 
 #include "../engine/framework/game_system.hxx"
 
-enum class system_id : system_id_t {
-    invalid = -1,
-    gfx,
-    input,
-};
+namespace system_id {
+    constexpr system_id_t invalid { -1 };
+    constexpr system_id_t gfx { 0 };
+    constexpr system_id_t input { 1 };
+}
 
 #endif

@@ -30,7 +30,7 @@ public:
 
     void assign_system_factory(system_factory* sys_factory);
 
-    void load_system(system_id_t id);
+    const game_system& load_system(system_id_t id);
     
     const system_map_t& systems() const noexcept;
 

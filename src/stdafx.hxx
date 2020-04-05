@@ -35,6 +35,7 @@
 #include <entt/entt.hxx>
 #include <easyloggingpp/easyloggingpp.hxx>
 
+#include "engine/framework/framework_constants.hxx"
 #include "definitions.hxx"
 
 #endif

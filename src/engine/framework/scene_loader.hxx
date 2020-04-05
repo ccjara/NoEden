@@ -2,7 +2,7 @@
 #define JARALYN_SCENE_LOADER_HXX
 
 #include "../managers/platform/platform_manager.hxx"
-#include "scene.hxx"
+#include "universal_scene.hxx"
 #include "scene_factory.hxx"
 
 class scene_loader {
@@ -10,7 +10,7 @@ protected:
     scene_factory* const factory_;
     platform_manager* const platform_;
 
-    std::unique_ptr<scene> current_scene_;
+    std::unique_ptr<universal_scene> current_scene_;
 public:
     /**
      * @brief Configures the scene loader
@@ -30,9 +30,9 @@ public:
     void load_initial_scene();
 
     /**
-     * @brief Returns the currently active scene
+     * @brief Returns the currently active universal_scene
      */
-    const scene& current_scene() const noexcept;
+    const universal_scene& current_scene() const noexcept;
 };
 
 #endif
