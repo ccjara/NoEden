@@ -16,6 +16,10 @@ void scene_loader::load_scene(scene_id_t id) {
 
         current_scene_->extend(&sys.scene());
     }
+
+    for (const auto& sys : platform_->systems()) {
+        sys.second->on_systems_loaded();
+    }
 }
 
 void scene_loader::load_initial_scene() {

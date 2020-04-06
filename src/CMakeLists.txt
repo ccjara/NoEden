@@ -11,7 +11,7 @@ add_executable(
     "engine/framework/scene.cxx"
     "engine/framework/scene_loader.cxx"
     "engine/framework/scene_factory.hxx"
-    "engine/framework/system_scene.cxx"
+    
     "engine/framework/system_factory.hxx"
     "engine/framework/task.hxx"
     "engine/framework/universal_object.cxx"
@@ -33,11 +33,14 @@ add_executable(
     "systems/gfx/gfx_system.cxx"
     "systems/gfx/renderer.cxx"
     "systems/gfx/text_renderer.cxx"
+    "systems/grid/cell.cxx"
+    "systems/grid/grid.cxx"
+    "systems/grid/grid_system.cxx"
     "systems/input/input_system.cxx"
     "systems/input/mouse.cxx"
-    "systems/player/player_system.cxx"
     "systems/system_factory_impl.cxx"
-)
+    "systems/unit/unit_system.cxx"
+ "systems/gfx/gfx_scene.cxx" "systems/grid/grid_scene.cxx" "systems/input/input_scene.cxx" "systems/grid/grid_task.hxx" "systems/unit/unit_scene.cxx")
 target_link_libraries(jaralyn SDL2::SDL2)
 target_link_libraries(jaralyn ${OPENGL_LIBRARIES})
 target_link_libraries(jaralyn GLEW::GLEW)

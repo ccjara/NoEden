@@ -42,6 +42,8 @@ const game_system& platform_manager::load_system(system_id_t id) {
     }
     auto sys { sys_factory_->create(id, *managers_) };
 
+    sys->on_load();
+
     sys->attach_platform(*events_);
 
     systems_[id] = std::move(sys);
