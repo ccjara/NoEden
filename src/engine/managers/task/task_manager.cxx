@@ -38,7 +38,7 @@ void task_manager::worker() {
         if (!is_running) {
             return;
         }
-        std::unique_ptr<task> task { std::move(tasks_.back()) };
+        auto task { tasks_.back() };
         tasks_.pop_back();
 
         const bool was_last { tasks_.empty() };
@@ -59,12 +59,7 @@ void task_manager::process(const system_map_t& systems) {
     {
         std::lock_guard<std::mutex> lock { worker_mutex_ };
         for (auto& system_entry : systems) {
-            auto& system_tasks { system_entry.second->submit_tasks() };
-
-            for (auto& t : system_tasks) {
-                tasks_.push_back(std::move(t));
-            }
-            system_tasks.clear();
+            tasks_.push_back(&system_entry.second->scene().primary_task());
         }
 
         if (tasks_.empty()) {

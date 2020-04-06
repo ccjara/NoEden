@@ -15,7 +15,7 @@ private:
     std::mutex scheduler_mutex_;
     std::condition_variable worker_cv_;
     std::condition_variable scheduler_cv_;
-    std::vector<std::unique_ptr<task>> tasks_;
+    std::vector<task*> tasks_;
     std::vector<std::thread> pool_;
 
     bool is_running { true };

@@ -13,7 +13,7 @@ public:
         objects_[obj.type()].emplace_back(&obj);
     }
 
-    const task& primary_task() const noexcept {
+    task& primary_task() const noexcept {
         return *primary_task_;
     }
 };

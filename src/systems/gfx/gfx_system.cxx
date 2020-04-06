@@ -2,9 +2,7 @@
 
 namespace detail {
     gfx_system_impl::gfx_system_impl(const window *w) {
-        scene_ = std::make_unique<gfx_scene>();
-
-        glewInit();
+        scene_ = std::make_unique<gfx_scene>(renderer_.get());
 
         window_ = w;
 

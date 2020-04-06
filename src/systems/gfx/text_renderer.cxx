@@ -4,6 +4,7 @@ text_renderer::text_renderer() :
     char_width{ 8 },
     char_height{ 12 }
 {
+    color_stack.reserve(16);
 }
 
 text_renderer::~text_renderer()
@@ -80,7 +81,8 @@ void text_renderer::render_text(const std::string& text, const vector2<GLfloat>&
         return;
     }
 
-    color_stack = std::vector<SDL_Color>{{ 255, 255, 255, 255 } };
+    color_stack.clear();
+    color_stack.push_back({ 255, 255, 255, 255 });
     glColor4ub(255, 255, 255, 255);
 
     auto offset{ p };
@@ -110,6 +112,9 @@ void text_renderer::render_text(const std::string& text, const vector2<GLfloat>&
                 offset.y += char_height;
                 continue;
             case modifier::Color: {
+                if (color_stack.size() > 15) {
+                    continue;
+                }
                 const auto channel_len = 8; // wrap around RRGGBBAA
                 const auto ix_color_start = index + 1;
                 const auto ix_color_end = ix_color_start + channel_len - 1;
