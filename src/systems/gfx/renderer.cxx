@@ -9,6 +9,7 @@ renderer::~renderer() {
     if (gl_context != nullptr) {
         glDeleteBuffers(1, &vao);
         glDeleteBuffers(1, &vbo);
+        glDeleteBuffers(1, &ebo);
 
         SDL_GL_DeleteContext(gl_context);
     }
@@ -98,24 +99,30 @@ void main()
 
     // BUFFERS
     const float vertices[] = {
-       -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f,  0.5f, 0.0f
+        0.5f, 0.0f, 0.0f, // top right
+        0.5f, -0.5f, 0.0f, // bottom right
+       -0.5f, -0.5f, 0.0f, // bottom left
+       -0.5f, 0.0, 0.0f, // top left
+    };
+
+    const unsigned int indices[] = {
+        0, 1, 3, 3, 2, 1
     };
 
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
+    glGenBuffers(1, &ebo);
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
 
     /////////////////////////////////////////////////////////////////
 
@@ -131,8 +138,9 @@ void renderer::start_rendering() {
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, size.width, size.height);
     glUseProgram(shader_program);
+
     glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
     /*
     glMatrixMode(GL_PROJECTION);
