@@ -1,5 +1,27 @@
 #include "renderer.hxx"
 
+namespace {
+    // main vertex shader source
+    static const char* const vss = R"RAW(
+#version 330 core
+layout (location = 0) in vec3 pos;
+
+void main() {
+    gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
+}
+)RAW";
+
+    // main fragment shader source
+    static const char* const fss = R"RAW(
+#version 330 core
+out vec4 col;
+
+void main() {
+    col = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+}
+)RAW";
+}
+
 renderer::renderer() :
     gl_context(nullptr),
     text(std::make_shared<text_renderer>()) {
@@ -38,64 +60,7 @@ void renderer::bind(const window* w) {
 
     /////////////////////////////////////////////////////////////////
 
-
-    // SHADERS
-    const char* const vss = R"RAW(
-#version 330 core
-layout (location = 0) in vec3 pos;
-void main()
-{
-    gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
-}
-)RAW";
-
-    const char* const fss = R"RAW(
-#version 330 core
-out vec4 col;
-
-void main()
-{
-    col = vec4(0.0f, 1.0f, 0.0f, 1.0f);
-} 
-)RAW";
-
-    auto vshader { glCreateShader(GL_VERTEX_SHADER) };
-
-    int ok { 0 };
-
-    glShaderSource(vshader, 1, &vss, nullptr);
-    glCompileShader(vshader);
-    glGetShaderiv(vshader, GL_COMPILE_STATUS, &ok);
-    if (!ok) {
-        LOG(ERROR) << "Could not compile main vertex shader";
-        throw;
-    }
-
-    auto fshader { glCreateShader(GL_FRAGMENT_SHADER) };
-
-    glShaderSource(fshader, 1, &fss, nullptr);
-    glCompileShader(fshader);
-    glGetShaderiv(fshader, GL_COMPILE_STATUS, &ok);
-    if (!ok) {
-        LOG(ERROR) << "Could not compile main fragment shader";
-        throw;
-    }
-
-    shader_program = glCreateProgram();
-
-    glAttachShader(shader_program, vshader);
-    glAttachShader(shader_program, fshader);
-
-    glLinkProgram(shader_program);
-    glGetProgramiv(shader_program, GL_LINK_STATUS, &ok);
-
-    if (!ok) {
-        LOG(ERROR) << "Could not link main shader program";
-        throw;
-    }
-
-    glDeleteShader(vshader);
-    glDeleteShader(fshader);
+    main_shader_.load(vss, fss);
 
     // BUFFERS
     const float vertices[] = {
@@ -137,7 +102,8 @@ void renderer::start_rendering() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, size.width, size.height);
-    glUseProgram(shader_program);
+
+    main_shader_.use();
 
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
