@@ -6,7 +6,7 @@ shader::~shader() {
     }
 }
 
-void shader::load(
+void shader::load_source(
     const std::string& vertex_source,
     const std::string& framgent_source
 ) {
@@ -71,3 +71,6 @@ bool shader::is_loaded() const noexcept {
     return !!program_;
 }
 
+GLint shader::id() const noexcept {
+    return program_;
+}

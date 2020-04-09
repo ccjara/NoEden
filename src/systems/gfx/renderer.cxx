@@ -1,27 +1,5 @@
 #include "renderer.hxx"
 
-namespace {
-    // main vertex shader source
-    static const char* const vss = R"RAW(
-#version 330 core
-layout (location = 0) in vec3 pos;
-
-void main() {
-    gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
-}
-)RAW";
-
-    // main fragment shader source
-    static const char* const fss = R"RAW(
-#version 330 core
-out vec4 col;
-
-void main() {
-    col = vec4(0.0f, 1.0f, 0.0f, 1.0f);
-}
-)RAW";
-}
-
 renderer::renderer() :
     gl_context(nullptr),
     text(std::make_shared<text_renderer>()) {
@@ -60,14 +38,18 @@ void renderer::bind(const window* w) {
 
     /////////////////////////////////////////////////////////////////
 
-    main_shader_.load(vss, fss);
+    text_shader_.load();
 
     // BUFFERS
     const float vertices[] = {
-        0.5f, 0.0f, 0.0f, // top right
-        0.5f, -0.5f, 0.0f, // bottom right
-       -0.5f, -0.5f, 0.0f, // bottom left
-       -0.5f, 0.0, 0.0f, // top left
+        // top right
+        0.5f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f,
+        // bottom right
+        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,
+        // bottom left
+       -0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,
+        // top left
+       -0.5f, 0.0, 0.0f,     0.0f, 1.0f, 1.0f,
     };
 
     const unsigned int indices[] = {
@@ -86,8 +68,12 @@ void renderer::bind(const window* w) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+    // pos
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
+    // col
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*> (3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     /////////////////////////////////////////////////////////////////
 
@@ -103,7 +89,7 @@ void renderer::start_rendering() {
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, size.width, size.height);
 
-    main_shader_.use();
+    text_shader_.use();
 
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);

@@ -14,7 +14,7 @@ public:
      * from the given sources. If a shader program was previously loaded
      * the previous program will be unloaded beforehand.
      */
-    void load(const std::string& vertex_source, const std::string& framgent_source);
+    void load_source(const std::string& vertex_source, const std::string& framgent_source);
 
     /**
      * @brief Unloads all existing resources and resets the program handle
@@ -33,6 +33,13 @@ public:
      * @brief Uses the currently loaded shader program during rendering
      */
     void use() const noexcept;
+
+    /**
+     * @brief Returns the id of the currently loaded shader
+     *
+     * Returns 0 if none is loaded
+     */
+    GLint id() const noexcept;
 };
 
 #endif

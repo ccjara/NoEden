@@ -40,7 +40,7 @@ add_executable(
     "systems/input/mouse.cxx"
     "systems/system_factory_impl.cxx"
     "systems/unit/unit_system.cxx"
- "systems/gfx/gfx_scene.cxx" "systems/grid/grid_scene.cxx" "systems/input/input_scene.cxx" "systems/grid/grid_task.hxx" "systems/unit/unit_scene.cxx" "systems/gfx/shader.cxx")
+ "systems/gfx/gfx_scene.cxx" "systems/grid/grid_scene.cxx" "systems/input/input_scene.cxx" "systems/grid/grid_task.hxx" "systems/unit/unit_scene.cxx" "systems/gfx/shader.cxx" "systems/gfx/text_shader.cxx")
 target_link_libraries(jaralyn SDL2::SDL2)
 target_link_libraries(jaralyn ${OPENGL_LIBRARIES})
 target_link_libraries(jaralyn GLEW::GLEW)
