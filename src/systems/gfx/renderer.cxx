@@ -1,15 +1,13 @@
 #include "renderer.hxx"
 
 renderer::renderer() :
-    gl_context(nullptr),
-    text(std::make_shared<text_renderer>()) {
+    gl_context(nullptr) {
 }
 
 renderer::~renderer() {
     if (gl_context != nullptr) {
         glDeleteBuffers(1, &vao);
         glDeleteBuffers(1, &vbo);
-        glDeleteBuffers(1, &ebo);
 
         SDL_GL_DeleteContext(gl_context);
     }
@@ -34,45 +32,27 @@ void renderer::bind(const window* w) {
         throw;
     }
 
-    // text->load();
+    tex_.load("font.bmp");
 
     /////////////////////////////////////////////////////////////////
 
-    text_shader_.load();
-
-    // BUFFERS
-    const float vertices[] = {
-        // top right
-        0.5f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f,
-        // bottom right
-        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,
-        // bottom left
-       -0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,
-        // top left
-       -0.5f, 0.0, 0.0f,     0.0f, 1.0f, 1.0f,
-    };
-
-    const unsigned int indices[] = {
-        0, 1, 3, 3, 2, 1
-    };
-
+    text_shader_.load(&tex_);
+    text_shader_.use_view_port(w->get_size());
+    text_shader_.use_glyph_size({ 8, 14 });
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
     glBindVertexArray(vao);
-
+    
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 500 * sizeof(letter), nullptr, GL_DYNAMIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // pos
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
+    // vertices
+    glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, sizeof(letter), nullptr);
     glEnableVertexAttribArray(0);
-    // col
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*> (3 * sizeof(float)));
+
+    // color
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(letter), reinterpret_cast<void*> (sizeof(letter::sign)));
     glEnableVertexAttribArray(1);
 
     /////////////////////////////////////////////////////////////////
@@ -89,18 +69,30 @@ void renderer::start_rendering() {
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, size.width, size.height);
 
+    letter next_data[500];
+
+    rot++;
+    if (rot + 500 > 754) {
+        rot = 0;
+    }
+
+    for (int i = 0; i < 500; i++) {
+        next_data[i] = {
+           (float) i + rot, 1.0f, 1.0f, 1.0f,
+        };
+    }
+
     text_shader_.use();
 
     glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
-    /*
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glViewport(0, 0, static_cast<GLsizei> (size.width), static_cast<GLsizei> (size.height));
-    glOrtho(0.0f, static_cast<GLdouble> (size.width), static_cast<GLdouble> (size.height), 0.0f, 0.0f, 1.0f);
-    glScalef(1.0f, 1.0f, 1.0f);
-    */
+    void *data = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+
+    memcpy(data, next_data, sizeof(next_data));
+
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    
+    glDrawArrays(GL_POINTS, 0, 500);
 }
 
 void renderer::finish_rendering() {

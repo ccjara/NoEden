@@ -8,6 +8,14 @@ struct vector2
     T y;
 };
 
+template<class T>
+struct rgb
+{
+    T r;
+    T g;
+    T b;
+};
+
 template<typename t>
 struct size {
     t width { 0 };

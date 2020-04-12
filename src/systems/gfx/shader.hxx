@@ -4,6 +4,8 @@
 class shader {
 protected:
     GLuint program_ { 0 };
+
+    virtual void prepare();
 public:
     virtual ~shader();
 
@@ -14,7 +16,11 @@ public:
      * from the given sources. If a shader program was previously loaded
      * the previous program will be unloaded beforehand.
      */
-    void load_source(const std::string& vertex_source, const std::string& framgent_source);
+    void load_source(
+        const std::string& vertex_source,
+        const std::string& geometry_source,
+        const std::string& framgent_source
+    );
 
     /**
      * @brief Unloads all existing resources and resets the program handle
@@ -32,7 +38,7 @@ public:
     /**
      * @brief Uses the currently loaded shader program during rendering
      */
-    void use() const noexcept;
+    void use() noexcept;
 
     /**
      * @brief Returns the id of the currently loaded shader
