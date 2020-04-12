@@ -16,12 +16,6 @@ public:
     void run() override {
         renderer_->start_rendering();
 
-        // renderer_->text->begin();
-
-        // renderer_->text->render_text("TEST", { 10, 10 });
-
-        // renderer_->text->end();
-
         renderer_->finish_rendering();
     }
 };

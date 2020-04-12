@@ -1,7 +1,6 @@
 add_executable(
     jaralyn
     ../deps/easyloggingpp/easyloggingpp.cxx
-    fps_provider.hxx
     layer.cxx
     frame_buffer.cxx
     main.cxx
@@ -16,6 +15,7 @@ add_executable(
     "engine/framework/task.hxx"
     "engine/framework/universal_object.cxx"
     "engine/framework/universal_scene.cxx"
+    "engine/managers/env/clock.cxx"
     "engine/managers/env/env_manager.cxx"
     "engine/managers/env/root_config.hxx"
     "engine/managers/manager_provider.cxx"
@@ -30,6 +30,7 @@ add_executable(
     "scenes/scene_factory_impl.cxx"
     "systems/gen/room_gen.cxx"
     "systems/gen/rng.cxx"
+    "systems/gfx/fps_provider.hxx"
     "systems/gfx/gfx_scene.cxx"
     "systems/gfx/gfx_system.cxx"
     "systems/gfx/renderer.cxx"

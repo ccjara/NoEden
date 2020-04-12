@@ -16,7 +16,6 @@ renderer::~renderer() {
 void renderer::bind(const window* w) {
     window_ = w;
 
-    SDL_GL_SetSwapInterval(1);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
@@ -26,6 +25,8 @@ void renderer::bind(const window* w) {
     }
 
     gl_context = SDL_GL_CreateContext(w->get_handle());
+
+    SDL_GL_SetSwapInterval(1);
 
     if (glewInit() != GLEW_OK) {
         LOG(ERROR) << "Could not initialize glew";
@@ -61,6 +62,8 @@ void renderer::bind(const window* w) {
 }
 
 void renderer::start_rendering() {
+    fps_.pre_render();
+
     SDL_GL_MakeCurrent(window_->get_handle(), gl_context);
 
     const auto size { window_->get_size() };
@@ -71,14 +74,11 @@ void renderer::start_rendering() {
 
     letter next_data[500];
 
-    rot++;
-    if (rot + 500 > 754) {
-        rot = 0;
-    }
+    const auto fps { std::to_string(fps_.get_fps()) };
 
-    for (int i = 0; i < 500; i++) {
+    for (int i = 0; i < fps.length(); i++) {
         next_data[i] = {
-           (float) i + rot, 1.0f, 1.0f, 1.0f,
+           (float) fps[i], 1.0f, 1.0f, 1.0f,
         };
     }
 

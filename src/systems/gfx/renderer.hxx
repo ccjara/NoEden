@@ -4,6 +4,7 @@
 #include "../../engine/managers/platform/window.hxx"
 #include "texture.hxx"
 #include "text_shader.hxx"
+#include "fps_provider.hxx"
 
 namespace {
     struct letter {
@@ -16,6 +17,7 @@ class renderer {
 private:
     texture tex_;
     text_shader text_shader_;
+    fps_provider fps_;
 
     const window* window_ = nullptr;
     SDL_GLContext gl_context = nullptr;

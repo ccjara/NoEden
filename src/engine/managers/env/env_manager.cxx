@@ -22,3 +22,7 @@ bool env_manager::is_running() const noexcept {
 void env_manager::stop() noexcept {
     is_running_ = false;
 }
+
+clock_c& env_manager::clock() noexcept {
+    return clock_;
+}

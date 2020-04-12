@@ -17,7 +17,11 @@ void engine::run() {
 
     scene_loader_.load_initial_scene();
 
+    managers_.env->clock().start();
+
     while (managers_.env->is_running()) {
+        managers_.env->clock().tick();
+
         managers_.platform->process_events();
 
         managers_.task->process(managers_.platform->systems());
