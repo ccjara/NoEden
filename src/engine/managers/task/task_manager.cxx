@@ -50,6 +50,8 @@ void task_manager::worker() {
         task->run();
         
         if (was_last) {
+            is_busy_ = false;
+
             scheduler_cv_.notify_one();
         }
     }
@@ -65,12 +67,15 @@ void task_manager::process(const system_map_t& systems) {
         if (tasks_.empty()) {
             return;
         }
+
+        is_busy_ = true;
+
         worker_cv_.notify_one();
     }
 
     std::unique_lock<std::mutex> sched_lock { scheduler_mutex_ };
 
     scheduler_cv_.wait(sched_lock, [this] {
-        return tasks_.empty() || !is_running;
+        return !is_busy_ || !is_running;
     });
 }

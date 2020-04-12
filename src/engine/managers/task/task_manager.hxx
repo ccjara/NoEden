@@ -17,6 +17,7 @@ private:
     std::condition_variable scheduler_cv_;
     std::vector<task*> tasks_;
     std::vector<std::thread> pool_;
+    std::atomic<bool> is_busy_ { false };
 
     bool is_running { true };
 
