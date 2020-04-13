@@ -1,0 +1,68 @@
+#include "renderer.hxx"
+
+j_renderer::~j_renderer() {
+    glDeleteBuffers(1, &vao);
+    glDeleteBuffers(1, &vbo);
+}
+
+void j_renderer::bind(const j_window* w) {
+    assert(w);
+
+    window_ = w;
+
+    tex_.load("font.bmp");
+
+    /////////////////////////////////////////////////////////////////
+
+    text_shader_.load(&tex_);
+    text_shader_.use_view_port(w->size());
+    text_shader_.use_glyph_size({ 8, 14 });
+
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+    glBindVertexArray(vao);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+    // vertices
+    glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, sizeof(j_display::cell_type), nullptr);
+    glEnableVertexAttribArray(0);
+
+    // color
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(j_display::cell_type), reinterpret_cast<void*> (sizeof(j_display::cell_type::letter)));
+    glEnableVertexAttribArray(1);
+}
+
+void j_renderer::render(const j_display& display) {
+    fps_.pre_render();
+
+    const auto size { window_->size() };
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glViewport(0, 0, size.width, size.height);
+
+    const auto fps { std::to_string(fps_.get_fps()) };
+
+    text_shader_.use();
+
+    glBindVertexArray(vao);
+
+    const auto byte_size { display.byte_size() };
+
+    if (last_size_ != byte_size) {
+        // glBindBuffer(GL_ARRAY_BUFFER, vbo); // TODO: see if necessary
+        glBufferData(GL_ARRAY_BUFFER, byte_size, display.data(), GL_DYNAMIC_DRAW);
+
+        last_size_ = byte_size;
+    } else {
+        void* data = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+
+        memcpy(data, display.data(), byte_size);
+
+        glUnmapBuffer(GL_ARRAY_BUFFER);
+    }
+    glDrawArrays(GL_POINTS, 0, display.size());
+
+    SDL_GL_SwapWindow(window_->handle());
+}

@@ -8,6 +8,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstdint>
+#include <exception>
 #include <fstream>
 #include <functional>
 #include <future>
@@ -24,8 +25,6 @@
 #include <thread>
 #include <unordered_map>
 
-#include <exception>
-
 #include <GL/glew.h>
 
 #define SDL_MAIN_HANDLED
@@ -36,7 +35,6 @@
 #include <entt/entt.hxx>
 #include <easyloggingpp/easyloggingpp.hxx>
 
-#include "engine/framework/framework_constants.hxx"
 #include "definitions.hxx"
 
 #endif
