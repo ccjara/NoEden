@@ -50,6 +50,13 @@ struct j_rect {
 
     j_rect() = default;
 
+    j_rect(t top, t right, t bottom, t left) :
+        top(top),
+        right(right),
+        bottom(bottom),
+        left(left) {
+    }
+
     j_rect(j_position<t> pos, j_size<t> size) :
         top(pos.y),
         right(pos.x + size.width),

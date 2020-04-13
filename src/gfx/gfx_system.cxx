@@ -35,9 +35,11 @@ j_gfx_system::~j_gfx_system() {
 }
 
 void j_gfx_system::temp__render() {
-    j_display_cell test { 33.0f, { 1.0f, 0.0f, 0.0f } };
+    j_text_options options;
 
-    display_.set({ 0, 0 }, std::move(test));
+    options.boundary = std::move(j_rect<uint32_t>(10, 10, 20, 0));
+
+    display_.text("String with break_word test", options);
 
     renderer_->render(display_);
 }
