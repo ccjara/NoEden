@@ -1,77 +1,76 @@
 #include "shader.hxx"
 
-j_shader::~j_shader() {
-    if (is_loaded()) {
-        glDeleteProgram(program_);
-    }
+j_shader::j_shader() {
+    program_ = glCreateProgram();
 }
 
-void j_shader::load_source(
-    const std::string& vertex_source,
-    const std::string& geometry_source,
-    const std::string& fragment_source
-) {
-    if (is_loaded()) {
-        glDeleteProgram(program_);
+j_shader::~j_shader() {
+    unload();
+    clear_stages();
+}
+
+bool j_shader::compile(j_shader_type type, std::string_view src) {
+    if (stages_.find(type) != stages_.end()) {
+        LOG(ERROR) << "Shader stage " << static_cast<int>(type) << " is already sourced";
+        return false;
     }
-    program_ = glCreateProgram();
-    if (!program_) {
-        LOG(ERROR) << "Could not create shader program";
-        throw;
-    }
+    const auto shader { glCreateShader(static_cast<GLenum>(type)) };
+    stages_[type] = shader;
 
-    const auto vshader { glCreateShader(GL_VERTEX_SHADER) };
-    const auto gshader { glCreateShader(GL_GEOMETRY_SHADER) };
-    const auto fshader { glCreateShader(GL_FRAGMENT_SHADER) };
-    GLint ok { 0 };
+    const auto p_source { src.data() };
+    int ok { 0 };
 
-    std::array<char, 512> info;
-
-    const auto vss { vertex_source.data() };
-    const auto gss { geometry_source.data() };
-    const auto fss { fragment_source.data() };
-
-    glShaderSource(vshader, 1, &vss, nullptr);
-    glCompileShader(vshader);
-    glGetShaderiv(vshader, GL_COMPILE_STATUS, &ok);
+    glShaderSource(shader, 1, &p_source, nullptr);
+    glCompileShader(shader);
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &ok);
     if (!ok) {
-        glGetShaderInfoLog(vshader, info.size(), NULL, info.data());
-        LOG(ERROR) << "Could not compile vertex shader: " << info.data();
-        throw;
+        GLint log_length { 0 };
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &log_length);
+        std::string info;
+        if (log_length) {
+            info.reserve(log_length);
+            glGetShaderInfoLog(shader, log_length, nullptr, info.data());
+        } else {
+            info = "No opengl error info is available";
+        }
+        LOG(ERROR) << "Could not compile shader: " << info;
+        return false;
     }
+    glAttachShader(program_, shader);
+    return true;
+}
 
-    glShaderSource(gshader, 1, &gss, nullptr);
-    glCompileShader(gshader);
-    glGetShaderiv(gshader, GL_COMPILE_STATUS, &ok);
-    if (!ok) {
-        glGetShaderInfoLog(gshader, info.size(), NULL, info.data());
-        LOG(ERROR) << "Could not compile geometry shader: " << info.data();
-        throw;
-    }
-
-    glShaderSource(fshader, 1, &fss, nullptr);
-    glCompileShader(fshader);
-    glGetShaderiv(fshader, GL_COMPILE_STATUS, &ok);
-    if (!ok) {
-        glGetShaderInfoLog(fshader, info.size(), NULL, info.data());
-        LOG(ERROR) << "Could not compile fragment shader: " << info.data();
-        throw;
-    }
-
-    glAttachShader(program_, vshader);
-    glAttachShader(program_, gshader);
-    glAttachShader(program_, fshader);
+bool j_shader::link() {
+    int ok { 0 };
 
     glLinkProgram(program_);
     glGetProgramiv(program_, GL_LINK_STATUS, &ok);
     if (!ok) {
-        LOG(ERROR) << "Could not link shader program";
-        throw;
+        GLint log_length { 0 };
+        std::string info;
+        glGetProgramiv(program_, GL_INFO_LOG_LENGTH, &log_length);
+        if (log_length) {
+            info.reserve(log_length);
+            glGetProgramInfoLog(program_, info.size(), nullptr, &info[0]);
+        }
+        else {
+            info = "No opengl error info is available";
+        }
+        LOG(ERROR) << "Could not link shader: " << info;
+        return false;
     }
+    clear_stages();
+    return true;
+}
 
-    glDeleteShader(vshader);
-    glDeleteShader(gshader);
-    glDeleteShader(fshader);
+void j_shader::clear_stages() {
+    if (stages_.empty()) {
+        return;
+    }
+    for (const auto stage : stages_) {
+        glDeleteShader(stage.second);
+    }
+    stages_.clear();
 }
 
 void j_shader::unload() {

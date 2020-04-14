@@ -16,7 +16,7 @@ private:
 
     void prepare() override;
 public:
-    void load(j_texture* tex);
+    explicit j_text_shader(j_texture* tex);
 
     void use_glyph_size(j_size<uint32_t> glyph_size);
     void use_texture(j_texture* tex);

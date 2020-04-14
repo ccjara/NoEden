@@ -10,7 +10,7 @@
 class j_renderer {
 private:
     j_texture tex_;
-    j_text_shader text_shader_;
+    std::unique_ptr<j_text_shader> text_shader_;
 
     const j_window* window_ = nullptr;
     SDL_GLContext gl_context = nullptr;

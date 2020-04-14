@@ -15,9 +15,9 @@ void j_renderer::bind(const j_window* w) {
 
     tex_.load("font.bmp");
 
-    text_shader_.load(&tex_);
-    text_shader_.use_view_port(w->size());
-    text_shader_.use_glyph_size({ 8, 14 });
+    text_shader_ = std::make_unique<j_text_shader>(&tex_);
+    text_shader_->use_view_port(w->size());
+    text_shader_->use_glyph_size({ 8, 14 });
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
@@ -41,7 +41,7 @@ void j_renderer::render(const j_display& display) {
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, size.width, size.height);
 
-    text_shader_.use();
+    text_shader_->use();
 
     glBindVertexArray(vao);
 

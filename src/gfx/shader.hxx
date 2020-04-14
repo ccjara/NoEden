@@ -1,29 +1,61 @@
 #ifndef JARALYN_SHADER_HXX
 #define JARALYN_SHADER_HXX
 
+enum class j_shader_type : GLenum {
+    vertex = GL_VERTEX_SHADER,
+    geometry = GL_GEOMETRY_SHADER,
+    fragment = GL_FRAGMENT_SHADER
+};
+
+
 class j_shader {
+private:
+    std::unordered_map<j_shader_type, GLuint> stages_;
+
+    void clear_stages();
 protected:
+
     GLuint program_ { 0 };
 
+    /**
+     * @brief Will be called before the shader program is used
+     *
+     * When a consumer of the shader use()s the shader, the prepare
+     * method can be used to set shader uniforms, bind textures
+     * to fragment shaders, etc.
+     *
+     * @see use()
+     */
     virtual void prepare();
+
+    /**
+     * @brief Compiles and attaches a shader source of the given type.
+     *
+     * @returns true if compilation was successful.
+     */
+    bool compile(j_shader_type type, std::string_view source);
+
+    /**
+     * @brief Links all shader stages into a shader program.
+     *
+     * Linker errors cause this shader to be a null-program
+     *
+     * @returns true if linkage was successful.
+     */
+    bool link();
 public:
+    /**
+     * @brief Creates the shader program resource
+     */
+    j_shader();
+
+    /**
+     * @brief Unloads the program and leftover shader stages
+     */
     virtual ~j_shader();
 
     /**
-     * @brief Loads a simple vertex + fragment shader from the given source
-     *
-     * The vertex + fragment shader program shader is compiled and linked
-     * from the given sources. If a shader program was previously loaded
-     * the previous program will be unloaded beforehand.
-     */
-    void load_source(
-        const std::string& vertex_source,
-        const std::string& geometry_source,
-        const std::string& framgent_source
-    );
-
-    /**
-     * @brief Unloads all existing resources and resets the program handle
+     * @brief Unloads the shader program and resets its handle
      *
      * If you call use() after unloading the shader, the null-program will
      * be used instead.
@@ -46,6 +78,11 @@ public:
      * Returns 0 if none is loaded
      */
     GLint id() const noexcept;
+
+    j_shader(const j_shader&) = delete;
+    j_shader(j_shader&&) = delete;
+    j_shader& operator=(j_shader&&) = delete;
+    const j_shader& operator=(const j_shader&) = delete;
 };
 
 #endif

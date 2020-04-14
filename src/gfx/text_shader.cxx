@@ -1,9 +1,7 @@
 #include "text_shader.hxx"
 
-void j_text_shader::load(j_texture* tex) {
-    assert(tex);
-
-    const std::string vss = R"RAW(
+j_text_shader::j_text_shader(j_texture* tex) {
+    const std::string_view vss = R"RAW(
 #version 330 core
 layout (location = 0) in float glyph;
 layout (location = 1) in vec3 color;
@@ -19,7 +17,7 @@ void main() {
 }
 )RAW";
 
-    const std::string gss = R"RAW(
+    const std::string_view gss = R"RAW(
 #version 330 core
  
 layout (points) in;
@@ -111,7 +109,7 @@ void main() {
 }
 )RAW";
 
-    const std::string fss = R"RAW(
+    const std::string_view fss = R"RAW(
 #version 330 core
 
 uniform sampler2D tex;
@@ -125,8 +123,15 @@ void main() {
     gl_FragColor = texture(tex, fragment.tex_coord) * vec4(fragment.color, 1.0);
 }
 )RAW";
+    use_texture(tex);
 
-    load_source(vss, gss, fss);
+    if (!(compile(j_shader_type::vertex, vss)
+        && compile(j_shader_type::geometry, gss)
+        && compile(j_shader_type::fragment, fss)
+        && link())) {
+        LOG(ERROR) << "Text shader creation failed";
+        return;
+    }
 
     u_view_port_ = glGetUniformLocation(program_, "u_view_port");
     u_glyph_size_ = glGetUniformLocation(program_, "u_glyph_size");
@@ -135,8 +140,6 @@ void main() {
     assert(u_view_port_ > -1);
     assert(u_glyph_size_ > -1);
     assert(u_tex_size_ > -1);
-
-    use_texture(tex);
 }
 
 void j_text_shader::use_glyph_size(j_size<uint32_t> glyph_size) {
