@@ -1,7 +1,12 @@
 #ifndef JARALYN_FPS_PROVIDER_HXX
 #define JARALYN_FPS_PROVIDER_HXX
 
-constexpr std::chrono::milliseconds FPS_INTERVAL { 1000 };
+namespace {
+    constexpr std::chrono::milliseconds FPS_INTERVAL { 1000 };
+    constexpr float_t FREQUENCY {
+        static_cast<float_t>(FPS_INTERVAL.count()) / 1000
+    };
+}
 
 class j_fps_provider {
 private:
@@ -19,7 +24,7 @@ public:
             mspf_ = static_cast<float_t>(ticks - prev_ticks) / frames;
 
             prev_ticks = ticks;
-            fps = frames;
+            fps = frames / FREQUENCY;
             frames = 0;
         }
     }
