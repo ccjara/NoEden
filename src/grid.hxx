@@ -50,6 +50,10 @@ public:
         return size() * sizeof(cell_t);
     }
 
+    j_size<uint32_t> dimensions() const noexcept {
+        return dimensions_;
+    }
+
     /**
      * @brief Returns the cell at the given zero-starting position
      *

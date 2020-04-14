@@ -86,6 +86,21 @@ struct j_rect {
         }
     }
 
+    void limit(const j_rect& other) noexcept {
+        if (left < other.left) {
+            left = other.left;
+        }
+        if (right < other.right) {
+            right = other.right;
+        }
+        if (top < other.top) {
+            top = other.top;
+        }
+        if (bottom < other.bottom) {
+            bottom = other.bottom;
+        }
+    }
+
     [[nodiscard]] bool intersects_with(const j_rect& other) const noexcept {
         return !(other.left > right
                  || other.right < left
@@ -103,6 +118,23 @@ struct j_rect {
             static_cast<t> (left + (right - left) / 2),
             static_cast<t> (top + (bottom - top) / 2)
         };
+    }
+};
+
+template<typename t>
+struct j_rect_corners {
+    t top_left { 0 };
+    t top_right { 0 };
+    t bottom_right { 0 };
+    t bottom_left { 0 };
+
+    j_rect_corners() = default;
+
+    j_rect_corners(t tl, t tr, t br, t bl) :
+        top_left(tl),
+        top_right(tr),
+        bottom_right(br),
+        bottom_left(bl) {
     }
 };
 

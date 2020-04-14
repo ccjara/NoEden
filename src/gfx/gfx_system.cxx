@@ -14,7 +14,7 @@ j_gfx_system::j_gfx_system(const j_window *w) {
         throw;
     }
 
-    SDL_GL_SetSwapInterval(1);
+    SDL_GL_SetSwapInterval(0);
 
     if (glewInit() != GLEW_OK) {
         LOG(ERROR) << "Could not initialize glew";
@@ -35,11 +35,39 @@ j_gfx_system::~j_gfx_system() {
 }
 
 void j_gfx_system::temp__render() {
-    j_text_options options;
+    std::stringstream ss;
 
-    options.boundary = std::move(j_rect<uint32_t>(10, 10, 20, 0));
+    ss.precision(2);
 
-    display_.text("String with break_word test", options);
+    ss << "MSPF: " << fps_.mspf() << " (" << fps_.get_fps() << " FPS)";
+
+    fps_.pre_render();
+
+    j_rect_options fancy_rect_opt, simple_rect_opt, filled_rect;
+
+    const auto dim { display_.dimensions() };
+
+    fancy_rect_opt.corner_glyphs = j_rect_corners<uint32_t>(704, 705, 707, 706);
+    fancy_rect_opt.border_glyphs = j_rect<uint32_t>(702, 703, 702, 703);
+    fancy_rect_opt.color = { .5f, .5f, .5f };
+    fancy_rect_opt.span = j_rect<uint32_t>(0, dim.width - 1 , dim.height - 1, 0);
+
+    display_.rectangle(fancy_rect_opt);
+
+    simple_rect_opt.span = j_rect<uint32_t>(2, dim.width - 3, dim.height - 3, 2);
+
+    display_.rectangle(simple_rect_opt);
+
+    filled_rect.span = j_rect<uint32_t>(3, dim.width - 4, dim.height - 4, 3);
+    filled_rect.color = { 1.0f, 0.0f, 0.0f };
+    filled_rect.fill_color = { 0.2f, 0.0f, 0.0f };
+
+    display_.rectangle(filled_rect);
+
+    j_text_options text_options;
+    text_options.boundary.top = 0;
+    text_options.boundary.left = 2;
+    display_.text(ss.str(), text_options);
 
     renderer_->render(display_);
 }

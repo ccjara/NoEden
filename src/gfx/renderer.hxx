@@ -11,7 +11,6 @@ class j_renderer {
 private:
     j_texture tex_;
     j_text_shader text_shader_;
-    j_fps_provider fps_;
 
     const j_window* window_ = nullptr;
     SDL_GLContext gl_context = nullptr;

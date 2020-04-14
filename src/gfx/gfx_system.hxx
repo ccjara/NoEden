@@ -7,6 +7,7 @@ class j_gfx_system : public j_system {
 private:
     SDL_GLContext gl_context { nullptr };
     const j_window* window_ { nullptr };
+    j_fps_provider fps_;
 
     std::unique_ptr<j_renderer> renderer_ = std::make_unique<j_renderer>();
 

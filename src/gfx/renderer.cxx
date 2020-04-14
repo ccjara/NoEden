@@ -35,15 +35,11 @@ void j_renderer::bind(const j_window* w) {
 }
 
 void j_renderer::render(const j_display& display) {
-    fps_.pre_render();
-
     const auto size { window_->size() };
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, size.width, size.height);
-
-    const auto fps { std::to_string(fps_.get_fps()) };
 
     text_shader_.use();
 
