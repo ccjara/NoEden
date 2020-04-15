@@ -20,6 +20,7 @@
 #include <optional>
 #include <queue>
 #include <random>
+#include <stack>
 #include <sstream>
 #include <string>
 #include <thread>

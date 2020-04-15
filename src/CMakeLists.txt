@@ -2,6 +2,7 @@ add_executable(
     jaralyn
     "../deps/easyloggingpp/easyloggingpp.cxx"
     
+    "components.hxx"
     "engine.cxx"
     "grid.hxx"
 
@@ -18,7 +19,7 @@ add_executable(
     "resource/resource_loader.hxx"
     "resource/resource_manager.cxx"
 
-    "gfx/display.hxx"
+    "gfx/display.cxx"
     "gfx/fps_provider.hxx"
     "gfx/gfx_system.cxx"
     "gfx/renderer.cxx"
@@ -31,8 +32,9 @@ add_executable(
     "input/mouse.cxx"
 
     "scenes/scene.cxx"
+    "scenes/world_scene.cxx"
     "system.cxx"
-  "gfx/display.cxx")
+)
 target_link_libraries(jaralyn SDL2::SDL2)
 target_link_libraries(jaralyn ${OPENGL_LIBRARIES})
 target_link_libraries(jaralyn GLEW::GLEW)

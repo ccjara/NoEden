@@ -27,6 +27,11 @@ public:
     void resize(j_size<uint32_t> dimensions) {
         cells_.resize(dimensions.area(), cell_t::null);
         dimensions_ = dimensions;
+        reset();
+    }
+
+    void reset() {
+        std::fill(cells_.begin(), cells_.end(), cell_t::null);
     }
 
     /**

@@ -9,12 +9,20 @@ void j_engine::run() {
 
     clock.start();
 
+    composer_.load<j_world_scene>();
+
     while (managers_.env->is_running()) {
         clock.tick();
 
         managers_.env->dispatcher().listen();
 
-        gfx_system_->temp__render();
+        composer_.active().update();
+
+        gfx_system_->prepare();
+
+        composer_.active().render(gfx_system_->display());
+
+        gfx_system_->present();
     }
 
     managers_.shutdown();

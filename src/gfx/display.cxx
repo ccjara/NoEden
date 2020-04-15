@@ -2,6 +2,10 @@
 
 const j_display_cell j_display_cell::null = j_display_cell();
 
+void j_display::put(j_display_cell&& cell, j_position<uint32_t> pos) {
+    cells_.at(to_index(pos)) = std::move(cell);
+}
+
 void j_display::text(const std::string& t, const j_text_options& options) {
     j_position<uint32_t> position {
         options.boundary.left,
@@ -52,15 +56,19 @@ void j_display::text(const std::string& t, const j_text_options& options) {
         bool is_last_char_of_line { position.x == limit.x };
         const char c { t[i] };
 
+        auto& cell { cells_.at(to_index(position)) };
+
         if (options.text_break == j_text_break::break_word) {
             if (c == ' ' && needs_break(i + 1)) {
                 is_last_char_of_line = true;
             } else {
-                cells_.at(to_index(position)).glyph = c;
+                cell.glyph = c;
             }
         } else {
-            cells_.at(to_index(position)).glyph = c;
+            cell.glyph = c;
         }
+
+        cell.color = options.color;
 
         if (is_last_char_of_line) {
             position.x = options.boundary.left;

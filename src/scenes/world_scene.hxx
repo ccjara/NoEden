@@ -2,9 +2,15 @@
 #define JARALYN_WORLD_SCENE_HXX
 
 #include "scene.hxx"
+#include "../gfx/gfx_system.hxx"
+#include "../components.hxx"
 
 class j_world_scene : public j_scene {
 public:
+    j_world_scene();
+
+    void update() override;
+    void render(j_display& display) override;
 };
 
 #endif

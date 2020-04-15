@@ -1,3 +1,6 @@
+#ifndef JARALYN_GFX_SYSTEM_HXX
+#define JARALYN_GFX_SYSTEM_HXX
+
 #include "../system.hxx"
 #include "../env/window.hxx"
 #include "renderer.hxx"
@@ -17,5 +20,11 @@ public:
 
     ~j_gfx_system();
 
-    void temp__render();
+    void prepare();
+    void present();
+
+    j_renderer& renderer() noexcept;
+    j_display& display() noexcept;
 };
+
+#endif

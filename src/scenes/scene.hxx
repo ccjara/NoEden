@@ -1,7 +1,7 @@
 #ifndef JARALYN_SCENE_HXX
 #define JARALYN_SCENE_HXX
 
-
+#include "../gfx/gfx_system.hxx"
 
 class j_scene {
 protected:
@@ -10,7 +10,14 @@ protected:
 public:
 	virtual ~j_scene() = default;
 
-	virtual void render() = 0;
+	virtual void render(j_display& display) = 0;
+	virtual void update() = 0;
+};
+
+class j_null_scene : public j_scene {
+public:
+	void render(j_display& display) override;
+	void update() override;
 };
 
 #endif
