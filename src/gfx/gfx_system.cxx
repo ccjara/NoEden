@@ -14,7 +14,7 @@ j_gfx_system::j_gfx_system(const j_window *w) {
         throw;
     }
 
-    SDL_GL_SetSwapInterval(0);
+    SDL_GL_SetSwapInterval(1);
 
     if (glewInit() != GLEW_OK) {
         LOG(ERROR) << "Could not initialize glew";
@@ -37,7 +37,7 @@ j_gfx_system::~j_gfx_system() {
 void j_gfx_system::temp__render() {
     std::stringstream ss;
 
-    ss.precision(2);
+    ss.precision(3);
 
     ss << "MSPF: " << fps_.mspf() << " (" << fps_.get_fps() << " FPS)";
 
@@ -49,18 +49,19 @@ void j_gfx_system::temp__render() {
 
     fancy_rect_opt.corner_glyphs = j_rect_corners<uint32_t>(704, 705, 707, 706);
     fancy_rect_opt.border_glyphs = j_rect<uint32_t>(702, 703, 702, 703);
-    fancy_rect_opt.color = { .5f, .5f, .5f };
+    fancy_rect_opt.color = { 128, 128, 128, 255 };
     fancy_rect_opt.span = j_rect<uint32_t>(0, dim.width - 1 , dim.height - 1, 0);
 
     display_.rectangle(fancy_rect_opt);
 
+    simple_rect_opt.color = { 0, 255, 0, 255 };
     simple_rect_opt.span = j_rect<uint32_t>(2, dim.width - 3, dim.height - 3, 2);
 
     display_.rectangle(simple_rect_opt);
 
     filled_rect.span = j_rect<uint32_t>(3, dim.width - 4, dim.height - 4, 3);
-    filled_rect.color = { 1.0f, 0.0f, 0.0f };
-    filled_rect.fill_color = { 0.2f, 0.0f, 0.0f };
+    filled_rect.color = { 255, 0, 0, 255 };
+    filled_rect.fill_color = { 50, 0, 0, 255 };
 
     display_.rectangle(filled_rect);
 

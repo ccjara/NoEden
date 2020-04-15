@@ -26,11 +26,11 @@ void j_renderer::bind(const j_window* w) {
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
     // glyph
-    glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, sizeof(j_display::cell_type), nullptr);
+    glVertexAttribIPointer(0, 1, GL_INT, sizeof(j_display::cell_type), nullptr);
     glEnableVertexAttribArray(0);
 
     // color
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(j_display::cell_type), reinterpret_cast<void*> (sizeof(j_display::cell_type::glyph)));
+    glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(j_display::cell_type), reinterpret_cast<void*> (sizeof(j_display::cell_type::glyph)));
     glEnableVertexAttribArray(1);
 }
 

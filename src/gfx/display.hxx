@@ -15,8 +15,8 @@ struct j_text_options {
 
 struct j_rect_options {
     j_rect<uint32_t> span;
-    j_rgb<float_t> color { 1.0f, 1.0f, 1.0f };
-    std::optional<j_rgb<float_t>> fill_color { std::nullopt };
+    j_color color;
+    std::optional<j_color> fill_color { std::nullopt };
     j_rect<uint32_t> border_glyphs { 745U, 745U, 745U, 745U };
     j_rect_corners<uint32_t> corner_glyphs {
         745U,
@@ -28,8 +28,8 @@ struct j_rect_options {
 
 struct j_display_cell {
 public:
-    float_t glyph { 0.0f };
-    j_rgb<float_t> color { 1.0f, 1.0f, 1.0f };
+    int32_t glyph { 0 };
+    j_color color;
 
     static const j_display_cell null;
 };

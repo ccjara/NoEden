@@ -13,7 +13,7 @@ j_surface::~j_surface() {
 void j_surface::load(const std::string& path) {
     surf_ = SDL_LoadBMP("font.bmp");
     if (!surf_) {
-        LOG(ERROR) << "Could not surface (" << SDL_GetError() << ")";
+        LOG(ERROR) << "Could not load surface (" << SDL_GetError() << ")";
         throw;
     }
 

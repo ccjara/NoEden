@@ -16,12 +16,12 @@ enum class j_mouse_button {
     right = SDL_BUTTON_RIGHT,
 };
 
-template<class T>
-struct j_rgb
+struct j_color
 {
-    T r;
-    T g;
-    T b;
+    unsigned char r { 0 };
+    unsigned char g { 0 };
+    unsigned char b { 0 };
+    unsigned char a { 255 };
 };
 
 template<typename t>

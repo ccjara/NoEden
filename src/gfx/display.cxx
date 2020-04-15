@@ -91,7 +91,7 @@ void j_display::rectangle(const j_rect_options& options) {
             const auto index { to_index({ x, y }) };
 
             uint32_t glyph;
-            j_rgb<float_t> color = options.color;
+            j_color color = options.color;
                 
             if (l_span) {
                 if (t_span) {

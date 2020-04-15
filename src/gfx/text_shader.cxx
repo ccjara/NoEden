@@ -3,12 +3,12 @@
 j_text_shader::j_text_shader(j_texture* tex) {
     const std::string_view vss = R"RAW(
 #version 330 core
-layout (location = 0) in float glyph;
-layout (location = 1) in vec3 color;
+layout (location = 0) in int glyph;
+layout (location = 1) in vec4 color;
 
 out v_struct {
-    float glyph;
-    vec3 color;
+    int glyph;
+    vec4 color;
 } vertex;
 
 void main() {
@@ -28,12 +28,12 @@ uniform vec2 u_glyph_size;
 uniform vec2 u_tex_size;
 
 in v_struct {
-    float glyph;
-    vec3 color;
+    int glyph;
+    vec4 color;
 } vertex[];
 
 out f_struct {
-    vec3 color;
+    vec4 color;
     vec2 tex_coord;
 } fragment;
 
@@ -44,8 +44,8 @@ void ndc(inout vec2 p) { // view port coords to npc coordinates
 
 void main() {
     // runs once for each vertex given since we pass in points
-    vec3 color = vertex[0].color;
-    float glyph = vertex[0].glyph;
+    vec4 color = vertex[0].color;
+    int glyph = vertex[0].glyph;
     float cycle = gl_PrimitiveIDIn; // this saves us a counter var
 
     float chars_per_line = u_view_port.x / u_glyph_size.x;
@@ -115,12 +115,12 @@ void main() {
 uniform sampler2D tex;
 
 in f_struct {
-    vec3 color;
+    vec4 color;
     vec2 tex_coord;
 } fragment;
 
 void main() {
-    gl_FragColor = texture(tex, fragment.tex_coord) * vec4(fragment.color, 1.0);
+    gl_FragColor = texture(tex, fragment.tex_coord) * vec4(fragment.color);
 }
 )RAW";
     use_texture(tex);
