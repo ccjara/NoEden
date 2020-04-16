@@ -3,10 +3,12 @@
 
 class j_clock {
 private:
-    std::chrono::steady_clock::duration elapsed_;
-    std::chrono::steady_clock::time_point last_;
+    std::chrono::high_resolution_clock::duration elapsed_;
+    std::chrono::high_resolution_clock::time_point last_;
 public:
-    [[nodiscard]] const std::chrono::steady_clock::duration& elapsed() const noexcept;
+    [[nodiscard]] const std::chrono::high_resolution_clock::duration& elapsed() const noexcept;
+
+    [[nodiscard]] float_t ratio() const noexcept;
 
     void start() noexcept;
 
