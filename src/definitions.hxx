@@ -36,6 +36,19 @@ struct j_size {
 };
 
 template<typename t>
+struct j_vec2 {
+    t x { 0 };
+    t y { 0 };
+};
+
+template<typename t>
+struct j_vec3 {
+    t x { 0 };
+    t y { 0 };
+    t z { 0 };
+};
+
+template<typename t>
 struct j_position {
     t x { 0 };
     t y { 0 };

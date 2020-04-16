@@ -3,14 +3,15 @@
 
 #include "../resource/resource_loader.hxx"
 #include "clock.hxx"
-#include "env_event_dispatcher.hxx"
+#include "env_interface.hxx"
+#include "env_event_system.hxx"
 #include "root_config.hxx"
 #include "window.hxx"
 
 class j_env_manager {
 private:
     j_clock clock_;
-    j_env_event_dispatcher dispatcher_;
+    j_env_event_system events_;
     uint32_t max_threads_ { 0 };
     std::unique_ptr<j_window> window_ { nullptr };
     std::unique_ptr<j_root_config> root_config_ { nullptr };
@@ -27,7 +28,7 @@ public:
     void shutdown() noexcept;
 
     j_clock& clock() noexcept;
-    j_env_event_dispatcher& dispatcher() noexcept;
+    j_env_event_system& events() noexcept;
     j_window& window() noexcept;
 };
 

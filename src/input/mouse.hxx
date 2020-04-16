@@ -1,16 +1,18 @@
 #ifndef JARALYN_MOUSE_HXX
 #define JARALYN_MOUSE_HXX
 
-class j_mouse {
+#include "input_interface.hxx"
+
+class j_mouse : public j_mouse_state {
 private:
     j_position<int32_t> position_;
 
     std::unordered_map<j_mouse_button, bool> button_state_;
 public:
-    j_position<int32_t> position() const noexcept;
+    j_position<int32_t> position() const noexcept override;
 
-    int32_t x() const noexcept;
-    int32_t y() const noexcept;
+    int32_t x() const noexcept override;
+    int32_t y() const noexcept override;
 
     /**
      * @brief Sets the mouse position (absolute)
@@ -30,7 +32,7 @@ public:
     /**
      * @brief Returns whether the given button is currently pressed
      */
-    bool is_pressed(j_mouse_button button) const noexcept;
+    bool is_pressed(j_mouse_button button) const noexcept override;
 };
 
 #endif

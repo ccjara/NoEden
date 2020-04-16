@@ -17,7 +17,7 @@ void j_env_manager::startup(j_resource_loader& res_loader) {
     window_ = std::make_unique<j_window>(root_config_->resolution());
     max_threads_ = std::thread::hardware_concurrency();
 
-    dispatcher_.on<j_quit_event, &j_env_manager::on_quit_event>(this);
+    events_.dispatcher().sink<j_quit_event>().connect<&j_env_manager::on_quit_event>(this);
 }
 
 void j_env_manager::shutdown() noexcept {
@@ -44,8 +44,8 @@ j_clock& j_env_manager::clock() noexcept {
     return clock_;
 }
 
-j_env_event_dispatcher& j_env_manager::dispatcher() noexcept {
-    return dispatcher_;
+j_env_event_system& j_env_manager::events() noexcept {
+    return events_;
 }
 
 j_window& j_env_manager::window() noexcept {

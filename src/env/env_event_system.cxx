@@ -1,6 +1,6 @@
-#include "env_event_dispatcher.hxx"
+#include "env_event_system.hxx"
 
-void j_env_event_dispatcher::listen() {
+void j_env_event_system::listen() {
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0) {
         switch (e.type) {
@@ -14,6 +14,12 @@ void j_env_event_dispatcher::listen() {
                     static_cast<uint32_t> (e.window.data2)
                 }));
             }
+            break;
+        case SDL_KEYDOWN:
+            dispatcher_->trigger(j_key_down_event(e.key.keysym.sym));
+            break;
+        case SDL_KEYUP:
+            dispatcher_->trigger(j_key_up_event(e.key.keysym.sym));
             break;
         case SDL_MOUSEBUTTONDOWN:
             dispatcher_->trigger(
@@ -30,4 +36,8 @@ void j_env_event_dispatcher::listen() {
             break;
         }
     }
+}
+
+entt::dispatcher& j_env_event_system::dispatcher() noexcept {
+    return *dispatcher_;
 }

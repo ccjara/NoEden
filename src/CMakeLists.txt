@@ -10,8 +10,8 @@ add_executable(
     "manager_provider.cxx"
     
     "env/clock.cxx"
-    "env/env_event.hxx"
-    "env/env_event_dispatcher.cxx"
+    "env/env_event_system.cxx"
+    "env/env_interface.hxx"
     "env/env_manager.cxx"
     "env/root_config.hxx"
     "env/window.cxx"
@@ -28,7 +28,9 @@ add_executable(
     "gfx/text_shader.cxx"
     "gfx/texture.cxx"
     
+    "input/input_interface.hxx"
     "input/input_system.cxx"
+    "input/keyboard.cxx"
     "input/mouse.cxx"
 
     "scenes/scene.cxx"

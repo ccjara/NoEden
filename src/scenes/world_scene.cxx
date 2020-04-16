@@ -7,17 +7,29 @@ j_world_scene::j_world_scene() {
     registry_.assign<jc_renderable>(player, static_cast<unsigned char>('@'));
 }
 
-void j_world_scene::update() {
-    registry_.view<jc_position>().each([](auto& position) {
-        position.x++;
+void j_world_scene::update(const j_input_state& input) {
+    j_vec2<int32_t> vel;
 
-        if (position.x >= 50) {
-            position.x = 0;
-            position.y++;
-            if (position.y > 20) {
-                position.y = 10;
-            }
-        }
+    if (input.keyboard().is_pressed(SDL_KeyCode::SDLK_w)) {
+        vel.y -= 1;
+    }
+    if (input.keyboard().is_pressed(SDL_KeyCode::SDLK_s)) {
+        vel.y += 1;
+    }
+    if (input.keyboard().is_pressed(SDL_KeyCode::SDLK_a)) {
+        vel.x -= 1;
+    }
+    if (input.keyboard().is_pressed(SDL_KeyCode::SDLK_d)) {
+        vel.x += 1;
+    }
+
+    if (!vel.x && !vel.y) {
+        return;
+    }
+
+    registry_.view<jc_position>().each([&vel = std::as_const(vel)](auto& position) {
+        position.x += vel.x;
+        position.y += vel.y;
     });
 }
 
