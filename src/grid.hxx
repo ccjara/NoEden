@@ -7,7 +7,7 @@ protected:
     std::vector<cell_t> cells_;
     j_size<uint32_t> dimensions_ { 0, 0 };
 
-    uint32_t to_index(j_position<uint32_t> pos) const noexcept {
+    uint32_t to_index(j_vec2<uint32_t> pos) const noexcept {
         return pos.y * dimensions_.width + pos.x;
     }
 public:
@@ -64,7 +64,7 @@ public:
      *
      * If the position is out of bounds, a null cell is returned.
      */
-    const cell_t& at(j_position<uint32_t> pos) const noexcept {
+    const cell_t& at(j_vec2<uint32_t> pos) const noexcept {
         if (!in_bounds(pos)) {
             return cell_t::null;
         }
@@ -76,7 +76,7 @@ public:
      *
      * If the position is out of bounds, the operation will be ignored.
      */
-    void set(j_position<uint32_t> pos, cell_t&& cell) {
+    void set(j_vec2<uint32_t> pos, cell_t&& cell) {
         if (!in_bounds(pos)) {
             LOG(ERROR)
                 << "Placement at " << pos.x << ", " << pos.y
@@ -90,7 +90,7 @@ public:
     /**
      * @brief Returns whether the given position is within bounds
      */
-    bool in_bounds(j_position<uint32_t> pos) const noexcept {
+    bool in_bounds(j_vec2<uint32_t> pos) const noexcept {
         return pos.x + 1 <= dimensions_.width && pos.y + 1 <= dimensions_.height;
     }
 };

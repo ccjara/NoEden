@@ -5,11 +5,11 @@
 
 class j_mouse : public j_mouse_state {
 private:
-    j_position<int32_t> position_;
+    j_vec2<int32_t> position_;
 
     std::unordered_map<j_mouse_button, bool> button_state_;
 public:
-    j_position<int32_t> position() const noexcept override;
+    j_vec2<int32_t> position() const noexcept override;
 
     int32_t x() const noexcept override;
     int32_t y() const noexcept override;
@@ -17,7 +17,7 @@ public:
     /**
      * @brief Sets the mouse position (absolute)
      */
-    void move(j_position<int32_t> pos) noexcept;
+    void move(j_vec2<int32_t> pos) noexcept;
 
     /**
      * @brief Updates the state of the given button to be pressed

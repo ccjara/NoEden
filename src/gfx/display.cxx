@@ -2,16 +2,16 @@
 
 const j_display_cell j_display_cell::null = j_display_cell();
 
-void j_display::put(j_display_cell&& cell, j_position<uint32_t> pos) {
+void j_display::put(j_display_cell&& cell, j_vec2<uint32_t> pos) {
     cells_.at(to_index(pos)) = std::move(cell);
 }
 
 void j_display::text(const std::string& t, const j_text_options& options) {
-    j_position<uint32_t> position {
+    j_vec2<uint32_t> position {
         options.boundary.left,
         options.boundary.top
     };
-    j_position<uint32_t> limit {
+    j_vec2<uint32_t> limit {
         options.boundary.right,
         options.boundary.bottom
     };
@@ -135,6 +135,9 @@ void j_display::rectangle(const j_rect_options& options) {
 }
 
 void j_display::line(j_vec2<uint32_t> from, j_vec2<uint32_t> to, uint32_t glyph, j_color color) {
+    if (!in_bounds(from) || !in_bounds(to)) {
+        return;
+    }
     bresenham(
         static_cast<j_vec2<int32_t>>(from),
         static_cast<j_vec2<int32_t>>(to),

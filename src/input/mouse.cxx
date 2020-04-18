@@ -1,10 +1,10 @@
 #include "mouse.hxx"
 
-j_position<int32_t> j_mouse::position() const noexcept {
+j_vec2<int32_t> j_mouse::position() const noexcept {
     return position_;
 }
 
-void j_mouse::move(j_position<int32_t> pos) noexcept {
+void j_mouse::move(j_vec2<int32_t> pos) noexcept {
     position_ = pos;
 }
 

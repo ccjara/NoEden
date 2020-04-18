@@ -16,7 +16,7 @@ public:
     /**
      * @brief Returns the current position
      */
-    virtual j_position<int32_t> position() const noexcept = 0;
+    virtual j_vec2<int32_t> position() const noexcept = 0;
 
     /**
      * @brief Returns true if the given button is pressed

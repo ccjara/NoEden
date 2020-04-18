@@ -23,9 +23,9 @@ struct j_resize_event : public j_env_event {
 };
 
 struct j_mouse_move_event : public j_env_event {
-    j_position<int32_t> position { 0, 0 };
+    j_vec2<int32_t> position { 0, 0 };
 
-    explicit j_mouse_move_event(j_position<int32_t> p) : position { p } {}
+    explicit j_mouse_move_event(j_vec2<int32_t> p) : position { p } {}
 };
 
 struct j_mouse_down_event : public j_env_event {

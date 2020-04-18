@@ -35,7 +35,7 @@ void j_world_scene::update(j_input_state& input) {
 
 void j_world_scene::render(j_display& display) {
     registry_.view<jc_renderable, jc_position>().each([&display](auto& renderable, auto& position) {
-        j_position<uint32_t> pos {
+        j_vec2<uint32_t> pos {
             static_cast<uint32_t> (position.x),
             static_cast<uint32_t> (position.y)
         };
