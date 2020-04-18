@@ -135,9 +135,8 @@ void j_display::rectangle(const j_rect_options& options) {
 }
 
 void j_display::line(j_vec2<uint32_t> from, j_vec2<uint32_t> to, uint32_t glyph, j_color color) {
-    if (!in_bounds(from) || !in_bounds(to)) {
-        return;
-    }
+    clamp(from);
+    clamp(to);
     bresenham(
         static_cast<j_vec2<int32_t>>(from),
         static_cast<j_vec2<int32_t>>(to),

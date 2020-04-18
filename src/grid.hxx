@@ -93,6 +93,20 @@ public:
     bool in_bounds(j_vec2<uint32_t> pos) const noexcept {
         return pos.x + 1 <= dimensions_.width && pos.y + 1 <= dimensions_.height;
     }
+
+    /**
+     * @brief Clamps the given position to the grid dimensions
+     *
+     * This ensures that the position is contained by the grid
+     */
+    void clamp(j_vec2<uint32_t>& pos) noexcept {
+        if (pos.x > dimensions_.width) {
+            pos.x = dimensions_.width;
+        }
+        if (pos.y > dimensions_.height) {
+            pos.y = dimensions_.height;
+        }
+    }
 };
 
 #endif
