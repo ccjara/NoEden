@@ -1,15 +1,14 @@
 add_executable(
     jaralyn
     "../deps/easyloggingpp/easyloggingpp.cxx"
-    
+
     "components.hxx"
     "engine.cxx"
     "grid.hxx"
 
     "main.cxx"
     "manager_provider.cxx"
-    
-    "env/clock.cxx"
+
     "env/env_event_system.cxx"
     "env/env_interface.hxx"
     "env/env_manager.cxx"
@@ -27,7 +26,7 @@ add_executable(
     "gfx/surface.cxx"
     "gfx/text_shader.cxx"
     "gfx/texture.cxx"
-    
+
     "input/input_interface.hxx"
     "input/input_system.cxx"
     "input/keyboard.cxx"

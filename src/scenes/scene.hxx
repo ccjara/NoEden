@@ -12,13 +12,13 @@ public:
 	virtual ~j_scene() = default;
 
 	virtual void render(j_display& display) = 0;
-	virtual void update(const j_input_state& input) = 0;
+	virtual void update(j_input_state& input) = 0;
 };
 
 class j_null_scene : public j_scene {
 public:
 	void render(j_display& display) override;
-	void update(const j_input_state& input) override;
+	void update(j_input_state& input) override;
 };
 
 #endif

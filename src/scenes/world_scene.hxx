@@ -9,7 +9,7 @@ class j_world_scene : public j_scene {
 public:
     j_world_scene();
 
-    void update(const j_input_state& input) override;
+    void update(j_input_state& input) override;
     void render(j_display& display) override;
 };
 

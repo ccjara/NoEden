@@ -9,16 +9,12 @@ void j_engine::run() {
 
     auto& clock { managers_.env->clock() };
 
-    clock.start();
-
     composer_.load<j_world_scene>();
 
     while (managers_.env->is_running()) {
-        clock.tick();
-
         managers_.env->events().listen();
 
-        composer_.active().update(*input_system_);
+        clock.tick([&]() { composer_.active().update(*input_system_); });
 
         gfx_system_->prepare();
 

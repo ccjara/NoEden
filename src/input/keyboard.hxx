@@ -7,11 +7,7 @@ class j_keyboard : public j_keyboard_state {
 private:
     std::unordered_map<SDL_Keycode, bool> keys_;
 public:
-    j_keyboard();
-
-    /**
-     * @brief Returns whether the given keycode is currently pressed
-     */
+    bool consume(SDL_Keycode key) noexcept override;
     bool is_pressed(SDL_Keycode key) const noexcept override;
 
     /**

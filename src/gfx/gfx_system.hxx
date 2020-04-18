@@ -3,6 +3,7 @@
 
 #include "../system.hxx"
 #include "../env/window.hxx"
+#include "../env/clock.hxx"
 #include "renderer.hxx"
 #include "display.hxx"
 

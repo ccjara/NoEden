@@ -7,19 +7,19 @@ j_world_scene::j_world_scene() {
     registry_.assign<jc_renderable>(player, static_cast<unsigned char>('@'));
 }
 
-void j_world_scene::update(const j_input_state& input) {
+void j_world_scene::update(j_input_state& input) {
     j_vec2<int32_t> vel;
 
-    if (input.keyboard().is_pressed(SDL_KeyCode::SDLK_w)) {
+    if (input.keyboard().consume(SDL_KeyCode::SDLK_w)) {
         vel.y -= 1;
     }
-    if (input.keyboard().is_pressed(SDL_KeyCode::SDLK_s)) {
+    if (input.keyboard().consume(SDL_KeyCode::SDLK_s)) {
         vel.y += 1;
     }
-    if (input.keyboard().is_pressed(SDL_KeyCode::SDLK_a)) {
+    if (input.keyboard().consume(SDL_KeyCode::SDLK_a)) {
         vel.x -= 1;
     }
-    if (input.keyboard().is_pressed(SDL_KeyCode::SDLK_d)) {
+    if (input.keyboard().consume(SDL_KeyCode::SDLK_d)) {
         vel.x += 1;
     }
 

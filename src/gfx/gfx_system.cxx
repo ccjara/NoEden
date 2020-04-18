@@ -1,6 +1,8 @@
 #include "gfx_system.hxx"
 
 j_gfx_system::j_gfx_system(const j_window *w) {
+    assert(w);
+
     window_ = w;
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -50,7 +52,6 @@ void j_gfx_system::present() {
     std::stringstream ss;
     ss.precision(3);
     ss << "MSPF: " << fps_.mspf() << " (" << fps_.get_fps() << " FPS)";
-
 
     display_.rectangle(frame_opt);
     display_.text(ss.str(), { j_rect<uint32_t>(0, 0, 0, 2) });

@@ -16,8 +16,8 @@ protected:
     void on_key_down(const j_key_down_event& e);
     void on_key_up(const j_key_up_event& e);
 public:
-    const j_mouse_state& mouse() const noexcept override;
-    const j_keyboard_state& keyboard() const noexcept override;
+    j_mouse_state& mouse() noexcept override;
+    j_keyboard_state& keyboard() noexcept override;
 
     virtual void attach(entt::dispatcher& dispatcher) override;
 };

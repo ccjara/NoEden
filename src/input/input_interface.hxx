@@ -30,6 +30,11 @@ public:
      * @brief Returns true if the given key is pressed
      */
     virtual bool is_pressed(SDL_Keycode k) const noexcept = 0;
+
+    /**
+     * @brief Returns true if the given key is pressed and resets its state
+     */
+    virtual bool consume(SDL_Keycode k) noexcept = 0;
 };
 
 class j_input_state {
@@ -37,12 +42,12 @@ public:
     /**
      * @brief Returns the current, readonly keyboard state
      */
-    virtual const j_keyboard_state& keyboard() const noexcept = 0;
+    virtual j_keyboard_state& keyboard() noexcept = 0;
 
     /**
      * @brief Returns the current, readonly mouse state
      */
-    virtual const j_mouse_state& mouse() const noexcept = 0;
+    virtual j_mouse_state& mouse() noexcept = 0;
 };
 
 #endif
