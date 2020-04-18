@@ -55,6 +55,7 @@ void j_gfx_system::present() {
 
     display_.rectangle(frame_opt);
     display_.text(ss.str(), { j_rect<uint32_t>(0, 0, 0, 2) });
+    display_.line({ 0, 0 }, { 10, 10, });
 
     renderer_->render(display_);
 }

@@ -9,6 +9,9 @@ add_executable(
     "main.cxx"
     "manager_provider.cxx"
 
+    "math/vec2.hxx"
+    "math/bresenham.hxx"
+
     "env/env_event_system.cxx"
     "env/env_interface.hxx"
     "env/env_manager.cxx"

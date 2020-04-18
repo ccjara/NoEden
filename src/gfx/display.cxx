@@ -133,3 +133,20 @@ void j_display::rectangle(const j_rect_options& options) {
         }
     }
 }
+
+void j_display::line(j_vec2<uint32_t> from, j_vec2<uint32_t> to, uint32_t glyph, j_color color) {
+    bresenham(
+        static_cast<j_vec2<int32_t>>(from),
+        static_cast<j_vec2<int32_t>>(to),
+        [&](j_vec2<int32_t> pos) {
+            const auto index { to_index({
+                static_cast<uint32_t>(pos.x),
+                static_cast<uint32_t>(pos.y)
+            }) };
+            auto& cell { cells_.at(index) };
+
+            cell.glyph = glyph;
+            cell.color = color;
+        }
+    );
+}

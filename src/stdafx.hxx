@@ -38,4 +38,7 @@
 
 #include "definitions.hxx"
 
+#include "math/vec2.hxx"
+#include "math/bresenham.hxx"
+
 #endif

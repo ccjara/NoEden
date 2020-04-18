@@ -40,6 +40,7 @@ public:
     void put(j_display_cell&& cell, j_position<uint32_t> pos);
     void text(const std::string& t, const j_text_options& options);
     void rectangle(const j_rect_options& options);
+    void line(j_vec2<uint32_t> from, j_vec2<uint32_t> to, uint32_t glyph = 750, j_color color = j_color());
 };
 
 #endif
