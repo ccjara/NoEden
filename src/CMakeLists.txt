@@ -5,7 +5,7 @@ add_executable(
     "components.hxx"
     "engine.cxx"
     "grid.hxx"
-
+    "identity.hxx"
     "main.cxx"
     "manager_provider.cxx"
 
@@ -36,7 +36,11 @@ add_executable(
     "input/keyboard.cxx"
     "input/mouse.cxx"
 
-    "scenes/scene.cxx"
+    "scenes/base_scene.cxx"
+    "scenes/null_scene.hxx"
+    "scenes/scene_composer.cxx"
+    "scenes/scene_interface.hxx"
+    "scenes/status_scene.cxx"
     "scenes/world_scene.cxx"
     "system.cxx"
 )

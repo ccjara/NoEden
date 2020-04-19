@@ -36,6 +36,8 @@
 #include <entt/entt.hxx>
 #include <easyloggingpp/easyloggingpp.hxx>
 
+#include "identity.hxx"
+
 #include "math/vec2.hxx"
 #include "math/bresenham.hxx"
 #include "math/rect.hxx"

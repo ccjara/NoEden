@@ -10,16 +10,20 @@ j_world_scene::j_world_scene() {
 void j_world_scene::update(j_input_state& input) {
     j_vec2<int32_t> vel;
 
-    if (input.keyboard().consume(SDL_KeyCode::SDLK_w)) {
+    if (input.keyboard().consume(SDL_KeyCode::SDLK_s)) {
+        return scene_writer_->load(j_scene_type::status);
+    }
+
+    if (input.keyboard().consume(SDL_KeyCode::SDLK_UP)) {
         vel.y -= 1;
     }
-    if (input.keyboard().consume(SDL_KeyCode::SDLK_s)) {
+    if (input.keyboard().consume(SDL_KeyCode::SDLK_DOWN)) {
         vel.y += 1;
     }
-    if (input.keyboard().consume(SDL_KeyCode::SDLK_a)) {
+    if (input.keyboard().consume(SDL_KeyCode::SDLK_LEFT)) {
         vel.x -= 1;
     }
-    if (input.keyboard().consume(SDL_KeyCode::SDLK_d)) {
+    if (input.keyboard().consume(SDL_KeyCode::SDLK_RIGHT)) {
         vel.x += 1;
     }
 

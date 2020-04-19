@@ -1,29 +1,25 @@
 #ifndef JARALYN_SCENE_COMPOSER_HXX
 #define JARALYN_SCENE_COMPOSER_HXX
 
-#include "scene.hxx"
+#include "scene_interface.hxx"
+#include "null_scene.hxx"
 #include "world_scene.hxx"
+#include "status_scene.hxx"
 
-class j_scene_composer {
+class j_scene_composer : public j_scene_writer {
 private:
-    std::stack<std::unique_ptr<j_scene>> scene_stack_;
+    std::vector<std::unique_ptr<j_base_scene>> scenes_;
+
+    bool stack_update_ { false };
 public:
-    j_scene_composer() {
-        scene_stack_.emplace(new j_null_scene());
-    }
+    j_scene_composer();
+    j_scene& active();
 
-    template<class scene_t>
-    void load();
+    void load(j_scene_type type) override;
+    void unload(j_id id) override;
 
-    j_scene& active() {
-        return *scene_stack_.top();
-    }
+    void render(j_display& display);
+    void update(j_input_state& input);
 };
-
-template<>
-inline void j_scene_composer::load<j_world_scene>() {
-    scene_stack_.emplace(new j_world_scene());
-}
-
 
 #endif

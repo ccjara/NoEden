@@ -1,11 +1,10 @@
 #ifndef JARALYN_WORLD_SCENE_HXX
 #define JARALYN_WORLD_SCENE_HXX
 
-#include "scene.hxx"
-#include "../gfx/gfx_system.hxx"
+#include "base_scene.hxx"
 #include "../components.hxx"
 
-class j_world_scene : public j_scene {
+class j_world_scene : public j_base_scene {
 public:
     j_world_scene();
 

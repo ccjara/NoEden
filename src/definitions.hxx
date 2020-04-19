@@ -1,10 +1,6 @@
 #ifndef JARALYN_DEFINITIONS_HXX
 #define JARALYN_DEFINITIONS_HXX
 
-enum class j_scene_id {
-    world,
-};
-
 enum class j_system_id {
     gfx,
     input,
