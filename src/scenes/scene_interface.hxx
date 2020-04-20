@@ -9,12 +9,14 @@ enum class j_scene_type {
 	status
 };
 
+class j_scene;
+
 class j_scene_writer {
 public:
 	/**
 	 * @brief Loads a new scene and pushes it onto the scene stack
 	 */
-	virtual void load(j_scene_type type) = 0;
+	virtual j_scene* load(j_scene_type type) = 0;
 
 	/**
 	 * @brief Unloads a scene by the given id

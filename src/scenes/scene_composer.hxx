@@ -15,7 +15,7 @@ public:
     j_scene_composer();
     j_scene& active();
 
-    void load(j_scene_type type) override;
+    j_scene* load(j_scene_type type) override;
     void unload(j_id id) override;
 
     void render(j_display& display);

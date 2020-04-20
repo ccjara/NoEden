@@ -1,17 +1,20 @@
 #include "world_scene.hxx"
 
 j_world_scene::j_world_scene() {
-    auto player { registry_.create() };
+    player_ = registry_.create();
 
-    registry_.assign<jc_position>(player, 10, 10, 0);
-    registry_.assign<jc_renderable>(player, static_cast<unsigned char>('@'));
+    registry_.assign<jc_position>(player_, 10, 10, 0);
+    registry_.assign<jc_renderable>(player_, static_cast<unsigned char>('@'));
+    registry_.assign<jc_attribute_bearing>(player_);
 }
 
 void j_world_scene::update(j_input_state& input) {
     j_vec2<int32_t> vel;
 
     if (input.keyboard().consume(SDL_KeyCode::SDLK_s)) {
-        return scene_writer_->load(j_scene_type::status);
+        auto s { static_cast<j_status_scene*> (scene_writer_->load(j_scene_type::status)) };
+
+        s->configure(&registry_, &player_);
     }
 
     if (input.keyboard().consume(SDL_KeyCode::SDLK_UP)) {
@@ -25,6 +28,17 @@ void j_world_scene::update(j_input_state& input) {
     }
     if (input.keyboard().consume(SDL_KeyCode::SDLK_RIGHT)) {
         vel.x += 1;
+    }
+
+    if (input.keyboard().consume(SDL_KeyCode::SDLK_PLUS)) {
+        auto& attr = registry_.get<jc_attribute_bearing>(player_);
+
+        attr.modify(j_attribute_type::strength, 2);
+    }
+    if (input.keyboard().consume(SDL_KeyCode::SDLK_MINUS)) {
+        auto& attr = registry_.get<jc_attribute_bearing>(player_);
+
+        attr.modify(j_attribute_type::strength, -2);
     }
 
     if (!vel.x && !vel.y) {

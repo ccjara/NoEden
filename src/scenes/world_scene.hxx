@@ -3,8 +3,11 @@
 
 #include "base_scene.hxx"
 #include "../components.hxx"
+#include "status_scene.hxx"
 
 class j_world_scene : public j_base_scene {
+protected:
+    entt::entity player_;
 public:
     j_world_scene();
 

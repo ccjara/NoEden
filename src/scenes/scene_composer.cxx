@@ -8,7 +8,7 @@ j_scene& j_scene_composer::active() {
     return *scenes_.back();
 }
 
-void j_scene_composer::load(j_scene_type type) {
+j_scene* j_scene_composer::load(j_scene_type type) {
     std::unique_ptr<j_base_scene> scene_ptr { nullptr };
 
     switch (type) {
@@ -20,13 +20,17 @@ void j_scene_composer::load(j_scene_type type) {
         break;
     default:
         LOG(ERROR) << "Unknown scene type " << static_cast<int32_t>(type);
-        return;
+        throw;
     }
     scene_ptr->attach(this);
+
+    auto raw_ptr { scene_ptr.get() };
 
     scenes_.push_back(std::move(scene_ptr));
 
     stack_update_ = true;
+
+    return raw_ptr;
 }
 
 void j_scene_composer::unload(j_id id) {

@@ -85,6 +85,10 @@ void j_display::text(const std::string& t, const j_text_options& options) {
     }
 }
 
+void j_display::text(const std::string& t, j_rect<uint32_t> boundary, j_color color, j_text_break text_break) {
+    return text(t, { boundary, color, text_break });
+}
+
 void j_display::rectangle(const j_rect_options& options) {
     if (!in_bounds({ options.span.right, options.span.bottom })) {
         return;

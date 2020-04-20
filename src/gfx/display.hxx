@@ -39,6 +39,7 @@ class j_display: public j_grid<j_display_cell> {
 public:
     void put(j_display_cell&& cell, j_vec2<uint32_t> pos);
     void text(const std::string& t, const j_text_options& options);
+    void text(const std::string& t, j_rect<uint32_t> boundary, j_color color = j_color(), j_text_break text_break = j_text_break::break_word);
     void rectangle(const j_rect_options& options);
     void line(j_vec2<uint32_t> from, j_vec2<uint32_t> to, uint32_t glyph = 750, j_color color = j_color());
 };

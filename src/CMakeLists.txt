@@ -2,6 +2,8 @@ add_executable(
     jaralyn
     "../deps/easyloggingpp/easyloggingpp.cxx"
 
+    "attribute.hxx"
+
     "components.hxx"
     "engine.cxx"
     "grid.hxx"

@@ -18,6 +18,12 @@ struct j_color
     unsigned char g { 255 };
     unsigned char b { 255 };
     unsigned char a { 255 };
+
+    j_color() = default;
+
+    j_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255)
+     : r(r), g(g), b(b), a(a) {
+    }
 };
 
 template<typename t>

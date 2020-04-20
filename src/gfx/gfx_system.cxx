@@ -43,20 +43,6 @@ void j_gfx_system::prepare() {
 }
 
 void j_gfx_system::present() {
-    j_rect_options frame_opt;
-
-    const auto dim { display_.dimensions() };
-    frame_opt.color = { 128, 128, 128, 255 };
-    frame_opt.span = j_rect<uint32_t>(0, dim.width - 1, dim.height - 1, 0);
-
-    std::stringstream ss;
-    ss.precision(3);
-    ss << "MSPF: " << fps_.mspf() << " (" << fps_.get_fps() << " FPS)";
-
-    display_.rectangle(frame_opt);
-    display_.text(ss.str(), { j_rect<uint32_t>(0, 0, 0, 2) });
-    display_.line({ 0, 0 }, { 10, 10, });
-
     renderer_->render(display_);
 }
 
