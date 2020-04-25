@@ -1,7 +1,8 @@
 #ifndef JARALYN_STATUS_SCENE
 #define JARALYN_STATUS_SCENE
 
-#include "../components.hxx"
+#include "../components/attribute_bearing.hxx"
+#include "../components/components.hxx"
 #include "base_scene.hxx"
 
 class j_status_scene : public j_base_scene {

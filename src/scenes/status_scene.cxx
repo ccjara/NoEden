@@ -64,14 +64,20 @@ void j_status_scene::render(j_display& display) {
     for (const auto& [type, attr] : target.attributes()) {
         std::array<char, 64> buf;
 
-        const auto info { attribute_info(attr) };
+        const auto& [tier, color] { attribute_info(attr) };
 
-        std::snprintf(buf.data(), buf.size(), "%s %s", info.first.data(), attribute_name.find(type)->second.data());
+        std::snprintf(
+            buf.data(),
+            buf.size(),
+            "%s %s",
+            tier.data(),
+            attr.name.data()
+        );
 
         display.text(
             std::string(buf.data()),
-            j_rect<uint32_t>(top, 0, 0, 2),
-            info.second
+            j_rect<uint32_t>(top, 0, 0, 0),
+            color
         );
 
         top++;

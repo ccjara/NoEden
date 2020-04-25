@@ -2,9 +2,10 @@ add_executable(
     jaralyn
     "../deps/easyloggingpp/easyloggingpp.cxx"
 
-    "attribute.hxx"
+    "components/attribute.hxx"
+    "components/attribute_bearing.cxx"
+    "components/components.hxx"
 
-    "components.hxx"
     "engine.cxx"
     "grid.hxx"
     "identity.hxx"
