@@ -6,6 +6,13 @@ j_world_scene::j_world_scene() {
     registry_.assign<jc_position>(player_, 10, 10, 0);
     registry_.assign<jc_renderable>(player_, static_cast<unsigned char>('@'));
     registry_.assign<jc_attribute_bearing>(player_);
+    auto& inventory { registry_.assign<jc_item_container>(player_) };
+    
+    j_item axe;
+    axe.label = "Axe";
+    axe.durability = 100;
+    axe.quality = j_item_quality::marvellous;
+    inventory.put(std::move(axe));
 }
 
 void j_world_scene::update(j_input_state& input) {
@@ -13,8 +20,13 @@ void j_world_scene::update(j_input_state& input) {
 
     if (input.keyboard().consume(SDL_KeyCode::SDLK_s)) {
         auto s { static_cast<j_status_scene*> (scene_writer_->load(j_scene_type::status)) };
-
         s->configure(&registry_, &player_);
+        return;
+    }
+    if (input.keyboard().consume(SDL_KeyCode::SDLK_i)) {
+        auto s { static_cast<j_inventory_scene*> (scene_writer_->load(j_scene_type::inventory)) };
+        s->configure(&registry_, &player_);
+        return;
     }
 
     if (input.keyboard().consume(SDL_KeyCode::SDLK_UP)) {

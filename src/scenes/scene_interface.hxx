@@ -6,7 +6,8 @@
 
 enum class j_scene_type {
 	world,
-	status
+	status,
+	inventory
 };
 
 class j_scene;

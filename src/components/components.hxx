@@ -2,6 +2,8 @@
 #define JARALYN_COMPONENTS_HXX
 
 #include "attribute.hxx"
+#include "attribute_bearing.hxx"
+#include "inventory.hxx"
 
 struct jc_position {
     int32_t x;

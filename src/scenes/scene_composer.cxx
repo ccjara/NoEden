@@ -18,6 +18,9 @@ j_scene* j_scene_composer::load(j_scene_type type) {
     case j_scene_type::world:
         scene_ptr = std::make_unique<j_world_scene>();
         break;
+    case j_scene_type::inventory:
+        scene_ptr = std::make_unique<j_inventory_scene>();
+        break;
     default:
         LOG(ERROR) << "Unknown scene type " << static_cast<int32_t>(type);
         throw;

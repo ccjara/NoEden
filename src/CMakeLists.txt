@@ -5,6 +5,7 @@ add_executable(
     "components/attribute.hxx"
     "components/attribute_bearing.cxx"
     "components/components.hxx"
+    "components/inventory.cxx"
 
     "engine.cxx"
     "grid.hxx"
@@ -40,6 +41,7 @@ add_executable(
     "input/mouse.cxx"
 
     "scenes/base_scene.cxx"
+    "scenes/inventory_scene.cxx"
     "scenes/null_scene.hxx"
     "scenes/scene_composer.cxx"
     "scenes/scene_interface.hxx"

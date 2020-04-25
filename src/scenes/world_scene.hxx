@@ -4,6 +4,7 @@
 #include "base_scene.hxx"
 #include "../components/components.hxx"
 #include "status_scene.hxx"
+#include "inventory_scene.hxx"
 
 class j_world_scene : public j_base_scene {
 protected:
