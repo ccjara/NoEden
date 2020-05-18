@@ -47,7 +47,6 @@ add_executable(
     "scenes/scene_interface.hxx"
     "scenes/status_scene.cxx"
     "scenes/world_scene.cxx"
-    "system.cxx"
 )
 target_link_libraries(jaralyn SDL2::SDL2)
 target_link_libraries(jaralyn ${OPENGL_LIBRARIES})

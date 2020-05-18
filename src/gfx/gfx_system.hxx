@@ -1,13 +1,12 @@
 #ifndef JARALYN_GFX_SYSTEM_HXX
 #define JARALYN_GFX_SYSTEM_HXX
 
-#include "../system.hxx"
 #include "../env/window.hxx"
 #include "../env/clock.hxx"
 #include "renderer.hxx"
 #include "display.hxx"
 
-class j_gfx_system : public j_system {
+class j_gfx_system {
 private:
     SDL_GLContext gl_context { nullptr };
     const j_window* window_ { nullptr };

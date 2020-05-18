@@ -61,14 +61,17 @@ void j_inventory_scene::render(j_display& display) {
         case j_item_quality::flawed:
             ret += "Flawed ";
             break;
-        case j_item_quality::marvellous:
-            ret += "Marvellous ";
-            break;
         case j_item_quality::sublime:
             ret += "Sublime ";
             break;
+        case j_item_quality::marvellous:
+            ret += "Marvellous ";
+            break;
         case j_item_quality::exceptional:
             ret += "Exceptional ";
+            break;
+        case j_item_quality::supreme:
+            ret += "Supreme ";
             break;
         }
 

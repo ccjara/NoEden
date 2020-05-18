@@ -1,7 +1,17 @@
 #include "surface.hxx"
 
-j_surface::j_surface(const std::string& path) {
+j_surface::j_surface(std::string_view path) {
     load(path);
+}
+
+j_surface::j_surface(j_surface&& other) {
+    *this = std::move(other);
+}
+
+j_surface& j_surface::operator=(j_surface&& other) {
+    surf_ = std::exchange(other.surf_, nullptr);
+    size_ = std::exchange(other.size_, { 0, 0 });
+    return *this;
 }
 
 j_surface::~j_surface() {
@@ -10,8 +20,8 @@ j_surface::~j_surface() {
     }
 }
 
-void j_surface::load(const std::string& path) {
-    surf_ = SDL_LoadBMP("font.bmp");
+void j_surface::load(std::string_view path) {
+    surf_ = SDL_LoadBMP(path.data());
     if (!surf_) {
         LOG(ERROR) << "Could not load surface (" << SDL_GetError() << ")";
         throw;
@@ -24,17 +34,17 @@ void j_surface::load(const std::string& path) {
 }
 
 void* j_surface::data() const noexcept {
-    assert(surf_);
+    if (!surf_) {
+        return nullptr;
+    }
     return surf_->pixels;
 }
 
 uint32_t j_surface::width() const noexcept {
-    assert(surf_);
     return size_.width;
 }
 
 uint32_t j_surface::height() const noexcept {
-    assert(surf_);
     return size_.height;
 }
 

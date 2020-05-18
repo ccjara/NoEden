@@ -16,38 +16,40 @@ j_world_scene::j_world_scene() {
 }
 
 void j_world_scene::update(j_input_state& input) {
+    auto& keyboard { input.keyboard() };
+
     j_vec2<int32_t> vel;
 
-    if (input.keyboard().consume(SDL_KeyCode::SDLK_s)) {
+    if (keyboard.consume(SDL_KeyCode::SDLK_s)) {
         auto s { static_cast<j_status_scene*> (scene_writer_->load(j_scene_type::status)) };
         s->configure(&registry_, &player_);
         return;
     }
-    if (input.keyboard().consume(SDL_KeyCode::SDLK_i)) {
+    if (keyboard.consume(SDL_KeyCode::SDLK_i)) {
         auto s { static_cast<j_inventory_scene*> (scene_writer_->load(j_scene_type::inventory)) };
         s->configure(&registry_, &player_);
         return;
     }
 
-    if (input.keyboard().consume(SDL_KeyCode::SDLK_UP)) {
+    if (keyboard.consume(SDL_KeyCode::SDLK_UP)) {
         vel.y -= 1;
     }
-    if (input.keyboard().consume(SDL_KeyCode::SDLK_DOWN)) {
+    if (keyboard.consume(SDL_KeyCode::SDLK_DOWN)) {
         vel.y += 1;
     }
-    if (input.keyboard().consume(SDL_KeyCode::SDLK_LEFT)) {
+    if (keyboard.consume(SDL_KeyCode::SDLK_LEFT)) {
         vel.x -= 1;
     }
-    if (input.keyboard().consume(SDL_KeyCode::SDLK_RIGHT)) {
+    if (keyboard.consume(SDL_KeyCode::SDLK_RIGHT)) {
         vel.x += 1;
     }
 
-    if (input.keyboard().consume(SDL_KeyCode::SDLK_PLUS)) {
+    if (keyboard.consume(SDL_KeyCode::SDLK_PLUS)) {
         auto& attr = registry_.get<jc_attribute_bearing>(player_);
 
         attr.modify(j_attribute_type::strength, 2);
     }
-    if (input.keyboard().consume(SDL_KeyCode::SDLK_MINUS)) {
+    if (keyboard.consume(SDL_KeyCode::SDLK_MINUS)) {
         auto& attr = registry_.get<jc_attribute_bearing>(player_);
 
         attr.modify(j_attribute_type::strength, -2);

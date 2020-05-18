@@ -1,22 +1,24 @@
 #ifndef JARALYN_GRID_HXX
 #define JARALYN_GRID_HXX
 
-template<typename cell_t>
+template<typename cell>
 class j_grid {
 protected:
-    std::vector<cell_t> cells_;
+    std::vector<cell> cells_;
     j_size<uint32_t> dimensions_ { 0, 0 };
 
-    uint32_t to_index(j_vec2<uint32_t> pos) const noexcept {
-        return pos.y * dimensions_.width + pos.x;
+    template<typename pos>
+    [[nodiscard]] constexpr inline auto to_index(const pos& position) const noexcept {
+        return position.y * dimensions_.width + position.x;
     }
 public:
-    using cell_type = cell_t;
+    using cell_type = cell;
 
-    j_grid(std::optional<j_size<uint32_t>> size = std::nullopt) {
-        if (size.has_value()) {
-            resize(size.value());
-        }
+    j_grid() = default;
+
+    template<typename sz>
+    constexpr explicit j_grid(const sz& size) {
+        resize(size);
     }
 
     /**
@@ -24,38 +26,39 @@ public:
      *
      * As of now this also resets the entire grid
      */
-    void resize(j_size<uint32_t> dimensions) {
-        cells_.resize(dimensions.area(), cell_t::null);
+    template<typename sz>
+    constexpr void resize(const sz& dimensions) {
+        cells_.resize(dimensions.area(), cell::null);
         dimensions_ = dimensions;
         reset();
     }
 
-    void reset() {
-        std::fill(cells_.begin(), cells_.end(), cell_t::null);
+    constexpr void reset() noexcept {
+        std::fill(cells_.begin(), cells_.end(), cell::null);
     }
 
     /**
      * @brief Provides iterable access to all cells of the grid
      */
-    const cell_t* data() const noexcept {
+    constexpr const auto* data() const noexcept {
         return cells_.data();
     }
 
     /**
      * @brief Returns the amount of cells in the grid
      */
-    typename std::vector<cell_t>::size_type size() const noexcept {
+    constexpr auto size() const noexcept {
         return cells_.size();
     }
 
     /**
      * @brief Returns the total grid size in bytes
      */
-    size_t byte_size() const noexcept {
-        return size() * sizeof(cell_t);
+    constexpr auto byte_size() const noexcept {
+        return size() * sizeof(cell);
     }
 
-    j_size<uint32_t> dimensions() const noexcept {
+    constexpr auto dimensions() const noexcept {
         return dimensions_;
     }
 
@@ -64,11 +67,12 @@ public:
      *
      * If the position is out of bounds, a null cell is returned.
      */
-    const cell_t& at(j_vec2<uint32_t> pos) const noexcept {
-        if (!in_bounds(pos)) {
-            return cell_t::null;
+    template<typename pos>
+    [[nodiscard]] constexpr inline cell& at(const pos& position) const noexcept {
+        if (!in_bounds(position)) {
+            return cell::null;
         }
-        return cells_.at(to_index(pos));
+        return cells_.at(to_index(position));
     }
 
     /**
@@ -76,22 +80,24 @@ public:
      *
      * If the position is out of bounds, the operation will be ignored.
      */
-    void set(j_vec2<uint32_t> pos, cell_t&& cell) {
-        if (!in_bounds(pos)) {
+    template<typename pos>
+    constexpr void put(cell&& c, const pos& position) {
+        if (!in_bounds(position)) {
             LOG(ERROR)
                 << "Placement at " << pos.x << ", " << pos.y
                 << " not within bounds ("
                 << dimensions_.width << ", " << dimensions_.height << ")";
             return;
         }
-        cells_[to_index(pos)] = std::move(cell);
+        cells_[to_index(position)] = std::move(c);
     }
 
     /**
      * @brief Returns whether the given position is within bounds
      */
-    bool in_bounds(j_vec2<uint32_t> pos) const noexcept {
-        return pos.x + 1 <= dimensions_.width && pos.y + 1 <= dimensions_.height;
+    template<typename pos>
+    [[nodiscard]] constexpr inline bool in_bounds(const pos& position) const noexcept {
+        return position.x + 1 <= dimensions_.width && position.y + 1 <= dimensions_.height;
     }
 
     /**
@@ -99,12 +105,13 @@ public:
      *
      * This ensures that the position is contained by the grid
      */
-    void clamp(j_vec2<uint32_t>& pos) noexcept {
-        if (pos.x > dimensions_.width) {
-            pos.x = dimensions_.width;
+    template<typename pos>
+    constexpr inline void clamp(pos& position) noexcept {
+        if (position.x > dimensions_.width) {
+            position.x = dimensions_.width;
         }
-        if (pos.y > dimensions_.height) {
-            pos.y = dimensions_.height;
+        if (position.y > dimensions_.height) {
+            position.y = dimensions_.height;
         }
     }
 };

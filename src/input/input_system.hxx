@@ -1,10 +1,9 @@
 #include "../env/env_interface.hxx"
-#include "../system.hxx"
 #include "input_interface.hxx"
 #include "mouse.hxx"
 #include "keyboard.hxx"
 
-class j_input_system : public j_system, public j_input_state, public j_env_event_listener {
+class j_input_system : public j_input_state, public j_env_event_listener {
 protected:
     j_keyboard keyboard_;
     j_mouse mouse_;

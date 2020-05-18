@@ -90,7 +90,7 @@ void j_display::text(const std::string& t, j_rect<uint32_t> boundary, j_color co
 }
 
 void j_display::rectangle(const j_rect_options& options) {
-    if (!in_bounds({ options.span.right, options.span.bottom })) {
+    if (!in_bounds(j_vec2<uint32_t>{ options.span.right, options.span.bottom })) {
         return;
     }
     for (uint32_t y { options.span.top }; y <= options.span.bottom; y++) {
@@ -100,7 +100,7 @@ void j_display::rectangle(const j_rect_options& options) {
         for (uint32_t x { options.span.left }; x <= options.span.right; x++) {
             const bool l_span { x == options.span.left };
             const bool r_span { x == options.span.right };
-            const auto index { to_index({ x, y }) };
+            const auto index { to_index(j_vec2<uint32_t>{ x, y }) };
 
             uint32_t glyph;
             j_color color = options.color;
@@ -145,7 +145,7 @@ void j_display::line(j_vec2<uint32_t> from, j_vec2<uint32_t> to, uint32_t glyph,
         static_cast<j_vec2<int32_t>>(from),
         static_cast<j_vec2<int32_t>>(to),
         [&](j_vec2<int32_t> pos) {
-            const auto index { to_index({
+            const auto index { to_index(j_vec2<uint32_t>{
                 static_cast<uint32_t>(pos.x),
                 static_cast<uint32_t>(pos.y)
             }) };

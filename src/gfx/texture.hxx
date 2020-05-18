@@ -13,7 +13,7 @@ public:
 
     ~j_texture();
     
-    void load(const std::string& path);
+    void load(std::string_view path);
     void unload();
     bool is_loaded() const noexcept;
     j_size<uint32_t> size() const noexcept;

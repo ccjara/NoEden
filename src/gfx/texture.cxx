@@ -15,7 +15,7 @@ bool j_texture::is_loaded() const noexcept {
     return !!id_;
 }
 
-void j_texture::load(const std::string& path) {
+void j_texture::load(std::string_view path) {
     unload();
 
     j_surface surf { path };

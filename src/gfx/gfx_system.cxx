@@ -27,7 +27,7 @@ j_gfx_system::j_gfx_system(const j_window *w) {
 
     const auto s { window_->size() };
 
-    display_.resize({ s.width / 8, s.height / 14 });
+    display_.resize(j_size<uint32_t>{ s.width / 8, s.height / 14 });
 }
 
 j_gfx_system::~j_gfx_system() {
