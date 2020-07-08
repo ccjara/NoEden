@@ -7,7 +7,13 @@ enum class j_shader_type : GLenum {
     fragment = GL_FRAGMENT_SHADER
 };
 
-
+/**
+ * @brief Wrapper around a GL shader.
+ *
+ * Currently barely enough to provide an extension point
+ * for the text_shader. There probably won't be any other shaders
+ * in this game.
+ */
 class j_shader {
 private:
     std::unordered_map<j_shader_type, GLuint> stages_;

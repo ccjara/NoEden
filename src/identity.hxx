@@ -3,6 +3,9 @@
 
 using j_id = uint32_t;
 
+/**
+ * @brief Atomic, auto incrementing entity id generator
+ */
 template<class t>
 class j_identity {
     j_id id_;

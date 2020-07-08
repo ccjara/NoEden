@@ -8,7 +8,7 @@ j_gfx_system::j_gfx_system(const j_window* w) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-    gl_context = SDL_GL_CreateContext(w->handle());
+    gl_context = SDL_GL_CreateContext(*w);
 
     if (gl_context == nullptr) {
         LOG(ERROR) << "Could not initialize opengl";
@@ -44,7 +44,7 @@ void j_gfx_system::prepare() {
 void j_gfx_system::present() {
     renderer_->render(display_);
 
-    SDL_GL_SwapWindow(window_->handle());
+    SDL_GL_SwapWindow(*window_);
 }
 
 void j_gfx_system::attach(entt::dispatcher& dispatcher) {

@@ -3,6 +3,13 @@
 
 // https://codereview.stackexchange.com/questions/93407/bresenham-line-drawing-implementation
 
+/**
+ * @brief Walks a line between two points and calls back on each step
+ *
+ * Todo: Not sure if the compiler is smart enough for the algorithm to be inlined
+ * completely, including the callback. I don't think we will render many lines
+ * in this game though.
+ */
 template<typename t, typename callable>
 inline void bresenham(j_vec2<t> p0, j_vec2<t> p1, callable&& cb) {
     const bool swap_xy { std::abs(p1.y - p0.y) > std::abs(p1.x - p0.x) };

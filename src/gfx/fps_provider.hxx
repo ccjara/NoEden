@@ -15,6 +15,11 @@ private:
     uint32_t prev_ticks { 0U };
     float_t mspf_ { 0.0f };
 public:
+    /**
+     * @brief Calculates the FPS based on the tick delta
+     *
+     * Requires to be called pre rendering on each game loop cycle.
+     */
     void pre_render() {
         frames++;
 

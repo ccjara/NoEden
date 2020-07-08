@@ -6,6 +6,9 @@
 #include "world_scene.hxx"
 #include "status_scene.hxx"
 
+/**
+ * @brief Scene stack manager
+ */
 class j_scene_composer : public j_scene_writer {
 private:
     std::vector<std::unique_ptr<j_base_scene>> scenes_;

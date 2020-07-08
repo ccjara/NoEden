@@ -4,6 +4,9 @@
 #include "../components/components.hxx"
 #include "base_scene.hxx"
 
+/**
+ * @brief Scene for the status of any unit
+ */
 class j_status_scene : public j_base_scene {
 protected:
     entt::entity* entity_ { nullptr };

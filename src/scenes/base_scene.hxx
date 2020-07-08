@@ -5,6 +5,9 @@
 #include "../input/input_interface.hxx"
 #include "scene_interface.hxx"
 
+/**
+ * @brief Extension point for any game scene
+ */
 class j_base_scene : public j_scene {
 protected:
 	j_scene_writer* scene_writer_ { nullptr };

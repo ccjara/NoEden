@@ -4,11 +4,14 @@
 namespace {
     using j_clock_t = std::chrono::high_resolution_clock;
 
-    constexpr uint32_t MAX_UPDATES { 10 };
+    constexpr uint32_t MAX_UPDATES { 10 }; // game updates per frame
     constexpr auto UPDATE_DURATION { std::chrono::milliseconds(12) };
     constexpr auto MAX_DELTA_DURATION { MAX_UPDATES * UPDATE_DURATION };
 }
 
+/**
+ * @brief Game clock, expected to be ticked on each frame.
+ */
 class j_clock {
 private:
     j_clock_t::duration real_time_delta_;
@@ -17,6 +20,12 @@ private:
     j_clock_t::time_point present_;
     j_clock_t::time_point future_;
 public:
+    /**
+     * @brief Advances the game clock
+     *
+     * Calls {@param f} on each tick. The amount of ticks depends
+     * on how much real time has elapsed since the last clock update.
+     */
     template<typename callback>
     constexpr inline void tick(callback f) {
         const auto now_before_update { j_clock_t::now() };

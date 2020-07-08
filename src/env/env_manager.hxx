@@ -8,6 +8,9 @@
 #include "root_config.hxx"
 #include "window.hxx"
 
+/**
+ * @brief Facade around the game platform (OS) and its specificities
+ */
 class j_env_manager {
 private:
     j_clock clock_;
@@ -21,11 +24,41 @@ private:
     void on_quit_event(const j_quit_event&);
     void on_resize_event(const j_resize_event&);
 public:
+    /**
+     * @brief Returns the root config
+     */
     const j_root_config& config() const noexcept;
+
+    /**
+     * @brief Returns whether the game is still running
+     *
+     * When false, the game loop will break after the current cycle,
+     * effectively triggering the exit routine.
+     */
     bool is_running() const noexcept;
+
+    /**
+     * @brief Request a stop of the environment
+     *
+     * This causes the game loop to break after the current cycle.
+     *
+     * @see is_running
+     */
     void stop() noexcept;
 
+    /**
+     * @brief Sets up this service
+     *
+     * Loads the configuration, reads hardware capabilities and initializes 
+     * the platform (using SDL2) thereafter by creating the game window.
+     */
     void startup(j_resource_loader& res_loader);
+
+    /**
+     * @brief Shuts down the platform (SDL2)
+     *
+     * Must be called _after_ {@link stop} was called
+     */
     void shutdown() noexcept;
 
     j_clock& clock() noexcept;

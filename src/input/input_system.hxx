@@ -3,6 +3,9 @@
 #include "mouse.hxx"
 #include "keyboard.hxx"
 
+/**
+ * @brief Facade managing all game input
+ */
 class j_input_system : public j_input_state, public j_env_event_listener {
 protected:
     j_keyboard keyboard_;

@@ -4,6 +4,9 @@
 #include "../components/components.hxx"
 #include "base_scene.hxx"
 
+/**
+ * @brief Renders an inventory of any game unit
+ */
 class j_inventory_scene : public j_base_scene {
 protected:
     entt::entity* entity_ { nullptr };

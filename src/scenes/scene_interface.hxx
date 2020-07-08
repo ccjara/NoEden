@@ -12,6 +12,9 @@ enum class j_scene_type {
 
 class j_scene;
 
+/**
+ * @brief Partial (writing) interface of the scene stack manager
+ */
 class j_scene_writer {
 public:
 	/**
@@ -25,6 +28,9 @@ public:
 	virtual void unload(uint32_t id) = 0;
 };
 
+/**
+ * @brief Stackable entity containers for the world, a menu or overlays
+ */
 class j_scene : public j_identity<j_scene> {
 public:
 	/**

@@ -41,6 +41,10 @@ j_size<uint32_t> j_window::size() const noexcept {
     return size_;
 }
 
+j_window::operator SDL_Window* () const noexcept {
+    return this->handle_;
+}
+
 void j_window::resize(j_size<uint32_t> s) noexcept {
     size_ = s;
 }

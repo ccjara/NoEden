@@ -22,6 +22,8 @@ void j_env_manager::startup(j_resource_loader& res_loader) {
 }
 
 void j_env_manager::shutdown() noexcept {
+    window_.reset(); // free handle, RAII would destroy the window after SDL_QUIT
+
     SDL_Quit();
 }
 

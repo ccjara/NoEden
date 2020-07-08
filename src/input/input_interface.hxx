@@ -1,6 +1,9 @@
 #ifndef JARALYN_INPUT_INTERFACE_HXX
 #define JARALYN_INPUT_INTERFACE_HXX
 
+/**
+ * @brief Represents the current mouse state
+ */
 class j_mouse_state {
 public:
     /**
@@ -24,6 +27,9 @@ public:
     virtual bool is_pressed(j_mouse_button) const noexcept = 0;
 };
 
+/**
+ * @brief Represents the current keyboard state
+ */
 class j_keyboard_state {
 public:
     /**
@@ -37,6 +43,9 @@ public:
     virtual bool consume(SDL_Keycode k) noexcept = 0;
 };
 
+/**
+ * @brief Encapsulates all input states inside a single class.
+ */
 class j_input_state {
 public:
     /**

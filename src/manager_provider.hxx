@@ -4,6 +4,11 @@
 #include "resource/resource_manager.hxx"
 #include "env/env_manager.hxx"
 
+/**
+ * @brief Facade around all game subsystems
+ *
+ * Todo: probably adds too much complexity
+ */
 struct j_manager_provider {
 private:
     bool is_running = false;

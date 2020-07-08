@@ -6,6 +6,9 @@
 #include "status_scene.hxx"
 #include "inventory_scene.hxx"
 
+/**
+ * @brief World scene (game environment)
+ */
 class j_world_scene : public j_base_scene {
 protected:
     entt::entity player_;

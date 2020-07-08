@@ -10,6 +10,14 @@ private:
         resolution_.height = 600;
     }
 public:
+    /**
+     * @brief Load a game configuration from an input stream.
+     *
+     * Note: Currently not implemented, will always load the fallback.
+     *
+     * If the {@param input} is not readable or corrupted, will load a
+     * preconfigured fallback instead.
+     */
     void read(std::istream& input) {
         const auto fail = [this](std::string_view reason) noexcept {
             LOG(ERROR) << "Cannot read config: " << reason << ". Loading fallback configuration.";
@@ -22,7 +30,7 @@ public:
         fail("Reading configuration is not yet implemented");
     }
 
-    j_size<uint32_t> resolution() const noexcept {
+    [[nodiscard]] j_size<uint32_t> resolution() const noexcept {
         return resolution_;
     }
 };
