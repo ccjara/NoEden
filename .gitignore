@@ -2,6 +2,8 @@ cmake-build-debug
 bin
 tools
 
+CMakeSettings.json
+
 .idea
 .vscode
 .vs
