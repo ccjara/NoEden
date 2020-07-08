@@ -18,6 +18,7 @@ void j_env_manager::startup(j_resource_loader& res_loader) {
     max_threads_ = std::thread::hardware_concurrency();
 
     events_.dispatcher().sink<j_quit_event>().connect<&j_env_manager::on_quit_event>(this);
+    events_.dispatcher().sink<j_resize_event>().connect <&j_env_manager::on_resize_event>(this);
 }
 
 void j_env_manager::shutdown() noexcept {
@@ -26,6 +27,10 @@ void j_env_manager::shutdown() noexcept {
 
 void j_env_manager::on_quit_event(const j_quit_event&) {
     is_running_ = false;
+}
+
+void j_env_manager::on_resize_event(const j_resize_event& e) {
+    window_->resize(e.size);
 }
 
 const j_root_config& j_env_manager::config() const noexcept {

@@ -19,6 +19,7 @@ private:
     bool is_running_ { false };
 
     void on_quit_event(const j_quit_event&);
+    void on_resize_event(const j_resize_event&);
 public:
     const j_root_config& config() const noexcept;
     bool is_running() const noexcept;

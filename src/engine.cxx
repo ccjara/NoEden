@@ -5,9 +5,12 @@ void j_engine::run() {
 
     gfx_system_ = std::make_unique<j_gfx_system>(&managers_.env->window());
     input_system_ = std::make_unique<j_input_system>();
-    input_system_->attach(managers_.env->events().dispatcher());
 
+    auto& dispatcher { managers_.env->events().dispatcher() };
     auto& clock { managers_.env->clock() };
+
+    gfx_system_->attach(dispatcher);
+    input_system_->attach(dispatcher);
 
     composer_.load(j_scene_type::world);
 

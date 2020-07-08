@@ -1,8 +1,7 @@
 #include "gfx_system.hxx"
 
-j_gfx_system::j_gfx_system(const j_window *w) {
+j_gfx_system::j_gfx_system(const j_window* w) {
     assert(w);
-
     window_ = w;
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -23,11 +22,11 @@ j_gfx_system::j_gfx_system(const j_window *w) {
         throw;
     }
 
-    renderer_->bind(window_);
+    const auto vp { window_->size() };
+    renderer_ = std::make_unique<j_renderer>();
+    renderer_->set_viewport(vp);
 
-    const auto s { window_->size() };
-
-    display_.resize(j_size<uint32_t>{ s.width / 8, s.height / 14 });
+    display_.resize(j_size<uint32_t>{ vp.width / 8, vp.height / 14 });
 }
 
 j_gfx_system::~j_gfx_system() {
@@ -44,6 +43,17 @@ void j_gfx_system::prepare() {
 
 void j_gfx_system::present() {
     renderer_->render(display_);
+
+    SDL_GL_SwapWindow(window_->handle());
+}
+
+void j_gfx_system::attach(entt::dispatcher& dispatcher) {
+    dispatcher.sink<j_resize_event>().connect<&j_gfx_system::on_resize_event>(this);
+}
+
+void j_gfx_system::on_resize_event(const j_resize_event& e) {
+    display_.resize(j_size<uint32_t>{ e.size.width / 8, e.size.height / 14 });
+    renderer_->set_viewport(e.size);
 }
 
 j_renderer& j_gfx_system::renderer() noexcept {
