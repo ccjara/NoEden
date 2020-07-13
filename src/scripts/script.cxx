@@ -34,6 +34,10 @@ j_script j_script::from_file(const char* path) {
     return script;
 }
 
+void j_script::run() {
+    lua_pcall(state_, 0, 0, 0);
+}
+
 j_script_status j_script::status() const noexcept {
     return status_;
 }

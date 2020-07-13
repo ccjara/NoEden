@@ -31,6 +31,11 @@ public:
     operator lua_State* () const noexcept;
 
     /**
+     * @brief Runs the script by doing a lua pcall
+     */
+    void run();
+
+    /**
      * @brief Loads the script from the given path
      *
      * If the file does not exist, the status flag will be switched

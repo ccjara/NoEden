@@ -16,8 +16,7 @@ j_root_config::j_root_config(j_script& sys_script) : j_root_config() {
         fail("System script is not loaded");
         return;
     }
-
-    lua_call(sys_script, 0, 0);
+    sys_script.run();
 
     const auto window_cfg = lua::getGlobal(sys_script, "window");
     if (!window_cfg.isTable()) {
