@@ -11,7 +11,6 @@ add_executable(
     "grid.hxx"
     "identity.hxx"
     "main.cxx"
-    "manager_provider.cxx"
 
     "math/bresenham.hxx"
     "math/rect.hxx"
@@ -20,11 +19,8 @@ add_executable(
     "env/env_event_system.cxx"
     "env/env_interface.hxx"
     "env/env_manager.cxx"
-    "env/root_config.hxx"
+    "env/root_config.cxx"
     "env/window.cxx"
-
-    "resource/resource_loader.hxx"
-    "resource/resource_manager.cxx"
 
     "gfx/display.cxx"
     "gfx/fps_provider.hxx"
@@ -47,7 +43,12 @@ add_executable(
     "scenes/scene_interface.hxx"
     "scenes/status_scene.cxx"
     "scenes/world_scene.cxx"
+
+    "scripts/script.cxx"
+    "scripts/script_system.cxx"
 )
+
+target_link_libraries(jaralyn ${LUA_LIBRARIES})
 target_link_libraries(jaralyn SDL2::SDL2)
 target_link_libraries(jaralyn ${OPENGL_LIBRARIES})
 target_link_libraries(jaralyn GLEW::GLEW)

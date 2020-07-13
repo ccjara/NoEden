@@ -8,6 +8,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstdint>
+#include <filesystem>
 #include <fstream>
 #include <functional>
 #include <future>
@@ -23,6 +24,9 @@
 #include <unordered_map>
 
 #include <GL/glew.h>
+
+#include "lua.hpp"
+#include <LuaBridge/LuaBridge.h>
 
 #define SDL_MAIN_HANDLED
 

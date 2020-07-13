@@ -1,12 +1,12 @@
 #ifndef JARALYN_ENV_MANAGER_HXX
 #define JARALYN_ENV_MANAGER_HXX
 
-#include "../resource/resource_loader.hxx"
 #include "clock.hxx"
 #include "env_interface.hxx"
 #include "env_event_system.hxx"
 #include "root_config.hxx"
 #include "window.hxx"
+#include "../scripts/script_system.hxx"
 
 /**
  * @brief Facade around the game platform (OS) and its specificities
@@ -52,7 +52,7 @@ public:
      * Loads the configuration, reads hardware capabilities and initializes 
      * the platform (using SDL2) thereafter by creating the game window.
      */
-    void startup(j_resource_loader& res_loader);
+    void startup(j_script_system& scripts);
 
     /**
      * @brief Shuts down the platform (SDL2)
