@@ -34,8 +34,14 @@ j_script j_script::from_file(const char* path) {
     return script;
 }
 
-void j_script::run() {
-    lua_pcall(state_, 0, 0, 0);
+bool j_script::run() {
+    // TODO: improve
+    switch (lua_pcall(state_, 0, 0, 0)) {
+    case LUA_ERRRUN:
+        LOG(ERROR) << "Runtime error in lua script: " << lua_tostring(state_, lua_gettop(state_));
+        return false;
+    }
+    return true;
 }
 
 j_script_status j_script::status() const noexcept {

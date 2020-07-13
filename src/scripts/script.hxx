@@ -32,8 +32,10 @@ public:
 
     /**
      * @brief Runs the script by doing a lua pcall
+     *
+     * Returns false if any error occurred during execution
      */
-    void run();
+    bool run();
 
     /**
      * @brief Loads the script from the given path

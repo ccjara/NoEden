@@ -16,7 +16,10 @@ j_root_config::j_root_config(j_script& sys_script) : j_root_config() {
         fail("System script is not loaded");
         return;
     }
-    sys_script.run();
+    if (!sys_script.run()) {
+        fail("Runtime error during script execution");
+        return;
+    }
 
     const auto window_cfg = lua::getGlobal(sys_script, "window");
     if (!window_cfg.isTable()) {
