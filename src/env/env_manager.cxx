@@ -1,7 +1,7 @@
 #include "env_manager.hxx"
 
 void j_env_manager::startup(j_script_system& scripts) {
-    auto sys_script = scripts.require("./system.lua");
+    auto& sys_script = scripts.require("system");
 
     root_config_ = std::make_unique<j_root_config>(sys_script);
 

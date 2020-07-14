@@ -36,6 +36,8 @@
 #include <entt/entt.hxx>
 #include <easyloggingpp/easyloggingpp.hxx>
 
+namespace fs = std::filesystem;
+
 #include "identity.hxx"
 
 #include "math/vec2.hxx"

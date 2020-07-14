@@ -44,6 +44,14 @@ bool j_script::run() {
     return true;
 }
 
+j_script j_script::null() {
+    j_script script;
+
+    luaL_loadstring(script, "");
+
+    return script;
+}
+
 j_script_status j_script::status() const noexcept {
     return status_;
 }

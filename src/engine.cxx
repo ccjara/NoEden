@@ -3,6 +3,7 @@
 void j_engine::run() {
     env_ = std::make_unique<j_env_manager>();
     script_system_ = std::make_unique<j_script_system>();
+    script_system_->preload("./scripts");
 
     // manager startup (keep in sync with shutdown reverse order)
     // TODO: clean up inconsistencies between systems and 'managers'

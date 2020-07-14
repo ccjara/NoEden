@@ -45,6 +45,11 @@ public:
      */
     static j_script from_file(const char* path);
 
+    /**
+     * @brief Instantiates a new null (empty) script
+     */
+    static j_script null();
+
     j_script_status status() const noexcept;
     bool loaded() const noexcept;
 
