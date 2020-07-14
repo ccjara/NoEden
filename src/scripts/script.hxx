@@ -35,7 +35,9 @@ public:
     ~j_script() noexcept;
 
     /**
-     * @brief Converts a j_script instance to a lua state
+     * @brief Implicit conversion from a j_script instance to a lua state
+     *
+     * This allows passing a j_script to lua C functions.
      */
     operator lua_State* () const noexcept;
 
@@ -48,6 +50,7 @@ public:
 
     j_script_status status() const noexcept;
     bool loaded() const noexcept;
+    const std::string& id() const noexcept;
 
     // move the managed script state between j_script instances
     j_script(j_script&&);

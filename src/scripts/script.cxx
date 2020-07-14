@@ -66,6 +66,10 @@ bool j_script::loaded() const noexcept {
     return status_ == j_script_status::loaded;
 }
 
+const std::string& j_script::id() const noexcept {
+    return id_;
+}
+
 j_script::j_script(j_script&& other) {
     *this = std::move(other);
 }
