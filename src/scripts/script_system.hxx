@@ -6,8 +6,6 @@
 class j_script_system {
 private:
     std::unordered_map<std::string, j_script> cache_;
-
-    j_script null_script_ = j_script::null();
 public:
     /**
      * @brief Recursively preloads all scripts from the given folder
@@ -52,7 +50,6 @@ void j_script_system::preload(path_like base_path) {
     // default options: does not follow symlinks, skips on denied permission
     for (const auto& entry : fs::recursive_directory_iterator(abs_path)) {
         const auto& path { entry.path() };
-        const auto path_str { path.string() };
         const auto filename { path.filename().string() };
 
         if (entry.is_directory()) {
@@ -60,18 +57,14 @@ void j_script_system::preload(path_like base_path) {
             continue;
         }
         if (path.extension().string() == ".lua") {
-            std::string script_id = prefix + path.stem().string();
+            const std::string& script_id = prefix + path.stem().string();
 
             LOG(INFO) << "Found script " << script_id;
 
             // TODO: gracefully handle case insensitive file systems (script ids must be unique)
             // TODO: locale-lowercase script_id for convenience and consistency?
-            // TODO: optimize? (2 j_script moves)
             // TODO: check against unicode file names
-            cache_.try_emplace(
-                std::move(script_id),
-                j_script::from_file(path_str.c_str())
-            );
+            cache_.try_emplace(script_id, script_id, path);
         }
     }
 }

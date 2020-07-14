@@ -12,13 +12,22 @@ enum class j_script_status {
  */
 class j_script {
 private:
+    std::string id_;
     lua_State* state_ { nullptr };
     j_script_status status_ { j_script_status::indeterminate };
 public:
     /**
-     * @brief Allocates a new lua state
+     * @brief Loads a script from the given path
+     *
+     * If the file does not exist, the status flag will be switched
+     * to `error` and the script state will be empty (but remain allocated).
      */
-    j_script();
+    j_script(const std::string& id, const fs::path& path);
+
+    /**
+     * @brief Loads a script from string
+     */
+    j_script(const std::string& id, const std::string& content);
 
     /**
      * @brief Frees the currently managed lua state if allocated
@@ -36,19 +45,6 @@ public:
      * Returns false if any error occurred during execution
      */
     bool run();
-
-    /**
-     * @brief Loads the script from the given path
-     *
-     * If the file does not exist, the status flag will be switched
-     * to `error` and the script state will be empty (but remain allocated).
-     */
-    static j_script from_file(const char* path);
-
-    /**
-     * @brief Instantiates a new null (empty) script
-     */
-    static j_script null();
 
     j_script_status status() const noexcept;
     bool loaded() const noexcept;
