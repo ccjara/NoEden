@@ -8,7 +8,7 @@ private:
     std::unordered_map<std::string, j_script> cache_;
 public:
     /**
-     * @brief Recursively preloads all scripts from the given folder
+     * @brief Recursively preloads all scripts from the given directory path
      *
      * Script files must have a lowercased `.lua` extension.
      *
@@ -17,15 +17,17 @@ public:
      * The id will be constructed from the file path stem (filename without
      * extension) and its directory level.
      * For each directory level visited, the stem will be prefixed with
-     * the visited folder name.
+     * the visited directory name.
      *
-     * Examples:
+     * Examples (assuming `scripts` as the `base_path`):
      *   - `scripts/extra/optional.lua` -> `extra/optional`
      *   - `scripts/very/deep/file.lua` -> `very/deep/file`
      *   - `scripts/system.lua` -> `system`
      */
     template<typename path_like>
     void preload(path_like base_path);
+
+    // TODO: reload
 
     /**
      * @brief Attempts to load the script with the given script id
