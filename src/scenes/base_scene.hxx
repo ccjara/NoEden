@@ -10,6 +10,7 @@
  */
 class j_base_scene : public j_scene {
 protected:
+	entt::dispatcher* game_events_ { nullptr };
 	j_scene_writer* scene_writer_ { nullptr };
 
 	entt::registry registry_;
@@ -19,7 +20,7 @@ protected:
 public:
 	virtual ~j_base_scene() = default;
 
-	void attach(j_scene_writer* const) override;
+	void attach(j_scene_writer* const, entt::dispatcher* const game_events) override;
 
 	bool opaque() const noexcept override;
 

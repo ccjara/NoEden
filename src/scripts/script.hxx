@@ -15,6 +15,7 @@ private:
     std::string id_;
     lua_State* state_ { nullptr };
     j_script_status status_ { j_script_status::indeterminate };
+    bool has_run_ { false };
 public:
     /**
      * @brief Loads a script from the given path
@@ -50,7 +51,9 @@ public:
 
     j_script_status status() const noexcept;
     bool loaded() const noexcept;
+    bool has_run() const noexcept;
     const std::string& id() const noexcept;
+    lua_State* lua_state() const noexcept;
 
     // move the managed script state between j_script instances
     j_script(j_script&&);

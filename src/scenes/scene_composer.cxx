@@ -25,7 +25,7 @@ j_scene* j_scene_composer::load(j_scene_type type) {
         LOG(ERROR) << "Unknown scene type " << static_cast<int32_t>(type);
         throw;
     }
-    scene_ptr->attach(this);
+    scene_ptr->attach(this, &game_events_);
 
     auto raw_ptr { scene_ptr.get() };
 
@@ -77,4 +77,8 @@ void j_scene_composer::update(j_input_state& input) {
             return;
         }
     }
+}
+
+entt::dispatcher& j_scene_composer::game_events() noexcept {
+    return game_events_;
 }

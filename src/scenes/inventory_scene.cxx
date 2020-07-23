@@ -1,7 +1,5 @@
 #include "inventory_scene.hxx"
 
-#include "status_scene.hxx"
-
 j_inventory_scene::j_inventory_scene() {
     is_blocking_ = true;
     is_opaque_ = true;
@@ -27,6 +25,9 @@ void j_inventory_scene::update(j_input_state& input) {
 
         item.label = "Thingy";
         item.quality = j_item_quality::supreme;
+
+        game_events_->trigger<j_inventory_item_added_event>(&item);
+
         inv.put(std::move(item));
     }
 

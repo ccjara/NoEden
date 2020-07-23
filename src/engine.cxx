@@ -11,6 +11,7 @@ void j_engine::run() {
 
     gfx_system_ = std::make_unique<j_gfx_system>(&env_->window());
     input_system_ = std::make_unique<j_input_system>();
+    composer_ = std::make_unique<j_scene_composer>();
 
     // wire event listeners
     auto& dispatcher { env_->events().dispatcher() };
@@ -18,15 +19,16 @@ void j_engine::run() {
     input_system_->attach(dispatcher);
 
     // testing: directly load world for now
-    composer_.load(j_scene_type::world);
+    script_system_->attach(composer_->game_events());
+    composer_->load(j_scene_type::world);
 
     while (env_->is_running()) {
         // update
         env_->events().listen();
-        env_->clock().tick([&]() { composer_.update(*input_system_); });
+        env_->clock().tick([&]() { composer_->update(*input_system_); });
         // render
         gfx_system_->prepare();
-        composer_.render(gfx_system_->display());
+        composer_->render(gfx_system_->display());
         gfx_system_->present();
     }
 

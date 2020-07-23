@@ -22,6 +22,8 @@ add_executable(
     "env/root_config.cxx"
     "env/window.cxx"
 
+    "game_event.hxx"
+
     "gfx/display.cxx"
     "gfx/fps_provider.hxx"
     "gfx/gfx_system.cxx"
@@ -45,6 +47,7 @@ add_executable(
     "scenes/world_scene.cxx"
 
     "scripts/script.cxx"
+    "scripts/script_env.cxx"
     "scripts/script_system.cxx"
 )
 

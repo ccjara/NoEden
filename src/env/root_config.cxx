@@ -16,7 +16,7 @@ j_root_config::j_root_config(j_script& sys_script) : j_root_config() {
         fail("System script is not loaded");
         return;
     }
-    if (!sys_script.run()) {
+    if (!sys_script.has_run() && !sys_script.run()) {
         fail("Runtime error during script execution");
         return;
     }

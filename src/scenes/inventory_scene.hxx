@@ -2,6 +2,7 @@
 #define JARALYN_INVENTORY_SCENE_HXX
 
 #include "../components/components.hxx"
+#include "../game_event.hxx"
 #include "base_scene.hxx"
 
 /**

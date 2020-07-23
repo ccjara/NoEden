@@ -14,8 +14,7 @@ private:
     std::unique_ptr<j_gfx_system> gfx_system_ { nullptr };
     std::unique_ptr<j_input_system> input_system_ { nullptr };
     std::unique_ptr<j_script_system> script_system_ { nullptr };
-
-    j_scene_composer composer_;
+    std::unique_ptr<j_scene_composer> composer_ { nullptr };
 public:
     /**
      * @brief Runs the engine together will all game systems.

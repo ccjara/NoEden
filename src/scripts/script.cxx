@@ -49,6 +49,11 @@ j_script::operator lua_State* () const noexcept {
 }
 
 bool j_script::run() {
+    if (has_run_) {
+        LOG(ERROR) << "Script " << id_ << " has already been called into";
+        return false;
+    }
+    has_run_ = true;
     // TODO: improve
     switch (lua_pcall(state_, 0, 0, 0)) {
     case LUA_ERRRUN:
@@ -68,6 +73,14 @@ bool j_script::loaded() const noexcept {
 
 const std::string& j_script::id() const noexcept {
     return id_;
+}
+
+lua_State* j_script::lua_state() const noexcept {
+    return state_;
+}
+
+bool j_script::has_run() const noexcept {
+    return has_run_;
 }
 
 j_script::j_script(j_script&& other) {

@@ -2,10 +2,13 @@
 #define JARALYN_SCRIPT_SYSTEM_HXX
 
 #include "script.hxx"
+#include "script_env.hxx"
 
 class j_script_system {
 private:
     std::unordered_map<std::string, j_script> cache_;
+
+    j_script_env script_env_;
 public:
     /**
      * @brief Recursively preloads all scripts from the given directory path
@@ -36,6 +39,11 @@ public:
      */
     template<typename string_like>
     j_script& require(string_like script_id);
+
+    /**
+     * @brief Attaches the script environment game events
+     */
+    void attach(entt::dispatcher& dispatcher);
 };
 
 template<typename path_like>
@@ -66,7 +74,8 @@ void j_script_system::preload(path_like base_path) {
             // TODO: gracefully handle case insensitive file systems (script ids must be unique)
             // TODO: locale-lowercase script_id for convenience and consistency?
             // TODO: check against unicode file names
-            cache_.try_emplace(script_id, script_id, path);
+            auto [iter, b] = cache_.try_emplace(script_id, script_id, path);
+            script_env_.setup(iter->second);
         }
     }
 }

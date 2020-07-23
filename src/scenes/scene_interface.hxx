@@ -52,7 +52,7 @@ public:
 	 *
 	 * The scene writer pointer is null before this method is called.
 	 */
-	virtual void attach(j_scene_writer* const) = 0;
+	virtual void attach(j_scene_writer* const, entt::dispatcher* const game_events) = 0;
 
 	/**
 	 * @brief Returns true if this scene prevents underlying scenes from rendering
