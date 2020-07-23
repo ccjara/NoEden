@@ -459,111 +459,17 @@ public:
       If an error occurs, a LuaException is thrown.
   */
   /** @{ */
-  LuaRef operator() () const
-  {
-    impl ().push ();;
-    LuaException::pcall (m_L, 0, 1);
-    return LuaRef::fromStack (m_L);
-  }
 
-  template <class P1>
-  LuaRef operator() (P1 p1) const
-  {
-    impl ().push ();;
-    Stack <P1>::push (m_L, p1);
-    LuaException::pcall (m_L, 1, 1);
-    return LuaRef::fromStack (m_L);
-  }
+  template <typename... varg_t>
+  [[nodiscard]] constexpr std::optional<LuaRef> operator()(varg_t... args) const {
+      impl().push();
 
-  template <class P1, class P2>
-  LuaRef operator() (P1 p1, P2 p2) const
-  {
-    impl ().push ();;
-    Stack <P1>::push (m_L, p1);
-    Stack <P2>::push (m_L, p2);
-    LuaException::pcall (m_L, 2, 1);
-    return LuaRef::fromStack (m_L);
-  }
-
-  template <class P1, class P2, class P3>
-  LuaRef operator() (P1 p1, P2 p2, P3 p3) const
-  {
-    impl ().push ();;
-    Stack <P1>::push (m_L, p1);
-    Stack <P2>::push (m_L, p2);
-    Stack <P3>::push (m_L, p3);
-    LuaException::pcall (m_L, 3, 1);
-    return LuaRef::fromStack (m_L);
-  }
-
-  template <class P1, class P2, class P3, class P4>
-  LuaRef operator() (P1 p1, P2 p2, P3 p3, P4 p4) const
-  {
-    impl ().push ();;
-    Stack <P1>::push (m_L, p1);
-    Stack <P2>::push (m_L, p2);
-    Stack <P3>::push (m_L, p3);
-    Stack <P4>::push (m_L, p4);
-    LuaException::pcall (m_L, 4, 1);
-    return LuaRef::fromStack (m_L);
-  }
-
-  template <class P1, class P2, class P3, class P4, class P5>
-  LuaRef operator() (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5) const
-  {
-    impl ().push ();;
-    Stack <P1>::push (m_L, p1);
-    Stack <P2>::push (m_L, p2);
-    Stack <P3>::push (m_L, p3);
-    Stack <P4>::push (m_L, p4);
-    Stack <P5>::push (m_L, p5);
-    LuaException::pcall (m_L, 5, 1);
-    return LuaRef::fromStack (m_L);
-  }
-
-  template <class P1, class P2, class P3, class P4, class P5, class P6>
-  LuaRef operator() (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6) const
-  {
-    impl ().push ();;
-    Stack <P1>::push (m_L, p1);
-    Stack <P2>::push (m_L, p2);
-    Stack <P3>::push (m_L, p3);
-    Stack <P4>::push (m_L, p4);
-    Stack <P5>::push (m_L, p5);
-    Stack <P6>::push (m_L, p6);
-    LuaException::pcall (m_L, 6, 1);
-    return LuaRef::fromStack (m_L);
-  }
-
-  template <class P1, class P2, class P3, class P4, class P5, class P6, class P7>
-  LuaRef operator() (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7) const
-  {
-    impl ().push ();;
-    Stack <P1>::push (m_L, p1);
-    Stack <P2>::push (m_L, p2);
-    Stack <P3>::push (m_L, p3);
-    Stack <P4>::push (m_L, p4);
-    Stack <P5>::push (m_L, p5);
-    Stack <P6>::push (m_L, p6);
-    Stack <P7>::push (m_L, p7);
-    LuaException::pcall (m_L, 7, 1);
-    return LuaRef::fromStack (m_L);
-  }
-
-  template <class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8>
-  LuaRef operator() (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8) const
-  {
-    impl ().push ();
-    Stack <P1>::push (m_L, p1);
-    Stack <P2>::push (m_L, p2);
-    Stack <P3>::push (m_L, p3);
-    Stack <P4>::push (m_L, p4);
-    Stack <P5>::push (m_L, p5);
-    Stack <P6>::push (m_L, p6);
-    Stack <P7>::push (m_L, p7);
-    Stack <P8>::push (m_L, p8);
-    LuaException::pcall (m_L, 8, 1);
-    return LuaRef::fromStack (m_L);
+      (Stack<varg_t>::push(m_L, args), ...); // C++17 fold expression
+      int code = lua_pcall(m_L, sizeof...(varg_t), 1, 0);
+      if (code != LUABRIDGE_LUA_OK) {
+          return std::nullopt;
+      }
+      return LuaRef::fromStack(m_L);
   }
   /** @} */
 
