@@ -5,14 +5,15 @@
 #include "../game_event.hxx"
 
 class j_script_env {
-    std::map<std::string, std::vector<luabridge::LuaRef>> listeners_;
+    std::unordered_map<j_game_event_type, std::vector<luabridge::LuaRef>> listeners_;
 
+    // item events
     void on_inventory_item_added(const j_inventory_item_added_event& e);
 
     /**
      * @brief Gets called when any lua function subscribes to any event
      */
-    void on_register_callback(const char* event_type, luabridge::LuaRef ref);
+    bool on_register_callback(const char* event_type, luabridge::LuaRef ref);
 public:
     /**
      * @brief Attaches the scripting environment to game events
