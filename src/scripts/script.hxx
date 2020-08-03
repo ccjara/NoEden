@@ -16,6 +16,9 @@ private:
     lua_State* state_ { nullptr };
     j_script_status status_ { j_script_status::indeterminate };
     bool has_run_ { false };
+
+    std::string path_;
+    std::string source_;
 public:
     /**
      * @brief Loads a script from the given path
@@ -26,9 +29,9 @@ public:
     j_script(const std::string& id, const fs::path& path);
 
     /**
-     * @brief Loads a script from string
+     * @brief Loads a script from a source string
      */
-    j_script(const std::string& id, const std::string& content);
+    j_script(const std::string& id, const std::string& source);
 
     /**
      * @brief Frees the currently managed lua state if allocated
@@ -48,6 +51,16 @@ public:
      * Returns false if any error occurred during execution
      */
     bool run();
+
+    /**
+     * @brief Loads the script from its configured data source
+     */
+    void load();
+
+    /**
+     * @brief Reloads the script from its data source
+     */
+    void reload();
 
     j_script_status status() const noexcept;
     bool loaded() const noexcept;

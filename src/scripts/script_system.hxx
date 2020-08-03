@@ -2,13 +2,41 @@
 #define JARALYN_SCRIPT_SYSTEM_HXX
 
 #include "script.hxx"
-#include "script_env.hxx"
+#include "../game_event.hxx"
 
 class j_script_system {
 private:
-    std::unordered_map<std::string, j_script> cache_;
+    struct j_bound_ref {
+        std::string script_id;
+        luabridge::LuaRef ref;
+    };
 
-    j_script_env script_env_;
+    std::unordered_map<j_game_event_type, std::vector<j_bound_ref>> listeners_;
+    std::unordered_map<std::string, j_script> scripts_;
+
+    // item events
+    void on_inventory_item_added(const j_inventory_item_added_event& e);
+
+    /**
+     * @brief Gets called when any lua function subscribes to any event
+     */
+    bool on_register_callback(const char* event_type, luabridge::LuaRef ref);
+
+    /**
+     * @brief Loads and runs the script
+     *
+     * TODO: Make scripts loadable on demand
+     */
+    void setup(j_script& script);
+
+    /**
+     * @brief Does a protected call into the given lua ref
+     *
+     * Checks whether the call was successful. In case of an error, the error
+     * is logged, *no* exception is thrown.
+     */
+    template<typename... varg_t>
+    constexpr inline void pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const noexcept;
 public:
     /**
      * @brief Recursively preloads all scripts from the given directory path
@@ -30,7 +58,28 @@ public:
     template<typename path_like>
     void preload(path_like base_path);
 
-    // TODO: reload
+    /**
+     * @brief Unloads a script with the given script_id
+     *
+     * An unloaded script can later be reloaded.
+     *
+     * @see reload
+     */
+    template<typename string_like>
+    void unload(string_like script_id);
+
+    /**
+     * @brief Reloads a script with the given script_id
+     *
+     * The script must be known to the script engine.
+     * Scripts which have been added after {@link preload} was called are not
+     * known to the script system (TODO).
+     *
+     * If the script was loaded from a file, the source will also be reloaded
+     * from the file system, making changes at runtime possible.
+     */
+    template<typename string_like>
+    void reload(string_like script_id);
 
     /**
      * @brief Attempts to load the script with the given script id
@@ -41,7 +90,7 @@ public:
     j_script& require(string_like script_id);
 
     /**
-     * @brief Attaches the script environment game events
+     * @brief Attaches the script environment to game events
      */
     void attach(entt::dispatcher& dispatcher);
 };
@@ -74,22 +123,71 @@ void j_script_system::preload(path_like base_path) {
             // TODO: gracefully handle case insensitive file systems (script ids must be unique)
             // TODO: locale-lowercase script_id for convenience and consistency?
             // TODO: check against unicode file names
-            auto [iter, b] = cache_.try_emplace(script_id, script_id, path);
-            script_env_.setup(iter->second);
+            auto [iter, b] = scripts_.try_emplace(script_id, script_id, path);
+
+            setup(iter->second);
         }
     }
 }
 
 template<typename string_like>
 j_script& j_script_system::require(string_like script_id) {
-    auto entry { cache_.find(script_id) };
+    auto entry { scripts_.find(script_id) };
 
-    if (entry == cache_.end()) {
+    if (entry == scripts_.end()) {
         LOG(ERROR) << "Could not find script " << script_id;
         throw;
     }
 
     return entry->second;
+}
+
+template<typename... varg_t>
+constexpr inline void j_script_system::pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const noexcept {
+    const auto result { ref(std::forward<varg_t>(args)...) };
+    if (result == std::nullopt) {
+        const auto state { ref.state() };
+
+        std::string err { "Caught error during script execution" };
+
+        if (lua_gettop(state) > 0) {
+            const char* e = lua_tostring(state, -1);
+            if (e) {
+                err.append(": ");
+                err.append(e);
+            }
+        }
+        LOG(ERROR) << err;
+    }
+}
+
+template<typename string_like>
+void j_script_system::reload(string_like script_id) {
+    auto it = scripts_.find(script_id);
+    if (it == scripts_.end()) {
+        LOG(ERROR) << "Can not reload unknown script " << script_id;
+    }
+    unload(script_id);
+    setup(it->second);
+}
+
+template<typename string_like>
+void j_script_system::unload(string_like script_id) {
+    auto& it = scripts_.find(script_id);
+    if (it == scripts_.end()) {
+        return;
+    }
+    // OPTIMIZE: this is an extremely slow operation.
+    //           improve script_id <-> handle tracking.
+    for (auto& [_, refs] : listeners_) {
+        refs.erase( // C++20 erase_if
+            std::remove_if(refs.begin(), refs.end(), [&script_id](const j_bound_ref& ref) {
+                return ref.script_id == script_id;
+            }),
+            refs.end()
+        );
+    }
+    LOG(INFO) << "Script " << script_id << " has been unloaded";
 }
 
 #endif

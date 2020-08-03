@@ -1,41 +1,13 @@
 #include "script.hxx"
 
-j_script::j_script(const std::string& id, const fs::path& path)
-    : id_(id) {
-    state_ = luaL_newstate();
-
-    if (!state_) {
-        LOG(ERROR) << "Could not allocate new lua state";
-        status_ = j_script_status::error;
-        return;
-    }
-    const auto result { luaL_loadfilex(state_, path.string().c_str(), nullptr) };
-
-    if (result == LUA_OK) {
-        status_ = j_script_status::loaded;
-    } else {
-        LOG(ERROR) << "Error while loading script file of " << id_ << ": result code " << result;
-        status_ = j_script_status::error;
-    }
+j_script::j_script(const std::string& id, const fs::path& path) :
+    id_(id),
+    path_(path.string().c_str()) {
 }
 
-j_script::j_script(const std::string& id, const std::string& content)
-    : id_(id) {
-    state_ = luaL_newstate();
-
-    if (!state_) {
-        LOG(ERROR) << "Could not allocate new lua state";
-        status_ = j_script_status::error;
-        return;
-    }
-    const auto result { luaL_loadstring(state_, content.c_str()) };
-
-    if (result == LUA_OK) {
-        status_ = j_script_status::loaded;
-    } else {
-        LOG(ERROR) << "Error while loading script " << id_ << ": result code " << result;
-        status_ = j_script_status::error;
-    }
+j_script::j_script(const std::string& id, const std::string& source) :
+    id_(id),
+    source_(source) {
 }
 
 j_script::~j_script() {
@@ -61,6 +33,47 @@ bool j_script::run() {
         return false;
     }
     return true;
+}
+
+void j_script::load() {
+    has_run_ = false;
+    if (state_) {
+        lua_close(state_);
+    }
+    state_ = luaL_newstate();
+    if (!state_) {
+        LOG(ERROR) << "Could not allocate new lua state";
+        status_ = j_script_status::error;
+        return;
+    }
+
+    if (!path_.empty()) {
+        if (!fs::exists(path_)) {
+            LOG(ERROR) << "Cannot load script " << id_ << ": path " << path_ << " not found";
+            status_ = j_script_status::error;
+            return;
+        }
+        std::ifstream input { path_, std::ios::ate };
+        if (input.bad()) {
+            LOG(ERROR) << "Cannot load script " << id_ << ": bad input";
+            status_ = j_script_status::error;
+            return;
+        }
+        const auto size { input.tellg() };
+        source_.resize(size);
+        input.seekg(0);
+        input.read(source_.data(), size);
+    }
+
+    const auto result { luaL_loadstring(state_, source_.c_str()) };
+    if (result == LUA_OK) {
+        status_ = j_script_status::loaded;
+        LOG(INFO) << "Script " << id_ << " has been loaded";
+    } else {
+        LOG(ERROR) << "Cannot load script " << id_ << ": lua error result " << result << ": " << lua_tostring(state_, -1);
+
+        status_ = j_script_status::error;
+    }
 }
 
 j_script_status j_script::status() const noexcept {
@@ -93,5 +106,9 @@ j_script& j_script::operator=(j_script&& other) {
         state_ = std::exchange(other.state_, nullptr);
     }
     status_ = other.status_;
+    has_run_ = other.has_run_;
+    path_ = std::move(other.path_);
+    source_ = std::move(other.source_);
+
     return *this;
 }

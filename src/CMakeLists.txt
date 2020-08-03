@@ -47,7 +47,6 @@ add_executable(
     "scenes/world_scene.cxx"
 
     "scripts/script.cxx"
-    "scripts/script_env.cxx"
     "scripts/script_system.cxx"
 )
 

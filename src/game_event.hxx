@@ -2,6 +2,7 @@
 #define JARALYN_GAME_EVENT_HXX
 
 #include "components/inventory.hxx"
+#include "scripts/script.hxx"
 
 enum class j_game_event_type {
     inventory_item_added,
