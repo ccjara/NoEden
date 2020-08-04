@@ -3,8 +3,18 @@
 
 enum class j_script_status {
     indeterminate,
-    loaded,
     error,
+    loaded,
+    called,
+};
+
+enum class j_script_error {
+    none,
+    runtime_error,
+    state_alloc_failed,
+    script_path_not_found,
+    bad_script_input,
+    script_corrupted,
 };
 
 /**
@@ -15,10 +25,12 @@ private:
     std::string id_;
     lua_State* state_ { nullptr };
     j_script_status status_ { j_script_status::indeterminate };
-    bool has_run_ { false };
+    j_script_error error_ { j_script_error::none };
 
     std::string path_;
     std::string source_;
+
+    void fail(j_script_error err);
 public:
     /**
      * @brief Loads a script from the given path
@@ -54,12 +66,19 @@ public:
 
     /**
      * @brief Loads the script from its configured data source
+     *
+     * Sets the script status to `loaded` if loaded successfully or
+     * `error` on failure. This also sets the `error_` member accordingly.
+     *
+     * A script can be loaded multiple times. The previous script state is
+     * discarded and reallocated on each load.
      */
     void load();
 
     j_script_status status() const noexcept;
+    bool called() const noexcept;
+    bool callable() const noexcept;
     bool loaded() const noexcept;
-    bool has_run() const noexcept;
     const std::string& id() const noexcept;
     lua_State* lua_state() const noexcept;
 

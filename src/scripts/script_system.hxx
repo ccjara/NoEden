@@ -39,6 +39,11 @@ private:
     constexpr inline void pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const noexcept;
 public:
     /**
+     * @brief Unloads all scripts before freeing ressources
+     */
+    ~j_script_system();
+
+    /**
      * @brief Recursively preloads all scripts from the given directory path
      *
      * Script files must have a lowercased `.lua` extension.

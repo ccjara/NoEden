@@ -1,5 +1,13 @@
 #include "script_system.hxx"
 
+j_script_system::~j_script_system() {
+    // need to clear all refs ahead of the scripts, otherwise the refs are
+    // TODO: bind the refs to the j_script instances somehow so the script 
+    //       can get rid of them?
+    listeners_.clear();
+    scripts_.clear();
+}
+
 void j_script_system::attach(entt::dispatcher& dispatcher) {
     dispatcher.sink<j_inventory_item_added_event>().connect<&j_script_system::on_inventory_item_added>(this);
 }
