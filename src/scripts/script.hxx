@@ -57,11 +57,6 @@ public:
      */
     void load();
 
-    /**
-     * @brief Reloads the script from its data source
-     */
-    void reload();
-
     j_script_status status() const noexcept;
     bool loaded() const noexcept;
     bool has_run() const noexcept;
