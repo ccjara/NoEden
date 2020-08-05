@@ -10,6 +10,10 @@ void j_base_scene::attach(
     game_events_ = game_events;
 }
 
+j_scene_type j_base_scene::type() const noexcept {
+    return type_;
+}
+
 bool j_base_scene::opaque() const noexcept {
     return is_opaque_;
 }

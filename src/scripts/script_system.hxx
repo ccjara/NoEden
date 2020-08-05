@@ -3,6 +3,7 @@
 
 #include "script.hxx"
 #include "../game_event.hxx"
+#include "display_proxy.hxx"
 
 class j_script_system {
 private:
@@ -12,10 +13,14 @@ private:
     };
 
     std::unordered_map<j_game_event_type, std::vector<j_bound_ref>> listeners_;
+    std::unordered_map<j_scene_type, std::vector<j_bound_ref>> scene_render_listeners_;
     std::unordered_map<std::string, j_script> scripts_;
 
     // item events
     void on_inventory_item_added(const j_inventory_item_added_event& e);
+
+    // scene events
+    void on_scene_render(const j_scene_render_event& e);
 
     /**
      * @brief Gets called when any lua function subscribes to any event

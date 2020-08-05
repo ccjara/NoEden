@@ -5,6 +5,7 @@
 #include "../input/input_interface.hxx"
 
 enum class j_scene_type {
+	null,
 	world,
 	status,
 	inventory

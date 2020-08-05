@@ -46,6 +46,7 @@ add_executable(
     "scenes/status_scene.cxx"
     "scenes/world_scene.cxx"
 
+    "scripts/display_proxy.hxx"
     "scripts/script.cxx"
     "scripts/script_system.cxx"
 )

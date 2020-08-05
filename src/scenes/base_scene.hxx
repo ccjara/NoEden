@@ -10,6 +10,7 @@
  */
 class j_base_scene : public j_scene {
 protected:
+	j_scene_type type_;
 	entt::dispatcher* game_events_ { nullptr };
 	j_scene_writer* scene_writer_ { nullptr };
 
@@ -17,10 +18,16 @@ protected:
 
 	bool is_opaque_ { false };
 	bool is_blocking_ { false };
+
+
+	j_base_scene(j_scene_type type) : type_(type) {
+	}
 public:
 	virtual ~j_base_scene() = default;
 
 	void attach(j_scene_writer* const, entt::dispatcher* const game_events) override;
+
+	[[nodiscard]] j_scene_type type() const noexcept;
 
 	bool opaque() const noexcept override;
 

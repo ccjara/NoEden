@@ -59,6 +59,8 @@ void j_scene_composer::render(j_display& display) {
 
         scene.render(display);
 
+        game_events_.trigger<j_scene_render_event>(scene.type(), &display);
+
         if (stack_update_ || scene.opaque()) {
             return;
         }

@@ -120,7 +120,6 @@ void j_script::fail(j_script_error err) {
         LOG(ERROR) << "Cannot load script " << id_ << ": bad input";
         break;
     case j_script_error::script_corrupted:
-        assert(lua_gettop(state_) == -1);
         LOG(ERROR) << "Cannot load script " << id_ << ": " << lua_tostring(state_, -1);
     case j_script_error::none:
         return;

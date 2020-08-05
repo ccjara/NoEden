@@ -1,6 +1,6 @@
 #include "world_scene.hxx"
 
-j_world_scene::j_world_scene() {
+j_world_scene::j_world_scene() : j_base_scene(j_scene_type::world) {
     player_ = registry_.create();
 
     registry_.assign<jc_position>(player_, 10, 10, 0);

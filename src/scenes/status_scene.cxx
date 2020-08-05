@@ -19,7 +19,7 @@ std::pair<std::string_view, j_color> j_status_scene::attribute_info(const j_attr
     return std::make_pair<std::string_view, j_color>("Inconceivable", j_color(255, 0, 255));
 }
 
-j_status_scene::j_status_scene() {
+j_status_scene::j_status_scene() : j_base_scene(j_scene_type::status) {
     is_blocking_ = true;
     is_opaque_ = true;
 }

@@ -1,6 +1,6 @@
 #include "inventory_scene.hxx"
 
-j_inventory_scene::j_inventory_scene() {
+j_inventory_scene::j_inventory_scene() : j_base_scene(j_scene_type::inventory) {
     is_blocking_ = true;
     is_opaque_ = true;
 }
@@ -23,8 +23,8 @@ void j_inventory_scene::update(j_input_state& input) {
 
         j_item item;
 
-        item.label = "Thingy";
-        item.quality = j_item_quality::supreme;
+        item.label = "Dimensional Slicer";
+        item.quality = j_item_quality::common;
 
         game_events_->trigger<j_inventory_item_added_event>(&item);
 
