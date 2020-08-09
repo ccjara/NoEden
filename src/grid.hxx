@@ -84,7 +84,7 @@ public:
     constexpr void put(cell&& c, const pos& position) {
         if (!in_bounds(position)) {
             LOG(ERROR)
-                << "Placement at " << pos.x << ", " << pos.y
+                << "Placement at " << position.x << ", " << position.y
                 << " not within bounds ("
                 << dimensions_.width << ", " << dimensions_.height << ")";
             return;

@@ -54,8 +54,8 @@ void j_scene_composer::unload(j_id id) {
 }
 
 void j_scene_composer::render(j_display& display) {
-    for (auto& it { scenes_.rbegin() }; it != scenes_.rend(); it++) {
-        auto& scene { *it->get() };
+    for (auto it { scenes_.rbegin() }; it != scenes_.rend(); it++) {
+        auto& scene { **it };
 
         scene.render(display);
 
@@ -70,8 +70,8 @@ void j_scene_composer::render(j_display& display) {
 void j_scene_composer::update(j_input_state& input) {
     stack_update_ = false;
 
-    for (auto& it { scenes_.rbegin() }; it != scenes_.rend(); it++) {
-        auto& scene { *it->get() };
+    for (auto it { scenes_.rbegin() }; it != scenes_.rend(); it++) {
+        auto& scene { **it };
 
         scene.update(input);
 

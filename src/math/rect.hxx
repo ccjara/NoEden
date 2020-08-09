@@ -34,10 +34,10 @@ struct j_rect {
     }
 
     void expand(t length) noexcept {
-        top -= t;
-        right += t;
-        bottom += t;
-        left -= t;
+        top -= length;
+        right += length;
+        bottom += length;
+        left -= length;
     }
 
     void scan(const std::function<void(j_vec2<t> p)> callable) const {

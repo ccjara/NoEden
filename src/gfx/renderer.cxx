@@ -21,7 +21,7 @@ j_renderer::j_renderer() {
     glEnableVertexAttribArray(1);
 }
 
-j_renderer::~j_renderer() {
+j_renderer::~j_renderer() noexcept {
     if (vao) {
         glDeleteBuffers(1, &vao);
     }

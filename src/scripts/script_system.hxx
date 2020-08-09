@@ -41,7 +41,7 @@ private:
      * is logged, *no* exception is thrown.
      */
     template<typename... varg_t>
-    constexpr inline void pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const noexcept;
+    inline void pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const noexcept;
 public:
     /**
      * @brief Unloads all scripts before freeing ressources
@@ -153,7 +153,7 @@ j_script& j_script_system::require(string_like script_id) {
 }
 
 template<typename... varg_t>
-constexpr inline void j_script_system::pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const noexcept {
+inline void j_script_system::pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const noexcept {
     const auto result { ref(std::forward<varg_t>(args)...) };
     if (result == std::nullopt) {
         const auto state { ref.state() };
@@ -183,7 +183,7 @@ void j_script_system::reload(string_like script_id) {
 
 template<typename string_like>
 void j_script_system::unload(string_like script_id) {
-    auto& it = scripts_.find(script_id);
+    auto it = scripts_.find(script_id);
     if (it == scripts_.end()) {
         return;
     }
