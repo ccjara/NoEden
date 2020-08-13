@@ -5,11 +5,11 @@ template<typename cell>
 class j_grid {
 protected:
     std::vector<cell> cells_;
-    j_size<uint32_t> dimensions_ { 0, 0 };
+    j_vec2<uint32_t> dimensions_;
 
     template<typename pos>
     [[nodiscard]] constexpr inline auto to_index(const pos& position) const noexcept {
-        return position.y * dimensions_.width + position.x;
+        return position.y * dimensions_.x + position.x;
     }
 public:
     using cell_type = cell;
@@ -26,7 +26,7 @@ public:
      */
     template<typename sz>
     constexpr void resize(const sz& dimensions) {
-        cells_.resize(dimensions.area(), cell::null);
+        cells_.resize(dimensions.x * dimensions.y, cell::null);
         dimensions_ = dimensions;
         reset();
     }
@@ -84,7 +84,7 @@ public:
             LOG(ERROR)
                 << "Placement at " << position.x << ", " << position.y
                 << " not within bounds ("
-                << dimensions_.width << ", " << dimensions_.height << ")";
+                << dimensions_.x << ", " << dimensions_.y << ")";
             return;
         }
         cells_[to_index(position)] = std::move(c);
@@ -95,7 +95,7 @@ public:
      */
     template<typename pos>
     [[nodiscard]] constexpr inline bool in_bounds(const pos& position) const noexcept {
-        return position.x + 1 <= dimensions_.width && position.y + 1 <= dimensions_.height;
+        return position.x + 1 <= dimensions_.x && position.y + 1 <= dimensions_.y;
     }
 
     /**
@@ -105,11 +105,11 @@ public:
      */
     template<typename pos>
     constexpr inline void clamp(pos& position) noexcept {
-        if (position.x > dimensions_.width) {
-            position.x = dimensions_.width;
+        if (position.x > dimensions_.x) {
+            position.x = dimensions_.x;
         }
-        if (position.y > dimensions_.height) {
-            position.y = dimensions_.height;
+        if (position.y > dimensions_.y) {
+            position.y = dimensions_.y;
         }
     }
 };

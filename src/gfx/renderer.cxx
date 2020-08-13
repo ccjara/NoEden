@@ -8,7 +8,7 @@ j_renderer::~j_renderer() noexcept {
 void j_renderer::render(const j_display& display) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    glViewport(0, 0, view_port_.width, view_port_.height);
+    glViewport(0, 0, view_port_.x, view_port_.y);
 
     text_shader_->use();
 
@@ -31,28 +31,22 @@ void j_renderer::render(const j_display& display) {
     glDrawArrays(GL_POINTS, 0, display.size());
 }
 
-void j_renderer::set_viewport(j_size<uint32_t> size) noexcept {
+void j_renderer::set_viewport(j_vec2<uint32_t> size) noexcept {
     view_port_ = size;
-    text_shader_->use_resolution(j_size<uint32_t>{
-        view_port_.width / static_cast<uint32_t>(scaling_),
-        view_port_.height / static_cast<uint32_t>(scaling_),
-    });
+    text_shader_->use_resolution(view_port_ / scaling_);
 }
 
 void j_renderer::set_font(j_texture&& tex) noexcept {
     text_shader_->use_texture(std::move(tex));
 }
 
-void j_renderer::set_glyph_size(j_size<uint32_t> glyph_size) noexcept {
+void j_renderer::set_glyph_size(j_vec2<uint32_t> glyph_size) noexcept {
     text_shader_->use_glyph_size(glyph_size);
 }
 
-void j_renderer::set_scaling(float_t scaling) noexcept {
+void j_renderer::set_scaling(uint32_t scaling) noexcept {
     scaling_ = scaling;
-    text_shader_->use_resolution(j_size<uint32_t>{
-        view_port_.width / static_cast<uint32_t>(scaling_),
-        view_port_.height / static_cast<uint32_t>(scaling_),
-    });
+    text_shader_->use_resolution(view_port_ / scaling);
 }
 
 void j_renderer::reset() noexcept {

@@ -19,10 +19,10 @@ struct j_rect {
         left(left) {
     }
 
-    j_rect(j_vec2<t> pos, j_size<t> size) :
+    j_rect(j_vec2<t> pos, j_vec2<t> size) :
         top(pos.y),
-        right(pos.x + size.width),
-        bottom(pos.y + size.height),
+        right(pos.x + size.x),
+        bottom(pos.y + size.y),
         left(pos.x) {
     }
 

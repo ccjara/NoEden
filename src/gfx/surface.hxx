@@ -9,7 +9,7 @@
 class j_surface {
 private:
     SDL_Surface* surf_ { nullptr };
-    j_size<uint32_t> size_;
+    j_vec2<uint32_t> size_;
 public:
     /**
      * @brief Loads a surface immediately
@@ -37,7 +37,7 @@ public:
 
     uint32_t width() const noexcept;
     uint32_t height() const noexcept;
-    j_size<uint32_t> size() const noexcept;
+    j_vec2<uint32_t> size() const noexcept;
 };
 
 #endif

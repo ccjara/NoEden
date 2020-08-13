@@ -1,12 +1,12 @@
 #include "window.hxx"
 
-j_window::j_window(j_size<uint32_t> s) : size_ { s } {
+j_window::j_window(j_vec2<uint32_t> s) : size_ { s } {
     handle_ = SDL_CreateWindow(
         "Jaralyn",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
-        static_cast<int> (size_.width),
-        static_cast<int> (size_.height),
+        static_cast<int> (size_.x),
+        static_cast<int> (size_.y),
         SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
     );
 
@@ -37,7 +37,7 @@ SDL_Window* j_window::handle() const noexcept {
     return handle_;
 }
 
-j_size<uint32_t> j_window::size() const noexcept {
+j_vec2<uint32_t> j_window::size() const noexcept {
     return size_;
 }
 
@@ -45,6 +45,6 @@ j_window::operator SDL_Window* () const noexcept {
     return this->handle_;
 }
 
-void j_window::resize(j_size<uint32_t> s) noexcept {
+void j_window::resize(j_vec2<uint32_t> s) noexcept {
     size_ = s;
 }

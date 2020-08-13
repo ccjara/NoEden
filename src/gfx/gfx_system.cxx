@@ -87,13 +87,12 @@ j_display& j_gfx_system::display() noexcept {
 }
 
 void j_gfx_system::adjust_display() {
-    const auto s { window_->size() };
-    const uint32_t w = s.width / static_cast<uint32_t> (cfg_.scaling);
-    const uint32_t h = s.height / static_cast<uint32_t> (cfg_.scaling);
-
-    display_.resize(j_size<uint32_t>{
-        w / cfg_.glyph_size.width,
-        h / cfg_.glyph_size.height
+    // calculate resolution
+    const auto scaled_size { window_->size() / cfg_.scaling };
+    // calculate how many cells will fit on the screen given that resolution
+    display_.resize(j_vec2<uint32_t>{
+        scaled_size.x / cfg_.glyph_size.x,
+        scaled_size.y / cfg_.glyph_size.y
     });
 }
 

@@ -37,7 +37,7 @@ void j_env_manager::on_script_loaded(const j_script_loaded_event& e) {
             SDL_Rect display_bounds;
             SDL_GetDisplayBounds(0, &display_bounds);
 
-            window_ = std::make_unique<j_window>(j_size<uint32_t>{
+            window_ = std::make_unique<j_window>(j_vec2<uint32_t>{
                 static_cast<uint32_t>(display_bounds.w) / 2,
                 static_cast<uint32_t>(display_bounds.h) / 2
             });
@@ -85,12 +85,12 @@ void j_env_manager::update_root_config(j_script& sys_script) noexcept {
         const auto& glyph_size { gfx_cfg["glyph_size"] };
         if (glyph_size.isTable()) {
             if (glyph_size["width"].isNumber()) {
-                root_config_.glyph_size.width = glyph_size["width"];
+                root_config_.glyph_size.x = glyph_size["width"];
             } else {
                 report("Expected gfx:glyph_size:width to be a number");
             }
             if (glyph_size["height"].isNumber()) {
-                root_config_.glyph_size.height = glyph_size["height"];
+                root_config_.glyph_size.y = glyph_size["height"];
             } else {
                 report("Expected gfx:glyph_size:height to be a number");
             }

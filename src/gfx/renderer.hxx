@@ -12,8 +12,8 @@
  */
 class j_renderer {
 private:
-    j_size<uint32_t> view_port_ { 0, 0 };
-    float_t scaling_ { 1.0f };
+    j_vec2<uint32_t> view_port_;
+    uint32_t scaling_ { 1 };
     std::unique_ptr<j_text_shader> text_shader_ { nullptr };
 
     SDL_GLContext gl_context_ { nullptr };
@@ -50,7 +50,7 @@ public:
      *
      * Must be called if the user resized the game window.
      */
-    void set_viewport(j_size<uint32_t> size) noexcept;
+    void set_viewport(j_vec2<uint32_t> size) noexcept;
 
     /**
      * @brief Sets the font texture used to display text.
@@ -60,12 +60,12 @@ public:
     /**
      * @brief Sets the font's glyph size
      */
-    void set_glyph_size(j_size<uint32_t> glyph_size) noexcept;
+    void set_glyph_size(j_vec2<uint32_t> glyph_size) noexcept;
 
     /**
      * @brief Sets the render scaling
      */
-    void set_scaling(float_t scaling) noexcept;
+    void set_scaling(uint32_t scaling) noexcept;
 };
 
 #endif

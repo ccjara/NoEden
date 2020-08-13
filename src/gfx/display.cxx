@@ -15,11 +15,11 @@ void j_display::text(const std::string& t, const j_text_options& options) {
         options.boundary.right,
         options.boundary.bottom
     };
-    if (!limit.x || limit.x > dimensions_.width) {
-        limit.x = dimensions_.width;
+    if (!limit.x || limit.x > dimensions_.x) {
+        limit.x = dimensions_.x;
     }
-    if (!limit.y || limit.y > dimensions_.height) {
-        limit.y = dimensions_.height;
+    if (!limit.y || limit.y > dimensions_.y) {
+        limit.y = dimensions_.y;
     }
     if (!in_bounds(position) || limit.x < position.x || limit.y < position.y) {
         return;
@@ -145,11 +145,7 @@ void j_display::line(j_vec2<uint32_t> from, j_vec2<uint32_t> to, uint32_t glyph,
         static_cast<j_vec2<int32_t>>(from),
         static_cast<j_vec2<int32_t>>(to),
         [&](j_vec2<int32_t> pos) {
-            const auto index { to_index(j_vec2<uint32_t>{
-                static_cast<uint32_t>(pos.x),
-                static_cast<uint32_t>(pos.y)
-            }) };
-            auto& cell { cells_.at(index) };
+            auto& cell { cells_.at(to_index(pos)) };
 
             cell.glyph = glyph;
             cell.color = color;

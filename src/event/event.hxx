@@ -30,16 +30,16 @@ struct j_quit_event {
  * @brief Triggered on SDL_WINDOWEVENT_RESIZED as the user resizes the window.
  */
 struct j_resize_event {
-    j_size<uint32_t> size;
+    j_vec2<uint32_t> size;
 
-    explicit j_resize_event(j_size<uint32_t> s) : size { s } {}
+    explicit j_resize_event(j_vec2<uint32_t> s) : size { s } {}
 };
 
 /**
  * @brief Triggered on SDL_MOUSEMOTION as the user moves the mouse inside the window.
  */
 struct j_mouse_move_event {
-    j_vec2<int32_t> position { 0, 0 };
+    j_vec2<int32_t> position;
 
     explicit j_mouse_move_event(j_vec2<int32_t> p) : position { p } {}
 };

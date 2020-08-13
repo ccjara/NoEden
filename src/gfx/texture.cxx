@@ -68,6 +68,6 @@ void j_texture::unbind() noexcept {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-j_size<uint32_t> j_texture::size() const noexcept {
+j_vec2<uint32_t> j_texture::size() const noexcept {
     return size_;
 }

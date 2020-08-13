@@ -27,27 +27,6 @@ struct j_color
 };
 
 template<typename t>
-struct j_size {
-    t width { 0 };
-    t height { 0 };
-
-    j_size() = default;
-    j_size(t w, t h) : width { w }, height { h } {}
-
-    [[nodiscard]] t area() const noexcept { return width * height; }
-};
-
-template<typename t>
-bool operator==(const j_size<t>& lhs, const j_size<t>& rhs) noexcept {
-    return lhs.area() == rhs.area();
-}
-
-template<typename t>
-bool operator!=(const j_size<t>& lhs, const j_size<t>& rhs) noexcept {
-    return !(lhs == rhs);
-}
-
-template<typename t>
 struct j_vec3 {
     t x { 0 };
     t y { 0 };

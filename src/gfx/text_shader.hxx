@@ -14,8 +14,8 @@ private:
     GLint u_tex_size_; // size of the bitmap font texture
 
     j_texture tex_;
-    j_size<uint32_t> glyph_size_;
-    j_size<uint32_t> resolution_;
+    j_vec2<uint32_t> glyph_size_;
+    j_vec2<uint32_t> resolution_;
 
     void prepare() override;
 public:
@@ -24,7 +24,7 @@ public:
     /**
      * @brief Configures the shader to use the given size for each glyph.
      */
-    void use_glyph_size(j_size<uint32_t> glyph_size);
+    void use_glyph_size(j_vec2<uint32_t> glyph_size);
 
     /**
      * @brief Uses the given, loaded texture as part of the shader program
@@ -34,7 +34,7 @@ public:
     /**
      * @brief Configures the render resolution of the shader program
      */
-    void use_resolution(j_size<uint32_t> resolution);
+    void use_resolution(j_vec2<uint32_t> resolution);
 };
 
 #endif

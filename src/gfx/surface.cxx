@@ -41,13 +41,13 @@ void* j_surface::data() const noexcept {
 }
 
 uint32_t j_surface::width() const noexcept {
-    return size_.width;
+    return size_.x;
 }
 
 uint32_t j_surface::height() const noexcept {
-    return size_.height;
+    return size_.y;
 }
 
-j_size<uint32_t> j_surface::size() const noexcept {
+j_vec2<uint32_t> j_surface::size() const noexcept {
     return size_;
 }

@@ -9,7 +9,7 @@
 class j_texture {
 private:
     GLuint id_ { 0 };
-    j_size<uint32_t> size_;
+    j_vec2<uint32_t> size_;
 public:
     GLuint id() const noexcept;
 
@@ -50,7 +50,7 @@ public:
     void unbind() noexcept;
 
     bool is_loaded() const noexcept;
-    j_size<uint32_t> size() const noexcept;
+    j_vec2<uint32_t> size() const noexcept;
 };
 
 #endif

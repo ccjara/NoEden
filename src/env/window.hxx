@@ -9,13 +9,13 @@
  */
 class j_window {
 private:
-    j_size<uint32_t> size_;
+    j_vec2<uint32_t> size_;
     SDL_Window* handle_ { nullptr };
 public:
     /**
      * @brief Creates an SDL window with the given size
      */
-    explicit j_window(j_size<uint32_t> size);
+    explicit j_window(j_vec2<uint32_t> size);
 
     /**
      * @brief Frees the SDL window handle
@@ -42,10 +42,10 @@ public:
      *
      * @see j_resize_event
      */
-    void resize(j_size<uint32_t> s) noexcept;
+    void resize(j_vec2<uint32_t> s) noexcept;
 
     [[nodiscard]] SDL_Window* handle() const noexcept;
-    [[nodiscard]] j_size<uint32_t> size() const noexcept;    
+    [[nodiscard]] j_vec2<uint32_t> size() const noexcept;
 };
 
 #endif
