@@ -3,30 +3,32 @@
 
 #include "../env/window.hxx"
 #include "../env/clock.hxx"
-#include "../env/env_interface.hxx"
+#include "../env/root_config.hxx"
+#include "../event/event.hxx"
 #include "renderer.hxx"
 #include "display.hxx"
 
 /**
  * @brief Facade managing graphics.
  */
-class j_gfx_system : public j_env_event_listener {
+class j_gfx_system : public j_event_listener {
 private:
     SDL_GLContext gl_context { nullptr };
     const j_window* window_ { nullptr };
+    j_root_config cfg_;
     j_fps_provider fps_;
 
-    std::unique_ptr<j_renderer> renderer_;
-
+    j_renderer renderer_;
     j_display display_;
 
-    void on_resize_event(const j_resize_event&);
-public:
-    /**
-     * @brief Creates a GL context for the given window.
-     */
-    explicit j_gfx_system(const j_window* w);
+    void on_resize(const j_resize_event&);
+    void on_root_config_updated(const j_root_config_updated_event&);
+    void on_window_created(const j_window_created_event&);
 
+    j_texture load_text_texture(const fs::path&) const;
+
+    void adjust_display(j_size<uint32_t> size);
+public:
     /**
      * @brief Destroys the GL context.
      */
@@ -46,7 +48,7 @@ public:
      */
     void present();
 
-    virtual void attach(entt::dispatcher& dispatcher) override;
+    virtual void attach(entt::dispatcher& dispatcher) noexcept override;
 
     j_renderer& renderer() noexcept;
     j_display& display() noexcept;

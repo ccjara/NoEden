@@ -7,6 +7,8 @@
 
 class j_script_system {
 private:
+    entt::dispatcher* const dispatcher_;
+
     struct j_bound_ref {
         std::string script_id;
         luabridge::LuaRef ref;
@@ -43,6 +45,8 @@ private:
     template<typename... varg_t>
     inline void pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const noexcept;
 public:
+    j_script_system(entt::dispatcher* const dispatcher);
+
     /**
      * @brief Unloads all scripts before freeing ressources
      */
@@ -136,6 +140,8 @@ void j_script_system::preload(path_like base_path) {
             auto [iter, b] = scripts_.try_emplace(script_id, script_id, path);
 
             setup(iter->second);
+
+            dispatcher_->trigger<j_script_loaded_event>({ &iter->second, false });
         }
     }
 }
@@ -179,6 +185,8 @@ void j_script_system::reload(string_like script_id) {
     }
     unload(script_id);
     setup(it->second);
+
+    dispatcher_->trigger<j_script_loaded_event>(&it->second, true);
 }
 
 template<typename string_like>

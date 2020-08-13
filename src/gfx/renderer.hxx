@@ -13,21 +13,23 @@
 class j_renderer {
 private:
     j_size<uint32_t> view_port_ { 0, 0 };
-    j_texture tex_;
+    float_t scaling_ { 1.0f };
     std::unique_ptr<j_text_shader> text_shader_ { nullptr };
 
-    SDL_GLContext gl_context { nullptr };
+    SDL_GLContext gl_context_ { nullptr };
     GLuint vbo { 0 };
     GLuint vao { 0 };
 
     size_t last_size_ { 0 };
+
+    void reset() noexcept;
 public:
     /**
      * @brief Initializes all renderer resources
      *
-     * Loads the text texture and its managing shader used to render everything.
+     * Loads the text shader used to render everything.
      */
-    j_renderer();
+    j_renderer() = default;
 
     j_renderer(const j_renderer&) = delete;
     j_renderer(j_renderer&&) = delete;
@@ -35,6 +37,8 @@ public:
     const j_renderer& operator=(const j_renderer&) = delete;
 
     ~j_renderer() noexcept;
+
+    void set_context(SDL_GLContext context);
 
     /**
      * @brief Renders the game based on the current state of the given display.
@@ -47,6 +51,21 @@ public:
      * Must be called if the user resized the game window.
      */
     void set_viewport(j_size<uint32_t> size) noexcept;
+
+    /**
+     * @brief Sets the font texture used to display text.
+     */
+    void set_font(j_texture&& tex) noexcept;
+
+    /**
+     * @brief Sets the font's glyph size
+     */
+    void set_glyph_size(j_size<uint32_t> glyph_size) noexcept;
+
+    /**
+     * @brief Sets the render scaling
+     */
+    void set_scaling(float_t scaling) noexcept;
 };
 
 #endif

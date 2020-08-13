@@ -1,4 +1,4 @@
-#include "../env/env_interface.hxx"
+#include "../event/event.hxx"
 #include "input_interface.hxx"
 #include "mouse.hxx"
 #include "keyboard.hxx"
@@ -6,7 +6,7 @@
 /**
  * @brief Facade managing all game input
  */
-class j_input_system : public j_input_state, public j_env_event_listener {
+class j_input_system : public j_input_state, public j_event_listener {
 protected:
     j_keyboard keyboard_;
     j_mouse mouse_;
@@ -21,5 +21,5 @@ public:
     j_mouse_state& mouse() noexcept override;
     j_keyboard_state& keyboard() noexcept override;
 
-    virtual void attach(entt::dispatcher& dispatcher) override;
+    virtual void attach(entt::dispatcher& dispatcher) noexcept override;
 };

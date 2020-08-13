@@ -10,7 +10,7 @@ j_script::j_script(const std::string& id, const std::string& source) :
     source_(source) {
 }
 
-j_script::~j_script() {
+j_script::~j_script() noexcept {
     if (state_) {
         lua_close(state_);
     }

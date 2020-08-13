@@ -1,33 +1,8 @@
 #include "renderer.hxx"
-
-j_renderer::j_renderer() {
-    tex_.load("font.bmp");
-
-    text_shader_ = std::make_unique<j_text_shader>(&tex_);
-    text_shader_->use_glyph_size({ 8, 14 });
-
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glBindVertexArray(vao);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-    // glyph
-    glVertexAttribIPointer(0, 1, GL_INT, sizeof(j_display::cell_type), nullptr);
-    glEnableVertexAttribArray(0);
-
-    // color
-    glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(j_display::cell_type), reinterpret_cast<void*> (sizeof(j_display::cell_type::glyph)));
-    glEnableVertexAttribArray(1);
-}
+#include "unistd.h"
 
 j_renderer::~j_renderer() noexcept {
-    if (vao) {
-        glDeleteBuffers(1, &vao);
-    }
-    if (vbo) {
-        glDeleteBuffers(1, &vbo);
-    }
+    reset();
 }
 
 void j_renderer::render(const j_display& display) {
@@ -58,5 +33,56 @@ void j_renderer::render(const j_display& display) {
 
 void j_renderer::set_viewport(j_size<uint32_t> size) noexcept {
     view_port_ = size;
-    text_shader_->use_view_port(view_port_);
+    text_shader_->use_resolution(j_size<uint32_t>{
+        view_port_.width / static_cast<uint32_t>(scaling_),
+        view_port_.height / static_cast<uint32_t>(scaling_),
+    });
+}
+
+void j_renderer::set_font(j_texture&& tex) noexcept {
+    text_shader_->use_texture(std::move(tex));
+}
+
+void j_renderer::set_glyph_size(j_size<uint32_t> glyph_size) noexcept {
+    text_shader_->use_glyph_size(glyph_size);
+}
+
+void j_renderer::set_scaling(float_t scaling) noexcept {
+    scaling_ = scaling;
+    text_shader_->use_resolution(j_size<uint32_t>{
+        view_port_.width / static_cast<uint32_t>(scaling_),
+        view_port_.height / static_cast<uint32_t>(scaling_),
+    });
+}
+
+void j_renderer::reset() noexcept {
+    gl_context_ = nullptr; // not owned by this class
+    if (vao) {
+        glDeleteBuffers(1, &vao);
+    }
+    if (vbo) {
+        glDeleteBuffers(1, &vbo);
+    }
+}
+
+void j_renderer::set_context(SDL_GLContext context) {
+    reset();
+
+    gl_context_ = context;
+
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+    glBindVertexArray(vao);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+    // glyph
+    glVertexAttribIPointer(0, 1, GL_INT, sizeof(j_display::cell_type), nullptr);
+    glEnableVertexAttribArray(0);
+
+    // color
+    glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(j_display::cell_type), reinterpret_cast<void*> (sizeof(j_display::cell_type::glyph)));
+    glEnableVertexAttribArray(1);
+
+    text_shader_ = std::make_unique<j_text_shader>();
 }

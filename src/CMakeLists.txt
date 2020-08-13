@@ -16,11 +16,13 @@ add_executable(
     "math/rect.hxx"
     "math/vec2.hxx"
 
-    "env/env_event_system.cxx"
-    "env/env_interface.hxx"
+    "env/env_event_dispatcher.cxx"
     "env/env_manager.cxx"
-    "env/root_config.cxx"
+    "env/root_config.hxx"
     "env/window.cxx"
+
+    "event/event.hxx"
+    "event/event_listener.hxx"
 
     "game_event.hxx"
 

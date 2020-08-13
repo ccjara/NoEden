@@ -1,5 +1,10 @@
 #include "script_system.hxx"
 
+j_script_system::j_script_system(entt::dispatcher* const dispatcher) :
+    dispatcher_(dispatcher) {
+    assert(dispatcher_);
+}
+
 j_script_system::~j_script_system() {
     // need to clear all refs ahead of the scripts, otherwise the refs are
     // TODO: bind the refs to the j_script instances somehow so the script 

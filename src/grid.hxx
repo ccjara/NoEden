@@ -22,9 +22,7 @@ public:
     }
 
     /**
-     * @brief Resizes the grid to the given dimensions
-     *
-     * As of now this also resets the entire grid
+     * @brief Resets and resizes the grid to the given cell dimensions
      */
     template<typename sz>
     constexpr void resize(const sz& dimensions) {
@@ -68,7 +66,7 @@ public:
      * If the position is out of bounds, a null cell is returned.
      */
     template<typename pos>
-    [[nodiscard]] constexpr inline cell& at(const pos& position) const noexcept {
+    [[nodiscard]] constexpr inline const cell& at(const pos& position) const noexcept {
         if (!in_bounds(position)) {
             return cell::null;
         }

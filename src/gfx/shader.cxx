@@ -81,9 +81,8 @@ void j_shader::unload() {
 }
 
 void j_shader::use() noexcept {
-    prepare();
-
     glUseProgram(program_);
+    prepare();
 }
 
 void j_shader::prepare() {

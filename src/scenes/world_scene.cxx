@@ -3,7 +3,7 @@
 j_world_scene::j_world_scene() : j_base_scene(j_scene_type::world) {
     player_ = registry_.create();
 
-    registry_.assign<jc_position>(player_, 10, 10, 0);
+    registry_.assign<jc_position>(player_, 0, 1, 0);
     registry_.assign<jc_renderable>(player_, static_cast<unsigned char>('@'));
     registry_.assign<jc_attribute_bearing>(player_);
     auto& inventory { registry_.assign<jc_item_container>(player_) };

@@ -38,6 +38,16 @@ struct j_size {
 };
 
 template<typename t>
+bool operator==(const j_size<t>& lhs, const j_size<t>& rhs) noexcept {
+    return lhs.area() == rhs.area();
+}
+
+template<typename t>
+bool operator!=(const j_size<t>& lhs, const j_size<t>& rhs) noexcept {
+    return !(lhs == rhs);
+}
+
+template<typename t>
 struct j_vec3 {
     t x { 0 };
     t y { 0 };

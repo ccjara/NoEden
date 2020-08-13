@@ -8,14 +8,20 @@
  */
 class j_texture {
 private:
-    GLuint id_;
-
+    GLuint id_ { 0 };
     j_size<uint32_t> size_;
 public:
     GLuint id() const noexcept;
 
+    j_texture() = default;
     ~j_texture();
-    
+
+    j_texture(j_texture&&) noexcept;
+    j_texture& operator=(j_texture&&) noexcept;
+
+    j_texture(const j_texture&) = delete;
+    j_texture& operator=(const j_texture&) = delete;
+
     /**
      * @briefs Load a texture from the given path
      *

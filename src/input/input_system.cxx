@@ -28,7 +28,7 @@ void j_input_system::on_key_up(const j_key_up_event& e) {
     keyboard_.key_up(e.key);
 }
 
-void j_input_system::attach(entt::dispatcher& dispatcher) {
+void j_input_system::attach(entt::dispatcher& dispatcher) noexcept {
     dispatcher.sink<j_mouse_move_event>().connect<&j_input_system::on_mouse_move>(this);
     dispatcher.sink<j_mouse_down_event>().connect<&j_input_system::on_mouse_down>(this);
     dispatcher.sink<j_mouse_up_event>().connect<&j_input_system::on_mouse_up>(this);
