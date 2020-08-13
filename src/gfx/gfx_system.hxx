@@ -27,7 +27,7 @@ private:
 
     j_texture load_text_texture(const fs::path&) const;
 
-    void adjust_display(j_size<uint32_t> size);
+    void adjust_display();
 public:
     /**
      * @brief Destroys the GL context.

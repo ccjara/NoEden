@@ -26,12 +26,12 @@ void j_gfx_system::attach(entt::dispatcher& dispatcher) noexcept {
 
 void j_gfx_system::on_resize(const j_resize_event& e) {
     renderer_.set_viewport(e.size);
-    adjust_display(e.size);
+    adjust_display();
 }
 
 void j_gfx_system::on_window_created(const j_window_created_event& e) {
-    window_ = e.window();
-    assert(e.window());
+    window_ = e.window;
+    assert(window_);
 
     if (gl_context != nullptr) {
         SDL_GL_DeleteContext(gl_context);
@@ -40,7 +40,7 @@ void j_gfx_system::on_window_created(const j_window_created_event& e) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-    gl_context = SDL_GL_CreateContext(*e.window());
+    gl_context = SDL_GL_CreateContext(*window_);
 
     if (gl_context == nullptr) {
         LOG(ERROR) << "Could not initialize opengl";
@@ -58,12 +58,12 @@ void j_gfx_system::on_window_created(const j_window_created_event& e) {
 }
 
 void j_gfx_system::on_root_config_updated(const j_root_config_updated_event& e) {
-    cfg_ = e.next();
+    cfg_ = e.next;
     renderer_.set_font(load_text_texture(cfg_.font_texture_path));
     renderer_.set_glyph_size(cfg_.glyph_size);
     renderer_.set_scaling(cfg_.scaling);
 
-    adjust_display(window_->size());
+    adjust_display();
 }
 
 j_texture j_gfx_system::load_text_texture(const fs::path& path) const {
@@ -86,9 +86,10 @@ j_display& j_gfx_system::display() noexcept {
     return display_;
 }
 
-void j_gfx_system::adjust_display(j_size<uint32_t> size) {
-    const uint32_t w = size.width / static_cast<uint32_t> (cfg_.scaling);
-    const uint32_t h = size.height / static_cast<uint32_t> (cfg_.scaling);
+void j_gfx_system::adjust_display() {
+    const auto s { window_->size() };
+    const uint32_t w = s.width / static_cast<uint32_t> (cfg_.scaling);
+    const uint32_t h = s.height / static_cast<uint32_t> (cfg_.scaling);
 
     display_.resize(j_size<uint32_t>{
         w / cfg_.glyph_size.width,

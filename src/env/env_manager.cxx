@@ -32,10 +32,8 @@ void j_env_manager::on_resize(const j_resize_event& e) {
 }
 
 void j_env_manager::on_script_loaded(const j_script_loaded_event& e) {
-    j_script* const s { e.script() };
-
-    if (s->id() == "system") {
-        if (!e.reloaded()) {
+    if (e.script->id() == "system") {
+        if (!e.reloaded) {
             SDL_Rect display_bounds;
             SDL_GetDisplayBounds(0, &display_bounds);
 
@@ -51,7 +49,7 @@ void j_env_manager::on_script_loaded(const j_script_loaded_event& e) {
 
             dispatcher_->trigger<j_window_created_event>(window_.get());
         }
-        update_root_config(*s);
+        update_root_config(*e.script);
     }
 }
 
