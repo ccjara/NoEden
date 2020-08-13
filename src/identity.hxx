@@ -1,5 +1,5 @@
-#ifndef JARALYN_COUNTABLE_HXX
-#define JARALYN_COUNTABLE_HXX
+#ifndef JARALYN_IDENTITY_HXX
+#define JARALYN_IDENTITY_HXX
 
 using j_id = uint32_t;
 

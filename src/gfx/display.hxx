@@ -68,6 +68,13 @@ struct j_rect_options {
  * @see j_display
  */
 struct j_display_cell {
+private:
+    friend class j_grid<j_display_cell>;
+
+    /**
+     * @brief Fallback (null) cell
+     */
+    static const j_display_cell null;
 public:
     /**
      * @brief code point (arbitrary code page) to render from this cell
@@ -78,11 +85,6 @@ public:
      * @brief Color to use when rendering this cell
      */
     j_color color;
-
-    /**
-     * @brief Fallback (null) cell
-     */
-    static const j_display_cell null;
 };
 
 /**

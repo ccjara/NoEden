@@ -16,6 +16,8 @@ public:
 
     j_grid() = default;
 
+    static_assert(std::is_const_v<decltype(cell::null)>);
+
     template<typename sz>
     constexpr explicit j_grid(const sz& size) {
         resize(size);
@@ -61,9 +63,9 @@ public:
     }
 
     /**
-     * @brief Returns the cell at the given zero-starting position
+     * @brief Returns a readonly reference to the cell at the given zero-starting position
      *
-     * If the position is out of bounds, a null cell is returned.
+     * If the position is out of bounds, the null-cell reference is returned.
      */
     template<typename pos>
     [[nodiscard]] constexpr inline const cell& at(const pos& position) const noexcept {
