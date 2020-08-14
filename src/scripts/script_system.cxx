@@ -19,31 +19,31 @@ void j_script_system::attach(entt::dispatcher& dispatcher) noexcept {
 }
 
 void j_script_system::on_inventory_item_added(const j_inventory_item_added_event& e) {
-    const auto it { listeners_.find(j_game_event_type::inventory_item_added) };
+    const auto it { listeners_.find(j_public_event_type::inventory_item_added) };
     if (it == listeners_.end()) {
         return;
     }
     for (auto& bound_ref : it->second) {
-        pcall_into(bound_ref.ref, e.item()->label.c_str());
+        pcall_into(bound_ref.ref, e.item->label.c_str());
     }
 }
 
 void j_script_system::on_scene_render(const j_scene_render_event& e) {
-    const auto it { scene_render_listeners_.find(e.scene_type()) };
+    const auto it { scene_render_listeners_.find(e.scene_type) };
     if (it == scene_render_listeners_.end()) {
         return;
     }
-    j_display_proxy display(e.display());
+    j_display_proxy display(e.display);
     for (auto& bound_ref : it->second) {
         pcall_into(bound_ref.ref, display);
     }
 }
 
 bool j_script_system::on_register_callback(const char* event_type, luabridge::LuaRef ref) {
-    LOG(INFO) << "Lua callback requested on game event " << event_type;
+    LOG(INFO) << "Lua callback requested on event " << event_type;
     const auto entry { event_type_by_string.find(event_type) };
     if (entry == event_type_by_string.end()) {
-        LOG(ERROR) << "Cannot register game event callback '" << event_type << "': unknown event type";
+        LOG(ERROR) << "Cannot register event callback '" << event_type << "': unknown event type";
         return false;
     }
     auto state = ref.state();

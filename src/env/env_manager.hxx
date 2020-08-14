@@ -6,6 +6,7 @@
 #include "root_config.hxx"
 #include "window.hxx"
 #include "../event/event.hxx"
+#include "../event/event_listener.hxx"
 #include "../scripts/script_system.hxx"
 
 /**

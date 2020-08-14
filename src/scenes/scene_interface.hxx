@@ -2,21 +2,10 @@
 #define JARALYN_SCENE_INTERFACE_HXX
 
 #include "../gfx/gfx_system.hxx"
+#include "../gfx/display.hxx"
 #include "../input/input_interface.hxx"
 
-enum class j_scene_type {
-	null,
-	world,
-	status,
-	inventory
-};
-
-static const std::unordered_map<std::string_view, j_scene_type> scene_type_by_string = {
-    { "inventory", j_scene_type::inventory },
-};
-
 class j_scene;
-
 /**
  * @brief Partial (writing) interface of the scene stack manager
  */

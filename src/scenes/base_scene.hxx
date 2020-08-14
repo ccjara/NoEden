@@ -10,7 +10,7 @@
  */
 class j_base_scene : public j_scene {
 protected:
-	j_scene_type type_;
+	const j_scene_type type_;
 	entt::dispatcher* game_events_ { nullptr };
 	j_scene_writer* scene_writer_ { nullptr };
 

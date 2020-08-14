@@ -13,19 +13,18 @@ void j_engine::run() {
     script_system_ = std::make_unique<j_script_system>(&dispatcher);
     gfx_system_ = std::make_unique<j_gfx_system>();
     input_system_ = std::make_unique<j_input_system>();
-    composer_ = std::make_unique<j_scene_composer>();
+    composer_ = std::make_unique<j_scene_composer>(&dispatcher);
 
     // wire event listeners
     env_->attach(dispatcher);
     gfx_system_->attach(dispatcher);
     input_system_->attach(dispatcher);
+    script_system_->attach(dispatcher);
     // testing: script reloading
     dispatcher.sink<j_key_down_event>().connect<&j_engine::on_key_down>(this);
 
     env_->start();
 
-    // TODO: unify events
-    script_system_->attach(composer_->game_events());
     // testing: directly load world for now
     composer_->load(j_scene_type::world);
 

@@ -5,6 +5,7 @@
 #include "../env/clock.hxx"
 #include "../env/root_config.hxx"
 #include "../event/event.hxx"
+#include "../event/event_listener.hxx"
 #include "renderer.hxx"
 #include "display.hxx"
 

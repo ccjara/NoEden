@@ -9,8 +9,6 @@
  */
 class j_status_scene : public j_base_scene {
 protected:
-    const j_scene_type type_ { j_scene_type::status };
-
     entt::entity* entity_ { nullptr };
     entt::registry* registry_ { nullptr };
 

@@ -2,20 +2,11 @@
 #define JARALYN_EVENT_HXX
 
 #include "../env/root_config.hxx"
-#include "../env/window.hxx"
-#include "../scripts/script.hxx"
+#include "../components/inventory.hxx"
 
-class j_event_listener {
-public:
-    /**
-     * @brief Register an instance to the event dispatcher
-     *
-     * You can subscribe to multiple events.
-     */
-    virtual void attach(entt::dispatcher& dispatcher) noexcept = 0;
-
-    virtual ~j_event_listener() = default;
-};
+class j_display;
+class j_script;
+class j_window;
 
 /**
  * @brief Triggered on SDL_QUIT when closing the window
@@ -85,6 +76,7 @@ struct j_key_up_event {
  */
 struct j_window_created_event {
     j_window* window { nullptr };
+
     explicit constexpr j_window_created_event(j_window* const window) : window { window } {
         assert(this->window);
     }
@@ -112,6 +104,36 @@ struct j_root_config_updated_event {
     j_root_config_updated_event(j_root_config cfg_prev, j_root_config cfg_next) :
         prev(std::move(cfg_prev)),
         next(std::move(cfg_next)) {
+    }
+};
+
+/**
+ * @brief Triggered when a scene renders
+ *
+ * May get triggered multiple times during one render tick if the scene is not
+ * opaque, i.e not render-blocking.
+ *
+ * Does not trigger for the null scene.
+ */
+struct j_scene_render_event {
+    j_display* display { nullptr };
+    j_scene_type scene_type { j_scene_type::null };
+
+    constexpr j_scene_render_event(j_scene_type scene_type, j_display* const display) :
+        display { display }, scene_type { scene_type } {
+        assert(this->display);
+    }
+};
+
+/**
+ * @brief Triggered when an item gets added to any inventory
+ */
+struct j_inventory_item_added_event {
+    j_item* item { nullptr };
+
+    constexpr j_inventory_item_added_event(j_item* const item) :
+        item { item } {
+        assert(item);
     }
 };
 

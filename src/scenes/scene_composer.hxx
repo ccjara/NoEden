@@ -11,13 +11,13 @@
  */
 class j_scene_composer : public j_scene_writer {
 private:
-    entt::dispatcher game_events_;
+    entt::dispatcher* const dispatcher_;
 
     std::vector<std::unique_ptr<j_base_scene>> scenes_;
 
     bool stack_update_ { false };
 public:
-    j_scene_composer();
+    explicit j_scene_composer(entt::dispatcher* const dispatcher);
     j_scene& active();
 
     j_scene* load(j_scene_type type) override;
@@ -25,8 +25,6 @@ public:
 
     void render(j_display& display);
     void update(j_input_state& input);
-
-    [[nodiscard]] entt::dispatcher& game_events() noexcept;
 };
 
 #endif

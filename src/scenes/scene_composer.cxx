@@ -1,6 +1,8 @@
 #include "scene_composer.hxx"
 
-j_scene_composer::j_scene_composer() {
+j_scene_composer::j_scene_composer(entt::dispatcher* const dispatcher) :
+    dispatcher_ { dispatcher } {
+    assert(dispatcher_);
     scenes_.emplace_back(new j_null_scene());
 }
 
@@ -25,7 +27,7 @@ j_scene* j_scene_composer::load(j_scene_type type) {
         LOG(ERROR) << "Unknown scene type " << static_cast<int32_t>(type);
         throw;
     }
-    scene_ptr->attach(this, &game_events_);
+    scene_ptr->attach(this, dispatcher_);
 
     auto raw_ptr { scene_ptr.get() };
 
@@ -54,12 +56,15 @@ void j_scene_composer::unload(j_id id) {
 }
 
 void j_scene_composer::render(j_display& display) {
-    for (auto it { scenes_.rbegin() }; it != scenes_.rend(); it++) {
+    for (auto it { scenes_.rbegin() }; it != scenes_.rend(); ++it) {
         auto& scene { **it };
+        if (scene.type() == j_scene_type::null) {
+            continue;
+        }
 
         scene.render(display);
 
-        game_events_.trigger<j_scene_render_event>(scene.type(), &display);
+        dispatcher_->trigger<j_scene_render_event>(scene.type(), &display);
 
         if (stack_update_ || scene.opaque()) {
             return;
@@ -70,7 +75,7 @@ void j_scene_composer::render(j_display& display) {
 void j_scene_composer::update(j_input_state& input) {
     stack_update_ = false;
 
-    for (auto it { scenes_.rbegin() }; it != scenes_.rend(); it++) {
+    for (auto it { scenes_.rbegin() }; it != scenes_.rend(); ++it) {
         auto& scene { **it };
 
         scene.update(input);
@@ -79,8 +84,4 @@ void j_scene_composer::update(j_input_state& input) {
             return;
         }
     }
-}
-
-entt::dispatcher& j_scene_composer::game_events() noexcept {
-    return game_events_;
 }

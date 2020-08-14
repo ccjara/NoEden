@@ -11,8 +11,6 @@
  */
 class j_world_scene : public j_base_scene {
 protected:
-    const j_scene_type type_ { j_scene_type::world };
-
     entt::entity player_;
 public:
     j_world_scene();

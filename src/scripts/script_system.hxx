@@ -2,7 +2,8 @@
 #define JARALYN_SCRIPT_SYSTEM_HXX
 
 #include "script.hxx"
-#include "../game_event.hxx"
+#include "../event/event.hxx"
+#include "../event/event_listener.hxx"
 #include "display_proxy.hxx"
 
 class j_script_system : public j_event_listener {
@@ -19,7 +20,7 @@ private:
         }
     };
 
-    std::unordered_map<j_game_event_type, std::vector<j_bound_ref>> listeners_;
+    std::unordered_map<j_public_event_type, std::vector<j_bound_ref>> listeners_;
     std::unordered_map<j_scene_type, std::vector<j_bound_ref>> scene_render_listeners_;
     std::unordered_map<std::string, j_script> scripts_;
 
@@ -115,9 +116,6 @@ public:
     template<typename string_like>
     j_script& require(string_like script_id);
 
-    /**
-     * @brief Attaches the script environment to game events
-     */
     void attach(entt::dispatcher& dispatcher) noexcept override;
 };
 
