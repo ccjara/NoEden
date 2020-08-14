@@ -5,13 +5,18 @@
 #include "../game_event.hxx"
 #include "display_proxy.hxx"
 
-class j_script_system {
+class j_script_system : public j_event_listener {
 private:
     entt::dispatcher* const dispatcher_;
 
     struct j_bound_ref {
         std::string script_id;
         luabridge::LuaRef ref;
+
+        j_bound_ref(const char* script_id, luabridge::LuaRef&& ref) :
+            script_id { script_id }, ref { std::move(ref) } {
+            assert(script_id);
+        }
     };
 
     std::unordered_map<j_game_event_type, std::vector<j_bound_ref>> listeners_;
@@ -28,6 +33,13 @@ private:
      * @brief Gets called when any lua function subscribes to any event
      */
     bool on_register_callback(const char* event_type, luabridge::LuaRef ref);
+
+    /**
+     * @brief Called when a scene registers a renderer for a particular scene
+     *
+     * `env:register_renderer(<scene_type_str>, callback)`
+     */
+    bool on_register_renderer(const char *scene_type, luabridge::LuaRef ref);
 
     /**
      * @brief Loads and runs the script
@@ -48,9 +60,9 @@ public:
     j_script_system(entt::dispatcher* const dispatcher);
 
     /**
-     * @brief Unloads all scripts before freeing ressources
+     * @brief Unloads all scripts before freeing resources
      */
-    ~j_script_system();
+    ~j_script_system() noexcept;
 
     /**
      * @brief Recursively preloads all scripts from the given directory path
@@ -106,7 +118,7 @@ public:
     /**
      * @brief Attaches the script environment to game events
      */
-    void attach(entt::dispatcher& dispatcher);
+    void attach(entt::dispatcher& dispatcher) noexcept override;
 };
 
 template<typename path_like>

@@ -11,6 +11,10 @@ enum class j_scene_type {
 	inventory
 };
 
+static const std::unordered_map<std::string_view, j_scene_type> scene_type_by_string = {
+    { "inventory", j_scene_type::inventory },
+};
+
 class j_scene;
 
 /**

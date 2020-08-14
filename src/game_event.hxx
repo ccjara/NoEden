@@ -6,9 +6,11 @@
 #include "scripts/script.hxx"
 #include "scenes/scene_interface.hxx"
 
+/**
+ * @see event_type_by_string
+ */
 enum class j_game_event_type {
     inventory_item_added,
-    scene_render,
 };
 
 /**
@@ -16,10 +18,11 @@ enum class j_game_event_type {
  *
  * Used when interfacing lua and C++. The string representation should
  * only be used in lua and the enum should be used in C++ at all times.
+ *
+ * Not every game event is necessarily exposed to lua.
  */
-static const std::unordered_map<std::string_view, j_game_event_type> event_type_by_string = {
+static const std::unordered_map<std::string_view, j_game_event_type> event_type_by_string {
     { "INVENTORY_ITEM_ADDED", j_game_event_type::inventory_item_added },
-    { "SCENE_RENDER", j_game_event_type::scene_render },
 };
 
 class j_inventory_item_added_event {
