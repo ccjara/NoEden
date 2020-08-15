@@ -24,8 +24,6 @@ add_executable(
     "event/event.hxx"
     "event/event_listener.hxx"
 
-    "game_event.hxx"
-
     "gfx/display.cxx"
     "gfx/fps_provider.hxx"
     "gfx/gfx_system.cxx"
@@ -59,3 +57,19 @@ target_link_libraries(jaralyn ${OPENGL_LIBRARIES})
 target_link_libraries(jaralyn GLEW::GLEW)
 
 target_precompile_headers(jaralyn PRIVATE stdafx.hxx)
+
+# copy script sources to runtime dir
+add_custom_command(
+    TARGET jaralyn POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/src/scripts/lua
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/scripts
+)
+
+# also assets
+add_custom_command(
+    TARGET jaralyn POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/assets/*
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
+)
