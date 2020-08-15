@@ -22,5 +22,8 @@ public:
     j_mouse_state& mouse() noexcept override;
     j_keyboard_state& keyboard() noexcept override;
 
+    /**
+     * @brief Attaches to env events to buffer the input
+     */
     virtual void attach(entt::dispatcher& dispatcher) noexcept override;
 };

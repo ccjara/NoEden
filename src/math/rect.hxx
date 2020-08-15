@@ -1,8 +1,6 @@
 #ifndef JARALYN_RECT_HXX
 #define JARALYN_RECT_HXX
 
-#include "../definitions.hxx"
-
 template<typename t>
 struct j_rect {
     t top { 0 };

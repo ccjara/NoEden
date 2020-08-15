@@ -2,7 +2,7 @@
 #define JARALYN_WINDOW_HXX
 
 /**
- * @brief Represents the game window by managing an SDL_Window
+ * @brief Represents the game window by owning an SDL_Window
  *
  * Ideally only one should exist at any given time, but its
  * managed resources can be moved when such a use case arises.

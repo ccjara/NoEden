@@ -49,7 +49,7 @@ public:
 class j_input_state {
 public:
     /**
-     * @brief Returns the current, readonly keyboard state
+     * @brief Returns the current keyboard state
      */
     virtual j_keyboard_state& keyboard() noexcept = 0;
 
