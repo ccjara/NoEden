@@ -10,6 +10,7 @@ j_script_system::~j_script_system() noexcept {
     // TODO: bind the refs to the j_script instances somehow so the script 
     //       can get rid of them?
     listeners_.clear();
+    scene_render_listeners_.clear();
     scripts_.clear();
 }
 
