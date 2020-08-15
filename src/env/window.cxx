@@ -17,9 +17,7 @@ j_window::j_window(j_vec2<uint32_t> s) : size_ { s } {
 }
 
 j_window::~j_window() noexcept {
-    if (handle_ != nullptr) {
-        SDL_DestroyWindow(handle_);
-    }
+    close();
 }
 
 j_window::j_window(j_window&& w) noexcept {
@@ -42,9 +40,16 @@ j_vec2<uint32_t> j_window::size() const noexcept {
 }
 
 j_window::operator SDL_Window* () const noexcept {
-    return this->handle_;
+    return handle_;
 }
 
 void j_window::resize(j_vec2<uint32_t> s) noexcept {
     size_ = s;
+}
+
+void j_window::close() noexcept {
+    if (handle_ ) {
+        SDL_DestroyWindow(handle_);
+        handle_ = nullptr;
+    }
 }

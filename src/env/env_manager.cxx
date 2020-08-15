@@ -3,6 +3,9 @@
 j_env_manager::j_env_manager(entt::dispatcher* const dispatcher) :
     dispatcher_(dispatcher) {
     assert(dispatcher_);
+    env_event_dispatcher_ = std::make_unique<j_env_event_dispatcher>(
+        dispatcher_
+    );
 }
 
 j_env_manager::~j_env_manager() noexcept {
@@ -20,6 +23,16 @@ void j_env_manager::start() {
         throw;
     }
 
+    SDL_Rect display_bounds;
+    SDL_GetDisplayBounds(0, &display_bounds);
+
+    window_ = std::make_unique<j_window>(j_vec2<uint32_t>{
+        static_cast<uint32_t>(display_bounds.w) / 2,
+        static_cast<uint32_t>(display_bounds.h) / 2
+    });
+
+    dispatcher_->trigger<j_window_created_event>(window_.get());
+
     is_running_ = true;
 }
 
@@ -33,22 +46,6 @@ void j_env_manager::on_resize(const j_resize_event& e) {
 
 void j_env_manager::on_script_loaded(const j_script_loaded_event& e) {
     if (e.script->id() == "system") {
-        if (!e.reloaded) {
-            SDL_Rect display_bounds;
-            SDL_GetDisplayBounds(0, &display_bounds);
-
-            window_ = std::make_unique<j_window>(j_vec2<uint32_t>{
-                static_cast<uint32_t>(display_bounds.w) / 2,
-                static_cast<uint32_t>(display_bounds.h) / 2
-            });
-
-            env_event_dispatcher_ = std::make_unique<j_env_event_dispatcher>(
-                window_.get(),
-                dispatcher_
-            );
-
-            dispatcher_->trigger<j_window_created_event>(window_.get());
-        }
         update_root_config(*e.script);
     }
 }
@@ -112,9 +109,7 @@ bool j_env_manager::running() const noexcept {
 }
 
 void j_env_manager::stop() noexcept {
-    if (window_) {
-        window_.reset(); // need to free the (SDL managed) window before quitting
-    }
+    window_->close();
     SDL_Quit();
     is_running_ = false;
 }

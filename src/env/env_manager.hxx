@@ -15,11 +15,19 @@
 class j_env_manager : public j_event_listener {
 private:
     j_clock clock_;
-    entt::dispatcher* dispatcher_;
+    entt::dispatcher* const dispatcher_ { nullptr };
 
     std::unique_ptr<j_window> window_ { nullptr };
     std::unique_ptr<j_env_event_dispatcher> env_event_dispatcher_ { nullptr };
 
+    /**
+     * @brief The source of truth of the system configuration
+     *
+     * Some services may claim a copy of this config which gets distributed by
+     * the dispatcher.
+     *
+     * @see j_root_config_updated_event
+     */
     j_root_config root_config_;
 
     bool is_running_ { false };
@@ -66,7 +74,8 @@ public:
     /**
      * @brief Request a stop of the environment
      *
-     * This causes the game loop to break after the current cycle.
+     * Frees owned resources and causes the game loop to break after the
+     * current cycle.
      *
      * @see running
      */

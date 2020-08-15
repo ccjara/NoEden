@@ -44,6 +44,11 @@ public:
      */
     void resize(j_vec2<uint32_t> s) noexcept;
 
+    /**
+     * @brief Destroys the underlying SDL managed window
+     */
+    void close() noexcept;
+
     [[nodiscard]] SDL_Window* handle() const noexcept;
     [[nodiscard]] j_vec2<uint32_t> size() const noexcept;
 };

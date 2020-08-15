@@ -1,9 +1,7 @@
 #include "env_event_dispatcher.hxx"
 
-j_env_event_dispatcher::j_env_event_dispatcher(j_window* const window, entt::dispatcher* const dispatcher) :
-    window_(window),
+j_env_event_dispatcher::j_env_event_dispatcher(entt::dispatcher* const dispatcher) :
     dispatcher_(dispatcher) {
-    assert(window_);
     assert(dispatcher_);
 }
 
