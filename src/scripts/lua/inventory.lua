@@ -1,5 +1,5 @@
 function on_render_inventory(display)
-    display:text("Inventory", 0, 20, 1, 0)
+    display:text("Inventory", 0, 0, 0x00ff00ff)
 end
 
 function on_load(env)
