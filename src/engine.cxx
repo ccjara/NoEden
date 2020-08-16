@@ -1,11 +1,5 @@
 #include "engine.hxx"
 
-void j_engine::on_key_down(const j_key_down_event& e) {
-    if (e.key == SDLK_F5) {
-        script_system_->reload("system");
-    }
-}
-
 void j_engine::run() {
     entt::dispatcher dispatcher;
 
@@ -20,15 +14,13 @@ void j_engine::run() {
     gfx_system_->attach(dispatcher);
     input_system_->attach(dispatcher);
     script_system_->attach(dispatcher);
-    // testing: script reloading
-    dispatcher.sink<j_key_down_event>().connect<&j_engine::on_key_down>(this);
 
     env_->start();
 
     // testing: directly load world for now
     composer_->load(j_scene_type::world);
 
-    script_system_->preload("./scripts");
+    script_system_->preload(script_system_->default_script_path);
 
     while (true) {
         // update

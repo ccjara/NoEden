@@ -6,8 +6,12 @@ j_script_system::j_script_system(entt::dispatcher* const dispatcher) :
 }
 
 j_script_system::~j_script_system() noexcept {
+    reset();
+}
+
+void j_script_system::reset() noexcept {
     // need to clear all refs ahead of the scripts, otherwise the refs are
-    // TODO: bind the refs to the j_script instances somehow so the script 
+    // TODO: bind the refs to the j_script instances somehow so the script
     //       can get rid of them?
     listeners_.clear();
     scene_render_listeners_.clear();
@@ -17,6 +21,7 @@ j_script_system::~j_script_system() noexcept {
 void j_script_system::attach(entt::dispatcher& dispatcher) noexcept {
     dispatcher.sink<j_inventory_item_added_event>().connect<&j_script_system::on_inventory_item_added>(this);
     dispatcher.sink<j_scene_render_event>().connect<&j_script_system::on_scene_render>(this);
+    dispatcher.sink<j_key_down_event>().connect<&j_script_system::on_key_down>(this);
 }
 
 void j_script_system::on_inventory_item_added(const j_inventory_item_added_event& e) {
@@ -66,6 +71,13 @@ bool j_script_system::on_register_renderer(const char *scene_str, luabridge::Lua
 
     scene_render_listeners_[iter->second].emplace_back(script_id, std::move(ref));
     return true;
+}
+
+void j_script_system::on_key_down(const j_key_down_event& e) {
+    if (e.key == SDLK_F5) {
+        LOG(INFO) << "Scripts reloadable using [F5]";
+        preload(default_script_path);
+    }
 }
 
 void j_script_system::setup(j_script& script) {

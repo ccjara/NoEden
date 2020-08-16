@@ -6,6 +6,10 @@
 #include "../event/event_listener.hxx"
 #include "display_proxy.hxx"
 
+namespace script_ids {
+    constexpr const char* system { "system" };
+}
+
 class j_script_system : public j_event_listener {
 private:
     entt::dispatcher* const dispatcher_;
@@ -30,6 +34,9 @@ private:
     // scene events
     void on_scene_render(const j_scene_render_event& e);
 
+    // internal testing
+    void on_key_down(const j_key_down_event& e);
+
     /**
      * @brief Gets called when any lua function subscribes to any event
      */
@@ -50,6 +57,13 @@ private:
     void setup(j_script& script);
 
     /**
+     * @brief Resets the script system to its initial state
+     *
+     * In this state, no script or any reference thereof is held
+     */
+    void reset() noexcept;
+
+    /**
      * @brief Does a protected call into the given lua ref
      *
      * Checks whether the call was successful. In case of an error, the error
@@ -58,6 +72,8 @@ private:
     template<typename... varg_t>
     inline void pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const noexcept;
 public:
+    constexpr static const char* default_script_path { "scripts" };
+
     j_script_system(entt::dispatcher* const dispatcher);
 
     /**
@@ -121,6 +137,8 @@ public:
 
 template<typename path_like>
 void j_script_system::preload(path_like base_path) {
+    reset();
+
     const auto abs_path { fs::absolute(base_path) };
 
     if (!fs::is_directory(abs_path)) {

@@ -15,9 +15,6 @@ private:
     std::unique_ptr<j_input_system> input_system_ { nullptr };
     std::unique_ptr<j_script_system> script_system_ { nullptr };
     std::unique_ptr<j_scene_composer> composer_ { nullptr };
-
-    // test script reloading
-    void on_key_down(const j_key_down_event& e);
 public:
     /**
      * @brief Runs the engine together will all game systems.
