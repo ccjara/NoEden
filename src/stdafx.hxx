@@ -29,6 +29,7 @@
 #include <LuaBridge/LuaBridge.h>
 
 #define SDL_MAIN_HANDLED
+#define ELPP_NO_DEFAULT_LOG_FILE
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>

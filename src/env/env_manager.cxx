@@ -15,9 +15,6 @@ j_env_manager::~j_env_manager() noexcept {
 }
 
 void j_env_manager::start() {
-    el::Configurations conf { "logger.cfg" };
-    el::Loggers::reconfigureLogger("default", conf);
-
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         LOG(ERROR) << "SDL could not initialize! (" << SDL_GetError() << ")";
         throw;
