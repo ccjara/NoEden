@@ -52,19 +52,17 @@ struct j_color {
     unsigned char r { 255 };
     unsigned char g { 255 };
     unsigned char b { 255 };
-    unsigned char a { 255 };
 
     j_color() = default;
 
     explicit j_color(int32_t value) :
-        r { static_cast<unsigned char> ((value >> 24) & 0xFF) },
-        g { static_cast<unsigned char> ((value >> 16) & 0xFF) },
-        b { static_cast<unsigned char> ((value >> 8) & 0xFF) },
-        a { static_cast<unsigned char> (value & 0xFF) } {
+        r { static_cast<unsigned char> ((value >> 16) & 0xFF) },
+        g { static_cast<unsigned char> ((value >> 8) & 0xFF) },
+        b { static_cast<unsigned char> (value & 0xFF) } {
     }
 
-    j_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255)
-     : r(r), g(g), b(b), a(a) {
+    j_color(unsigned char r, unsigned char g, unsigned char b) :
+        r(r), g(g), b(b) {
     }
 };
 

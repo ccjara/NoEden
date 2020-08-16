@@ -75,7 +75,7 @@ void j_renderer::set_context(SDL_GLContext context) {
     glEnableVertexAttribArray(0);
 
     // color
-    glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(j_display::cell_type), reinterpret_cast<void*> (sizeof(j_display::cell_type::glyph)));
+    glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(j_display::cell_type), reinterpret_cast<void*> (sizeof(j_display::cell_type::glyph)));
     glEnableVertexAttribArray(1);
 
     text_shader_ = std::make_unique<j_text_shader>();
