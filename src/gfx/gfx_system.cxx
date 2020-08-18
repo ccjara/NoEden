@@ -68,7 +68,7 @@ void j_gfx_system::on_root_config_updated(const j_root_config_updated_event& e) 
 
 j_texture j_gfx_system::load_text_texture(const fs::path& path) const {
     j_texture tex;
-    const char* path_str = path.c_str();
+    const auto path_str { path.u8string() };
     if (!fs::exists(path)) {
         LOG(ERROR) << "Could not read text font at path " << path_str;
         throw;

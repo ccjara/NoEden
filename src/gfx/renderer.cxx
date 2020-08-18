@@ -1,5 +1,4 @@
 #include "renderer.hxx"
-#include "unistd.h"
 
 j_renderer::~j_renderer() noexcept {
     reset();
