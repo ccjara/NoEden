@@ -72,7 +72,13 @@ private:
     template<typename... varg_t>
     inline void pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const noexcept;
 public:
-    constexpr static const char* default_script_path { "scripts" };
+    constexpr static const char* default_script_path {
+#ifdef NDEBUG
+        "scripts"
+#else
+        "../src/scripts/lua"
+#endif
+    };
 
     j_script_system(entt::dispatcher* const dispatcher);
 
