@@ -6,6 +6,7 @@ add_executable(
     "components/attribute_bearing.cxx"
     "components/components.hxx"
     "components/inventory.cxx"
+    "components/item.hxx"
 
     "engine.cxx"
     "grid.hxx"

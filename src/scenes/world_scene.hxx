@@ -15,6 +15,7 @@ protected:
 public:
     j_world_scene();
 
+    void on_create() override;
     void update(j_input_state& input) override;
     void render(j_display& display) override;
 };

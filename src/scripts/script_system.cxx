@@ -19,12 +19,12 @@ void j_script_system::reset() noexcept {
 }
 
 void j_script_system::attach(entt::dispatcher& dispatcher) noexcept {
-    dispatcher.sink<j_inventory_item_added_event>().connect<&j_script_system::on_inventory_item_added>(this);
+    dispatcher.sink<j_item_stored_event>().connect<&j_script_system::on_item_stored>(this);
     dispatcher.sink<j_scene_render_event>().connect<&j_script_system::on_scene_render>(this);
     dispatcher.sink<j_key_down_event>().connect<&j_script_system::on_key_down>(this);
 }
 
-void j_script_system::on_inventory_item_added(const j_inventory_item_added_event& e) {
+void j_script_system::on_item_stored(const j_item_stored_event& e) {
     const auto it { listeners_.find(j_public_event_type::inventory_item_added) };
     if (it == listeners_.end()) {
         return;

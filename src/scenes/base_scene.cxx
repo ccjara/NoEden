@@ -10,6 +10,9 @@ void j_base_scene::attach(
     game_events_ = game_events;
 }
 
+void j_base_scene::on_create() {
+}
+
 j_scene_type j_base_scene::type() const noexcept {
     return type_;
 }

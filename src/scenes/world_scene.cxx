@@ -1,18 +1,19 @@
 #include "world_scene.hxx"
 
 j_world_scene::j_world_scene() : j_base_scene(j_scene_type::world) {
-    player_ = registry_.create();
+}
 
+void j_world_scene::on_create() {
+    player_ = registry_.create();
     registry_.assign<jc_position>(player_, 0, 1, 0);
+    registry_.assign<jc_controllable>(player_);
     registry_.assign<jc_renderable>(player_, static_cast<unsigned char>('@'));
     registry_.assign<jc_attribute_bearing>(player_);
-    auto& inventory { registry_.assign<jc_item_container>(player_) };
 
-    j_item axe;
-    axe.label = "Axe";
-    axe.durability = 100;
-    axe.quality = j_item_quality::marvellous;
-    inventory.put(std::move(axe));
+    auto& inventory { registry_.assign<jc_item_container>(player_, game_events_) };
+    j_item sword;
+    sword.label = "Sword";
+    inventory.put(std::move(sword));
 }
 
 void j_world_scene::update(j_input_state& input) {

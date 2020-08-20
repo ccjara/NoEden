@@ -29,7 +29,7 @@ private:
     std::unordered_map<std::string, j_script> scripts_;
 
     // item events
-    void on_inventory_item_added(const j_inventory_item_added_event& e);
+    void on_item_stored(const j_item_stored_event& e);
 
     // scene events
     void on_scene_render(const j_scene_render_event& e);

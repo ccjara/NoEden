@@ -21,12 +21,7 @@ void j_inventory_scene::update(j_input_state& input) {
         auto& inv { registry_->get<jc_item_container>(entity_) };
 
         j_item item;
-
-        item.label = "Dimensional Slicer";
-        item.quality = j_item_quality::common;
-
-        game_events_->trigger<j_inventory_item_added_event>(&item);
-
+        item.label = "Skeleton Key";
         inv.put(std::move(item));
     }
 }

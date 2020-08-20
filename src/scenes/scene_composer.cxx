@@ -29,6 +29,9 @@ j_scene* j_scene_composer::load(j_scene_type type) {
     }
     scene_ptr->attach(this, dispatcher_);
 
+    // allow the scene to initialize itself before broadcasting its creation
+    scene_ptr->on_create();
+
     auto raw_ptr { scene_ptr.get() };
 
     dispatcher_->trigger<j_scene_created_event>(raw_ptr);

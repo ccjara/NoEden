@@ -27,6 +27,8 @@ public:
 
 	[[nodiscard]] j_scene_type type() const noexcept;
 
+	void on_create() override;
+
 	bool opaque() const noexcept override;
 
 	bool blocking() const noexcept override;

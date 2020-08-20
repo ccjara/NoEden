@@ -27,6 +27,17 @@ public:
 class j_scene : public j_identity<j_scene> {
 public:
 	/**
+	 * @brief Called as soon as the scene composer creates the scene
+	 *
+	 * This method is called before {@see j_scene_created_event} is triggered,
+	 * allowing the scene to properly initialize itself before broadcasting
+	 * its creation.
+	 *
+	 * All dependencies of the scene are expected to be initialized at this point.
+	 */
+	virtual void on_create() = 0;
+
+	/**
 	 * @brief Called during the render phase of the game loop
 	 */
 	virtual void render(j_display& display) = 0;

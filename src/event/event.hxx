@@ -2,7 +2,7 @@
 #define JARALYN_EVENT_HXX
 
 #include "../env/root_config.hxx"
-#include "../components/inventory.hxx"
+#include "../components/item.hxx"
 
 class j_display;
 class j_script;
@@ -140,10 +140,10 @@ struct j_scene_render_event {
 /**
  * @brief Triggered when an item gets added to any inventory
  */
-struct j_inventory_item_added_event {
+struct j_item_stored_event {
     j_item* item { nullptr };
 
-    constexpr j_inventory_item_added_event(j_item* const item) :
+    constexpr j_item_stored_event(j_item* const item) :
         item { item } {
         assert(item);
     }
