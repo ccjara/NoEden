@@ -1,7 +1,7 @@
 #ifndef JARALYN_KEYBOARD_HXX
 #define JARALYN_KEYBOARD_HXX
 
-#include "input_interface.hxx"
+#include "keyboard_state.hxx"
 
 class j_keyboard : public j_keyboard_state {
 private:

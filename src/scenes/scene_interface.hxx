@@ -1,9 +1,8 @@
 #ifndef JARALYN_SCENE_INTERFACE_HXX
 #define JARALYN_SCENE_INTERFACE_HXX
 
-#include "../gfx/gfx_system.hxx"
 #include "../gfx/display.hxx"
-#include "../input/input_interface.hxx"
+#include "../input/input_state.hxx"
 
 class j_scene;
 /**

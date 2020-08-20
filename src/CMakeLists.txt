@@ -33,10 +33,12 @@ add_executable(
     "gfx/text_shader.cxx"
     "gfx/texture.cxx"
 
-    "input/input_interface.hxx"
+    "input/input_state.hxx"
     "input/input_system.cxx"
     "input/keyboard.cxx"
+    "input/keyboard_state.hxx"
     "input/mouse.cxx"
+    "input/mouse_state.hxx"
 
     "scenes/base_scene.cxx"
     "scenes/inventory_scene.cxx"

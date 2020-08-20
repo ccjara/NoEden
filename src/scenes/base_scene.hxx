@@ -2,7 +2,6 @@
 #define JARALYN_SCENE_HXX
 
 #include "../gfx/gfx_system.hxx"
-#include "../input/input_interface.hxx"
 #include "scene_interface.hxx"
 
 /**

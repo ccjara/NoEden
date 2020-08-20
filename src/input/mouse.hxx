@@ -1,7 +1,7 @@
 #ifndef JARALYN_MOUSE_HXX
 #define JARALYN_MOUSE_HXX
 
-#include "input_interface.hxx"
+#include "input_state.hxx"
 
 class j_mouse : public j_mouse_state {
 private:
