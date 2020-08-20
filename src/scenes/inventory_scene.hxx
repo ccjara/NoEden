@@ -9,12 +9,12 @@
  */
 class j_inventory_scene : public j_base_scene {
 protected:
-    entt::entity* entity_ { nullptr };
+    entt::entity entity_;
     entt::registry* registry_ { nullptr };
 public:
     j_inventory_scene();
 
-    void configure(entt::registry* registry, entt::entity* entity);
+    void configure(entt::registry* registry, entt::entity entity);
     void update(j_input_state& input) override;
     void render(j_display& display) override;
 };

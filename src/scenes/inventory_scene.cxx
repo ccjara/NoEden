@@ -5,11 +5,10 @@ j_inventory_scene::j_inventory_scene() : j_base_scene(j_scene_type::inventory) {
     is_opaque_ = true;
 }
 
-void j_inventory_scene::configure(entt::registry* registry, entt::entity* entity) {
-    assert(entity);
+void j_inventory_scene::configure(entt::registry* registry, entt::entity entity) {
     assert(registry);
-    entity_ = entity;
     registry_ = registry;
+    entity_ = entity;
 }
 
 void j_inventory_scene::update(j_input_state& input) {
@@ -19,7 +18,7 @@ void j_inventory_scene::update(j_input_state& input) {
     }
 
     if (input.keyboard().consume(SDL_KeyCode::SDLK_c)) {
-        auto& inv { registry_->get<jc_item_container>(*entity_) };
+        auto& inv { registry_->get<jc_item_container>(entity_) };
 
         j_item item;
 
@@ -30,14 +29,10 @@ void j_inventory_scene::update(j_input_state& input) {
 
         inv.put(std::move(item));
     }
-
-    if (!entity_) {
-        return;
-    }
 }
 
 void j_inventory_scene::render(j_display& display) {
-    if (!entity_) {
+    if (entity_ == entt::null) {
         display.text("There is no inventory information available", j_rect<uint32_t>(2, 0, 0, 2));
         return;
     }
@@ -48,7 +43,7 @@ void j_inventory_scene::render(j_display& display) {
 
     display.text("Inventory", opt);
 
-    auto& inv { registry_->get<jc_item_container>(*entity_) };
+    auto& inv { registry_->get<jc_item_container>(entity_) };
 
     uint32_t top = 2;
 

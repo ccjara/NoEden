@@ -7,7 +7,7 @@ j_world_scene::j_world_scene() : j_base_scene(j_scene_type::world) {
     registry_.assign<jc_renderable>(player_, static_cast<unsigned char>('@'));
     registry_.assign<jc_attribute_bearing>(player_);
     auto& inventory { registry_.assign<jc_item_container>(player_) };
-    
+
     j_item axe;
     axe.label = "Axe";
     axe.durability = 100;
@@ -27,7 +27,7 @@ void j_world_scene::update(j_input_state& input) {
     }
     if (keyboard.consume(SDL_KeyCode::SDLK_i)) {
         auto s { static_cast<j_inventory_scene*> (scene_writer_->load(j_scene_type::inventory)) };
-        s->configure(&registry_, &player_);
+        s->configure(&registry_, player_);
         return;
     }
 
