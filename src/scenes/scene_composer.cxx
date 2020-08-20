@@ -31,6 +31,8 @@ j_scene* j_scene_composer::load(j_scene_type type) {
 
     auto raw_ptr { scene_ptr.get() };
 
+    dispatcher_->trigger<j_scene_created_event>(raw_ptr);
+
     scenes_.push_back(std::move(scene_ptr));
 
     stack_update_ = true;

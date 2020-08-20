@@ -7,6 +7,7 @@
 class j_display;
 class j_script;
 class j_window;
+class j_scene;
 
 /**
  * @brief Triggered on SDL_QUIT when closing the window
@@ -92,6 +93,17 @@ struct j_script_loaded_event {
     constexpr j_script_loaded_event(j_script* const script, bool reloaded) :
         script { script }, reloaded { reloaded } {
         assert(this->script);
+    }
+};
+
+/**
+ * @brief Triggered immediately after instantiating a new scene and prior to pushing it onto the scene stack
+ */
+struct j_scene_created_event {
+    j_scene* scene { nullptr };
+
+    constexpr j_scene_created_event(j_scene* const scene) : scene(scene) {
+        assert(scene);
     }
 };
 

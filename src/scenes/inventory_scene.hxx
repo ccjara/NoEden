@@ -3,6 +3,7 @@
 
 #include "../components/components.hxx"
 #include "base_scene.hxx"
+#include "../gfx/gfx_system.hxx"
 
 /**
  * @brief Renders an inventory of any game unit
