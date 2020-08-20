@@ -1,6 +1,6 @@
 #include "world_scene.hxx"
 
-j_world_scene::j_world_scene() : j_base_scene(j_scene_type::world) {
+j_world_scene::j_world_scene() : j_scene(j_scene_type::world) {
 }
 
 void j_world_scene::on_create() {

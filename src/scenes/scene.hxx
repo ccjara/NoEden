@@ -1,31 +1,33 @@
-#ifndef JARALYN_SCENE_INTERFACE_HXX
-#define JARALYN_SCENE_INTERFACE_HXX
+#ifndef JARALYN_SCENE_HXX
+#define JARALYN_SCENE_HXX
 
+#include "scene_writer.hxx"
 #include "../gfx/display.hxx"
 #include "../input/input_state.hxx"
-
-class j_scene;
-/**
- * @brief Partial (writing) interface of the scene stack manager
- */
-class j_scene_writer {
-public:
-	/**
-	 * @brief Loads a new scene and pushes it onto the scene stack
-	 */
-	virtual j_scene* load(j_scene_type type) = 0;
-
-	/**
-	 * @brief Unloads a scene by the given id
-	 */
-	virtual void unload(uint32_t id) = 0;
-};
+#include "../identity.hxx"
 
 /**
- * @brief Stackable entity containers for the world, a menu or overlays
+ * @brief Extension point for any game scene
  */
 class j_scene : public j_identity<j_scene> {
+protected:
+	const j_scene_type type_;
+	entt::dispatcher* game_events_ { nullptr };
+	j_scene_writer* scene_writer_ { nullptr };
+
+	entt::registry registry_;
+
+	bool is_opaque_ { false };
+	bool is_blocking_ { false };
+
+
+	j_scene(j_scene_type type) : type_(type) {
+	}
 public:
+	virtual ~j_scene() = default;
+
+	j_scene_type type() const noexcept;
+
 	/**
 	 * @brief Called as soon as the scene composer creates the scene
 	 *
@@ -35,7 +37,7 @@ public:
 	 *
 	 * All dependencies of the scene are expected to be initialized at this point.
 	 */
-	virtual void on_create() = 0;
+	virtual void on_create();
 
 	/**
 	 * @brief Called during the render phase of the game loop
@@ -51,22 +53,22 @@ public:
 	 * @brief Attaches the scene to the scene writer
 	 *
 	 * The scene writer interface enables the scene to close itself (for example
-	 * based on player input) or load a new scene which will be pushed onto 
+	 * based on player input) or load a new scene which will be pushed onto
 	 * the scene stack.
 	 *
 	 * The scene writer pointer is null before this method is called.
 	 */
-	virtual void attach(j_scene_writer* const, entt::dispatcher* const game_events) = 0;
+	void attach(j_scene_writer* const, entt::dispatcher* const game_events);
 
 	/**
 	 * @brief Returns true if this scene prevents underlying scenes from rendering
 	 */
-	virtual bool opaque() const noexcept = 0;
+	bool opaque() const noexcept;
 
 	/**
 	 * @brief Returns true if this scene prevents underlying scenes from updating
 	 */
-	virtual bool blocking() const noexcept = 0;
+	bool blocking() const noexcept;
 };
 
 #endif

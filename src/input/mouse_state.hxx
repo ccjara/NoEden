@@ -1,5 +1,5 @@
-#ifndef JARALYN_MOUSE_INTERFACE_HXX
-#define JARALYN_MOUSE_INTERFACE_HXX
+#ifndef JARALYN_MOUSE_STATE_HXX
+#define JARALYN_MOUSE_STATE_HXX
 
 /**
  * @brief Represents the current mouse state

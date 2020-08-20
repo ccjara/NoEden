@@ -1,6 +1,6 @@
 #include "inventory_scene.hxx"
 
-j_inventory_scene::j_inventory_scene() : j_base_scene(j_scene_type::inventory) {
+j_inventory_scene::j_inventory_scene() : j_scene(j_scene_type::inventory) {
     is_blocking_ = true;
     is_opaque_ = true;
 }

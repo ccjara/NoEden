@@ -1,7 +1,7 @@
 #ifndef JARALYN_WORLD_SCENE_HXX
 #define JARALYN_WORLD_SCENE_HXX
 
-#include "base_scene.hxx"
+#include "scene.hxx"
 #include "../components/components.hxx"
 #include "status_scene.hxx"
 #include "inventory_scene.hxx"
@@ -9,7 +9,7 @@
 /**
  * @brief World scene (game environment)
  */
-class j_world_scene : public j_base_scene {
+class j_world_scene : public j_scene {
 protected:
     entt::entity player_;
 public:

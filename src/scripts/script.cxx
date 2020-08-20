@@ -1,4 +1,6 @@
 #include "script.hxx"
+#include "../gfx/display.hxx"
+#include "../input/input_state.hxx"
 
 j_script::j_script(const std::string& id, const fs::path& path) :
     id_(id),

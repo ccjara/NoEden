@@ -41,11 +41,11 @@ add_executable(
     "input/mouse.cxx"
     "input/mouse_state.hxx"
 
-    "scenes/base_scene.cxx"
+    "scenes/scene.cxx"
     "scenes/inventory_scene.cxx"
     "scenes/null_scene.hxx"
     "scenes/scene_composer.cxx"
-    "scenes/scene_interface.hxx"
+    "scenes/scene_writer.hxx"
     "scenes/status_scene.cxx"
     "scenes/world_scene.cxx"
 

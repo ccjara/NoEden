@@ -11,7 +11,7 @@ j_scene& j_scene_composer::active() {
 }
 
 j_scene* j_scene_composer::load(j_scene_type type) {
-    std::unique_ptr<j_base_scene> scene_ptr { nullptr };
+    std::unique_ptr<j_scene> scene_ptr { nullptr };
 
     switch (type) {
     case j_scene_type::status:

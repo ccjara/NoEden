@@ -1,7 +1,7 @@
 #ifndef JARALYN_SCENE_COMPOSER_HXX
 #define JARALYN_SCENE_COMPOSER_HXX
 
-#include "scene_interface.hxx"
+#include "scene_writer.hxx"
 #include "null_scene.hxx"
 #include "world_scene.hxx"
 #include "status_scene.hxx"
@@ -13,7 +13,7 @@ class j_scene_composer : public j_scene_writer {
 private:
     entt::dispatcher* const dispatcher_;
 
-    std::vector<std::unique_ptr<j_base_scene>> scenes_;
+    std::vector<std::unique_ptr<j_scene>> scenes_;
 
     bool stack_update_ { false };
 public:

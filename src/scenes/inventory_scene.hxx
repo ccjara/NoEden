@@ -1,14 +1,14 @@
 #ifndef JARALYN_INVENTORY_SCENE_HXX
 #define JARALYN_INVENTORY_SCENE_HXX
 
+#include "scene.hxx"
 #include "../components/components.hxx"
-#include "base_scene.hxx"
 #include "../gfx/gfx_system.hxx"
 
 /**
  * @brief Renders an inventory of any game unit
  */
-class j_inventory_scene : public j_base_scene {
+class j_inventory_scene : public j_scene {
 protected:
     entt::entity entity_;
     entt::registry* registry_ { nullptr };
