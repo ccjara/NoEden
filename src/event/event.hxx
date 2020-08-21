@@ -3,11 +3,11 @@
 
 #include "../env/root_config.hxx"
 #include "../components/item.hxx"
+#include "../scenes/scene.hxx"
 
 class j_display;
 class j_script;
 class j_window;
-class j_scene;
 
 /**
  * @brief Triggered on SDL_QUIT when closing the window
@@ -129,11 +129,12 @@ struct j_root_config_updated_event {
  */
 struct j_scene_render_event {
     j_display* display { nullptr };
-    j_scene_type scene_type { j_scene_type::null };
+    j_scene* scene { nullptr };
 
-    constexpr j_scene_render_event(j_scene_type scene_type, j_display* const display) :
-        display { display }, scene_type { scene_type } {
+    constexpr j_scene_render_event(j_scene* const scene, j_display* const display) :
+        display { display }, scene { scene } {
         assert(this->display);
+        assert(this->scene);
     }
 };
 

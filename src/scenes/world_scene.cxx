@@ -9,11 +9,7 @@ void j_world_scene::on_create() {
     registry_.assign<jc_controllable>(player_);
     registry_.assign<jc_renderable>(player_, static_cast<unsigned char>('@'));
     registry_.assign<jc_attribute_bearing>(player_);
-
-    auto& inventory { registry_.assign<jc_item_container>(player_, game_events_) };
-    j_item sword;
-    sword.label = "Sword";
-    inventory.put(std::move(sword));
+    registry_.assign<jc_item_container>(player_, game_events_);
 }
 
 void j_world_scene::update(j_input_state& input) {

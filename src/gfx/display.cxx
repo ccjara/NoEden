@@ -6,7 +6,7 @@ void j_display::put(j_display_cell&& cell, j_vec2<uint32_t> pos) {
     cells_.at(to_index(pos)) = std::move(cell);
 }
 
-void j_display::text(const std::string& t, const j_text_options& options) {
+void j_display::text(std::string_view t, const j_text_options& options) {
     j_vec2<uint32_t> position {
         options.boundary.left,
         options.boundary.top
@@ -85,7 +85,7 @@ void j_display::text(const std::string& t, const j_text_options& options) {
     }
 }
 
-void j_display::text(const std::string& t, j_rect<uint32_t> boundary, j_color color, j_text_break text_break) {
+void j_display::text(std::string_view t, j_rect<uint32_t> boundary, j_color color, j_text_break text_break) {
     return text(t, { boundary, color, text_break });
 }
 

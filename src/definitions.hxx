@@ -55,14 +55,26 @@ struct j_color {
 
     j_color() = default;
 
-    explicit j_color(int32_t value) :
+    explicit constexpr j_color(int32_t value) :
         r { static_cast<unsigned char> ((value >> 16) & 0xFF) },
         g { static_cast<unsigned char> ((value >> 8) & 0xFF) },
         b { static_cast<unsigned char> (value & 0xFF) } {
     }
 
-    j_color(unsigned char r, unsigned char g, unsigned char b) :
+    constexpr j_color(unsigned char r, unsigned char g, unsigned char b) :
         r(r), g(g), b(b) {
+    }
+
+    constexpr static j_color mono(unsigned char value) {
+        return j_color(value, value, value);
+    }
+
+    constexpr static j_color white() {
+        return j_color::mono(255);
+    }
+
+    constexpr static j_color green() {
+        return j_color(0, 255, 0);
     }
 };
 

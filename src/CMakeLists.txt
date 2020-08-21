@@ -41,6 +41,8 @@ add_executable(
     "input/mouse.cxx"
     "input/mouse_state.hxx"
 
+    "pagination.hxx"
+
     "scenes/scene.cxx"
     "scenes/inventory_scene.cxx"
     "scenes/null_scene.hxx"

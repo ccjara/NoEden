@@ -35,7 +35,7 @@ void j_script_system::on_item_stored(const j_item_stored_event& e) {
 }
 
 void j_script_system::on_scene_render(const j_scene_render_event& e) {
-    const auto it { scene_render_listeners_.find(e.scene_type) };
+    const auto it { scene_render_listeners_.find(e.scene->type()) };
     if (it == scene_render_listeners_.end()) {
         return;
     }

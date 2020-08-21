@@ -105,12 +105,12 @@ public:
     /**
      * @brief Render a text on the display
      */
-    void text(const std::string& t, const j_text_options& options);
+    void text(std::string_view t, const j_text_options& options);
 
     /**
      * @brief Render a text on the display
      */
-    void text(const std::string& t, j_rect<uint32_t> boundary, j_color color = j_color(), j_text_break text_break = j_text_break::break_word);
+    void text(std::string_view t, j_rect<uint32_t> boundary, j_color color = j_color(), j_text_break text_break = j_text_break::break_word);
 
     /**
      * @brief Render a rectangle on the display

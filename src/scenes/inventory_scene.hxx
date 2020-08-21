@@ -2,6 +2,7 @@
 #define JARALYN_INVENTORY_SCENE_HXX
 
 #include "scene.hxx"
+#include "../pagination.hxx"
 #include "../components/components.hxx"
 #include "../gfx/gfx_system.hxx"
 
@@ -12,6 +13,13 @@ class j_inventory_scene : public j_scene {
 protected:
     entt::entity entity_;
     entt::registry* registry_ { nullptr };
+
+    uint32_t selected_index_ { 0 };
+    uint32_t page_ { 0 };
+
+    bool alpha_select_ { false };
+
+    j_pagination pagination_;
 public:
     j_inventory_scene();
 
