@@ -17,8 +17,7 @@ void j_inventory_scene::update(j_input_state& input) {
     auto& inv { registry_->get<jc_item_container>(entity_) };
 
     if (k.consume(SDL_KeyCode::SDLK_c)) {
-        j_item item;
-        item.label = "Skeleton Key";
+        auto item { registry_->create() };
         inv.put(std::move(item));
     }
 
@@ -93,7 +92,7 @@ void j_inventory_scene::render(j_display& display) {
                 color = j_color::mono(200);
             }
         }
-        display.text(item.label, j_rect<uint32_t>(y, 0, 0, x + 2), color);
+        display.text("<ITEM>", j_rect<uint32_t>(y, 0, 0, x + 2), color);
 
         ++y;
     });

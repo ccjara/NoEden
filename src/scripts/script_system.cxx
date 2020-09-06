@@ -30,7 +30,7 @@ void j_script_system::on_item_stored(const j_item_stored_event& e) {
         return;
     }
     for (auto& bound_ref : it->second) {
-        pcall_into(bound_ref.ref, e.item->label.c_str());
+        pcall_into(bound_ref.ref, e.item);
     }
 }
 

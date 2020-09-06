@@ -15,8 +15,6 @@ protected:
 	entt::dispatcher* game_events_ { nullptr };
 	j_scene_writer* scene_writer_ { nullptr };
 
-	entt::registry registry_;
-
 	bool is_opaque_ { false };
 	bool is_blocking_ { false };
 

@@ -16,6 +16,8 @@ public:
 	 * @brief Unloads a scene by the given id
 	 */
 	virtual void unload(uint32_t id) = 0;
+
+	virtual entt::registry& registry() = 0;
 };
 
 #endif

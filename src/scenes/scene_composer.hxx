@@ -16,12 +16,18 @@ private:
     std::vector<std::unique_ptr<j_scene>> scenes_;
 
     bool stack_update_ { false };
+
+    entt::registry registry_;
 public:
+
     explicit j_scene_composer(entt::dispatcher* const dispatcher);
     j_scene& active();
 
     j_scene* load(j_scene_type type) override;
+
     void unload(j_id id) override;
+
+    entt::registry& registry() override { return registry_; }
 
     void render(j_display& display);
     void update(j_input_state& input);
