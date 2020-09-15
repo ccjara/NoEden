@@ -6,6 +6,8 @@ j_env_event_dispatcher::j_env_event_dispatcher(entt::dispatcher* const dispatche
 }
 
 void j_env_event_dispatcher::listen() const noexcept {
+    // TODO: separate input from window events, refactor input system
+
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0) {
         switch (e.type) {

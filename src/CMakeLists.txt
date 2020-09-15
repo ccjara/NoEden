@@ -8,15 +8,6 @@ add_executable(
     "components/inventory.cxx"
     "components/item.hxx"
 
-    "engine.cxx"
-    "grid.hxx"
-    "identity.hxx"
-    "main.cxx"
-
-    "math/bresenham.hxx"
-    "math/rect.hxx"
-    "math/vec2.hxx"
-
     "env/env_event_dispatcher.cxx"
     "env/env_manager.cxx"
     "env/root_config.hxx"
@@ -24,6 +15,15 @@ add_executable(
 
     "event/event.hxx"
     "event/event_listener.hxx"
+
+    "game.cxx"
+    "grid.hxx"
+
+    "main.cxx"
+
+    "math/bresenham.hxx"
+    "math/rect.hxx"
+    "math/vec2.hxx"
 
     "gfx/display.cxx"
     "gfx/fps_provider.hxx"
@@ -34,6 +34,8 @@ add_executable(
     "gfx/text_shader.cxx"
     "gfx/texture.cxx"
 
+    "identity.hxx"
+
     "input/input_state.hxx"
     "input/input_system.cxx"
     "input/keyboard.cxx"
@@ -41,20 +43,21 @@ add_executable(
     "input/mouse.cxx"
     "input/mouse_state.hxx"
 
+    "player/player_system.cxx"
     "pagination.hxx"
-
-    "scenes/scene.cxx"
-    "scenes/inventory_scene.cxx"
-    "scenes/null_scene.hxx"
-    "scenes/scene_composer.cxx"
-    "scenes/scene_writer.hxx"
-    "scenes/status_scene.cxx"
-    "scenes/world_scene.cxx"
 
     "scripts/display_proxy.hxx"
     "scripts/script.cxx"
     "scripts/script_system.cxx"
-)
+
+    "states/state.hxx"
+    "states/state_stack.cxx"
+    "states/world_state.cxx"
+
+    "system.hxx"
+    "system_interface.cxx"
+    "systems.cxx"
+ )
 
 target_link_libraries(jaralyn ${LUA_LIBRARIES})
 target_link_libraries(jaralyn SDL2::SDL2)

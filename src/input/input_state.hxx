@@ -9,6 +9,8 @@
  */
 class j_input_state {
 public:
+    virtual ~j_input_state() = default;
+
     /**
      * @brief Returns the current keyboard state
      */

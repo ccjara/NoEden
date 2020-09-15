@@ -3,11 +3,9 @@
 
 #include "../env/root_config.hxx"
 #include "../components/item.hxx"
-#include "../scenes/scene.hxx"
 
 class j_display;
 class j_script;
-class j_window;
 
 /**
  * @brief Triggered on SDL_QUIT when closing the window
@@ -73,17 +71,6 @@ struct j_key_up_event {
 };
 
 /**
- * @brief Triggered after the (SDL managed) game window has been created
- */
-struct j_window_created_event {
-    j_window* window { nullptr };
-
-    explicit constexpr j_window_created_event(j_window* const window) : window { window } {
-        assert(this->window);
-    }
-};
-
-/**
  * @brief Triggered when a script loads or reloads
  */
 struct j_script_loaded_event {
@@ -93,17 +80,6 @@ struct j_script_loaded_event {
     constexpr j_script_loaded_event(j_script* const script, bool reloaded) :
         script { script }, reloaded { reloaded } {
         assert(this->script);
-    }
-};
-
-/**
- * @brief Triggered immediately after instantiating a new scene and prior to pushing it onto the scene stack
- */
-struct j_scene_created_event {
-    j_scene* scene { nullptr };
-
-    constexpr j_scene_created_event(j_scene* const scene) : scene(scene) {
-        assert(scene);
     }
 };
 
@@ -120,31 +96,22 @@ struct j_root_config_updated_event {
 };
 
 /**
- * @brief Triggered when a scene renders
- *
- * May get triggered multiple times during one render tick if the scene is not
- * opaque, i.e not render-blocking.
- *
- * Does not trigger for the null scene.
- */
-struct j_scene_render_event {
-    j_display* display { nullptr };
-    j_scene* scene { nullptr };
-
-    constexpr j_scene_render_event(j_scene* const scene, j_display* const display) :
-        display { display }, scene { scene } {
-        assert(this->display);
-        assert(this->scene);
-    }
-};
-
-/**
  * @brief Triggered when an item gets added to any inventory
  */
 struct j_item_stored_event {
     entt::entity item;
 
-    constexpr j_item_stored_event(entt::entity item) : item(item) {
+    explicit constexpr j_item_stored_event(entt::entity item) : item(item) {
+    }
+};
+
+/**
+ * @brief Triggered as soon as the player assumes control of a unit
+ */
+struct j_player_control_event {
+    entt::entity player;
+
+    explicit constexpr j_player_control_event(entt::entity player) : player(player) {
     }
 };
 

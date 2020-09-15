@@ -37,7 +37,7 @@ public:
         future_ += real_time_delta_;
 
         while (future_ >= present_) {
-            f();
+            f(UPDATE_DURATION);
             present_ += UPDATE_DURATION;
         }
         const auto now_after_update { clock::now() };

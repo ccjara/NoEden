@@ -25,14 +25,10 @@ private:
     };
 
     std::unordered_map<j_public_event_type, std::vector<j_bound_ref>> listeners_;
-    std::unordered_map<j_scene_type, std::vector<j_bound_ref>> scene_render_listeners_;
     std::unordered_map<std::string, j_script> scripts_;
 
     // item events
     void on_item_stored(const j_item_stored_event& e);
-
-    // scene events
-    void on_scene_render(const j_scene_render_event& e);
 
     // internal testing
     void on_key_down(const j_key_down_event& e);
@@ -41,13 +37,6 @@ private:
      * @brief Gets called when any lua function subscribes to any event
      */
     bool on_register_callback(const char* event_type, luabridge::LuaRef ref);
-
-    /**
-     * @brief Called when a scene registers a renderer for a particular scene
-     *
-     * `env:register_renderer(<scene_type_str>, callback)`
-     */
-    bool on_register_renderer(const char *scene_type, luabridge::LuaRef ref);
 
     /**
      * @brief Loads and runs the script

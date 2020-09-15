@@ -6,6 +6,8 @@
  */
 class j_mouse_state {
 public:
+    virtual ~j_mouse_state() = default;
+
     /**
      * @brief Returns the current x position
      */

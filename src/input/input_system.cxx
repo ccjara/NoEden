@@ -8,31 +8,35 @@ j_keyboard_state& j_input_system::keyboard() noexcept {
     return keyboard_;
 }
 
-void j_input_system::on_mouse_move(const j_mouse_move_event& e) {
-    mouse_.move(e.position);
-}
+void j_input_system::update(uint32_t delta_time) {
+    SDL_Event e;
 
-void j_input_system::on_mouse_down(const j_mouse_down_event& e) {
-    mouse_.mouse_down(e.button);
-}
-
-void j_input_system::on_mouse_up(const j_mouse_up_event& e) {
-    mouse_.mouse_up(e.button);
-}
-
-void j_input_system::on_key_down(const j_key_down_event& e) {
-    keyboard_.key_down(e.key);
-}
-
-void j_input_system::on_key_up(const j_key_up_event& e) {
-    keyboard_.key_up(e.key);
-}
-
-void j_input_system::attach(entt::dispatcher& dispatcher) noexcept {
-    dispatcher.sink<j_mouse_move_event>().connect<&j_input_system::on_mouse_move>(this);
-    dispatcher.sink<j_mouse_down_event>().connect<&j_input_system::on_mouse_down>(this);
-    dispatcher.sink<j_mouse_up_event>().connect<&j_input_system::on_mouse_up>(this);
-    dispatcher.sink<j_key_down_event>().connect<&j_input_system::on_key_down>(this);
-    dispatcher.sink<j_key_up_event>().connect<&j_input_system::on_key_up>(this);
-    LOG(INFO) << "Input system now listening to env events";
+    while (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_EventType::SDL_KEYDOWN, SDL_EventType::SDL_MOUSEWHEEL)) {
+        switch (e.type) {
+        case SDL_EventType::SDL_KEYDOWN:
+            keyboard_.key_down(e.key.keysym.sym);
+            dispatcher_->trigger(j_key_down_event(e.key.keysym.sym));
+            break;
+        case SDL_EventType::SDL_KEYUP:
+            keyboard_.key_up(e.key.keysym.sym);
+            dispatcher_->trigger(j_key_up_event(e.key.keysym.sym));
+            break;
+        case SDL_EventType::SDL_MOUSEBUTTONDOWN:
+            mouse_.mouse_down(static_cast<j_mouse_button>(e.button.button));
+            dispatcher_->trigger(
+                j_mouse_down_event(static_cast<j_mouse_button>(e.button.button))
+            );
+            break;
+        case SDL_EventType::SDL_MOUSEBUTTONUP:
+            mouse_.mouse_up(static_cast<j_mouse_button>(e.button.button));
+            dispatcher_->trigger(
+                j_mouse_up_event(static_cast<j_mouse_button>(e.button.button))
+            );
+            break;
+        case SDL_EventType::SDL_MOUSEMOTION:
+            mouse_.move({ e.motion.x, e.motion.y });
+            dispatcher_->trigger(j_mouse_move_event({ e.motion.x, e.motion.y }));
+            break;
+        }
+    }
 }

@@ -28,8 +28,6 @@ void j_env_manager::start() {
         static_cast<uint32_t>(display_bounds.h) / 2
     });
 
-    dispatcher_->trigger<j_window_created_event>(window_.get());
-
     is_running_ = true;
 }
 
@@ -120,7 +118,26 @@ j_window& j_env_manager::window() noexcept {
 }
 
 void j_env_manager::process_os_messages() const noexcept {
-    env_event_dispatcher_->listen();
+    SDL_PumpEvents();
+
+    SDL_Event e;
+    while (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_EventType::SDL_FIRSTEVENT, SDL_EventType::SDL_WINDOWEVENT) != 0) {
+        switch (e.type) {
+        case SDL_EventType::SDL_QUIT:
+            dispatcher_->trigger<j_quit_event>(j_quit_event());
+            return;
+        case SDL_EventType::SDL_WINDOWEVENT:
+            if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
+                dispatcher_->trigger(j_resize_event({
+                    static_cast<uint32_t> (e.window.data1),
+                    static_cast<uint32_t> (e.window.data2)
+                    }));
+            }
+            break;
+        }
+    }
+
+    // env_event_dispatcher_->listen();
 }
 
 void j_env_manager::attach(entt::dispatcher& dispatcher) noexcept {

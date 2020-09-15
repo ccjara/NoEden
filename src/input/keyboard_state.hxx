@@ -6,6 +6,8 @@
  */
 class j_keyboard_state {
 public:
+    virtual ~j_keyboard_state() = default;
+
     /**
      * @brief Returns true if the given key is pressed
      */

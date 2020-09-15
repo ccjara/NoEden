@@ -1,36 +1,7 @@
 #include "gfx_system.hxx"
+#include "../game.hxx"
 
-j_gfx_system::~j_gfx_system() {
-    if (gl_context != nullptr) {
-        SDL_GL_DeleteContext(gl_context);
-    }
-}
-
-void j_gfx_system::prepare() {
-    fps_.pre_render();
-
-    display_.reset();
-}
-
-void j_gfx_system::present() {
-    renderer_.render(display_);
-
-    SDL_GL_SwapWindow(*window_);
-}
-
-void j_gfx_system::attach(entt::dispatcher& dispatcher) noexcept {
-    dispatcher.sink<j_resize_event>().connect<&j_gfx_system::on_resize>(this);
-    dispatcher.sink<j_window_created_event>().connect<&j_gfx_system::on_window_created>(this);
-    dispatcher.sink<j_root_config_updated_event>().connect<&j_gfx_system::on_root_config_updated>(this);
-}
-
-void j_gfx_system::on_resize(const j_resize_event& e) {
-    renderer_.set_viewport(e.size);
-    adjust_display();
-}
-
-void j_gfx_system::on_window_created(const j_window_created_event& e) {
-    window_ = e.window;
+j_gfx_system::j_gfx_system(j_window* window) : window_(window) {
     assert(window_);
 
     if (gl_context != nullptr) {
@@ -55,6 +26,49 @@ void j_gfx_system::on_window_created(const j_window_created_event& e) {
 
     renderer_.set_context(gl_context);
     renderer_.set_viewport(window_->size());
+}
+
+j_gfx_system::~j_gfx_system() {
+    if (gl_context != nullptr) {
+        SDL_GL_DeleteContext(gl_context);
+    }
+}
+
+void j_gfx_system::on_load() {
+    dispatcher_->sink<j_resize_event>().connect<&j_gfx_system::on_resize>(this);
+    dispatcher_->sink<j_root_config_updated_event>().connect<&j_gfx_system::on_root_config_updated>(this);
+}
+
+void j_gfx_system::update(uint32_t delta_time) {
+    fps_.pre_render();
+    display_.reset();
+
+    game->entities()->view<jc_renderable, jc_position>().each([this](auto& renderable, auto& position) {
+        j_vec2<uint32_t> pos {
+            static_cast<uint32_t> (position.x),
+            static_cast<uint32_t> (position.y)
+        };
+
+        if (position.x < 0 || position.y < 0 || !display_.in_bounds(pos)) {
+            return;
+        }
+
+        j_display_cell cell;
+
+        cell.color = renderable.color;
+        cell.glyph = renderable.glyph;
+
+        display_.put(std::move(cell), std::move(pos));
+    });
+
+    renderer_.render(display_);
+
+    SDL_GL_SwapWindow(*window_);
+}
+
+void j_gfx_system::on_resize(const j_resize_event& e) {
+    renderer_.set_viewport(e.size);
+    adjust_display();
 }
 
 void j_gfx_system::on_root_config_updated(const j_root_config_updated_event& e) {
