@@ -3,6 +3,8 @@
 
 #include "system_interface.hxx"
 
+class j_systems;
+
 /**
  * @brief Base class of all game systems
  */
