@@ -6,21 +6,13 @@ void j_display::put(j_display_cell&& cell, j_vec2<uint32_t> pos) {
     cells_.at(to_index(pos)) = std::move(cell);
 }
 
-void j_display::text(std::string_view t, const j_text_options& options) {
-    j_vec2<uint32_t> position {
-        options.boundary.left,
-        options.boundary.top
-    };
+void j_display::text(std::string_view t, j_vec2<uint32_t> position, const j_text_options& options) {
+    const auto origin { position };
+
     j_vec2<uint32_t> limit {
-        options.boundary.right,
-        options.boundary.bottom
+        std::min(options.clamp.x, dimensions_.x),
+        std::min(options.clamp.y, dimensions_.y)
     };
-    if (!limit.x || limit.x > dimensions_.x) {
-        limit.x = dimensions_.x;
-    }
-    if (!limit.y || limit.y > dimensions_.y) {
-        limit.y = dimensions_.y;
-    }
     if (!in_bounds(position) || limit.x < position.x || limit.y < position.y) {
         return;
     }
@@ -71,7 +63,7 @@ void j_display::text(std::string_view t, const j_text_options& options) {
         cell.color = options.color;
 
         if (is_last_char_of_line) {
-            position.x = options.boundary.left;
+            position.x = origin.x;
             position.y++;
 
             if (i + 1 < text_length && t[i + 1] == ' ') {
@@ -83,10 +75,6 @@ void j_display::text(std::string_view t, const j_text_options& options) {
             position.x++;
         }
     }
-}
-
-void j_display::text(std::string_view t, j_rect<uint32_t> boundary, j_color color, j_text_break text_break) {
-    return text(t, { boundary, color, text_break });
 }
 
 void j_display::rectangle(const j_rect_options& options) {

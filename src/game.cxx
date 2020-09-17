@@ -24,9 +24,9 @@ void j_game::run() {
 
     env_->start();
 
-    systems_->emplace<j_gfx_system>(&env_->window());
     systems_->emplace<j_input_system>();
     systems_->emplace<j_player_system>();
+    systems_->emplace<j_gfx_system>(&env_->window());
 
     script_system_->preload(script_system_->default_script_path);
 

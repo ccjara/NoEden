@@ -53,12 +53,7 @@ void j_gfx_system::update(uint32_t delta_time) {
             return;
         }
 
-        j_display_cell cell;
-
-        cell.color = renderable.color;
-        cell.glyph = renderable.glyph;
-
-        display_.put(std::move(cell), std::move(pos));
+        display_.text(renderable.text, position, renderable.text_options);
     });
 
     renderer_.render(display_);

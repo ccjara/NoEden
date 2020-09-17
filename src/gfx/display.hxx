@@ -10,14 +10,20 @@ enum class j_text_break {
 
 struct j_text_options {
     /**
-     * @brief Constrains the text to the given rect
+     * @brief Constrains the text to a boundary (viewed in positive direction)
      *
      * Horizontally clipping text will be rendered on the next line,
      * depending on the {@see text_break} option.
      *
      * Vertically clipping text will not be rendered.
+     *
+     * If a coordinate is set to the numeric maximum the renderer will constrain
+     * it to the dimensions of the display, effectively meaning 'clamp to display'
      */
-    j_rect<uint32_t> boundary;
+    j_vec2<uint32_t> clamp {
+        std::numeric_limits<uint32_t>::max(),
+        std::numeric_limits<uint32_t>::max()
+    };
 
     /**
      * @brief Color to use the render the text
@@ -105,12 +111,7 @@ public:
     /**
      * @brief Render a text on the display
      */
-    void text(std::string_view t, const j_text_options& options);
-
-    /**
-     * @brief Render a text on the display
-     */
-    void text(std::string_view t, j_rect<uint32_t> boundary, j_color color = j_color(), j_text_break text_break = j_text_break::break_word);
+    void text(std::string_view t, j_vec2<uint32_t> position, const j_text_options& options);
 
     /**
      * @brief Render a rectangle on the display

@@ -2,8 +2,12 @@
 #define JARALYN_WORLD_STATE_HXX
 
 #include "state.hxx"
+#include "../event/event.hxx"
 
 class j_world_state : public j_state {
+private:
+    entt::entity dwarf_;
+    entt::entity troll_;
 public:
     virtual void on_enter() override;
 

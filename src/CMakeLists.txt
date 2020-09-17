@@ -57,7 +57,7 @@ add_executable(
     "system.hxx"
     "system_interface.cxx"
     "systems.cxx"
- )
+)
 
 target_link_libraries(jaralyn ${LUA_LIBRARIES})
 target_link_libraries(jaralyn SDL2::SDL2)

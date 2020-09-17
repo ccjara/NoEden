@@ -4,26 +4,6 @@
 // TODO: move to submodule definitions, include in pch, then remove this file
 
 /**
- * @see scene_type_by_string
- */
-enum class j_scene_type {
-	null,
-	world,
-	status,
-	inventory
-};
-
-/**
- * @brief Maps strings to j_scene_type
- *
- * Used when interfacing lua and C++. The string representation should
- * only be used in lua and the enum should be used in C++ at all times.
- */
-static const std::unordered_map<std::string_view, j_scene_type> scene_type_by_string {
-    { "inventory", j_scene_type::inventory },
-};
-
-/**
  * @see event_type_by_string
  */
 enum class j_public_event_type {
@@ -75,6 +55,14 @@ struct j_color {
 
     constexpr static j_color green() {
         return j_color(0, 255, 0);
+    }
+
+    constexpr static j_color red() {
+        return j_color(255, 0, 0);
+    }
+
+    constexpr static j_color yellow() {
+        return j_color(255, 255, 0);
     }
 };
 
