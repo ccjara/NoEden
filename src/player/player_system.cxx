@@ -12,9 +12,13 @@ void j_player_system::update(uint32_t delta_time) {
     }
     // handle movement
     auto& position { game->entities()->get<jc_position>(player_) };
-    position.x += velocity_.x;
-    position.y += velocity_.y;
-    velocity_ = { 0, 0 };
+
+    if (velocity_.x || velocity_.y) {
+        position.x += velocity_.x;
+        position.y += velocity_.y;
+        velocity_ = { 0, 0 };
+        game->events()->trigger<j_player_moved_event>(player_, position);
+    }
 }
 
 void j_player_system::on_player_control(const j_player_control_event& e) {

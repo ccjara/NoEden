@@ -34,6 +34,8 @@ add_executable(
     "gfx/text_shader.cxx"
     "gfx/texture.cxx"
 
+    "hud/hud_system.cxx"
+
     "identity.hxx"
 
     "input/input_state.hxx"

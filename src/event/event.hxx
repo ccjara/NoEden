@@ -115,4 +115,17 @@ struct j_player_control_event {
     }
 };
 
+/**
+ * @brief Triggered when the current controllable unit moved
+ */
+struct j_player_moved_event {
+    entt::entity player;
+    j_vec2<uint32_t> position;
+
+    constexpr j_player_moved_event(entt::entity player, j_vec2<uint32_t> position) :
+        player(player),
+        position(position) {
+    }
+};
+
 #endif

@@ -10,6 +10,7 @@
 #include "scripts/script_system.hxx"
 #include "input/input_system.hxx"
 #include "player/player_system.hxx"
+#include "hud/hud_system.hxx"
 
 class j_systems;
 class j_state_stack;

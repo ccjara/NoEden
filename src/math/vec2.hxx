@@ -9,12 +9,12 @@ struct j_vec2 {
     /**
      * @brief Constructs a null-vector
      */
-    j_vec2() = default;
+    constexpr j_vec2() = default;
 
     /**
      * @brief Copy-constructs a vector from another vector
      */
-    j_vec2(const j_vec2<t>& v) noexcept {
+    constexpr j_vec2(const j_vec2<t>& v) noexcept {
         x = v.x;
         y = v.y;
     }
@@ -23,7 +23,7 @@ struct j_vec2 {
      * @brief Copy-constructs a vector from another vector
      */
     template<typename u>
-    j_vec2(const u& v) noexcept {
+    constexpr j_vec2(const u& v) noexcept {
         x = static_cast<t> (v.x);
         y = static_cast<t> (v.y);
     }
@@ -31,7 +31,7 @@ struct j_vec2 {
     /**
      * @brief Constructs a vector from two scalars
      */
-    j_vec2(t x, t y) noexcept {
+    constexpr j_vec2(t x, t y) noexcept {
         this->x = x;
         this->y = y;
     }

@@ -21,6 +21,8 @@ void j_world_state::on_enter() {
     auto item { entities->create() };
     entities->assign<jc_position>(item, 2, 3, 0);
     entities->assign<jc_renderable>(item, jc_renderable::item('$', j_color::yellow()));
+    entities->assign<jc_object_descriptor>(item, "Gold coin");
+    entities->assign<jc_item>(item, "Gold coin");
 }
 
 void j_world_state::on_update() {

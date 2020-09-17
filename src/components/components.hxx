@@ -6,6 +6,10 @@
 #include "inventory.hxx"
 #include "../gfx/display.hxx"
 
+struct jc_object_descriptor {
+    std::string label;
+};
+
 struct jc_position {
     int32_t x;
     int32_t y;
