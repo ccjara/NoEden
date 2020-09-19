@@ -11,6 +11,7 @@
 #include "../system.hxx"
 #include "renderer.hxx"
 #include "display.hxx"
+#include "fov.hxx"
 
 /**
  * @brief Facade managing graphics.
@@ -22,6 +23,7 @@ private:
     j_root_config cfg_;
     j_fps_provider fps_;
 
+    j_fov fov_;
     j_renderer renderer_;
     j_display display_;
 

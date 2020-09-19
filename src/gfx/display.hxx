@@ -103,6 +103,10 @@ public:
  */
 class j_display: public j_grid<j_display_cell> {
 public:
+    j_display() : j_grid<j_display_cell>(j_display_cell{}) {
+
+    }
+
     /**
      * @brief Override a single cell of the display
      */

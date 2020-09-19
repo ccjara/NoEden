@@ -43,6 +43,31 @@ void j_gfx_system::update(uint32_t delta_time) {
     fps_.pre_render();
     display_.reset();
 
+    const auto& pos = game->entities()->get<jc_position>(static_cast<entt::entity>(1));
+
+    fov_.grid().reset();
+
+    fov_.grid().put(2, j_vec2<uint32_t>{ 5, 5 });
+    fov_.grid().put(2, j_vec2<uint32_t>{ 3, 1 });
+    fov_.grid().put(2, j_vec2<uint32_t>{ 19, 7 });
+    fov_.grid().put(2, j_vec2<uint32_t>{ 24, 16 });
+
+    fov_.do_fov(pos, 3.5f);
+
+    fov_.grid().each_at([this](const auto& cell, j_vec2<uint32_t> pos) {
+        j_color col = j_color::mono(0);
+        if (cell == visibility::visible) {
+            col = j_color::green();
+        } else if (cell == visibility::hidden) {
+            col = j_color::mono(0);
+        } else if (cell == visibility::wall) {
+            col = j_color::yellow();
+        } else if (cell == visibility::debug) {
+            col = j_color::mono(64);
+        }
+        display_.put(j_display_cell{ 'X', col }, pos);
+    });
+
     game->entities()->view<jc_renderable, jc_position>().each([this](auto& renderable, auto& position) {
         j_vec2<uint32_t> pos {
             static_cast<uint32_t> (position.x),
@@ -99,9 +124,11 @@ void j_gfx_system::adjust_display() {
     // calculate resolution
     const auto scaled_size { window_->size() / cfg_.scaling };
     // calculate how many cells will fit on the screen given that resolution
-    display_.resize(j_vec2<uint32_t>{
+    const j_vec2<uint32_t> cell_extent {
         scaled_size.x / cfg_.glyph_size.x,
         scaled_size.y / cfg_.glyph_size.y
-    });
+    };
+    display_.resize(cell_extent);
+    fov_.grid().resize(cell_extent);
 }
 

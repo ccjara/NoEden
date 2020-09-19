@@ -26,6 +26,7 @@ add_executable(
     "math/vec2.hxx"
 
     "gfx/display.cxx"
+    "gfx/fov.hxx"
     "gfx/fps_provider.hxx"
     "gfx/gfx_system.cxx"
     "gfx/renderer.cxx"

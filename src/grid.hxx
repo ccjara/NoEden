@@ -7,6 +7,8 @@ protected:
     std::vector<cell> cells_;
     j_vec2<uint32_t> dimensions_;
 
+    cell null_cell_;
+
     template<typename pos>
     [[nodiscard]] constexpr inline auto to_index(const pos& position) const noexcept {
         return position.y * dimensions_.x + position.x;
@@ -14,13 +16,7 @@ protected:
 public:
     using cell_type = cell;
 
-    j_grid() = default;
-
-    static_assert(std::is_const_v<decltype(cell::null)>);
-
-    template<typename sz>
-    constexpr explicit j_grid(const sz& size) {
-        resize(size);
+    constexpr explicit j_grid(cell&& null_cell) : null_cell_(std::move(null_cell)) {
     }
 
     /**
@@ -28,13 +24,13 @@ public:
      */
     template<typename sz>
     constexpr void resize(const sz& dimensions) {
-        cells_.resize(dimensions.x * dimensions.y, cell::null);
+        cells_.resize(dimensions.x * dimensions.y, null_cell_);
         dimensions_ = dimensions;
         reset();
     }
 
     constexpr void reset() noexcept {
-        std::fill(cells_.begin(), cells_.end(), cell::null);
+        std::fill(cells_.begin(), cells_.end(), null_cell_);
     }
 
     /**
@@ -70,7 +66,7 @@ public:
     template<typename pos>
     [[nodiscard]] constexpr inline const cell& at(const pos& position) const noexcept {
         if (!in_bounds(position)) {
-            return cell::null;
+            return null_cell_;
         }
         return cells_.at(to_index(position));
     }
@@ -112,6 +108,19 @@ public:
         }
         if (position.y > dimensions_.y) {
             position.y = dimensions_.y;
+        }
+    }
+
+    constexpr const std::vector<cell>& cells() const noexcept {
+        return cells_;
+    }
+
+    template<typename callable>
+    constexpr void each_at(callable fn) const {
+        const auto size { cells_.size() };
+
+        for (uint32_t i { 0 }; i < size; ++i) {
+            fn(cells_[i], j_vec2<uint32_t>{ i % dimensions_.x, i / dimensions_.x });
         }
     }
 };
