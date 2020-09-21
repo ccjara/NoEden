@@ -2,7 +2,6 @@
 
 j_game::j_game() {
     env_ = std::make_unique<j_env_manager>(&dispatcher_);
-    env_->attach(dispatcher_); // TODO: merge with constructor?
     systems_ = std::make_unique<j_systems>(&dispatcher_);
 }
 

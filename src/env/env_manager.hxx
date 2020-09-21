@@ -2,23 +2,20 @@
 #define JARALYN_ENV_MANAGER_HXX
 
 #include "clock.hxx"
-#include "env_event_dispatcher.hxx"
 #include "root_config.hxx"
 #include "window.hxx"
 #include "../event/event.hxx"
-#include "../event/event_listener.hxx"
 #include "../scripts/script_system.hxx"
 
 /**
  * @brief Facade around the game platform (OS) and its specificities
  */
-class j_env_manager : public j_event_listener {
+class j_env_manager {
 private:
     j_clock clock_;
     entt::dispatcher* const dispatcher_ { nullptr };
 
     std::unique_ptr<j_window> window_ { nullptr };
-    std::unique_ptr<j_env_event_dispatcher> env_event_dispatcher_ { nullptr };
 
     /**
      * @brief The source of truth of the system configuration
@@ -87,8 +84,6 @@ public:
      * @see env_event_dispatcher
      */
     void process_os_messages() const noexcept;
-
-    void attach(entt::dispatcher& dispatcher) noexcept override;
 
     j_clock& clock() noexcept;
     j_window& window() noexcept;

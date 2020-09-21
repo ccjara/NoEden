@@ -8,7 +8,6 @@ add_executable(
     "components/inventory.cxx"
     "components/item.hxx"
 
-    "env/env_event_dispatcher.cxx"
     "env/env_manager.cxx"
     "env/root_config.hxx"
     "env/window.cxx"

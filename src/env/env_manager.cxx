@@ -3,9 +3,10 @@
 j_env_manager::j_env_manager(entt::dispatcher* const dispatcher) :
     dispatcher_(dispatcher) {
     assert(dispatcher_);
-    env_event_dispatcher_ = std::make_unique<j_env_event_dispatcher>(
-        dispatcher_
-    );
+
+    dispatcher_->sink<j_quit_event>().connect<&j_env_manager::on_quit>(this);
+    dispatcher_->sink<j_resize_event>().connect<&j_env_manager::on_resize>(this);
+    dispatcher_->sink<j_script_loaded_event>().connect<&j_env_manager::on_script_loaded>(this);
 }
 
 j_env_manager::~j_env_manager() noexcept {
@@ -131,17 +132,9 @@ void j_env_manager::process_os_messages() const noexcept {
                 dispatcher_->trigger(j_resize_event({
                     static_cast<uint32_t> (e.window.data1),
                     static_cast<uint32_t> (e.window.data2)
-                    }));
+                }));
             }
             break;
         }
     }
-
-    // env_event_dispatcher_->listen();
-}
-
-void j_env_manager::attach(entt::dispatcher& dispatcher) noexcept {
-    dispatcher_->sink<j_quit_event>().connect<&j_env_manager::on_quit>(this);
-    dispatcher_->sink<j_resize_event>().connect<&j_env_manager::on_resize>(this);
-    dispatcher_->sink<j_script_loaded_event>().connect<&j_env_manager::on_script_loaded>(this);
 }
