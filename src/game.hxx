@@ -2,23 +2,14 @@
 #define JARALYN_GAME_HXX
 
 #include "systems.hxx"
-#include "states/state_stack.hxx"
+#include "states/state_writer.hxx"
 
 #include "env/env_manager.hxx"
 
-#include "gfx/gfx_system.hxx"
-#include "scripts/script_system.hxx"
-#include "input/input_system.hxx"
-#include "player/player_system.hxx"
-#include "hud/hud_system.hxx"
-
-class j_systems;
-class j_state_stack;
-
 class j_game {
-private:
-    j_state_stack state_;
+    friend class j_game_factory;
 
+    std::unique_ptr<j_state_writer> state_;
     std::unique_ptr<j_env_manager> env_;
     std::unique_ptr<j_systems> systems_;
     entt::registry entities_;
@@ -32,6 +23,13 @@ public:
     void run();
 };
 
+/**
+ * @brief Globally accessible game instance pointer
+ *
+ * Initialized in game factory
+ *
+ * @see j_game_factory::run()
+ */
 extern j_game* game;
 
 #endif

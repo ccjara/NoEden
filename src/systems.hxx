@@ -1,7 +1,6 @@
 #ifndef JARALYN_SYSTEMS_HXX
 #define JARALYN_SYSTEMS_HXX
 
-#include "game.hxx"
 #include "system_interface.hxx"
 
 /**

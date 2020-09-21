@@ -1,5 +1,4 @@
 #include "world_state.hxx"
-#include "../game.hxx"
 
 void j_world_state::on_enter() {
     auto entities { game->entities() };

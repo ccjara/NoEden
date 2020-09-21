@@ -1,8 +1,8 @@
 #ifndef JARALYN_GFX_SYSTEM_HXX
 #define JARALYN_GFX_SYSTEM_HXX
 
+#include "../game.hxx"
 #include "../components/components.hxx"
-
 #include "../env/window.hxx"
 #include "../env/clock.hxx"
 #include "../env/root_config.hxx"

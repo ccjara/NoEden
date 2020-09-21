@@ -18,27 +18,16 @@ entt::dispatcher* j_game::events() {
 }
 
 void j_game::run() {
-    env_->start();
-
-    systems_->emplace<j_input_system>();
-    systems_->emplace<j_player_system>();
-    systems_->emplace<j_gfx_system>(&env_->window());
-    systems_->emplace<j_hud_system>();
-    systems_->emplace<j_script_system>();
-
-    state_.push(j_state_id::world);
+    state_->push(j_state_id::world);
 
     while (true) {
-        // update
         env_->process_os_messages();
         if (!env_->running()) {
             break;
         }
-
         env_->clock().tick([&](std::chrono::milliseconds delta_time) {
             systems_->update(delta_time.count());
         });
-        
-        state_.update();
+        state_->update();
     }
 }

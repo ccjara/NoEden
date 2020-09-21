@@ -4,7 +4,6 @@
 #include "attribute.hxx"
 #include "attribute_bearing.hxx"
 #include "inventory.hxx"
-#include "../gfx/display.hxx"
 
 struct jc_object_descriptor {
     std::string label;

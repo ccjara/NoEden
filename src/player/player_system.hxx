@@ -1,8 +1,10 @@
 #ifndef JARALYN_PLAYER_SYSTEM_HXX
 #define JARALYN_PLAYER_SYSTEM_HXX
 
+#include "../game.hxx"
 #include "../system.hxx"
 #include "../event/event.hxx"
+#include "../components/components.hxx"
 
 class j_player_system : public j_system<j_player_system> {
 private:

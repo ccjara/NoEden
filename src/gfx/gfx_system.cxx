@@ -1,5 +1,4 @@
 #include "gfx_system.hxx"
-#include "../game.hxx"
 
 j_gfx_system::j_gfx_system(j_window* window) : window_(window) {
     assert(window_);

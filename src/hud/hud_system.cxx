@@ -1,5 +1,4 @@
 #include "hud_system.hxx"
-#include "../game.hxx"
 
 void j_hud_system::on_load() {
     game->events()->sink<j_player_moved_event>().connect<&j_hud_system::on_player_movement>(this);

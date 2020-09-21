@@ -1,5 +1,4 @@
 #include "player_system.hxx"
-#include "../game.hxx"
 
 void j_player_system::on_load() {
     dispatcher_->sink<j_player_control_event>().connect<&j_player_system::on_player_control>(this);

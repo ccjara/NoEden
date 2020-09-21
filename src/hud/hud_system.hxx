@@ -1,6 +1,7 @@
 #ifndef JARALYN_HUD_SYSTEM_HXX
 #define JARALYN_HUD_SYSTEM_HXX
 
+#include "../game.hxx"
 #include "../system.hxx"
 #include "../event/event.hxx"
 #include "../components/components.hxx"

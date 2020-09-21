@@ -8,6 +8,7 @@ add_executable(
     "components/inventory.cxx"
     "components/item.hxx"
 
+    "env/clock.hxx"
     "env/env_manager.cxx"
     "env/root_config.hxx"
     "env/window.cxx"
@@ -15,6 +16,8 @@ add_executable(
     "event/event.hxx"
 
     "game.cxx"
+    "game_factory.cxx"
+
     "grid.hxx"
 
     "main.cxx"
@@ -52,6 +55,7 @@ add_executable(
 
     "states/state.hxx"
     "states/state_stack.cxx"
+    "states/state_writer.hxx"
     "states/world_state.cxx"
 
     "system.hxx"
