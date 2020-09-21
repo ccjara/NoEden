@@ -4,10 +4,10 @@
 #include "../grid.hxx"
 
 struct octant {
-    char xx;
-    char xy;
-    char yx;
-    char yy;
+    int xx;
+    int xy;
+    int yx;
+    int yy;
 };
 
 constexpr std::array<octant, 8> octants {
@@ -22,16 +22,9 @@ constexpr std::array<octant, 8> octants {
 };
 
 
-enum visibility {
-    hidden = 0,
-    visible = 1,
-    wall = 2,
-    debug = 3,
-};
-
 class j_fov {
 private:
-    j_grid<int> grid_;
+    j_grid<float_t> grid_;
     j_vec2<uint32_t> origin_;
     float_t radius_ { 1.0f };
     float_t radius_sq_ { 1.0f };
@@ -46,9 +39,6 @@ private:
         // is empty, we can use this instead of having to compute the top-right corner
         // of the empty cell.
         float_t savedRightSlope = -1;
-
-        const int xDim = grid_.dimensions().x;
-        const int yDim = grid_.dimensions().y;
 
         // Outer loop: walk across each column, stopping when we reach the visibility limit.
         for (int currentCol = start_col; currentCol <= radius_ceiling_; currentCol++) {
@@ -67,7 +57,7 @@ private:
                 // Note that, while we will stop at a solid column of blocks, we do always
                 // start at the top of the column, which may be outside the grid if we're (say)
                 // checking the first octant while positioned at the north edge of the map.
-                if (gridX < 0 || gridX >= xDim || gridY < 0 || gridY >= yDim) {
+                if (gridX < 0 || gridX >= grid_.dimensions().x || gridY < 0 || gridY >= grid_.dimensions().y) {
                     continue;
                 }
 
@@ -91,12 +81,12 @@ private:
                     break;
                 }
                 float_t distanceSquared = xc * xc + yc * yc;
-                const j_vec2<uint32_t> pos { (unsigned int) gridX, (unsigned int) gridY };
+                const j_vec2<uint32_t> pos { (uint32_t) gridX, (uint32_t) gridY };
 
-                bool curBlocked = grid_.at(pos) == visibility::wall;
+                bool curBlocked = grid_.at(pos) >= 250.0f;
 
                 if (distanceSquared <= radius_sq_) {
-                    grid_.put(visibility::visible, pos);
+                    grid_.put(distanceSquared, pos);
                 }
 
                 if (prevWasBlocked) {
@@ -140,7 +130,7 @@ private:
         }
     }
 public:
-    j_fov() : grid_(visibility::hidden) {
+    j_fov() : grid_(0) {
     }
 
     void do_fov(j_vec2<uint32_t> origin, float_t radius) {
@@ -149,14 +139,13 @@ public:
         radius_ceiling_ = std::ceil(radius_);
         radius_sq_ = radius * radius;
 
-        grid_.put(visibility::visible, origin);
-
+        grid_.put(255, origin);
         for (auto oct : octants) {
             cast_light(1, 1.0f, 0.0f, oct);
         }
     }
 
-    j_grid<int>& grid() {
+    j_grid<float_t>& grid() {
         return grid_;
     }
 };

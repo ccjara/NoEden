@@ -77,7 +77,7 @@ public:
      * If the position is out of bounds, the operation will be ignored.
      */
     template<typename pos>
-    constexpr void put(cell&& c, const pos& position) {
+    constexpr void put(cell c, const pos& position) {
         if (!in_bounds(position)) {
             LOG(ERROR)
                 << "Placement at " << position.x << ", " << position.y

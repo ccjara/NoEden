@@ -47,24 +47,13 @@ void j_gfx_system::update(uint32_t delta_time) {
 
     fov_.grid().reset();
 
-    fov_.grid().put(2, j_vec2<uint32_t>{ 5, 5 });
-    fov_.grid().put(2, j_vec2<uint32_t>{ 3, 1 });
-    fov_.grid().put(2, j_vec2<uint32_t>{ 19, 7 });
-    fov_.grid().put(2, j_vec2<uint32_t>{ 24, 16 });
+    fov_.grid().put(255, j_vec2<uint32_t>{ 15, 10 });
 
-    fov_.do_fov(pos, 3.5f);
+    fov_.do_fov(pos, 15.5f);
 
-    fov_.grid().each_at([this](const auto& cell, j_vec2<uint32_t> pos) {
-        j_color col = j_color::mono(0);
-        if (cell == visibility::visible) {
-            col = j_color::green();
-        } else if (cell == visibility::hidden) {
-            col = j_color::mono(0);
-        } else if (cell == visibility::wall) {
-            col = j_color::yellow();
-        } else if (cell == visibility::debug) {
-            col = j_color::mono(64);
-        }
+    fov_.grid().each_at([this](const auto &cell, j_vec2<uint32_t> pos) {
+        j_color col = j_color::mono(std::min((int)(cell), 255));
+
         display_.put(j_display_cell{ 'X', col }, pos);
     });
 
@@ -80,6 +69,8 @@ void j_gfx_system::update(uint32_t delta_time) {
 
         display_.text(renderable.text, position, renderable.text_options);
     });
+
+    display_.put(j_display_cell{ 'X', j_color::red()}, j_vec2<uint32_t>(15, 10));
 
     renderer_.render(display_);
 
