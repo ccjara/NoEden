@@ -11,22 +11,22 @@ public:
     /**
      * @brief Returns the current x position
      */
-    virtual int32_t x() const noexcept = 0;
+    virtual int32_t x() const = 0;
 
     /**
      * @brief Returns the current y position
      */
-    virtual int32_t y() const noexcept = 0;
+    virtual int32_t y() const = 0;
 
     /**
      * @brief Returns the current position
      */
-    virtual j_vec2<int32_t> position() const noexcept = 0;
+    virtual j_vec2<int32_t> position() const = 0;
 
     /**
      * @brief Returns true if the given button is pressed
      */
-    virtual bool is_pressed(j_mouse_button) const noexcept = 0;
+    virtual bool is_pressed(j_mouse_button) const = 0;
 };
 
 #endif

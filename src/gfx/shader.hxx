@@ -71,19 +71,19 @@ public:
     /**
      * @brief Returns whether a shader is currently loaded
      */
-    bool is_loaded() const noexcept;
+    bool is_loaded() const;
 
     /**
      * @brief Uses the currently loaded shader program during rendering
      */
-    void use() noexcept;
+    void use();
 
     /**
      * @brief Returns the id of the currently loaded shader
      *
      * Returns 0 if none is loaded
      */
-    GLint id() const noexcept;
+    GLint id() const;
 
     j_shader(const j_shader&) = delete;
     j_shader(j_shader&&) = delete;

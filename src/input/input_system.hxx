@@ -14,8 +14,8 @@ protected:
     j_keyboard keyboard_;
     j_mouse mouse_;
 public:
-    j_mouse_state& mouse() noexcept override;
-    j_keyboard_state& keyboard() noexcept override;
+    j_mouse_state& mouse() override;
+    j_keyboard_state& keyboard() override;
 
     void update(uint32_t delta_time) override;
 };

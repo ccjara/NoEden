@@ -12,42 +12,42 @@ j_window::j_window(j_vec2<uint32_t> s) : size_ { s } {
 
     if (handle_ == nullptr) {
         LOG(ERROR) << "Could not create window: " << SDL_GetError();
-        throw;
+        std::abort();
     }
 }
 
-j_window::~j_window() noexcept {
+j_window::~j_window() {
     close();
 }
 
-j_window::j_window(j_window&& w) noexcept {
+j_window::j_window(j_window&& w) {
     handle_ = std::exchange(w.handle_, nullptr);
     size_ = w.size_;
 }
 
-j_window& j_window::operator=(j_window&& w) noexcept {
+j_window& j_window::operator=(j_window&& w) {
     handle_ = std::exchange(w.handle_, nullptr);
     size_ = w.size_;
     return *this;
 }
 
-SDL_Window* j_window::handle() const noexcept {
+SDL_Window* j_window::handle() const {
     return handle_;
 }
 
-j_vec2<uint32_t> j_window::size() const noexcept {
+j_vec2<uint32_t> j_window::size() const {
     return size_;
 }
 
-j_window::operator SDL_Window* () const noexcept {
+j_window::operator SDL_Window* () const {
     return handle_;
 }
 
-void j_window::resize(j_vec2<uint32_t> s) noexcept {
+void j_window::resize(j_vec2<uint32_t> s) {
     size_ = s;
 }
 
-void j_window::close() noexcept {
+void j_window::close() {
     if (handle_ ) {
         SDL_DestroyWindow(handle_);
         handle_ = nullptr;

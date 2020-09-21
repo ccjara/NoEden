@@ -1,6 +1,6 @@
 #include "renderer.hxx"
 
-j_renderer::~j_renderer() noexcept {
+j_renderer::~j_renderer() {
     reset();
 }
 
@@ -30,25 +30,25 @@ void j_renderer::render(const j_display& display) {
     glDrawArrays(GL_POINTS, 0, display.size());
 }
 
-void j_renderer::set_viewport(j_vec2<uint32_t> size) noexcept {
+void j_renderer::set_viewport(j_vec2<uint32_t> size) {
     view_port_ = size;
     text_shader_->use_resolution(view_port_ / scaling_);
 }
 
-void j_renderer::set_font(j_texture&& tex) noexcept {
+void j_renderer::set_font(j_texture&& tex) {
     text_shader_->use_texture(std::move(tex));
 }
 
-void j_renderer::set_glyph_size(j_vec2<uint32_t> glyph_size) noexcept {
+void j_renderer::set_glyph_size(j_vec2<uint32_t> glyph_size) {
     text_shader_->use_glyph_size(glyph_size);
 }
 
-void j_renderer::set_scaling(uint32_t scaling) noexcept {
+void j_renderer::set_scaling(uint32_t scaling) {
     scaling_ = scaling;
     text_shader_->use_resolution(view_port_ / scaling);
 }
 
-void j_renderer::reset() noexcept {
+void j_renderer::reset() {
     gl_context_ = nullptr; // not owned by this class
     if (vao) {
         glDeleteBuffers(1, &vao);

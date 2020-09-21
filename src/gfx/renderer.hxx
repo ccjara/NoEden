@@ -22,7 +22,7 @@ private:
 
     size_t last_size_ { 0 };
 
-    void reset() noexcept;
+    void reset();
 public:
     /**
      * @brief Initializes all renderer resources
@@ -36,7 +36,7 @@ public:
     j_renderer& operator=(j_renderer&&) = delete;
     const j_renderer& operator=(const j_renderer&) = delete;
 
-    ~j_renderer() noexcept;
+    ~j_renderer();
 
     void set_context(SDL_GLContext context);
 
@@ -50,22 +50,22 @@ public:
      *
      * Must be called if the user resized the game window.
      */
-    void set_viewport(j_vec2<uint32_t> size) noexcept;
+    void set_viewport(j_vec2<uint32_t> size);
 
     /**
      * @brief Sets the font texture used to display text.
      */
-    void set_font(j_texture&& tex) noexcept;
+    void set_font(j_texture&& tex);
 
     /**
      * @brief Sets the font's glyph size
      */
-    void set_glyph_size(j_vec2<uint32_t> glyph_size) noexcept;
+    void set_glyph_size(j_vec2<uint32_t> glyph_size);
 
     /**
      * @brief Sets the render scaling
      */
-    void set_scaling(uint32_t scaling) noexcept;
+    void set_scaling(uint32_t scaling);
 };
 
 #endif

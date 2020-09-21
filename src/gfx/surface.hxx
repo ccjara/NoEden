@@ -33,11 +33,11 @@ public:
     /**
      * @brief Pointer to the raw surface buffer
      */
-    void* data() const noexcept;
+    void* data() const;
 
-    uint32_t width() const noexcept;
-    uint32_t height() const noexcept;
-    j_vec2<uint32_t> size() const noexcept;
+    uint32_t width() const;
+    uint32_t height() const;
+    j_vec2<uint32_t> size() const;
 };
 
 #endif

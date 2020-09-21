@@ -1,10 +1,10 @@
 #include "input_system.hxx"
 
-j_mouse_state& j_input_system::mouse() noexcept {
+j_mouse_state& j_input_system::mouse() {
     return mouse_;
 }
 
-j_keyboard_state& j_input_system::keyboard() noexcept {
+j_keyboard_state& j_input_system::keyboard() {
     return keyboard_;
 }
 

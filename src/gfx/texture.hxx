@@ -11,13 +11,13 @@ private:
     GLuint id_ { 0 };
     j_vec2<uint32_t> size_;
 public:
-    GLuint id() const noexcept;
+    GLuint id() const;
 
     j_texture() = default;
     ~j_texture();
 
-    j_texture(j_texture&&) noexcept;
-    j_texture& operator=(j_texture&&) noexcept;
+    j_texture(j_texture&&);
+    j_texture& operator=(j_texture&&);
 
     j_texture(const j_texture&) = delete;
     j_texture& operator=(const j_texture&) = delete;
@@ -39,7 +39,7 @@ public:
     /**
      * @briefs Binds the texture for the next GL draw operation
      */
-    void bind() noexcept;
+    void bind();
 
     /**
      * @briefs Unbinds the currently active texture for the next GL draw operation
@@ -47,10 +47,10 @@ public:
      * Note that as this calls glBindTexture(0) this will unbind any texture resource,
      * regardless whether it is managed by this wrapper.
      */
-    void unbind() noexcept;
+    void unbind();
 
-    bool is_loaded() const noexcept;
-    j_vec2<uint32_t> size() const noexcept;
+    bool is_loaded() const;
+    j_vec2<uint32_t> size() const;
 };
 
 #endif

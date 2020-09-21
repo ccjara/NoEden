@@ -34,11 +34,11 @@ public:
         }
     }
 
-    [[nodiscard]] uint32_t get_fps() const noexcept {
+    [[nodiscard]] uint32_t get_fps() const {
         return fps;
     }
 
-    [[nodiscard]] float_t mspf() const noexcept {
+    [[nodiscard]] float_t mspf() const {
         return mspf_;
     }
 };

@@ -21,10 +21,10 @@ void jc_attribute_bearing::modify(j_attribute_type type, int32_t value) {
     attr.points += value;
 }
 
-const j_attribute& jc_attribute_bearing::attribute(j_attribute_type type) noexcept {
+const j_attribute& jc_attribute_bearing::attribute(j_attribute_type type) {
     return attributes_.at(type);
 }
 
-const std::unordered_map<j_attribute_type, j_attribute>& jc_attribute_bearing::attributes() const noexcept {
+const std::unordered_map<j_attribute_type, j_attribute>& jc_attribute_bearing::attributes() const {
     return attributes_;
 }

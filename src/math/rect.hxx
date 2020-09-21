@@ -24,14 +24,14 @@ struct j_rect {
         left(pos.x) {
     }
 
-    bool has_corner_at(const j_vec2<t> p) const noexcept {
+    bool has_corner_at(const j_vec2<t> p) const {
         return (p.x == left && p.y == top)
             || (p.x == right && p.y == top)
             || (p.x == left && p.y == bottom)
             || (p.x == right && p.y == bottom);
     }
 
-    void expand(t length) noexcept {
+    void expand(t length) {
         top -= length;
         right += length;
         bottom += length;
@@ -46,7 +46,7 @@ struct j_rect {
         }
     }
 
-    void limit(const j_rect& other) noexcept {
+    void limit(const j_rect& other) {
         if (left < other.left) {
             left = other.left;
         }
@@ -61,7 +61,7 @@ struct j_rect {
         }
     }
 
-    [[nodiscard]] bool intersects_with(const j_rect& other) const noexcept {
+    [[nodiscard]] bool intersects_with(const j_rect& other) const {
         return !(other.left > right
             || other.right < left
             || other.top > bottom
@@ -69,11 +69,11 @@ struct j_rect {
             );
     }
 
-    [[nodiscard]] bool edges(const j_vec2<t>& pos) const noexcept {
+    [[nodiscard]] bool edges(const j_vec2<t>& pos) const {
         return pos.x == left || pos.x == right || pos.y == top || pos.y == bottom;
     }
 
-    [[nodiscard]] j_vec2<t> center() const noexcept {
+    [[nodiscard]] j_vec2<t> center() const {
         return j_vec2<t> {
             static_cast<t> (left + (right - left) / 2),
                 static_cast<t> (top + (bottom - top) / 2)

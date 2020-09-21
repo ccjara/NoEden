@@ -15,7 +15,7 @@ public:
 
     void put(entt::entity);
 
-    const std::vector<entt::entity>& items() const noexcept;
+    const std::vector<entt::entity>& items() const;
 };
 
 #endif

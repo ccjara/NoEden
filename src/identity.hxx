@@ -16,7 +16,7 @@ public:
         id_ = next_id++;
     }
 
-    j_id_t id() const noexcept {
+    j_id_t id() const {
         return id_;
     }
 };

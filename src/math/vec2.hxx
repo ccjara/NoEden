@@ -14,7 +14,7 @@ struct j_vec2 {
     /**
      * @brief Copy-constructs a vector from another vector
      */
-    constexpr j_vec2(const j_vec2<t>& v) noexcept {
+    constexpr j_vec2(const j_vec2<t>& v) {
         x = v.x;
         y = v.y;
     }
@@ -23,7 +23,7 @@ struct j_vec2 {
      * @brief Copy-constructs a vector from another vector
      */
     template<typename u>
-    constexpr j_vec2(const u& v) noexcept {
+    constexpr j_vec2(const u& v) {
         x = static_cast<t> (v.x);
         y = static_cast<t> (v.y);
     }
@@ -31,7 +31,7 @@ struct j_vec2 {
     /**
      * @brief Constructs a vector from two scalars
      */
-    constexpr j_vec2(t x, t y) noexcept {
+    constexpr j_vec2(t x, t y) {
         this->x = x;
         this->y = y;
     }
@@ -39,7 +39,7 @@ struct j_vec2 {
     /**
      * @brief Adds the given vector
      */
-    constexpr inline void operator+=(const j_vec2<t>& rhs) noexcept {
+    constexpr inline void operator+=(const j_vec2<t>& rhs) {
         this->x += rhs.x;
         this->y += rhs.y;
     }
@@ -47,7 +47,7 @@ struct j_vec2 {
     /**
      * @brief Adds the given scalar
      */
-    constexpr inline void operator+=(const t scalar) noexcept {
+    constexpr inline void operator+=(const t scalar) {
         this->x += scalar;
         this->y += scalar;
     }
@@ -55,7 +55,7 @@ struct j_vec2 {
     /**
      * @brief Subtracts the given vector
      */
-    constexpr inline void operator-=(const j_vec2<t>& rhs) noexcept {
+    constexpr inline void operator-=(const j_vec2<t>& rhs) {
         this->x -= rhs.x;
         this->y -= rhs.y;
     }
@@ -63,7 +63,7 @@ struct j_vec2 {
     /**
      * @brief Subtracts the given scalar
      */
-    constexpr inline void operator-=(const t scalar) noexcept {
+    constexpr inline void operator-=(const t scalar) {
         this->x -= scalar;
         this->y -= scalar;
     }
@@ -71,7 +71,7 @@ struct j_vec2 {
     /**
      * @brief Multiplies the vector parts by the given scalar
      */
-    constexpr inline void operator*=(const t scalar) noexcept {
+    constexpr inline void operator*=(const t scalar) {
         this->x *= scalar;
         this->y *= scalar;
     }
@@ -79,7 +79,7 @@ struct j_vec2 {
     /**
      * @brief Divides the vector parts by the given scalar
      */
-    constexpr inline void operator/=(const t scalar) noexcept {
+    constexpr inline void operator/=(const t scalar) {
         this->x /= scalar;
         this->y /= scalar;
     }
@@ -91,7 +91,7 @@ struct j_vec2 {
  * Unreliable on floats
  */
 template<typename t>
-[[nodiscard]] constexpr inline bool operator==(const j_vec2<t>& lhs, const j_vec2<t>& rhs) noexcept {
+[[nodiscard]] constexpr inline bool operator==(const j_vec2<t>& lhs, const j_vec2<t>& rhs) {
     return lhs.x == rhs.x && lhs.y == rhs.y;
 }
 
@@ -99,7 +99,7 @@ template<typename t>
  * @brief Returns a new negated version of the given vector
  */
 template<typename t>
-[[nodiscard]] constexpr inline j_vec2<t> operator-(const j_vec2<t>& v) noexcept {
+[[nodiscard]] constexpr inline j_vec2<t> operator-(const j_vec2<t>& v) {
     return j_vec2<t>(-v.x, -v.y);
 }
 
@@ -107,7 +107,7 @@ template<typename t>
  * @brief Subtracts a scalar from all vector parts
  */
 template<typename t>
-[[nodiscard]] constexpr inline j_vec2<t> operator-(const j_vec2<t>& v, t scalar) noexcept {
+[[nodiscard]] constexpr inline j_vec2<t> operator-(const j_vec2<t>& v, t scalar) {
     return j_vec2<t>(v.x - scalar, v.y - scalar);
 }
 
@@ -115,7 +115,7 @@ template<typename t>
  * @brief Subtracts two given vectors
  */
 template<typename t>
-[[nodiscard]] constexpr inline j_vec2<t> operator-(const j_vec2<t>& lhs, const j_vec2<t>& rhs) noexcept {
+[[nodiscard]] constexpr inline j_vec2<t> operator-(const j_vec2<t>& lhs, const j_vec2<t>& rhs) {
     return j_vec2<t>(lhs.x - rhs.x, lhs.y - rhs.y);
 }
 
@@ -123,7 +123,7 @@ template<typename t>
  * @brief Adds two given vectors
  */
 template<typename t>
-[[nodiscard]] constexpr inline j_vec2<t> operator+(const j_vec2<t>& lhs, const j_vec2<t>& rhs) noexcept {
+[[nodiscard]] constexpr inline j_vec2<t> operator+(const j_vec2<t>& lhs, const j_vec2<t>& rhs) {
     return j_vec2<t>(lhs.x + rhs.x, lhs.y + rhs.y);
 }
 
@@ -131,7 +131,7 @@ template<typename t>
  * @brief Adds a scalar to all vector parts
  */
 template<typename t>
-[[nodiscard]] constexpr inline j_vec2<t> operator+(const j_vec2<t>& v, t scalar) noexcept {
+[[nodiscard]] constexpr inline j_vec2<t> operator+(const j_vec2<t>& v, t scalar) {
     return j_vec2<t>(v.x + scalar, v.y + scalar);
 }
 
@@ -147,7 +147,7 @@ template<typename t>
  * @brief Multiplies all vector parts by the given scalar
  */
 template<typename t>
-[[nodiscard]] constexpr inline j_vec2<t> operator*(const j_vec2<t>& v, t scalar) noexcept {
+[[nodiscard]] constexpr inline j_vec2<t> operator*(const j_vec2<t>& v, t scalar) {
     return j_vec2<t>(v.x * scalar, v.y * scalar);
 }
 

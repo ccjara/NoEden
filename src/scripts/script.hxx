@@ -48,14 +48,14 @@ public:
     /**
      * @brief Frees the currently managed lua state if allocated
      */
-    ~j_script() noexcept;
+    ~j_script();
 
     /**
      * @brief Implicit conversion from a j_script instance to a lua state
      *
      * This allows passing a j_script to lua C functions.
      */
-    operator lua_State* () const noexcept;
+    operator lua_State* () const;
 
     /**
      * @brief Runs the script by doing a lua pcall
@@ -75,12 +75,12 @@ public:
      */
     void load();
 
-    j_script_status status() const noexcept;
-    bool called() const noexcept;
-    bool callable() const noexcept;
-    bool loaded() const noexcept;
-    const std::string& id() const noexcept;
-    lua_State* lua_state() const noexcept;
+    j_script_status status() const;
+    bool called() const;
+    bool callable() const;
+    bool loaded() const;
+    const std::string& id() const;
+    lua_State* lua_state() const;
 
     // move the managed script state between j_script instances
     j_script(j_script&&);

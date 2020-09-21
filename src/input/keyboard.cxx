@@ -1,6 +1,6 @@
 #include "keyboard.hxx"
 
-bool j_keyboard::consume(SDL_Keycode key) noexcept {
+bool j_keyboard::consume(SDL_Keycode key) {
     const auto k { keys_.find(key) };
 
     const auto pressed { k == keys_.end() ? false : k->second };
@@ -11,7 +11,7 @@ bool j_keyboard::consume(SDL_Keycode key) noexcept {
     return pressed;
 }
 
-bool j_keyboard::is_pressed(SDL_Keycode key) const noexcept {
+bool j_keyboard::is_pressed(SDL_Keycode key) const {
     const auto k { keys_.find(key) };
 
     return k == keys_.end() ? false : k->second;

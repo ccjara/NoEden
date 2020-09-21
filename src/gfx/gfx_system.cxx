@@ -14,13 +14,13 @@ j_gfx_system::j_gfx_system(j_window* window) : window_(window) {
 
     if (gl_context == nullptr) {
         LOG(ERROR) << "Could not initialize opengl";
-        throw;
+        std::abort();
     }
     SDL_GL_SetSwapInterval(1);
 
     if (glewInit() != GLEW_OK) {
         LOG(ERROR) << "Could not initialize glew";
-        throw;
+        std::abort();
     }
 
     renderer_.set_context(gl_context);
@@ -79,18 +79,18 @@ j_texture j_gfx_system::load_text_texture(const fs::path& path) const {
     const auto path_str { path.u8string() };
     if (!fs::exists(path)) {
         LOG(ERROR) << "Could not read text font at path " << path_str;
-        throw;
+        std::abort();
     }
     tex.load(path_str);
     assert(tex.is_loaded());
     return tex;
 }
 
-j_renderer& j_gfx_system::renderer() noexcept {
+j_renderer& j_gfx_system::renderer() {
     return renderer_;
 }
 
-j_display& j_gfx_system::display() noexcept {
+j_display& j_gfx_system::display() {
     return display_;
 }
 

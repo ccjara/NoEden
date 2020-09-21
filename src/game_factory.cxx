@@ -6,7 +6,7 @@ void j_game_factory::run() {
     game = new j_game();
     if (!game) {
         LOG(ERROR) << "Could not allocate game memory";
-        throw;
+        std::abort();
     }
     game->state_ = std::make_unique<j_state_stack>();
 

@@ -12,13 +12,13 @@ j_script::j_script(const std::string& id, const std::string& source) :
     source_(source) {
 }
 
-j_script::~j_script() noexcept {
+j_script::~j_script() {
     if (state_) {
         lua_close(state_);
     }
 }
 
-j_script::operator lua_State* () const noexcept {
+j_script::operator lua_State* () const {
     return state_;
 }
 
@@ -65,27 +65,27 @@ void j_script::load() {
     status_ = j_script_status::loaded;
 }
 
-j_script_status j_script::status() const noexcept {
+j_script_status j_script::status() const {
     return status_;
 }
 
-bool j_script::callable() const noexcept {
+bool j_script::callable() const {
     return status_ == j_script_status::loaded;
 }
 
-bool j_script::called() const noexcept {
+bool j_script::called() const {
     return status_ == j_script_status::called;
 }
 
-bool j_script::loaded() const noexcept {
+bool j_script::loaded() const {
     return callable();
 }
 
-const std::string& j_script::id() const noexcept {
+const std::string& j_script::id() const {
     return id_;
 }
 
-lua_State* j_script::lua_state() const noexcept {
+lua_State* j_script::lua_state() const {
     return state_;
 }
 

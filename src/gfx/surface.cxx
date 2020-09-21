@@ -24,7 +24,7 @@ void j_surface::load(std::string_view path) {
     surf_ = SDL_LoadBMP(path.data());
     if (!surf_) {
         LOG(ERROR) << "Could not load surface (" << SDL_GetError() << ")";
-        throw;
+        std::abort();
     }
 
     assert(surf_->w > 0);
@@ -33,21 +33,21 @@ void j_surface::load(std::string_view path) {
     size_ = { static_cast<uint32_t>(surf_->w), static_cast<uint32_t>(surf_->h) };
 }
 
-void* j_surface::data() const noexcept {
+void* j_surface::data() const {
     if (!surf_) {
         return nullptr;
     }
     return surf_->pixels;
 }
 
-uint32_t j_surface::width() const noexcept {
+uint32_t j_surface::width() const {
     return size_.x;
 }
 
-uint32_t j_surface::height() const noexcept {
+uint32_t j_surface::height() const {
     return size_.y;
 }
 
-j_vec2<uint32_t> j_surface::size() const noexcept {
+j_vec2<uint32_t> j_surface::size() const {
     return size_;
 }

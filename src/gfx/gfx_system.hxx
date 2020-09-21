@@ -42,8 +42,8 @@ public:
 
     void update(uint32_t delta_time) override;
 
-    j_renderer& renderer() noexcept;
-    j_display& display() noexcept;
+    j_renderer& renderer();
+    j_display& display();
 };
 
 #endif

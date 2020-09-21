@@ -20,18 +20,18 @@ public:
     /**
      * @brief Frees the SDL window handle
      */
-    ~j_window() noexcept;
+    ~j_window();
 
     // resource management, handle can only be moved
     j_window(const j_window&) = delete;
-    j_window(j_window&&) noexcept;
+    j_window(j_window&&);
     j_window& operator=(const j_window&) = delete;
-    j_window& operator=(j_window&&) noexcept;
+    j_window& operator=(j_window&&);
 
     /**
      * @brief Implicit conversion to the managed handle
      */
-    operator SDL_Window* () const noexcept;
+    operator SDL_Window* () const;
 
     /**
      * @brief Updates the window size
@@ -42,15 +42,15 @@ public:
      *
      * @see j_resize_event
      */
-    void resize(j_vec2<uint32_t> s) noexcept;
+    void resize(j_vec2<uint32_t> s);
 
     /**
      * @brief Destroys the underlying SDL managed window
      */
-    void close() noexcept;
+    void close();
 
-    [[nodiscard]] SDL_Window* handle() const noexcept;
-    [[nodiscard]] j_vec2<uint32_t> size() const noexcept;
+    [[nodiscard]] SDL_Window* handle() const;
+    [[nodiscard]] j_vec2<uint32_t> size() const;
 };
 
 #endif

@@ -80,7 +80,7 @@ void j_shader::unload() {
     }
 }
 
-void j_shader::use() noexcept {
+void j_shader::use() {
     glUseProgram(program_);
     prepare();
 }
@@ -89,10 +89,10 @@ void j_shader::prepare() {
 
 }
 
-bool j_shader::is_loaded() const noexcept {
+bool j_shader::is_loaded() const {
     return !!program_;
 }
 
-GLint j_shader::id() const noexcept {
+GLint j_shader::id() const {
     return program_;
 }

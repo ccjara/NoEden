@@ -9,7 +9,7 @@ j_env_manager::j_env_manager(entt::dispatcher* const dispatcher) :
     dispatcher_->sink<j_script_loaded_event>().connect<&j_env_manager::on_script_loaded>(this);
 }
 
-j_env_manager::~j_env_manager() noexcept {
+j_env_manager::~j_env_manager() {
     if (is_running_) {
         stop();
     }
@@ -18,7 +18,7 @@ j_env_manager::~j_env_manager() noexcept {
 void j_env_manager::start() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         LOG(ERROR) << "SDL could not initialize! (" << SDL_GetError() << ")";
-        throw;
+        std::abort();
     }
 
     SDL_Rect display_bounds;
@@ -46,10 +46,10 @@ void j_env_manager::on_script_loaded(const j_script_loaded_event& e) {
     }
 }
 
-void j_env_manager::update_root_config(j_script& sys_script) noexcept {
+void j_env_manager::update_root_config(j_script& sys_script) {
     j_root_config cfg_prev = root_config_;
 
-    constexpr const auto report = [](std::string_view reason) noexcept -> void {
+    constexpr const auto report = [](std::string_view reason) -> void {
         LOG(ERROR) << "Error in root config: " << reason << ".";
     };
 
@@ -96,29 +96,29 @@ void j_env_manager::update_root_config(j_script& sys_script) noexcept {
     dispatcher_->trigger(j_root_config_updated_event(std::move(cfg_prev), root_config_));
 }
 
-const j_root_config& j_env_manager::config() const noexcept {
+const j_root_config& j_env_manager::config() const {
     return root_config_;
 }
 
-bool j_env_manager::running() const noexcept {
+bool j_env_manager::running() const {
     return is_running_;
 }
 
-void j_env_manager::stop() noexcept {
+void j_env_manager::stop() {
     window_->close();
     SDL_Quit();
     is_running_ = false;
 }
 
-j_clock& j_env_manager::clock() noexcept {
+j_clock& j_env_manager::clock() {
     return clock_;
 }
 
-j_window& j_env_manager::window() noexcept {
+j_window& j_env_manager::window() {
     return *window_;
 }
 
-void j_env_manager::process_os_messages() const noexcept {
+void j_env_manager::process_os_messages() const {
     SDL_PumpEvents();
 
     SDL_Event e;

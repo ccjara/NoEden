@@ -11,12 +11,12 @@ public:
     /**
      * @brief Returns true if the given key is pressed
      */
-    virtual bool is_pressed(SDL_Keycode k) const noexcept = 0;
+    virtual bool is_pressed(SDL_Keycode k) const = 0;
 
     /**
      * @brief Returns true if the given key is pressed and resets its state
      */
-    virtual bool consume(SDL_Keycode k) noexcept = 0;
+    virtual bool consume(SDL_Keycode k) = 0;
 };
 
 #endif

@@ -38,19 +38,19 @@ private:
      *
      * Corrupted config entries will be ignored
      */
-    void update_root_config(j_script& sys_script) noexcept;
+    void update_root_config(j_script& sys_script);
 public:
     j_env_manager(entt::dispatcher* const dispatcher);
 
     /**
      * @brief Frees resources in case {@see stop} was not invoked
      */
-    ~j_env_manager() noexcept;
+    ~j_env_manager();
 
     /**
      * @brief Returns the root config
      */
-    const j_root_config& config() const noexcept;
+    const j_root_config& config() const;
 
     /**
      * @brief Returns whether the game is still running
@@ -58,7 +58,7 @@ public:
      * When false, the game loop will break after the current cycle,
      * effectively triggering the exit routine.
      */
-    bool running() const noexcept;
+    bool running() const;
 
     /**
      * @brief Starts the environment
@@ -76,17 +76,17 @@ public:
      *
      * @see running
      */
-    void stop() noexcept;
+    void stop();
 
     /**
      * Polls for pending OS messages and dispatches env events
      *
      * @see env_event_dispatcher
      */
-    void process_os_messages() const noexcept;
+    void process_os_messages() const;
 
-    j_clock& clock() noexcept;
-    j_window& window() noexcept;
+    j_clock& clock();
+    j_window& window();
 };
 
 #endif

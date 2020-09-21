@@ -1,6 +1,6 @@
 #include "script_system.hxx"
 
-j_script_system::~j_script_system() noexcept {
+j_script_system::~j_script_system() {
     reset();
 }
 
@@ -11,7 +11,7 @@ void j_script_system::on_load() {
     preload(default_script_path);
 }
 
-void j_script_system::reset() noexcept {
+void j_script_system::reset() {
     // need to clear all refs ahead of the scripts, otherwise the refs are
     // TODO: bind the refs to the j_script instances somehow so the script
     //       can get rid of them?

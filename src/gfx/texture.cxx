@@ -1,6 +1,6 @@
 #include "texture.hxx"
 
-j_texture::j_texture(j_texture&& other) noexcept {
+j_texture::j_texture(j_texture&& other) {
     *this = std::move(other);
 }
 
@@ -8,7 +8,7 @@ j_texture::~j_texture() {
     unload();
 }
 
-j_texture& j_texture::operator=(j_texture&& other) noexcept {
+j_texture& j_texture::operator=(j_texture&& other) {
     id_ = std::exchange(other.id_, 0);
     size_ = std::exchange(other.size_, { 0, 0 });
     return *this;
@@ -21,7 +21,7 @@ void j_texture::unload() {
     }
 }
 
-bool j_texture::is_loaded() const noexcept {
+bool j_texture::is_loaded() const {
     return !!id_;
 }
 
@@ -50,24 +50,24 @@ void j_texture::load(std::string_view path) {
     const auto glError = glGetError();
     if (glError) {
         LOG(ERROR) << "Could not generate texture from surface (" << glError << ")";
-        throw;
+        std::abort();
     }
 
     size_ = surf.size();
 }
 
-GLuint j_texture::id() const noexcept {
+GLuint j_texture::id() const {
     return id_;
 }
 
-void j_texture::bind() noexcept {
+void j_texture::bind() {
     glBindTexture(GL_TEXTURE_2D, id_);
 }
 
-void j_texture::unbind() noexcept {
+void j_texture::unbind() {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-j_vec2<uint32_t> j_texture::size() const noexcept {
+j_vec2<uint32_t> j_texture::size() const {
     return size_;
 }

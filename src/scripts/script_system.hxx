@@ -48,7 +48,7 @@ private:
      *
      * In this state, no script or any reference thereof is held
      */
-    void reset() noexcept;
+    void reset();
 
     /**
      * @brief Does a protected call into the given lua ref
@@ -57,7 +57,7 @@ private:
      * is logged, *no* exception is thrown.
      */
     template<typename... varg_t>
-    inline void pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const noexcept;
+    inline void pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const;
 public:
     constexpr static const char* default_script_path {
 #ifdef NDEBUG
@@ -70,7 +70,7 @@ public:
     /**
      * @brief Unloads all scripts before freeing resources
      */
-    ~j_script_system() noexcept;
+    ~j_script_system();
 
     /**
      * @brief Recursively preloads all scripts from the given directory path
@@ -118,7 +118,7 @@ public:
     /**
      * @brief Attempts to load the script with the given script id
      *
-     * Throws if the file does not exist
+     * Panics if the file does not exist
      */
     template<typename string_like>
     j_script& require(string_like script_id);
@@ -136,7 +136,7 @@ void j_script_system::preload(path_like base_path) {
 
     if (!fs::is_directory(abs_path)) {
         LOG(ERROR) << "Script path " << abs_path << " must be a readable directory";
-        throw;
+        std::abort();
     }
 
     std::string prefix;
@@ -173,14 +173,14 @@ j_script& j_script_system::require(string_like script_id) {
 
     if (entry == scripts_.end()) {
         LOG(ERROR) << "Could not find script " << script_id;
-        throw;
+        std::abort();
     }
 
     return entry->second;
 }
 
 template<typename... varg_t>
-inline void j_script_system::pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const noexcept {
+inline void j_script_system::pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const {
     const auto result { ref(std::forward<varg_t>(args)...) };
     if (result == std::nullopt) {
         const auto state { ref.state() };

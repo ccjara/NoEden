@@ -8,7 +8,7 @@ protected:
     j_vec2<uint32_t> dimensions_;
 
     template<typename pos>
-    [[nodiscard]] constexpr inline auto to_index(const pos& position) const noexcept {
+    [[nodiscard]] constexpr inline auto to_index(const pos& position) const {
         return position.y * dimensions_.x + position.x;
     }
 public:
@@ -33,32 +33,32 @@ public:
         reset();
     }
 
-    constexpr void reset() noexcept {
+    constexpr void reset() {
         std::fill(cells_.begin(), cells_.end(), cell::null);
     }
 
     /**
      * @brief Provides iterable access to all cells of the grid
      */
-    constexpr const auto* data() const noexcept {
+    constexpr const auto* data() const {
         return cells_.data();
     }
 
     /**
      * @brief Returns the amount of cells in the grid
      */
-    constexpr auto size() const noexcept {
+    constexpr auto size() const {
         return cells_.size();
     }
 
     /**
      * @brief Returns the total grid size in bytes
      */
-    constexpr auto byte_size() const noexcept {
+    constexpr auto byte_size() const {
         return size() * sizeof(cell);
     }
 
-    constexpr auto dimensions() const noexcept {
+    constexpr auto dimensions() const {
         return dimensions_;
     }
 
@@ -68,7 +68,7 @@ public:
      * If the position is out of bounds, the null-cell reference is returned.
      */
     template<typename pos>
-    [[nodiscard]] constexpr inline const cell& at(const pos& position) const noexcept {
+    [[nodiscard]] constexpr inline const cell& at(const pos& position) const {
         if (!in_bounds(position)) {
             return cell::null;
         }
@@ -96,7 +96,7 @@ public:
      * @brief Returns whether the given position is within bounds
      */
     template<typename pos>
-    [[nodiscard]] constexpr inline bool in_bounds(const pos& position) const noexcept {
+    [[nodiscard]] constexpr inline bool in_bounds(const pos& position) const {
         return position.x + 1 <= dimensions_.x && position.y + 1 <= dimensions_.y;
     }
 
@@ -106,7 +106,7 @@ public:
      * This ensures that the position is contained by the grid
      */
     template<typename pos>
-    constexpr inline void clamp(pos& position) noexcept {
+    constexpr inline void clamp(pos& position) {
         if (position.x > dimensions_.x) {
             position.x = dimensions_.x;
         }

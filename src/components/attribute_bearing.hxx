@@ -11,9 +11,9 @@ public:
 
     void modify(j_attribute_type type, int32_t value);
 
-    const j_attribute& attribute(j_attribute_type type) noexcept;
+    const j_attribute& attribute(j_attribute_type type);
 
-    const std::unordered_map<j_attribute_type, j_attribute>& attributes() const noexcept;
+    const std::unordered_map<j_attribute_type, j_attribute>& attributes() const;
 };
 
 #endif

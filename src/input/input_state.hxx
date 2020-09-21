@@ -14,12 +14,12 @@ public:
     /**
      * @brief Returns the current keyboard state
      */
-    virtual j_keyboard_state& keyboard() noexcept = 0;
+    virtual j_keyboard_state& keyboard() = 0;
 
     /**
      * @brief Returns the current, readonly mouse state
      */
-    virtual j_mouse_state& mouse() noexcept = 0;
+    virtual j_mouse_state& mouse() = 0;
 };
 
 #endif
