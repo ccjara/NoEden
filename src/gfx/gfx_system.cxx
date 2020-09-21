@@ -98,7 +98,7 @@ void j_gfx_system::adjust_display() {
     // calculate resolution
     const auto scaled_size { window_->size() / cfg_.scaling };
     // calculate how many cells will fit on the screen given that resolution
-    display_.resize(j_vec2<uint32_t>{
+    display_.resize({
         scaled_size.x / cfg_.glyph_size.x,
         scaled_size.y / cfg_.glyph_size.y
     });

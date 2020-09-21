@@ -27,7 +27,7 @@ void j_renderer::render(const j_display& display) {
 
         last_size_ = byte_size;
     }
-    glDrawArrays(GL_POINTS, 0, display.size());
+    glDrawArrays(GL_POINTS, 0, display.cell_count());
 }
 
 void j_renderer::set_viewport(j_vec2<uint32_t> size) {

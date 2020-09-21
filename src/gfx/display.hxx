@@ -74,14 +74,11 @@ struct j_rect_options {
  * @see j_display
  */
 struct j_display_cell {
-private:
-    friend class j_grid<j_display_cell>;
+    j_display_cell() = default;
 
-    /**
-     * @brief Fallback (null) cell
-     */
-    static const j_display_cell null;
-public:
+    j_display_cell(int32_t glyph, j_color color) : glyph(glyph), color(color) {
+    }
+
     /**
      * @brief code point (arbitrary code page) to render from this cell
      */
@@ -103,10 +100,8 @@ public:
  */
 class j_display: public j_grid<j_display_cell> {
 public:
-    /**
-     * @brief Override a single cell of the display
-     */
-    void put(j_display_cell&& cell, j_vec2<uint32_t> pos);
+    j_display() : j_grid<j_display_cell>(j_display_cell{}) {
+    }
 
     /**
      * @brief Render a text on the display

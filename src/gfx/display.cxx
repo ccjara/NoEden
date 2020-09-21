@@ -2,10 +2,6 @@
 
 const j_display_cell j_display_cell::null = j_display_cell();
 
-void j_display::put(j_display_cell&& cell, j_vec2<uint32_t> pos) {
-    cells_.at(to_index(pos)) = std::move(cell);
-}
-
 void j_display::text(std::string_view t, j_vec2<uint32_t> position, const j_text_options& options) {
     const auto origin { position };
 
