@@ -2,7 +2,6 @@
 #define JARALYN_PLAYER_SYSTEM_HXX
 
 #include "../system.hxx"
-#include "../event/event_listener.hxx"
 #include "../event/event.hxx"
 
 class j_player_system : public j_system<j_player_system> {

@@ -3,6 +3,9 @@
 j_script_system::j_script_system(entt::dispatcher* const dispatcher) :
     dispatcher_(dispatcher) {
     assert(dispatcher_);
+
+    dispatcher_->sink<j_item_stored_event>().connect<&j_script_system::on_item_stored>(this);
+    dispatcher_->sink<j_key_down_event>().connect<&j_script_system::on_key_down>(this);
 }
 
 j_script_system::~j_script_system() noexcept {
@@ -15,11 +18,6 @@ void j_script_system::reset() noexcept {
     //       can get rid of them?
     listeners_.clear();
     scripts_.clear();
-}
-
-void j_script_system::attach(entt::dispatcher& dispatcher) noexcept {
-    dispatcher.sink<j_item_stored_event>().connect<&j_script_system::on_item_stored>(this);
-    dispatcher.sink<j_key_down_event>().connect<&j_script_system::on_key_down>(this);
 }
 
 void j_script_system::on_item_stored(const j_item_stored_event& e) {

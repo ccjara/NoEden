@@ -13,7 +13,6 @@ add_executable(
     "env/window.cxx"
 
     "event/event.hxx"
-    "event/event_listener.hxx"
 
     "game.cxx"
     "grid.hxx"

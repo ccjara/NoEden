@@ -3,14 +3,13 @@
 
 #include "script.hxx"
 #include "../event/event.hxx"
-#include "../event/event_listener.hxx"
 #include "display_proxy.hxx"
 
 namespace script_ids {
     constexpr const char* system { "system" };
 }
 
-class j_script_system : public j_event_listener {
+class j_script_system {
 private:
     entt::dispatcher* const dispatcher_;
 
@@ -126,8 +125,6 @@ public:
      */
     template<typename string_like>
     j_script& require(string_like script_id);
-
-    void attach(entt::dispatcher& dispatcher) noexcept override;
 };
 
 template<typename path_like>

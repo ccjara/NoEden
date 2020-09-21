@@ -2,7 +2,6 @@
 #define JARALYN_INPUT_SYSTEM_HXX
 
 #include "../event/event.hxx"
-#include "../event/event_listener.hxx"
 #include "../system.hxx"
 #include "mouse.hxx"
 #include "keyboard.hxx"
