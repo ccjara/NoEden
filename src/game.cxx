@@ -18,17 +18,13 @@ entt::dispatcher* j_game::events() {
 }
 
 void j_game::run() {
-    auto script_system_ = std::make_unique<j_script_system>(&dispatcher_);
-    script_system_->attach(dispatcher_);
-
     env_->start();
 
     systems_->emplace<j_input_system>();
     systems_->emplace<j_player_system>();
     systems_->emplace<j_gfx_system>(&env_->window());
     systems_->emplace<j_hud_system>();
-
-    script_system_->preload(script_system_->default_script_path);
+    systems_->emplace<j_script_system>();
 
     state_.push(j_state_id::world);
 

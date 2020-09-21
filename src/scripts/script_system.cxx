@@ -1,15 +1,14 @@
 #include "script_system.hxx"
 
-j_script_system::j_script_system(entt::dispatcher* const dispatcher) :
-    dispatcher_(dispatcher) {
-    assert(dispatcher_);
-
-    dispatcher_->sink<j_item_stored_event>().connect<&j_script_system::on_item_stored>(this);
-    dispatcher_->sink<j_key_down_event>().connect<&j_script_system::on_key_down>(this);
-}
-
 j_script_system::~j_script_system() noexcept {
     reset();
+}
+
+void j_script_system::on_load() {
+    dispatcher_->sink<j_item_stored_event>().connect<&j_script_system::on_item_stored>(this);
+    dispatcher_->sink<j_key_down_event>().connect<&j_script_system::on_key_down>(this);
+
+    preload(default_script_path);
 }
 
 void j_script_system::reset() noexcept {
@@ -73,4 +72,7 @@ void j_script_system::setup(j_script& script) {
     if (on_load.isFunction()) {
         pcall_into(on_load, this);
     }
+}
+
+void j_script_system::update(uint32_t delta_time) {
 }

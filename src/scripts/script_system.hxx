@@ -1,6 +1,7 @@
 #ifndef JARALYN_SCRIPT_SYSTEM_HXX
 #define JARALYN_SCRIPT_SYSTEM_HXX
 
+#include "../system.hxx"
 #include "script.hxx"
 #include "../event/event.hxx"
 #include "display_proxy.hxx"
@@ -9,10 +10,8 @@ namespace script_ids {
     constexpr const char* system { "system" };
 }
 
-class j_script_system {
+class j_script_system : public j_system<j_script_system> {
 private:
-    entt::dispatcher* const dispatcher_;
-
     struct j_bound_ref {
         std::string script_id;
         luabridge::LuaRef ref;
@@ -67,8 +66,6 @@ public:
         "../src/scripts/lua"
 #endif
     };
-
-    j_script_system(entt::dispatcher* const dispatcher);
 
     /**
      * @brief Unloads all scripts before freeing resources
@@ -125,6 +122,10 @@ public:
      */
     template<typename string_like>
     j_script& require(string_like script_id);
+
+    void on_load() override;
+
+    void update(uint32_t delta_time) override;
 };
 
 template<typename path_like>
