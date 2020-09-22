@@ -19,7 +19,7 @@ void main() {
 
     const std::string_view gss = R"RAW(
 #version 400 core
- 
+
 layout (points) in;
 layout (triangle_strip, max_vertices=4) out;
 

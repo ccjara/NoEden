@@ -67,7 +67,7 @@ public:
     constexpr uint32_t start_index() const {
         return start_index_;
     }
-    
+
     constexpr uint32_t stop_index() const {
         return stop_index_;
     }

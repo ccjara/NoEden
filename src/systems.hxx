@@ -16,7 +16,7 @@ public:
 
     j_systems(const j_systems&) = delete;
     j_systems& operator=(const j_systems&) = delete;
-    
+
     j_systems(j_systems&&) = delete;
     j_systems& operator=(j_systems&&) = delete;
 
@@ -40,7 +40,7 @@ public:
 
     /**
      * @brief Adds a new system to the system container
-     * 
+     *
      * Arguments provided are forwarded to the system constructor.
      */
     template<typename sys, typename... args>

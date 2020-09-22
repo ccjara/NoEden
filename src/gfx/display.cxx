@@ -86,7 +86,7 @@ void j_display::rectangle(const j_rect_options& options) {
 
             uint32_t glyph;
             j_color color = options.color;
-                
+
             if (l_span) {
                 if (t_span) {
                     glyph = options.corner_glyphs.top_left;

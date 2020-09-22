@@ -10,7 +10,7 @@ enum class j_state_id {
 class j_state {
 public:
     virtual ~j_state() = default;
-    
+
     virtual void on_enter() {
     }
 
