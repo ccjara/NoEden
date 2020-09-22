@@ -3,6 +3,12 @@
 
 /**
  * @brief Generic implementation of a two-dimensional grid
+ *
+ * Most methods which access specific locations using a templatized `location_type`
+ * accept either coordinates packed into a `j_vec2<uint32_t>` or an integral typed index
+ *
+ * Grid is not suitable for very large dimensions, i.e. dimensions which would
+ * produce indices larger than uint32_t could represent. (TODO: assertions)
  */
 template<typename cell>
 class j_grid {
@@ -50,13 +56,12 @@ protected:
      * otherwise the location is converted from the assumed index location.
      */
     template<typename location_type>
-    [[nodiscard]] constexpr j_vec2<uint32_t> ensure_position(location_type location) const {
+    [[nodiscard]] constexpr j_vec2<uint32_t> ensure_coordinates(location_type location) const {
         if constexpr (std::is_same_v<location_type, j_vec2<uint32_t>>) {
             return location;
         } else {
             static_assert(std::is_integral_v<location_type>);
-
-            return to_position(location);
+            return to_coordinates(location);
         }
     }
 public:
@@ -134,17 +139,19 @@ public:
     }
 
     /**
-     * @brief Copy-constructs the given cell at the given position
+     * @brief Copy-constructs the given cell at the given location
      *
      * If the position is out of bounds, the operation will be ignored.
      *
-     * @see emplace to construct the cell in-place instead.
+     * @see emplace() to construct the cell in-place instead.
      */
     template<typename location_type>
     constexpr void put(const cell& c, location_type location) {
         if (!in_bounds(location)) {
+            constexpr auto coord { ensure_coordinates(location) };
+
             LOG(ERROR)
-                << "Placement at " << location.x << ", " << location.y
+                << "Placement at " << coord.x << ", " << coord.y
                 << " not within bounds ("
                 << dimensions_.x << ", " << dimensions_.y << ")";
             return;
@@ -153,16 +160,16 @@ public:
     }
 
     /**
-     * @brief Constructs the cell in-place at the given position
+     * @brief Constructs the cell in-place at the given location
      *
-     * If the position is out of bounds, the operation will be ignored.
+     * If the location is invalid the operation will be ignored.
      *
-     * @see put to copy-construct a cell instead.
+     * @see put() to copy-construct a cell instead.
      */
     template<typename location_type, typename... args>
     constexpr void emplace(location_type location, args&&... cell_args) {
         if (!in_bounds(location)) {
-            constexpr auto coord { ensure_position(location) };
+            constexpr auto coord { ensure_coordinates(location) };
 
             LOG(ERROR)
                 << "Placement at " << coord.x << ", " << coord.y
@@ -193,31 +200,31 @@ public:
     }
 
     /**
-     * @brief Clamps (mutates) the given position to the grid dimensions
+     * @brief Clamps (mutates) the given coordinates to the grid dimensions
      *
-     * This ensures that the position is contained by the grid
+     * This ensures that the coordinates are contained by the grid
      */
-    constexpr void clamp(j_vec2<uint32_t>& position) const {
-        if (position.x > dimensions_.x) {
-            position.x = dimensions_.x;
+    constexpr void clamp(j_vec2<uint32_t>& coord) const {
+        if (coord.x > dimensions_.x) {
+            coord.x = dimensions_.x;
         }
-        if (position.y > dimensions_.y) {
-            position.y = dimensions_.y;
+        if (coord.y > dimensions_.y) {
+            coord.y = dimensions_.y;
         }
     }
 
     /**
-     * @brief Converts the given index to a position vector
+     * @brief Converts the given index to grid coordinates
      *
-     * Using the `fast_access_t` tag, does not ensure that the grid is non-empty.
-     * If using fast access and the grid is empty, the game will panic due to
-     * division by zero. When using the `safe_access_t` tag this method will
-     * retrieve a zero position vector if the grid's width is zero.
+     * Using the `fast_access_t` tag (default), does not ensure that the grid is
+     * non-empty. If using fast access and the grid is empty, the game will
+     * panic due to division by zero. When using the `safe_access_t` tag this
+     * method will return origin coordinates if the grid's width is zero.
      *
      * This does *not* verify the resulting coordinates.
      */
     template <typename grid_access_t = fast_access_t>
-    [[nodiscard]] constexpr j_vec2<uint32_t> to_position(size_t index) const {
+    [[nodiscard]] constexpr j_vec2<uint32_t> to_coordinates(size_t index) const {
         if constexpr (std::is_same_v<grid_access_t, safe_access_t>) {
             if (!dimensions_.x) {
                 return { 0, 0 };
@@ -234,8 +241,8 @@ public:
      *
      * This method does *not* verify the resulting index.
      */
-    [[nodiscard]] constexpr size_t to_index(j_vec2<uint32_t> position) const {
-        return position.y * dimensions_.x + position.x;
+    [[nodiscard]] constexpr size_t to_index(j_vec2<uint32_t> coord) const {
+        return coord.y * dimensions_.x + coord.x;
     }
 };
 
