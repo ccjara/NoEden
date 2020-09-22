@@ -16,6 +16,7 @@ void j_game_factory::run() {
     game->systems_->emplace<j_gfx_system>(&game->env_->window());
     game->systems_->emplace<j_hud_system>();
     game->systems_->emplace<j_script_system>();
+    game->systems_->emplace<j_controller_system>();
 
     game->run();
 

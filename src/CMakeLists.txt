@@ -5,8 +5,11 @@ add_executable(
     "components/attribute.hxx"
     "components/attribute_bearing.cxx"
     "components/components.hxx"
-    "components/inventory.cxx"
-    "components/item.hxx"
+    "components/item.cxx"
+
+    "controller/controller.cxx"
+    "controller/controller_system.cxx"
+    "controller/unit_controller.cxx"
 
     "env/clock.hxx"
     "env/env_manager.cxx"

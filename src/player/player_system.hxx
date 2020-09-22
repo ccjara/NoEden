@@ -4,6 +4,7 @@
 #include "../game.hxx"
 #include "../system.hxx"
 #include "../event/event.hxx"
+#include "../event/gathering_event.hxx"
 #include "../components/components.hxx"
 
 class j_player_system : public j_system<j_player_system> {
@@ -15,6 +16,8 @@ private:
     void on_player_control(const j_player_control_event& e);
 
     void on_key_down(const j_key_down_event& e);
+
+    bool gathering_ { false };
 public:
     void on_load() override;
 

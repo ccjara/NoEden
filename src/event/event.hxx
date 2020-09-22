@@ -4,8 +4,9 @@
 #include "../env/root_config.hxx"
 #include "../components/item.hxx"
 
-class j_display;
 class j_script;
+
+// TODO: split up
 
 /**
  * @brief Triggered on SDL_QUIT when closing the window

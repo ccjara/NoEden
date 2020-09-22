@@ -18,6 +18,11 @@ void j_player_system::update(uint32_t delta_time) {
         velocity_ = { 0, 0 };
         game->events()->trigger<j_player_moved_event>(player_, position);
     }
+
+    if (gathering_) {
+        game->events()->trigger<j_gathering_started_event>(player_, position);
+        gathering_ = false;
+    }
 }
 
 void j_player_system::on_player_control(const j_player_control_event& e) {
@@ -37,6 +42,9 @@ void j_player_system::on_key_down(const j_key_down_event& e) {
             break;
         case SDL_KeyCode::SDLK_RIGHT:
             velocity_.x += 1;
+            break;
+        case SDL_KeyCode::SDLK_g:
+            gathering_ = true;
             break;
     }
 }

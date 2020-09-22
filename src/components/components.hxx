@@ -3,7 +3,7 @@
 
 #include "attribute.hxx"
 #include "attribute_bearing.hxx"
-#include "inventory.hxx"
+#include "item.hxx"
 
 struct jc_object_descriptor {
     std::string label;

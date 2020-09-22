@@ -4,6 +4,7 @@
 #include "../game.hxx"
 #include "../event/event.hxx"
 #include "../components/components.hxx"
+#include "../components/item.hxx"
 #include "state.hxx"
 
 class j_world_state : public j_state {
