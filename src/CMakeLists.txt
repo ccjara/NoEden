@@ -11,8 +11,6 @@ add_executable(
     "controller/controller_system.cxx"
     "controller/unit_controller.cxx"
 
-    "color.hxx"
-
     "env/clock.hxx"
     "env/env_manager.cxx"
     "env/root_config.hxx"
@@ -34,6 +32,7 @@ add_executable(
     "math/rect.hxx"
     "math/vec2.hxx"
 
+    "gfx/color.hxx"
     "gfx/display.cxx"
     "gfx/fps_provider.hxx"
     "gfx/gfx_system.cxx"
@@ -43,6 +42,7 @@ add_executable(
     "gfx/text_shader.cxx"
     "gfx/texture.cxx"
 
+    "hud/journal.cxx"
     "hud/hud_system.cxx"
 
     "identity.hxx"

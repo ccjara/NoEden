@@ -6,9 +6,12 @@
 #include "../event/player_event.hxx"
 #include "../components/components.hxx"
 #include "../components/item.hxx"
+#include "journal.hxx"
 
 class j_hud_system : public j_system<j_hud_system> {
 private:
+    j_journal journal_;
+
     entt::entity status_text_;
     entt::observer item_observer_;
 
@@ -17,6 +20,13 @@ public:
     void on_load() override;
 
     void update(uint32_t delta_time) override;
+
+    /**
+     * @brief Returns all journal entries which should be rendered to display
+     *
+     * The return type will change later as soon as "render jobs" are implemented
+     */
+    const std::vector<std::string>& journal_entries() const;
 };
 
 #endif

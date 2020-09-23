@@ -55,6 +55,8 @@ void j_gfx_system::update(uint32_t delta_time) {
         display_.text(renderable.text, position, renderable.text_options);
     });
 
+    render_hud();
+
     renderer_.render(display_);
 
     SDL_GL_SwapWindow(*window_);
@@ -104,3 +106,17 @@ void j_gfx_system::adjust_display() {
     });
 }
 
+void j_gfx_system::render_hud() {
+    auto hud { game->systems()->get<j_hud_system>() };
+    const auto& journal { hud->journal_entries() };
+
+    j_vec2<uint32_t> pos { 0, display_.dimensions().y - 1 };
+
+    for (auto it { journal.crbegin() }; it != journal.crend(); ++it) {
+        display_.text(*it, pos, j_text_options{});
+
+        if (--pos.y == 0) {
+            break;
+        }
+    }
+}

@@ -23,6 +23,18 @@ void j_world_state::on_enter() {
     entities->assign<jc_renderable>(item, jc_renderable::item('$', j_color::yellow()));
     entities->assign<jc_object_descriptor>(item, "Gold coin");
     entities->assign<jc_item>(item, "Gold coin");
+
+    item = entities->create();
+    entities->assign<jc_position>(item, 8, 4, 0);
+    entities->assign<jc_renderable>(item, jc_renderable::item('$', j_color(0x888888)));
+    entities->assign<jc_object_descriptor>(item, "Silver coin");
+    entities->assign<jc_item>(item, "Silver coin");
+
+    item = entities->create();
+    entities->assign<jc_position>(item, 6, 1, 0);
+    entities->assign<jc_renderable>(item, jc_renderable::item('$', j_color(0x875630)));
+    entities->assign<jc_object_descriptor>(item, "Copper coin");
+    entities->assign<jc_item>(item, "Copper coin");
 }
 
 void j_world_state::on_update() {

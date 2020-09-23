@@ -1,6 +1,8 @@
 #include "hud_system.hxx"
 
 void j_hud_system::on_load() {
+    journal_.attach(game->events());
+
     game->events()->sink<j_player_moved_event>().connect<&j_hud_system::on_player_movement>(this);
 
     auto entities { game->entities() };
@@ -33,4 +35,8 @@ void j_hud_system::on_player_movement(const j_player_moved_event& e) {
 
 void j_hud_system::update(uint32_t delta_time) {
 
+}
+
+const std::vector<std::string>& j_hud_system::journal_entries() const {
+    return journal_.entries();
 }
