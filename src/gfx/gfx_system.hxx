@@ -6,7 +6,7 @@
 #include "../env/window.hxx"
 #include "../env/clock.hxx"
 #include "../env/root_config.hxx"
-#include "../event/event.hxx"
+#include "../event/platform_event.hxx"
 #include "../system.hxx"
 #include "renderer.hxx"
 #include "display.hxx"

@@ -1,7 +1,7 @@
-#ifndef JARALYN_GATHERING_EVENT_HXX
-#define JARALYN_GATHERING_EVENT_HXX
+#ifndef JARALYN_INVENTORY_EVENT_HXX
+#define JARALYN_INVENTORY_EVENT_HXX
 
-class jc_inventory;
+class j_item_container;
 
 /**
  * @brief Triggered when any unit started a gathering attempt
@@ -44,6 +44,18 @@ struct j_gathering_completed_event {
     ) : gatherer(gatherer), item(item), container(container) {
         assert(this->container);
     }
+};
+
+/**
+ * @brief Triggered when an item gets added to any inventory
+ */
+struct j_item_stored_event {
+    /**
+     * @brief The item which was stored
+     */
+    entt::entity item;
+
+    // TODO: add container pointer
 };
 
 #endif

@@ -3,7 +3,7 @@
 
 #include "../game.hxx"
 #include "../system.hxx"
-#include "../event/event.hxx"
+#include "../event/player_event.hxx"
 #include "../components/components.hxx"
 #include "../components/item.hxx"
 

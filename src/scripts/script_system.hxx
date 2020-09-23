@@ -2,13 +2,34 @@
 #define JARALYN_SCRIPT_SYSTEM_HXX
 
 #include "../system.hxx"
+#include "../event/script_event.hxx"
+#include "../event/inventory_event.hxx"
+#include "../event/platform_event.hxx"
 #include "script.hxx"
-#include "../event/event.hxx"
 #include "display_proxy.hxx"
 
 namespace script_ids {
     constexpr const char* system { "system" };
 }
+
+/**
+ * @see event_type_by_string
+ */
+enum class j_public_event_type {
+    inventory_item_added,
+};
+
+/**
+ * @brief Maps strings to j_public_event_type
+ *
+ * Used when interfacing lua and C++. The string representation should
+ * only be used in lua and the enum should be used in C++ at all times.
+ *
+ * Not every event is necessarily exposed to lua.
+ */
+static const std::unordered_map<std::string_view, j_public_event_type> event_type_by_string {
+    { "INVENTORY_ITEM_ADDED", j_public_event_type::inventory_item_added },
+};
 
 class j_script_system : public j_system<j_script_system> {
 private:

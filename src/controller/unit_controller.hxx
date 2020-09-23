@@ -2,7 +2,7 @@
 #define JARALYN_UNIT_CONTROLLER_HXX
 
 #include "../game.hxx"
-#include "../event/gathering_event.hxx"
+#include "../event/inventory_event.hxx"
 #include "../components/components.hxx"
 #include "../components/item.hxx"
 #include "controller.hxx"

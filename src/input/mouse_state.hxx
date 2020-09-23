@@ -1,6 +1,12 @@
 #ifndef JARALYN_MOUSE_STATE_HXX
 #define JARALYN_MOUSE_STATE_HXX
 
+enum class j_mouse_button {
+    left = SDL_BUTTON_LEFT,
+    middle = SDL_BUTTON_MIDDLE,
+    right = SDL_BUTTON_RIGHT,
+};
+
 /**
  * @brief Represents the current mouse state
  */

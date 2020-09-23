@@ -2,9 +2,9 @@
 #define JARALYN_WORLD_STATE_HXX
 
 #include "../game.hxx"
-#include "../event/event.hxx"
 #include "../components/components.hxx"
 #include "../components/item.hxx"
+#include "../event/player_event.hxx"
 #include "state.hxx"
 
 class j_world_state : public j_state {

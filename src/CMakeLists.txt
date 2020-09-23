@@ -11,12 +11,17 @@ add_executable(
     "controller/controller_system.cxx"
     "controller/unit_controller.cxx"
 
+    "color.hxx"
+
     "env/clock.hxx"
     "env/env_manager.cxx"
     "env/root_config.hxx"
     "env/window.cxx"
 
-    "event/event.hxx"
+    "event/inventory_event.hxx"
+    "event/platform_event.hxx"
+    "event/player_event.hxx"
+    "event/script_event.hxx"
 
     "game.cxx"
     "game_factory.cxx"
@@ -42,7 +47,6 @@ add_executable(
 
     "identity.hxx"
 
-    "input/input_state.hxx"
     "input/input_system.cxx"
     "input/keyboard.cxx"
     "input/keyboard_state.hxx"

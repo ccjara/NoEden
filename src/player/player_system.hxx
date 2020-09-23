@@ -3,8 +3,9 @@
 
 #include "../game.hxx"
 #include "../system.hxx"
-#include "../event/event.hxx"
-#include "../event/gathering_event.hxx"
+#include "../event/platform_event.hxx"
+#include "../event/player_event.hxx"
+#include "../event/inventory_event.hxx"
 #include "../components/components.hxx"
 
 class j_player_system : public j_system<j_player_system> {

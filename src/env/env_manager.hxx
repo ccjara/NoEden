@@ -4,8 +4,9 @@
 #include "clock.hxx"
 #include "root_config.hxx"
 #include "window.hxx"
-#include "../event/event.hxx"
 #include "../scripts/script_system.hxx"
+#include "../event/platform_event.hxx"
+#include "../event/script_event.hxx"
 
 /**
  * @brief Facade around the game platform (OS) and its specificities

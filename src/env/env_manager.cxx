@@ -125,14 +125,14 @@ void j_env_manager::process_os_messages() const {
     while (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_EventType::SDL_FIRSTEVENT, SDL_EventType::SDL_WINDOWEVENT) != 0) {
         switch (e.type) {
         case SDL_EventType::SDL_QUIT:
-            dispatcher_->trigger<j_quit_event>(j_quit_event());
+            dispatcher_->trigger<j_quit_event>();
             return;
         case SDL_EventType::SDL_WINDOWEVENT:
             if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
-                dispatcher_->trigger(j_resize_event({
+                dispatcher_->trigger<j_resize_event>(j_vec2<uint32_t> {
                     static_cast<uint32_t> (e.window.data1),
                     static_cast<uint32_t> (e.window.data2)
-                }));
+                });
             }
             break;
         }
