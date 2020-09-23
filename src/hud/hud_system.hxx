@@ -11,8 +11,8 @@
 class j_hud_system : public j_system<j_hud_system> {
 private:
     j_journal journal_;
+    std::string status_;
 
-    entt::entity status_text_;
     entt::observer item_observer_;
 
     void on_player_movement(const j_player_moved_event& e);
@@ -27,6 +27,11 @@ public:
      * The return type will change later as soon as "render jobs" are implemented
      */
     const std::vector<std::string>& journal_entries() const;
+
+    /**
+     * @brief Returns the status text - not sure where we are going with this
+     */
+    const std::string& status() const;
 };
 
 #endif
