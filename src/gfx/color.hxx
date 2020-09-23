@@ -1,6 +1,11 @@
 #ifndef JARALYN_COLOR_HXX
 #define JARALYN_COLOR_HXX
 
+/**
+ * @brief Represents a color which can be displayed by the gfx display
+ *
+ * This class is globally available as part of the pch.
+ */
 struct j_color {
     unsigned char r { 255 };
     unsigned char g { 255 };

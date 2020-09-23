@@ -46,6 +46,6 @@ namespace fs = std::filesystem;
 #include "math/bresenham.hxx"
 #include "math/rect.hxx"
 
-#include "color.hxx"
+#include "gfx/color.hxx"
 
 #endif
