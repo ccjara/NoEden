@@ -38,11 +38,11 @@ protected:
      * @brief Helper which guarantees an index location return type
      *
      * If the `location_type` is an index, it will be returned as-is
-     * otherwise the location is converted from the assumed index location. 
+     * otherwise the location is converted from the assumed index location.
      */
     template<typename location_type>
     [[nodiscard]] constexpr size_t ensure_index(location_type location) const {
-        if constexpr (std::is_same_v<location_type, j_vec2<uint32_t>>) {
+        if constexpr (std::is_base_of_v<j_vec2<uint32_t>, location_type>) {
             return to_index(location);
         } else {
             return location;
@@ -57,7 +57,7 @@ protected:
      */
     template<typename location_type>
     [[nodiscard]] constexpr j_vec2<uint32_t> ensure_coordinates(location_type location) const {
-        if constexpr (std::is_same_v<location_type, j_vec2<uint32_t>>) {
+        if constexpr (std::is_base_of_v<j_vec2<uint32_t>, location_type>) {
             return location;
         } else {
             static_assert(std::is_integral_v<location_type>);
@@ -141,46 +141,23 @@ public:
     /**
      * @brief Copy-constructs the given cell at the given location
      *
-     * If the position is out of bounds, the operation will be ignored.
-     *
-     * @see emplace() to construct the cell in-place instead.
+     * If using `safe_access_t` (default) and the position is out of bounds,
+     * the operation will be ignored.
      */
-    template<typename location_type>
-    constexpr void put(const cell& c, location_type location) {
-        if (!in_bounds(location)) {
-            constexpr auto coord { ensure_coordinates(location) };
+    template<typename location_type, typename grid_access_t = safe_access_t>
+    constexpr void put(cell&& c, location_type location, grid_access_t) {
+        if constexpr (std::is_same_v<grid_access_t, safe_access_t>) {
+            if (!in_bounds(location)) {
+                const auto coord { ensure_coordinates(location) };
 
-            LOG(ERROR)
-                << "Placement at " << coord.x << ", " << coord.y
-                << " not within bounds ("
-                << dimensions_.x << ", " << dimensions_.y << ")";
-            return;
+                LOG(ERROR)
+                    << "Placement at " << coord.x << ", " << coord.y
+                    << " not within bounds ("
+                    << dimensions_.x << ", " << dimensions_.y << ")";
+                return;
+            }
         }
-        cells_[ensure_index(location)] = c;
-    }
-
-    /**
-     * @brief Constructs the cell in-place at the given location
-     *
-     * If the location is invalid the operation will be ignored.
-     *
-     * @see put() to copy-construct a cell instead.
-     */
-    template<typename location_type, typename... args>
-    constexpr void emplace(location_type location, args&&... cell_args) {
-        if (!in_bounds(location)) {
-            constexpr auto coord { ensure_coordinates(location) };
-
-            LOG(ERROR)
-                << "Placement at " << coord.x << ", " << coord.y
-                << " not within bounds ("
-                << dimensions_.x << ", " << dimensions_.y << ")";
-            return;
-        }
-        cells_.emplace(
-            cells_.begin() + ensure_index(location),
-            std::forward<args> (cell_args)...
-        );
+        cells_[ensure_index(location)] = std::move(c);
     }
 
     /**
@@ -191,7 +168,7 @@ public:
      */
     template<typename location_type>
     [[nodiscard]] constexpr bool in_bounds(location_type location) const {
-        if constexpr (std::is_same_v<location_type, j_vec2<uint32_t>>) {
+        if constexpr (std::is_base_of_v<j_vec2<uint32_t>, location_type>) {
             return location.x + 1 <= dimensions_.x && location.y + 1 <= dimensions_.y;
         } else {
             static_assert(std::is_integral_v<location_type>);

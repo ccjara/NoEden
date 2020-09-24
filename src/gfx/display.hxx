@@ -3,37 +3,9 @@
 
 #include "../grid.hxx"
 
-enum class j_text_break {
-    break_all, // break immediately when clipping
-    break_word, // go back and break the entire word
-};
-
-struct j_text_options {
-    /**
-     * @brief Constrains the text to a boundary (viewed in positive direction)
-     *
-     * Horizontally clipping text will be rendered on the next line,
-     * depending on the {@see text_break} option.
-     *
-     * Vertically clipping text will not be rendered.
-     *
-     * If a coordinate is set to the numeric maximum the renderer will constrain
-     * it to the dimensions of the display, effectively meaning 'clamp to display'
-     */
-    j_vec2<uint32_t> clamp {
-        std::numeric_limits<uint32_t>::max(),
-        std::numeric_limits<uint32_t>::max()
-    };
-
-    /**
-     * @brief Color to use the render the text
-     */
+struct j_text_state {
     j_color color;
-
-    /**
-     * @brief Text break on clipping text, considering the {@see boundary}
-     */
-    j_text_break text_break = j_text_break::break_word;
+    bool break_word;
 };
 
 struct j_rect_options {
@@ -74,11 +46,6 @@ struct j_rect_options {
  * @see j_display
  */
 struct j_display_cell {
-    j_display_cell() = default;
-
-    j_display_cell(int32_t glyph, j_color color) : glyph(glyph), color(color) {
-    }
-
     /**
      * @brief code point (arbitrary code page) to render from this cell
      */
@@ -87,7 +54,12 @@ struct j_display_cell {
     /**
      * @brief Color to use when rendering this cell
      */
-    j_color color;
+    j_color color = j_color::white();
+
+    j_display_cell() = default;
+
+    j_display_cell(int32_t glyph, j_color color) : glyph(glyph), color(color) {
+    }
 };
 
 /**
@@ -99,14 +71,49 @@ struct j_display_cell {
  * @see j_text_shader
  */
 class j_display: public j_grid<j_display_cell> {
+private:
+    constexpr static unsigned char CONTROL_CHAR { '$' };
+    constexpr static size_t MAX_STATES { 128 };
+
+    std::array<j_text_state, MAX_STATES> state_;
+
+    uint32_t current_state_ { 0 };
 public:
-    j_display() : j_grid<j_display_cell>(j_display_cell{}) {
-    }
+    j_display();
 
     /**
-     * @brief Render a text on the display
+     * @brief Render a text to the display
+     *
+     * If a clamp coordinate is set to the numeric maximum the renderer will
+     * constrain the text to the display's width or height respectively.
+     * See below for more information about break modes.
+     *
+     * Text is formattable using the control character $. When encountering it,
+     * the text renderer will apply formatting rules based on the desired operation.
+     *
+     * Depending on the operation, the text renderer may push a new formatting
+     * state on its state stack. This way text renderer 'remembers' what format
+     * was used when the new formatting is undone.
+     *
+     * $c renders all subsequent characters in the given color (hex).
+     *    usage: $cRRGGBB (RRGGBB as hex)
+     * $! pops the current formatting state from the state stack, restoring the
+     *    previously active state. if the stack is empty, this will be a noop
+     * $n breaks the current line (does not modify the state stack)
+     *    usage: Hello $n World
+     * $w set text break mode to `break word` (default) which renders clipping
+     *    words on the next line (unless the next line is vertically clipping)
+     * $a set text break mode to `break all` which immediately renders a clipping
+     *    character on the next line, regardless if it is mid-word or not
      */
-    void text(std::string_view t, j_vec2<uint32_t> position, const j_text_options& options);
+    void text(
+        std::string_view t,
+        j_vec2<uint32_t> position,
+        j_vec2<uint32_t> clamp = {
+            std::numeric_limits<uint32_t>::max(),
+            std::numeric_limits<uint32_t>::max()
+        }
+    );
 
     /**
      * @brief Render a rectangle on the display

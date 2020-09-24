@@ -13,14 +13,16 @@ struct j_color {
 
     constexpr j_color() = default;
 
-    explicit constexpr j_color(int32_t value) :
-        r { static_cast<unsigned char> ((value >> 16) & 0xFF) },
-        g { static_cast<unsigned char> ((value >> 8) & 0xFF) },
-        b { static_cast<unsigned char> (value & 0xFF) } {
+    explicit constexpr j_color(int32_t value) {
+        assign_from_int(value);
     }
 
     constexpr j_color(unsigned char r, unsigned char g, unsigned char b) :
         r(r), g(g), b(b) {
+    }
+
+    constexpr void operator=(int32_t value) {
+        assign_from_int(value);
     }
 
     constexpr static j_color mono(unsigned char value) {
@@ -41,6 +43,13 @@ struct j_color {
 
     constexpr static j_color yellow() {
         return j_color(255, 255, 0);
+    }
+
+private:
+    constexpr void assign_from_int(int32_t value) {
+        r = static_cast<unsigned char> ((value >> 16) & 0xFF);
+        g = static_cast<unsigned char> ((value >> 8) & 0xFF);
+        b = static_cast<unsigned char> (value & 0xFF);
     }
 };
 

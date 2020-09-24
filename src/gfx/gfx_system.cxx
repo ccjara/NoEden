@@ -43,16 +43,14 @@ void j_gfx_system::update(uint32_t delta_time) {
     display_.reset();
 
     game->entities()->view<jc_renderable, jc_position>().each([this](auto& renderable, auto& position) {
-        j_vec2<uint32_t> pos {
-            static_cast<uint32_t> (position.x),
-            static_cast<uint32_t> (position.y)
-        };
-
-        if (position.x < 0 || position.y < 0 || !display_.in_bounds(pos)) {
-            return;
+        if (!display_.in_bounds(position)) {
+            return; // do net render entities outside of view
         }
-
-        display_.text(renderable.text, position, renderable.text_options);
+        display_.put(
+            j_display_cell(renderable.glyph, renderable.color),
+            position,
+            j_display::fast_access_t {} // bounds checked above
+        );
     });
 
     render_hud();
@@ -113,7 +111,7 @@ void j_gfx_system::render_hud() {
     j_vec2<uint32_t> pos { 0, display_.dimensions().y - 1 };
 
     for (auto it { journal.crbegin() }; it != journal.crend(); ++it) {
-        display_.text(*it, pos, j_text_options{});
+        display_.text(*it, pos);
 
         if (--pos.y == 0) {
             break;
@@ -121,6 +119,5 @@ void j_gfx_system::render_hud() {
     }
 
     pos = { 0, 0 };
-
-    display_.text(hud->status(), pos, j_text_options{});
+    display_.text(hud->status(), pos);
 }
