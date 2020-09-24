@@ -4,8 +4,8 @@
 #include "../grid.hxx"
 
 struct j_text_state {
-    j_color color;
-    bool break_word;
+    j_color color { j_color::white() };
+    bool break_word { true };
 };
 
 struct j_rect_options {
@@ -73,13 +73,22 @@ struct j_display_cell {
 class j_display: public j_grid<j_display_cell> {
 private:
     constexpr static unsigned char CONTROL_CHAR { '$' };
+
     constexpr static size_t MAX_STATES { 128 };
-
     std::array<j_text_state, MAX_STATES> states_;
-
     j_text_state* state_ { states_.data() };
-    j_text_state* const first_state_ = { &states_.front() };
-    j_text_state* const last_state_ = { &states_.back() };
+    j_text_state* const first_state_ { &states_.front() };
+    j_text_state* const last_state_ { &states_.back() };
+
+    /**
+     * @brief Attempts to parse a color from the given string. Returns white on failure.
+     */
+    inline j_color parse_color(std::string_view text) const;
+
+    /**
+     * @brief Copies the current state into the subsequent state, updating the state pointer accordingly
+     */
+    inline void push_copy();
 public:
     j_display();
 

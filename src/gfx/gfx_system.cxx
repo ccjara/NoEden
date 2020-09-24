@@ -120,8 +120,4 @@ void j_gfx_system::render_hud() {
 
     pos = { 0, 0 };
     display_.text(hud->status(), pos);
-
-    auto t { "This is a $cff0000colored$! text. $cff0000Colors $c00ff00are $c0000ffstackable! $!(pop) $!(pop) $!(pop)$nNew$nNew$nNew line!" };
-    pos = { 20, 10 };
-    display_.text(t, pos);
 }

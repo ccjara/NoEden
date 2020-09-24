@@ -1,7 +1,6 @@
 #include "display.hxx"
 
 j_display::j_display() : j_grid<j_display_cell>(j_display_cell{}) {
-    *first_state_ = j_text_state { j_color::white() };
 }
 
 void j_display::text(std::string_view t, j_vec2<uint32_t> position, j_vec2<uint32_t> clamp) {
@@ -27,16 +26,17 @@ void j_display::text(std::string_view t, j_vec2<uint32_t> position, j_vec2<uint3
             switch (t[i]) {
             case CONTROL_CHAR:
                 switch (t[i + 1]) {
+                    // can increase `i` safely past boundaries as it is checked on each iteration
                     case 'c':
-                        i = std::min(text_length, i + 8);
+                        i += 8;
                         continue;
                     case '!':
                     case 'w':
                     case 'a':
-                        i = std::min(text_length, i + 2);
+                        i += 2;
                         continue;
                     case 'n':
-                        i = std::min(text_length, i + 2);
+                        i += 2;
                         return false;
                     case '\0':
                     default:
@@ -46,15 +46,13 @@ void j_display::text(std::string_view t, j_vec2<uint32_t> position, j_vec2<uint3
             case ' ':
                 return false;
             }
-            x++;
-            i++;
+            ++x;
+            ++i;
         }
         return true;
     };
 
     for (size_t i { 0 }; i < text_length; ++i) {
-        bool is_last_char_of_line { position.x == limit.x };
-
         if (t[i] == CONTROL_CHAR) {
             switch (t[i + 1]) {
                 case 'c': {
@@ -62,24 +60,16 @@ void j_display::text(std::string_view t, j_vec2<uint32_t> position, j_vec2<uint3
                     // t[i+n]: cRRGGBB
                     if (i + 7 >= text_length || state_ == last_state_)
                         break;
-                    int32_t hex_color { 0xFFFFFF };
-                    // note: from_chars processes the interval [first,last)
-                    std::from_chars(&t[i + 2], &t[i + 8], hex_color, 16);
-
-                    auto next_state { state_ + 1 };
-                    *next_state = *state_;
-                    next_state->color = hex_color;
-                    state_ = next_state;
+                    push_copy();
+                    state_->color = parse_color(std::string_view(&t[i + 2], 6));
                     i += 8;
                     break;
                 }
                 case 'w':
                 case 'a':
                     if (state_ != last_state_) {
-                        auto next_state { state_ + 1 };
-                        *next_state = *state_;
-                        next_state->break_word = t[i + 1] == 'w';
-                        state_ = next_state;
+                        push_copy();
+                        state_->break_word = t[i + 1] == 'w';
                         i += 1;
                         continue;
                     }
@@ -105,8 +95,9 @@ void j_display::text(std::string_view t, j_vec2<uint32_t> position, j_vec2<uint3
         }
         const char c { t[i] };
         auto& cell { cells_.at(to_index(position)) };
+        bool is_last_char_of_line { position.x == limit.x };
 
-        if (state_->break_word) {
+        if (!is_last_char_of_line && state_->break_word) {
             if (c == ' ' && needs_break(i + 1)) {
                 is_last_char_of_line = true;
             } else {
@@ -201,4 +192,20 @@ void j_display::line(j_vec2<uint32_t> from, j_vec2<uint32_t> to, uint32_t glyph,
             cell.color = color;
         }
     );
+}
+
+inline j_color j_display::parse_color(std::string_view text) const {
+    // not really sure why std::from_chars does not have a string_view friendly
+    // and constexpr interface (C++23 maybe?)
+    int32_t hex_color { 0xFFFFFF };
+    // note: from_chars processes the interval [first,last),
+    //       so the null terminator must be included
+    std::from_chars(&text.front(), &text.back() + 1, hex_color, 16);
+    return j_color(hex_color);
+}
+
+inline void j_display::push_copy() {
+    j_text_state* const next_state { state_ + 1 };
+    *next_state = *state_;
+    state_ = next_state;
 }
