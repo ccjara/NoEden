@@ -1,11 +1,12 @@
 #include "display.hxx"
 
 j_display::j_display() : j_grid<j_display_cell>(j_display_cell{}) {
-    state_[0] = j_text_state { j_color::white() };
+    *first_state_ = j_text_state { j_color::white() };
 }
 
 void j_display::text(std::string_view t, j_vec2<uint32_t> position, j_vec2<uint32_t> clamp) {
-    current_state_ = 0; // reset state stack
+    state_ = first_state_; // reset state stack
+
     const j_vec2<uint32_t> limit {
         std::min(clamp.x, dimensions_.x),
         std::min(clamp.y, dimensions_.y)
@@ -13,7 +14,6 @@ void j_display::text(std::string_view t, j_vec2<uint32_t> position, j_vec2<uint3
     if (!in_bounds(position) || limit.x < position.x || limit.y < position.y) {
         return;
     }
-    bool break_word { true };
     const auto origin { position };
     const size_t text_length { t.length() };
 
@@ -52,8 +52,6 @@ void j_display::text(std::string_view t, j_vec2<uint32_t> position, j_vec2<uint3
         return true;
     };
 
-    j_color current_color = j_color::white();
-
     for (size_t i { 0 }; i < text_length; ++i) {
         bool is_last_char_of_line { position.x == limit.x };
 
@@ -62,34 +60,33 @@ void j_display::text(std::string_view t, j_vec2<uint32_t> position, j_vec2<uint3
                 case 'c': {
                     //      n: 1234567
                     // t[i+n]: cRRGGBB
-                    if (i + 7 >= text_length || current_state_ >= MAX_STATES)
+                    if (i + 7 >= text_length || state_ == last_state_)
                         break;
-                    int color_hex { 0xFFFFFF };
+                    int32_t hex_color { 0xFFFFFF };
                     // note: from_chars processes the interval [first,last)
-                    std::from_chars(&t[i + 2], &t[i + 8], color_hex, 16);
-                    current_color = color_hex;
+                    std::from_chars(&t[i + 2], &t[i + 8], hex_color, 16);
 
-                    state_[current_state_ + 1] = state_[current_state_];
-                    ++current_state_;
-                    state_[current_state_].color = current_color;
+                    auto next_state { state_ + 1 };
+                    *next_state = *state_;
+                    next_state->color = hex_color;
+                    state_ = next_state;
                     i += 8;
                     break;
                 }
                 case 'w':
                 case 'a':
-                    if (current_state_ < MAX_STATES) {
-                        state_[current_state_ + 1] = state_[current_state_];
-                        ++current_state_;
-                        state_[current_state_].break_word = t[i + 1] == 'w';
+                    if (state_ != last_state_) {
+                        auto next_state { state_ + 1 };
+                        *next_state = *state_;
+                        next_state->break_word = t[i + 1] == 'w';
+                        state_ = next_state;
                         i += 1;
                         continue;
                     }
                     break;
                 case '!':
-                    if (current_state_ > 0) {
-                        --current_state_;
-                        current_color = state_[current_state_].color;
-                        break_word = state_[current_state_].break_word;
+                    if (state_ != first_state_) {
+                        --state_;
                         i += 2;
                     }
                     break;
@@ -109,7 +106,7 @@ void j_display::text(std::string_view t, j_vec2<uint32_t> position, j_vec2<uint3
         const char c { t[i] };
         auto& cell { cells_.at(to_index(position)) };
 
-        if (break_word) {
+        if (state_->break_word) {
             if (c == ' ' && needs_break(i + 1)) {
                 is_last_char_of_line = true;
             } else {
@@ -120,7 +117,7 @@ void j_display::text(std::string_view t, j_vec2<uint32_t> position, j_vec2<uint3
         }
 
         if (c != ' ') {
-            cell.color = current_color;
+            cell.color = state_->color;
         }
 
         if (is_last_char_of_line) {

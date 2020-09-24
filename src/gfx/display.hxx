@@ -75,9 +75,11 @@ private:
     constexpr static unsigned char CONTROL_CHAR { '$' };
     constexpr static size_t MAX_STATES { 128 };
 
-    std::array<j_text_state, MAX_STATES> state_;
+    std::array<j_text_state, MAX_STATES> states_;
 
-    uint32_t current_state_ { 0 };
+    j_text_state* state_ { states_.data() };
+    j_text_state* const first_state_ = { &states_.front() };
+    j_text_state* const last_state_ = { &states_.back() };
 public:
     j_display();
 
