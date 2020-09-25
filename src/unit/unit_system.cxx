@@ -1,14 +1,10 @@
-#include "unit_controller.hxx"
+#include "unit_system.hxx"
 
-void j_unit_controller::on_create() {
-    dispatcher_->sink<j_gathering_started_event>().connect<&j_unit_controller::on_gathering_started_event>(this);
+void j_unit_system::on_load() {
+    define_task<j_gathering_started_event, &j_unit_system::task_pickup_item>();
 }
 
-void j_unit_controller::on_destroy() {
-    dispatcher_->sink<j_gathering_started_event>().disconnect<&j_unit_controller::on_gathering_started_event>(this);
-}
-
-void j_unit_controller::on_gathering_started_event(const j_gathering_started_event& e) {
+void j_unit_system::task_pickup_item(const j_gathering_started_event& e) {
     auto registry { game->entities() };
     if (!registry->has<jc_inventory>(e.gatherer)) {
         LOG(ERROR) << "Entity " << static_cast<uint32_t> (e.gatherer) << " attempted to gather but has no item container";
@@ -36,4 +32,8 @@ void j_unit_controller::on_gathering_started_event(const j_gathering_started_eve
             break;
         }
     }
+}
+
+void j_unit_system::update(uint32_t delta_time) {
+    queue_.update();
 }

@@ -7,10 +7,6 @@ add_executable(
     "components/components.hxx"
     "components/item.cxx"
 
-    "controller/controller.cxx"
-    "controller/controller_system.cxx"
-    "controller/unit_controller.cxx"
-
     "env/clock.hxx"
     "env/env_manager.cxx"
     "env/root_config.hxx"
@@ -68,6 +64,8 @@ add_executable(
     "system.hxx"
     "system_interface.cxx"
     "systems.cxx"
+
+    "unit/unit_system.cxx"
 )
 
 target_link_libraries(jaralyn ${LUA_LIBRARIES})

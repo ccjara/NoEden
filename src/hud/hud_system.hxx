@@ -2,20 +2,14 @@
 #define JARALYN_HUD_SYSTEM_HXX
 
 #include "../game.hxx"
-#include "../system.hxx"
-#include "../event/player_event.hxx"
-#include "../components/components.hxx"
-#include "../components/item.hxx"
 #include "journal.hxx"
+#include "../components/components.hxx"
 
 class j_hud_system : public j_system<j_hud_system> {
 private:
     j_journal journal_;
-    std::string status_;
 
-    entt::observer item_observer_;
-
-    void on_player_movement(const j_player_moved_event& e);
+    void task_journal_item_pickup(const j_gathering_completed_event& e);
 public:
     void on_load() override;
 
@@ -27,11 +21,6 @@ public:
      * The return type will change later as soon as "render jobs" are implemented
      */
     const std::vector<std::string>& journal_entries() const;
-
-    /**
-     * @brief Returns the status text - not sure where we are going with this
-     */
-    const std::string& status() const;
 };
 
 #endif

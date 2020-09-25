@@ -117,7 +117,4 @@ void j_gfx_system::render_hud() {
             break;
         }
     }
-
-    pos = { 0, 0 };
-    display_.text(hud->status(), pos);
 }
