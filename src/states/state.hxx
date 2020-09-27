@@ -7,6 +7,8 @@ enum class j_state_id {
     status,
 };
 
+#include "../gfx/display.hxx"
+
 class j_state {
 public:
     virtual ~j_state() = default;
@@ -15,6 +17,10 @@ public:
     }
 
     virtual void on_update() {
+    }
+
+    virtual void on_render(j_display& display) {
+
     }
 
     virtual void on_leave() {

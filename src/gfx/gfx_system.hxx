@@ -9,6 +9,7 @@
 #include "../event/platform_event.hxx"
 #include "../system.hxx"
 #include "../hud/hud_system.hxx"
+#include "../states/state_system.hxx"
 #include "renderer.hxx"
 #include "display.hxx"
 
@@ -31,8 +32,6 @@ private:
     j_texture load_text_texture(const fs::path&) const;
 
     void adjust_display();
-
-    void render_hud();
 public:
     j_gfx_system(j_window* window);
 

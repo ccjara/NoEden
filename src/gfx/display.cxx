@@ -62,8 +62,8 @@ void j_display::text(std::string_view t, j_vec2<uint32_t> position, j_vec2<uint3
                         break;
                     push_copy();
                     state_->color = parse_color(std::string_view(&t[i + 2], 6));
-                    i += 8;
-                    break;
+                    i += 7;
+                    continue;
                 }
                 case 'w':
                 case 'a':
@@ -77,7 +77,8 @@ void j_display::text(std::string_view t, j_vec2<uint32_t> position, j_vec2<uint3
                 case '!':
                     if (state_ != first_state_) {
                         --state_;
-                        i += 2;
+                        i += 1;
+                        continue;
                     }
                     break;
                 case 'n':

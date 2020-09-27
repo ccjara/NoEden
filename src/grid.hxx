@@ -2,6 +2,21 @@
 #define JARALYN_GRID_HXX
 
 /**
+ * @brief Tag group determining access behavior on the grid
+ */
+struct grid_access_tag {};
+
+/**
+ * @brief Fast access behavior, no bounds checking, invokes UB when accessing invalid locations
+ */
+struct fast_grid_access_tag : grid_access_tag {};
+
+/**
+ * @brief Safe access behavior, includes bounds checking and returns fallbacks for invalid locations
+ */
+struct safe_grid_access_tag : grid_access_tag {};
+
+/**
  * @brief Generic implementation of a two-dimensional grid
  *
  * Most methods which access specific locations using a templatized `location_type`
@@ -13,16 +28,6 @@
 template<typename cell>
 class j_grid {
 public:
-    /**
-     * @brief Fast access behavior, no bounds checking, invokes UB when accessing invalid locations
-     */
-    struct fast_access_t {};
-
-    /**
-     * @brief Safe access behavior, includes bounds checking and returns fallbacks for invalid locations
-     */
-    struct safe_access_t {};
-
     using cell_type = cell;
     using container_type = std::vector<cell_type>;
 protected:
@@ -118,19 +123,26 @@ public:
     }
 
     /**
+     * @brief Returns the width and height in of the grid
+     */
+    [[nodiscard]] constexpr container_type& cells() {
+        return cells_;
+    }
+
+    /**
      * @brief Returns a readonly reference to the cell at the given location.
      *
      * The location is range checked by default, but you may override this behavior
-     * by providing the `fast_access_t` tag which places the burden of bounds
-     * verification onto you. `fast_access_t` in conjunction with an invalid
+     * by providing the `fast_grid_access_tag` which places the burden of bounds
+     * verification onto you. `fast_grid_access_tag` in conjunction with an invalid
      * location leads to a dangling reference (UB).
      *
      * If using `safe_access_t` and the location is invalid, a reference to the
      * null-cell is returned instead.
      */
-    template<typename location_type, typename grid_access_t = safe_access_t>
-    [[nodiscard]] constexpr const cell& at(location_type location, grid_access_t) const {
-        if constexpr (std::is_same_v<grid_access_t, safe_access_t>) {
+    template<typename location_type>
+    [[nodiscard]] constexpr const cell& at(location_type location, grid_access_tag = safe_grid_access_tag {}) const {
+        if constexpr (std::is_same_v<grid_access_tag, safe_grid_access_tag>) {
             if (!in_bounds(location)) {
                 return null_cell_;
             }
@@ -139,14 +151,14 @@ public:
     }
 
     /**
-     * @brief Copy-constructs the given cell at the given location
+     * @brief Assigns the given cell to the given location
      *
      * If using `safe_access_t` (default) and the position is out of bounds,
      * the operation will be ignored.
      */
-    template<typename location_type, typename grid_access_t = safe_access_t>
-    constexpr void put(cell&& c, location_type location, grid_access_t) {
-        if constexpr (std::is_same_v<grid_access_t, safe_access_t>) {
+    template<typename cel, typename location_type>
+    constexpr void put(cel&& c, location_type location, grid_access_tag = safe_grid_access_tag {}) {
+        if constexpr (std::is_same_v<grid_access_tag, safe_grid_access_tag>) {
             if (!in_bounds(location)) {
                 const auto coord { ensure_coordinates(location) };
 
@@ -157,7 +169,7 @@ public:
                 return;
             }
         }
-        cells_[ensure_index(location)] = std::move(c);
+        cells_[ensure_index(location)] = std::forward<cel>(c);
     }
 
     /**
@@ -193,16 +205,15 @@ public:
     /**
      * @brief Converts the given index to grid coordinates
      *
-     * Using the `fast_access_t` tag (default), does not ensure that the grid is
+     * Using the `fast_grid_access_tag` (default), does not ensure that the grid is
      * non-empty. If using fast access and the grid is empty, the game will
      * panic due to division by zero. When using the `safe_access_t` tag this
      * method will return origin coordinates if the grid's width is zero.
      *
      * This does *not* verify the resulting coordinates.
      */
-    template <typename grid_access_t = fast_access_t>
-    [[nodiscard]] constexpr j_vec2<uint32_t> to_coordinates(size_t index) const {
-        if constexpr (std::is_same_v<grid_access_t, safe_access_t>) {
+    [[nodiscard]] constexpr j_vec2<uint32_t> to_coordinates(size_t index, grid_access_tag = fast_grid_access_tag {}) const {
+        if constexpr (std::is_same_v<grid_access_tag, safe_grid_access_tag>) {
             if (!dimensions_.x) {
                 return { 0, 0 };
             }

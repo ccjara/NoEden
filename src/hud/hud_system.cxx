@@ -16,7 +16,9 @@ void j_hud_system::task_journal_item_pickup(const j_gathering_completed_event& e
     std::string log_str { "Picked up " };
 
     if (game->entities()->has<jc_object_descriptor>(e.item)) {
+        log_str += "$c00ff00";
         log_str += game->entities()->get<jc_object_descriptor>(e.item).label;
+        log_str += "$!";
     } else {
         log_str += " something";
     }

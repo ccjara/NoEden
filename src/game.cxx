@@ -18,8 +18,6 @@ entt::dispatcher* j_game::events() {
 }
 
 void j_game::run() {
-    state_->push(j_state_id::world);
-
     while (true) {
         env_->process_os_messages();
         if (!env_->running()) {
@@ -28,6 +26,5 @@ void j_game::run() {
         env_->clock().tick([&](std::chrono::milliseconds delta_time) {
             systems_->update(delta_time.count());
         });
-        state_->update();
     }
 }

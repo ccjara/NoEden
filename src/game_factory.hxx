@@ -7,7 +7,7 @@
 #include "player/player_system.hxx"
 #include "hud/hud_system.hxx"
 #include "unit/unit_system.hxx"
-#include "states/state_stack.hxx"
+#include "states/state_system.hxx"
 
 class j_game_factory {
 public:

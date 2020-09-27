@@ -1,6 +1,6 @@
-#include "state_stack.hxx"
+#include "state_system.hxx"
 
-void j_state_stack::push(j_state_id state_id) {
+void j_state_system::push(j_state_id state_id) {
     switch (state_id) {
     case j_state_id::world:
         current_ = states_.emplace_back(new j_world_state()).get();
@@ -13,7 +13,7 @@ void j_state_stack::push(j_state_id state_id) {
     current_->on_enter();
 }
 
-void j_state_stack::pop() {
+void j_state_system::pop() {
     if (!current_) {
         LOG(ERROR) << "Cannot pop state from an empty stack";
         return;
@@ -22,8 +22,18 @@ void j_state_stack::pop() {
     states_.pop_back();
 }
 
-void j_state_stack::update() {
+void j_state_system::on_load() {
+    push(j_state_id::world);
+}
+
+void j_state_system::update(uint32_t delta_time) {
     if (current_) {
         current_->on_update();
+    }
+}
+
+void j_state_system::render(j_display& display) {
+    if (current_) {
+        current_->on_render(display);
     }
 }

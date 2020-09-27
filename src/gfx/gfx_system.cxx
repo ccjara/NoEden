@@ -42,18 +42,7 @@ void j_gfx_system::update(uint32_t delta_time) {
     fps_.pre_render();
     display_.reset();
 
-    game->entities()->view<jc_renderable, jc_position>().each([this](auto& renderable, auto& position) {
-        if (!display_.in_bounds(position)) {
-            return; // do net render entities outside of view
-        }
-        display_.put(
-            j_display_cell(renderable.glyph, renderable.color),
-            position,
-            j_display::fast_access_t {} // bounds checked above
-        );
-    });
-
-    render_hud();
+    game->systems()->get<j_state_system>()->render(display_);
 
     renderer_.render(display_);
 
@@ -102,19 +91,4 @@ void j_gfx_system::adjust_display() {
         scaled_size.x / cfg_.glyph_size.x,
         scaled_size.y / cfg_.glyph_size.y
     });
-}
-
-void j_gfx_system::render_hud() {
-    auto hud { game->systems()->get<j_hud_system>() };
-    const auto& journal { hud->journal_entries() };
-
-    j_vec2<uint32_t> pos { 0, display_.dimensions().y - 1 };
-
-    for (auto it { journal.crbegin() }; it != journal.crend(); ++it) {
-        display_.text(*it, pos);
-
-        if (--pos.y == 0) {
-            break;
-        }
-    }
 }

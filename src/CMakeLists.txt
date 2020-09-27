@@ -57,8 +57,7 @@ add_executable(
     "scripts/script_system.cxx"
 
     "states/state.hxx"
-    "states/state_stack.cxx"
-    "states/state_writer.hxx"
+    "states/state_system.cxx"
     "states/world_state.cxx"
 
     "system.hxx"

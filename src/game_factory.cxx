@@ -8,14 +8,15 @@ void j_game_factory::run() {
         LOG(ERROR) << "Could not allocate game memory";
         std::abort();
     }
-    game->state_ = std::make_unique<j_state_stack>();
-
     game->env_->start();
     game->systems_->emplace<j_input_system>();
     game->systems_->emplace<j_player_system>();
     game->systems_->emplace<j_unit_system>();
     game->systems_->emplace<j_hud_system>();
+    game->systems_->emplace<j_state_system>();
     game->systems_->emplace<j_gfx_system>(&game->env_->window());
+    // FIXME: emit default root_config before the script system is loaded so
+    //        the gfx system can startup independently...
     game->systems_->emplace<j_script_system>();
 
     game->run();
