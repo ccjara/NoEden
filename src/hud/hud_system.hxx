@@ -4,12 +4,18 @@
 #include "../game.hxx"
 #include "journal.hxx"
 #include "../components/components.hxx"
+#include "ui_tree.hxx"
 
 class j_hud_system : public j_system<j_hud_system> {
 private:
     j_journal journal_;
 
+    void task_show_inventory_ui(const j_inventory_view_event& e);
     void task_journal_item_pickup(const j_gathering_completed_event& e);
+
+    j_ui_window* inventory_window_ { nullptr };
+
+    j_ui_tree ui_;
 public:
     void on_load() override;
 
@@ -21,6 +27,8 @@ public:
      * The return type will change later as soon as "render jobs" are implemented
      */
     const std::vector<std::string>& journal_entries() const;
+
+    const j_ui_tree& ui_tree() const;
 };
 
 #endif

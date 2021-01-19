@@ -15,7 +15,7 @@ enum j_attribute_threshold {
 	average = 100,
 	high = 150,
 	very_high = 250,
-	inconceivable  = 500
+	inconceivable = 500
 };
 
 struct j_attribute {

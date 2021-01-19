@@ -17,8 +17,8 @@ void j_unit_system::task_pickup_item(const j_gathering_started_event& e) {
     for (auto item : item_group) {
         const auto& position { item_group.get<jc_position>(item) };
 
-        if (position.x == e.position.x && position.y == e.position.y) {
-            inventory.put(0, item);
+        if (position == e.position) {
+            inventory.items.push_back(item);
             registry->remove<jc_position>(item);
 
             dispatcher_->trigger<j_item_stored_event>(item);
@@ -27,7 +27,7 @@ void j_unit_system::task_pickup_item(const j_gathering_started_event& e) {
             dispatcher_->trigger<j_gathering_completed_event>(
                 e.gatherer,
                 item,
-                inventory.get_container(0)
+                &inventory
             );
             break;
         }

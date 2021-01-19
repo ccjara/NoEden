@@ -45,6 +45,10 @@ struct j_color {
         return j_color(255, 255, 0);
     }
 
+    constexpr static j_color black() {
+        return j_color(0, 0, 0);
+    }
+
 private:
     constexpr void assign_from_int(int32_t value) {
         r = static_cast<unsigned char> ((value >> 16) & 0xFF);

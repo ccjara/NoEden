@@ -36,13 +36,18 @@ j_gfx_system::~j_gfx_system() {
 void j_gfx_system::on_load() {
     dispatcher_->sink<j_resize_event>().connect<&j_gfx_system::on_resize>(this);
     dispatcher_->sink<j_root_config_updated_event>().connect<&j_gfx_system::on_root_config_updated>(this);
+
+    ui_ = std::make_unique<j_ui_renderer>(&display_, game->systems()->get<j_hud_system>());
+    world_ = std::make_unique<j_world_renderer>(&display_);
+    assert(ui_);
 }
 
 void j_gfx_system::update(uint32_t delta_time) {
     fps_.pre_render();
     display_.reset();
 
-    game->systems()->get<j_state_system>()->render(display_);
+    world_->draw();
+    ui_->draw();
 
     renderer_.render(display_);
 

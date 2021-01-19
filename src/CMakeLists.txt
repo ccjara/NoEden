@@ -5,7 +5,7 @@ add_executable(
     "components/attribute.hxx"
     "components/attribute_bearing.cxx"
     "components/components.hxx"
-    "components/item.cxx"
+    
 
     "env/clock.hxx"
     "env/env_manager.cxx"
@@ -37,9 +37,12 @@ add_executable(
     "gfx/surface.cxx"
     "gfx/text_shader.cxx"
     "gfx/texture.cxx"
+    "gfx/ui_renderer.cxx"
+    "gfx/world_renderer.cxx"
 
     "hud/journal.cxx"
     "hud/hud_system.cxx"
+    "hud/ui_tree.hxx"
 
     "identity.hxx"
 
@@ -55,10 +58,6 @@ add_executable(
     "scripts/display_proxy.hxx"
     "scripts/script.cxx"
     "scripts/script_system.cxx"
-
-    "states/state.hxx"
-    "states/state_system.cxx"
-    "states/world_state.cxx"
 
     "system.hxx"
     "system_interface.cxx"
