@@ -17,6 +17,10 @@ entt::dispatcher* j_game::events() {
     return &dispatcher_;
 }
 
+const j_env_manager& j_game::env() const {
+    return *env_;
+}
+
 void j_game::run() {
     while (true) {
         env_->process_os_messages();

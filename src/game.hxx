@@ -16,6 +16,8 @@ public:
     j_systems* systems();
     entt::registry* entities();
     entt::dispatcher* events();
+    
+    const j_env_manager& env() const;
 
     void run();
 };

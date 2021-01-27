@@ -42,7 +42,9 @@ add_executable(
 
     "hud/journal.cxx"
     "hud/hud_system.cxx"
+    "hud/ui_node.cxx"
     "hud/ui_tree.hxx"
+    "hud/ui_window.cxx"
 
     "identity.hxx"
 

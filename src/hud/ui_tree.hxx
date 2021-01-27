@@ -1,29 +1,18 @@
 #ifndef JARALYN_UI_TREE_HXX
 #define JARALYN_UI_TREE_HXX
 
-enum class j_ui_node_type {
-    generic_wrapper,
-    window,
-};
-
-struct j_ui_node {
-    j_ui_node_type node_type;
-    std::string_view id;
-    std::vector<j_ui_node*> children;
-    j_ui_node* parent { nullptr };
-
-    j_vec2<uint32_t> position;
-    j_vec2<uint32_t> size;
-};
-
-struct j_ui_window : public j_ui_node {
-    std::string title;
-};
+#include "ui_window.hxx"
 
 class j_ui_tree {
 private:
+    /**
+     * @brief A key value store mapping id to node
+     */
     std::unordered_map<std::string, std::unique_ptr<j_ui_node>> nodes_;
 
+    /**
+     * @brief The head of the tree, must not be nullptr after construction
+     */
     j_ui_node* root_;
 
     template<typename node>
@@ -36,28 +25,41 @@ private:
             return nullptr;
         }
         auto n = iterator->second.get();
-        n->id = id;
-        n->parent = parent;
-        parent->children.push_back(n);
+        n->id_ = id;
+        n->parent_ = parent;
+        n->anchor_.node = root_;
+        parent->children_.push_back(n);
         return static_cast<node*>(n);
     }
 public:
+    /**
+     * @brief Constructs the root node
+     */
     j_ui_tree() {
-        auto [iterator, inserted] = nodes_.try_emplace(std::string("root"), std::make_unique<j_ui_node>());
+        auto [iterator, inserted] = nodes_.try_emplace(
+            std::string("root"),
+            std::make_unique<j_ui_node>()
+        );
         assert(inserted);
 
         root_ = iterator->second.get();
-        root_->id = iterator->first;
+        root_->id_ = iterator->first;
     }
 
-    j_ui_node* root() const {
-        return root_;
-    }
-
+    /**
+     * @brief Creates a window node
+     */
     j_ui_window* create_window(j_ui_node* parent, std::string_view id) {
         auto window { create_node<j_ui_window>(parent, id) };
-        window->node_type = j_ui_node_type::window;
+        window->type_ = j_ui_node_type::window;
         return window;
+    }
+
+    /**
+     * @brief Returns the head of the tree, guaranteed to be non-null
+     */
+    j_ui_node* root() const {
+        return root_;
     }
 };
 

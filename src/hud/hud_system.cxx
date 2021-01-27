@@ -30,13 +30,16 @@ void j_hud_system::task_journal_item_pickup(const j_gathering_completed_event& e
 
 void j_hud_system::task_show_inventory_ui(const j_inventory_view_event& e) {
     if (!inventory_window_) {
+        // TODO: create j_display_resized event or some sort to update the root's size
+        ui_.root()->resize({ 120, 38 });
+
         inventory_window_ = ui_.create_window(ui_.root(), "inventory_window");
         assert(inventory_window_);
 
-        inventory_window_->title = "Inventory";
-        inventory_window_->position = { 0, 0 };
-        inventory_window_->size = { 20, 20 };
-        // TODOS: draw the window!
+        inventory_window_->set_title("Inventory");
+        inventory_window_->set_anchor_origin(j_ui_anchor_origin::center);
+        inventory_window_->resize({ 20, 10 });
+        inventory_window_->move({ 0, 0 });
     }
 }
 

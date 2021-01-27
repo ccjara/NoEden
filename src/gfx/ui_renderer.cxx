@@ -19,23 +19,24 @@ void j_ui_renderer::draw() {
 
 void j_ui_renderer::draw_node(j_ui_node* node) {
     assert(node);
-    if (node->node_type == j_ui_node_type::window) {
+    if (node->type() == j_ui_node_type::window) {
         auto window { static_cast<j_ui_window*>(node) };
+        const auto pos { window->absolute_position() };
         // border
         display_->rectangle({
             {
-                window->position.y,
-                window->position.x + window->size.x,
-                window->position.y + window->size.y,
-                window->position.x
+                pos.y,
+                pos.x + window->size().x,
+                pos.y + window->size().y,
+                pos.x
             },
             j_color::mono(128),
             j_color::black(),
         });
         // title
-        display_->text(window->title, window->position);
+        display_->text(window->title(), pos);
     }
-    for (j_ui_node* child_node : node->children) {
+    for (j_ui_node* child_node : node->children()) {
         draw_node(child_node);
     }
 }
