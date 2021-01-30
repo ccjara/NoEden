@@ -3,6 +3,7 @@
 
 #include "../game.hxx"
 #include "../components/components.hxx"
+#include "../gfx/display.hxx"
 
 class j_world_renderer {
     j_display* display_ { nullptr };

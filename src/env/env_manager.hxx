@@ -4,7 +4,7 @@
 #include "clock.hxx"
 #include "root_config.hxx"
 #include "window.hxx"
-#include "../scripts/script_system.hxx"
+#include "../scripts/script.hxx"
 #include "../event/platform_event.hxx"
 #include "../event/script_event.hxx"
 

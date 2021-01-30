@@ -1,12 +1,13 @@
 #ifndef JARALYN_SCRIPT_SYSTEM_HXX
 #define JARALYN_SCRIPT_SYSTEM_HXX
 
+#include "../hud/hud_system.hxx"
 #include "../system.hxx"
 #include "../event/script_event.hxx"
 #include "../event/inventory_event.hxx"
 #include "../event/platform_event.hxx"
 #include "script.hxx"
-#include "display_proxy.hxx"
+#include "ui_proxy.hxx"
 
 namespace script_ids {
     constexpr const char* system { "system" };
@@ -79,6 +80,10 @@ private:
      */
     template<typename... varg_t>
     inline void pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const;
+
+    j_hud_system* hud_ { nullptr };
+
+    std::unique_ptr<j_ui_proxy> ui_proxy_;
 public:
     constexpr static const char* default_script_path {
 #ifdef NDEBUG

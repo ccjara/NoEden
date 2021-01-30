@@ -2,6 +2,8 @@
 #define JARALYN_HUD_SYSTEM_HXX
 
 #include "../game.hxx"
+#include "../system.hxx"
+#include "../event/inventory_event.hxx"
 #include "journal.hxx"
 #include "../components/components.hxx"
 #include "ui_tree.hxx"
@@ -28,7 +30,7 @@ public:
      */
     const std::vector<std::string>& journal_entries() const;
 
-    const j_ui_tree& ui_tree() const;
+    j_ui_tree& ui_tree();
 };
 
 #endif

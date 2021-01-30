@@ -8,6 +8,11 @@ void j_script_system::on_load() {
     dispatcher_->sink<j_item_stored_event>().connect<&j_script_system::on_item_stored>(this);
     dispatcher_->sink<j_key_down_event>().connect<&j_script_system::on_key_down>(this);
 
+    hud_ = game->systems()->get<j_hud_system>();
+    assert(hud_);
+
+    ui_proxy_ = std::make_unique<j_ui_proxy>(&hud_->ui_tree());
+
     preload(default_script_path);
 }
 
@@ -54,17 +59,25 @@ void j_script_system::setup(j_script& script) {
     script.load();
 
     luaL_openlibs(script);
-
-    luabridge::setGlobal(script, script.id().c_str(), "script_id");
-
+    
     luabridge::getGlobalNamespace(script)
         .beginClass<j_script_system>("env")
         .addFunction("on", &j_script_system::on_register_callback)
         .endClass()
 
-        .beginClass<j_display_proxy>("display")
-        .addFunction("text", &j_display_proxy::text)
+        .beginClass<j_ui_proxy>("ui")
+        .addFunction("create_window", &j_ui_proxy::create_window)
+        .endClass()
+        
+        .beginClass<j_ui_window_proxy>("window")
+        .addFunction("set_title", &j_ui_window_proxy::set_title)
+        .addFunction("set_handler", &j_ui_window_proxy::set_handler)
+        .addFunction("move", &j_ui_window_proxy::move)
+        .addFunction("resize", &j_ui_window_proxy::resize)
         .endClass();
+
+    luabridge::setGlobal(script, script.id().c_str(), "script_id");
+    luabridge::setGlobal(script, ui_proxy_.get(), "ui");
 
     script.run();
 

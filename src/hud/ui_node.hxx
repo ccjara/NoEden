@@ -16,8 +16,6 @@ enum class j_ui_anchor_origin {
     center,
 };
 
-// TODO: port stuff from ui_tree.hxx to ui_node.cxx, add implementations
-
 /**
  * @brief RTTI for ui nodes
  */
@@ -117,6 +115,10 @@ public:
      * @brief Readonly accessor for the size_ attribute
      */
     j_vec2<uint32_t> size() const;
+
+    void set_lua_ref(luabridge::LuaRef ref);
+
+    luabridge::LuaRef& lua_ref();
 protected:
     /**
      * @brief Unique id referencing this node
@@ -175,6 +177,7 @@ protected:
      */
     j_vec2<uint32_t> size_;
 
+    luabridge::LuaRef lua_ref_ { nullptr };
 private:
     /**
      * @brief Assigns an absolute position to this node

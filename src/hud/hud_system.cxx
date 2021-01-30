@@ -43,6 +43,6 @@ void j_hud_system::task_show_inventory_ui(const j_inventory_view_event& e) {
     }
 }
 
-const j_ui_tree& j_hud_system::ui_tree() const {
+j_ui_tree& j_hud_system::ui_tree() {
     return ui_;
 }

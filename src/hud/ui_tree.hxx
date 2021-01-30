@@ -17,8 +17,9 @@ private:
 
     template<typename node>
     node* create_node(j_ui_node* parent, std::string_view id) {
-        assert(parent);
-
+        if (parent == nullptr) {
+            parent = root_;
+        }
         auto [iterator, inserted] = nodes_.try_emplace(std::string(id), std::make_unique<node>());
         if (!inserted) {
             LOG(ERROR) << "Cannot create node " << id << ": a node with this id already exists";

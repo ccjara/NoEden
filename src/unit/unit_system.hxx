@@ -4,6 +4,8 @@
 #include "../game.hxx"
 #include "../components/components.hxx"
 #include "../components/item.hxx"
+#include "../event/inventory_event.hxx"
+#include "../system.hxx"
 
 /**
  * @brief Manages all unit-like entities
