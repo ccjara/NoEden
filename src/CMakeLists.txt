@@ -60,7 +60,10 @@ add_executable(
     "scripts/display_proxy.hxx"
     "scripts/script.cxx"
     "scripts/script_system.cxx"
+    "scripts/ui_node_proxy.hxx"
+    "scripts/ui_node_proxy_interface.hxx"
     "scripts/ui_proxy.cxx"
+    "scripts/ui_window_proxy.hxx"
 
     "system.hxx"
     "system_interface.cxx"

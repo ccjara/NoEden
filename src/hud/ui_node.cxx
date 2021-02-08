@@ -52,14 +52,6 @@ j_vec2<uint32_t> j_ui_node::size() const {
     return size_;
 }
 
-void j_ui_node::set_lua_ref(luabridge::LuaRef ref) {
-    lua_ref_ = ref;
-}
-
-luabridge::LuaRef& j_ui_node::lua_ref() {
-    return lua_ref_;
-}
-
 j_vec2<uint32_t> calc_anchor_offset(
     const j_ui_node& target,
     const j_ui_node& anchor

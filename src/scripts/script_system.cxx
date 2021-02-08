@@ -50,7 +50,7 @@ bool j_script_system::on_register_callback(const char* event_type, luabridge::Lu
 
 void j_script_system::on_key_down(const j_key_down_event& e) {
     if (e.key == SDLK_F5) {
-        LOG(INFO) << "Scripts reloadable using [F5]";
+        ui_proxy_->clear();
         preload(default_script_path);
     }
 }
@@ -63,18 +63,9 @@ void j_script_system::setup(j_script& script) {
     luabridge::getGlobalNamespace(script)
         .beginClass<j_script_system>("env")
         .addFunction("on", &j_script_system::on_register_callback)
-        .endClass()
-
-        .beginClass<j_ui_proxy>("ui")
-        .addFunction("create_window", &j_ui_proxy::create_window)
-        .endClass()
-        
-        .beginClass<j_ui_window_proxy>("window")
-        .addFunction("set_title", &j_ui_window_proxy::set_title)
-        .addFunction("set_handler", &j_ui_window_proxy::set_handler)
-        .addFunction("move", &j_ui_window_proxy::move)
-        .addFunction("resize", &j_ui_window_proxy::resize)
         .endClass();
+
+    declare<j_ui_proxy, j_ui_window_proxy>(script);
 
     luabridge::setGlobal(script, script.id().c_str(), "script_id");
     luabridge::setGlobal(script, ui_proxy_.get(), "ui");
@@ -88,4 +79,7 @@ void j_script_system::setup(j_script& script) {
 }
 
 void j_script_system::update(uint32_t delta_time) {
+    for (auto& [_, node_proxy] : ui_proxy_->node_proxies()) {
+        node_proxy->call_handler();
+    }
 }

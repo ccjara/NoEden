@@ -115,10 +115,6 @@ public:
      * @brief Readonly accessor for the size_ attribute
      */
     j_vec2<uint32_t> size() const;
-
-    void set_lua_ref(luabridge::LuaRef ref);
-
-    luabridge::LuaRef& lua_ref();
 protected:
     /**
      * @brief Unique id referencing this node
@@ -176,8 +172,6 @@ protected:
      * @brief Size of this node, affects positioning of anchored nodes
      */
     j_vec2<uint32_t> size_;
-
-    luabridge::LuaRef lua_ref_ { nullptr };
 private:
     /**
      * @brief Assigns an absolute position to this node

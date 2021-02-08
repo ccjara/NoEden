@@ -84,6 +84,9 @@ private:
     j_hud_system* hud_ { nullptr };
 
     std::unique_ptr<j_ui_proxy> ui_proxy_;
+
+    template<typename... types>
+    inline void declare(j_script& script) const;
 public:
     constexpr static const char* default_script_path {
 #ifdef NDEBUG
@@ -222,6 +225,11 @@ inline void j_script_system::pcall_into(luabridge::LuaRef& ref, varg_t&&... args
         }
         LOG(ERROR) << err;
     }
+}
+
+template<typename... types>
+inline void j_script_system::declare(j_script& script) const {
+    (types::declare(luabridge::getGlobalNamespace(script)), ...);
 }
 
 template<typename string_like>

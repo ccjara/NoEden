@@ -14,6 +14,8 @@ public:
      * @brief Writing accessor of the title_ attribute
      */
     void set_title(std::string_view title);
+
+    j_ui_window();
 private:
     /**
      * @brief An optional string that will be displayed as a title

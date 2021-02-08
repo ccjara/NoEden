@@ -33,7 +33,7 @@ void j_hud_system::task_show_inventory_ui(const j_inventory_view_event& e) {
         // TODO: create j_display_resized event or some sort to update the root's size
         ui_.root()->resize({ 120, 38 });
 
-        inventory_window_ = ui_.create_window(ui_.root(), "inventory_window");
+        inventory_window_ = ui_.create_node<j_ui_window>(ui_.root(), "inventory_window");
         assert(inventory_window_);
 
         inventory_window_->set_title("Inventory");

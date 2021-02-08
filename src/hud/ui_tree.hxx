@@ -14,13 +14,33 @@ private:
      * @brief The head of the tree, must not be nullptr after construction
      */
     j_ui_node* root_;
+public:
+    /**
+     * @brief Constructs the root node
+     */
+    j_ui_tree() {
+        reset();
+    }
 
+    /**
+     * @brief Creates and tracks a node
+     * 
+     * The node will become a child of the optionally given parent node. If
+     * no parent is specified, i.e. nullptr is given, the root node will be
+     * automatically assumed. The only node without a parent is the root node.
+     * 
+     * The given id must be unique, otherwise the creation will fail and nullptr
+     * will be returned instead.
+     */
     template<typename node>
     node* create_node(j_ui_node* parent, std::string_view id) {
         if (parent == nullptr) {
             parent = root_;
         }
-        auto [iterator, inserted] = nodes_.try_emplace(std::string(id), std::make_unique<node>());
+        auto [iterator, inserted] = nodes_.try_emplace(
+            std::string(id),
+            std::make_unique<node>()
+        );
         if (!inserted) {
             LOG(ERROR) << "Cannot create node " << id << ": a node with this id already exists";
             return nullptr;
@@ -32,11 +52,24 @@ private:
         parent->children_.push_back(n);
         return static_cast<node*>(n);
     }
-public:
+
+    j_ui_node* get_node_by_id(std::string_view id) {
+        auto node_iter { nodes_.find(std::string(id)) };
+        if (node_iter == nodes_.end()) {
+            return nullptr;
+        }
+        return node_iter->second.get();
+    }
+
     /**
-     * @brief Constructs the root node
+     * @brief Returns the head of the tree, guaranteed to be non-null
      */
-    j_ui_tree() {
+    j_ui_node* root() const {
+        return root_;
+    }
+
+    void reset() {
+        nodes_.clear();
         auto [iterator, inserted] = nodes_.try_emplace(
             std::string("root"),
             std::make_unique<j_ui_node>()
@@ -45,22 +78,6 @@ public:
 
         root_ = iterator->second.get();
         root_->id_ = iterator->first;
-    }
-
-    /**
-     * @brief Creates a window node
-     */
-    j_ui_window* create_window(j_ui_node* parent, std::string_view id) {
-        auto window { create_node<j_ui_window>(parent, id) };
-        window->type_ = j_ui_node_type::window;
-        return window;
-    }
-
-    /**
-     * @brief Returns the head of the tree, guaranteed to be non-null
-     */
-    j_ui_node* root() const {
-        return root_;
     }
 };
 
