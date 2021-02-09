@@ -57,6 +57,9 @@ public:
 
     virtual void on_load() override {
     }
+    
+    virtual void on_unload() override {
+    }
 
     [[nodiscard]] inline const j_static_id_t id() const override {
         return static_id;

@@ -8,6 +8,13 @@ class j_ui_window_proxy : public j_ui_node_proxy<j_ui_window_proxy, j_ui_window>
 public:
     using j_ui_node_proxy::j_ui_node_proxy;
 
+    /**
+     * @brief Proxies j_ui_window::set_title
+     */
+    void set_title(const char* title) {
+        node_->set_title(title);
+    }
+
     static inline void declare(luabridge::Namespace& ns) {
         proxy_extend(
             ns,

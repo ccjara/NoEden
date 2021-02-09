@@ -33,13 +33,11 @@ public:
         node_->resize({ width, height });
     }
 
-    virtual void set_title(const char* title) override {
-        node_->set_title(title);
-    }
-
     luabridge::LuaRef& handler() { return handler_; };
 
-    virtual ~j_ui_node_proxy() = default;
+    virtual ~j_ui_node_proxy() {
+        handler_ = nullptr;
+    };
 protected:
     luabridge::LuaRef handler_ { nullptr };
     node* node_ { nullptr };

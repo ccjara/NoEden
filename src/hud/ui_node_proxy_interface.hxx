@@ -30,11 +30,6 @@ public:
      */
     virtual void resize(uint32_t width, uint32_t height) = 0;
 
-    /**
-     * @brief Proxies j_ui_node::set_title
-     */
-    virtual void set_title(const char* title) = 0;
-
     virtual ~j_ui_node_proxy_interface() = default;
 };
 

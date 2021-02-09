@@ -3,10 +3,21 @@
 void j_hud_system::on_load() {
     define_task<j_gathering_completed_event, &j_hud_system::task_journal_item_pickup>();
     define_task<j_inventory_view_event, &j_hud_system::task_show_inventory_ui>();
+
+    dispatcher_->sink<j_script_loaded_event>().connect<&j_hud_system::immediate_on_script_loaded>(this);
 }
 
 void j_hud_system::update(uint32_t delta_time) {
     queue_.update();
+
+    for (auto& [_, node_proxy] : ui_proxy_.node_proxies()) { // scripts
+        node_proxy->call_handler();
+    }
+}
+
+void j_hud_system::immediate_on_script_loaded(const j_script_loaded_event& e) {
+    e.script->declare<j_ui_window_proxy>();
+    e.script->define_global("ui", &ui_proxy_);
 }
 
 const std::vector<std::string>& j_hud_system::journal_entries() const {

@@ -8,11 +8,6 @@ void j_script_system::on_load() {
     dispatcher_->sink<j_item_stored_event>().connect<&j_script_system::on_item_stored>(this);
     dispatcher_->sink<j_key_down_event>().connect<&j_script_system::on_key_down>(this);
 
-    hud_ = game->systems()->get<j_hud_system>();
-    assert(hud_);
-
-    ui_proxy_ = std::make_unique<j_ui_proxy>(&hud_->ui_tree());
-
     preload(default_script_path);
 }
 
@@ -50,14 +45,16 @@ bool j_script_system::on_register_callback(const char* event_type, luabridge::Lu
 
 void j_script_system::on_key_down(const j_key_down_event& e) {
     if (e.key == SDLK_F5) {
-        ui_proxy_->clear();
         preload(default_script_path);
     }
 }
 
-void j_script_system::setup(j_script& script) {
+void j_script_system::setup(j_script& script, bool reloaded) {
     script.load();
 
+    if (!script.loaded()) {
+        return;
+    }
     luaL_openlibs(script);
     
     luabridge::getGlobalNamespace(script)
@@ -65,10 +62,9 @@ void j_script_system::setup(j_script& script) {
         .addFunction("on", &j_script_system::on_register_callback)
         .endClass();
 
-    declare<j_ui_proxy, j_ui_window_proxy>(script);
+    dispatcher_->trigger<j_script_loaded_event>(&script, reloaded);
 
     luabridge::setGlobal(script, script.id().c_str(), "script_id");
-    luabridge::setGlobal(script, ui_proxy_.get(), "ui");
 
     script.run();
 
@@ -79,7 +75,4 @@ void j_script_system::setup(j_script& script) {
 }
 
 void j_script_system::update(uint32_t delta_time) {
-    for (auto& [_, node_proxy] : ui_proxy_->node_proxies()) {
-        node_proxy->call_handler();
-    }
 }

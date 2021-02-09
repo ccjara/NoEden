@@ -18,6 +18,11 @@ public:
     virtual void on_load() = 0;
 
     /**
+     * @brief Called before the system is unloaded
+     */
+    virtual void on_unload() = 0;
+
+    /**
      * @brief Returns the type id of the implementing system
      */
     [[nodiscard]] virtual inline const j_static_id_t id() const = 0;

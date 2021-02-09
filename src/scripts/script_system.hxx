@@ -1,13 +1,11 @@
 #ifndef JARALYN_SCRIPT_SYSTEM_HXX
 #define JARALYN_SCRIPT_SYSTEM_HXX
 
-#include "../hud/hud_system.hxx"
 #include "../system.hxx"
 #include "../event/script_event.hxx"
 #include "../event/inventory_event.hxx"
 #include "../event/platform_event.hxx"
 #include "script.hxx"
-#include "ui_proxy.hxx"
 
 namespace script_ids {
     constexpr const char* system { "system" };
@@ -62,8 +60,9 @@ private:
      * @brief Loads and runs the script
      *
      * TODO: Make scripts loadable on demand
+     * TODO: handle reloaded internally by checking if a script was loaded already
      */
-    void setup(j_script& script);
+    void setup(j_script& script, bool reloaded);
 
     /**
      * @brief Resets the script system to its initial state
@@ -80,13 +79,6 @@ private:
      */
     template<typename... varg_t>
     inline void pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const;
-
-    j_hud_system* hud_ { nullptr };
-
-    std::unique_ptr<j_ui_proxy> ui_proxy_;
-
-    template<typename... types>
-    inline void declare(j_script& script) const;
 public:
     constexpr static const char* default_script_path {
 #ifdef NDEBUG
@@ -153,7 +145,6 @@ public:
     j_script& require(string_like script_id);
 
     void on_load() override;
-
     void update(uint32_t delta_time) override;
 };
 
@@ -189,9 +180,7 @@ void j_script_system::preload(path_like base_path) {
             // TODO: check against unicode file names
             auto [iter, b] = scripts_.try_emplace(script_id, script_id, path);
 
-            setup(iter->second);
-
-            dispatcher_->trigger<j_script_loaded_event>({ &iter->second, false });
+            setup(iter->second, false);
         }
     }
 }
@@ -227,11 +216,6 @@ inline void j_script_system::pcall_into(luabridge::LuaRef& ref, varg_t&&... args
     }
 }
 
-template<typename... types>
-inline void j_script_system::declare(j_script& script) const {
-    (types::declare(luabridge::getGlobalNamespace(script)), ...);
-}
-
 template<typename string_like>
 void j_script_system::reload(string_like script_id) {
     auto it = scripts_.find(script_id);
@@ -239,9 +223,7 @@ void j_script_system::reload(string_like script_id) {
         LOG(ERROR) << "Can not reload unknown script " << script_id;
     }
     unload(script_id);
-    setup(it->second);
-
-    dispatcher_->trigger<j_script_loaded_event>(&it->second, true);
+    setup(it->second, true);
 }
 
 template<typename string_like>

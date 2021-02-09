@@ -43,8 +43,12 @@ add_executable(
     "hud/journal.cxx"
     "hud/hud_system.cxx"
     "hud/ui_node.cxx"
+    "hud/ui_node_proxy.hxx"
+    "hud/ui_node_proxy_interface.hxx"
+    "hud/ui_proxy.cxx"
     "hud/ui_tree.hxx"
     "hud/ui_window.cxx"
+    "hud/ui_window_proxy.hxx"
 
     "identity.hxx"
 
@@ -57,13 +61,8 @@ add_executable(
     "player/player_system.cxx"
     "pagination.hxx"
 
-    "scripts/display_proxy.hxx"
     "scripts/script.cxx"
     "scripts/script_system.cxx"
-    "scripts/ui_node_proxy.hxx"
-    "scripts/ui_node_proxy_interface.hxx"
-    "scripts/ui_proxy.cxx"
-    "scripts/ui_window_proxy.hxx"
 
     "system.hxx"
     "system_interface.cxx"

@@ -1,8 +1,6 @@
-local int = 0;
 
 function on_update_inventory_window(window)
-    window:set_title(string.format("Title update %i", int));
-    int = int + 1;
+    window:set_title(string.format("Title update!"));
 end
 
 function on_load(env)

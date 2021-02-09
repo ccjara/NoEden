@@ -30,6 +30,8 @@ private:
     std::string path_;
     std::string source_;
 
+    std::vector<std::string> globals_;
+
     void fail(j_script_error err);
 public:
     /**
@@ -75,6 +77,14 @@ public:
      */
     void load();
 
+    template<typename t>
+    void define_global(std::string_view name, t value);
+
+    template<typename... types>
+    inline void declare() {
+        (types::declare(luabridge::getGlobalNamespace(state_)), ...);
+    }
+
     j_script_status status() const;
     bool called() const;
     bool callable() const;
@@ -90,5 +100,21 @@ public:
     j_script(const j_script&) = delete;
     j_script& operator=(const j_script&) = delete;
 };
+
+template<typename t>
+void j_script::define_global(std::string_view name, t value) {
+    if (!loaded()) {
+        LOG(ERROR) << "Cannot set global '" << name << "' in script '" << id_ << "': " 
+                   << "script is not loaded";
+        return;
+    }
+    const auto& stored_name { globals_.emplace_back(name) };
+    // TODO: this does not cover const char*!
+    // concepts / SFINAE....
+    if constexpr (!std::is_fundamental<t>::value) { // TODO: "requires script_declarable"
+        std::remove_pointer_t<t>::declare(luabridge::getGlobalNamespace(state_));
+    }
+    luabridge::setGlobal(state_, value, stored_name.c_str());
+}
 
 #endif

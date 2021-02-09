@@ -7,10 +7,13 @@
 #include "journal.hxx"
 #include "../components/components.hxx"
 #include "ui_tree.hxx"
+#include "ui_proxy.hxx"
 
 class j_hud_system : public j_system<j_hud_system> {
 private:
     j_journal journal_;
+
+    void immediate_on_script_loaded(const j_script_loaded_event& e);
 
     void task_show_inventory_ui(const j_inventory_view_event& e);
     void task_journal_item_pickup(const j_gathering_completed_event& e);
@@ -18,7 +21,10 @@ private:
     j_ui_window* inventory_window_ { nullptr };
 
     j_ui_tree ui_;
+    j_ui_proxy ui_proxy_;
 public:
+    j_hud_system() : ui_proxy_(&ui_) {}
+
     void on_load() override;
 
     void update(uint32_t delta_time) override;
