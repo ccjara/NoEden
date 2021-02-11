@@ -17,8 +17,6 @@ void j_game_factory::run() {
     game->systems_->emplace<j_unit_system>();
     game->systems_->emplace<j_hud_system>();
     game->systems_->emplace<j_gfx_system>(&game->env_->window());
-    // FIXME: emit default root_config before the script system is loaded so
-    //        the gfx system can startup independently...
     game->systems_->emplace<j_script_system>();
 
     test_arena();

@@ -35,11 +35,9 @@ private:
     void on_script_loaded(const j_script_loaded_event&);
 
     /**
-     * @brief Updates the root config based on the given script
-     *
-     * Corrupted config entries will be ignored
+     * @brief Updates the root config from inside a lua script
      */
-    void update_root_config(j_script& sys_script);
+    void configure_from_lua(luabridge::LuaRef cfg);
 public:
     j_env_manager(entt::dispatcher* const dispatcher);
 

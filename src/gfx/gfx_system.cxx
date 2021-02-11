@@ -40,6 +40,8 @@ void j_gfx_system::on_load() {
     ui_ = std::make_unique<j_ui_renderer>(&display_, game->systems()->get<j_hud_system>());
     world_ = std::make_unique<j_world_renderer>(&display_);
     assert(ui_);
+
+    configure(game->env().config());
 }
 
 void j_gfx_system::update(uint32_t delta_time) {
@@ -59,13 +61,17 @@ void j_gfx_system::on_resize(const j_resize_event& e) {
     adjust_display();
 }
 
-void j_gfx_system::on_root_config_updated(const j_root_config_updated_event& e) {
-    cfg_ = e.next;
+void j_gfx_system::configure(const j_root_config& cfg) {
+    cfg_ = cfg;
+
     renderer_.set_font(load_text_texture(cfg_.font_texture_path));
     renderer_.set_glyph_size(cfg_.glyph_size);
     renderer_.set_scaling(cfg_.scaling);
-
     adjust_display();
+}
+
+void j_gfx_system::on_root_config_updated(const j_root_config_updated_event& e) {
+    configure(e.next);
 }
 
 j_texture j_gfx_system::load_text_texture(const fs::path& path) const {

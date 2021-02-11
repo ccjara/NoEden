@@ -12,9 +12,9 @@ void j_script_system::on_load() {
 }
 
 void j_script_system::reset() {
-    // need to clear all refs ahead of the scripts, otherwise the refs are
-    // TODO: bind the refs to the j_script instances somehow so the script
-    //       can get rid of them?
+    // FIXME: need to clear all refs ahead of the scripts, this causes memory corruption as of now
+    //        bind the refs to the j_script instances somehow so the script
+    //        can get rid of them?
     listeners_.clear();
     scripts_.clear();
 }
@@ -51,24 +51,22 @@ void j_script_system::on_key_down(const j_key_down_event& e) {
 
 void j_script_system::setup(j_script& script, bool reloaded) {
     script.load();
-
     if (!script.loaded()) {
         return;
     }
-    luaL_openlibs(script);
-    
+    // allow other parts of the system contribute to the scripting env
+    dispatcher_->trigger<j_script_loaded_event>(&script, reloaded);
+    // declare the env arg that will be passed into the on_load function
     luabridge::getGlobalNamespace(script)
-        .beginClass<j_script_system>("env")
+        .beginClass<j_script_system>("events")
         .addFunction("on", &j_script_system::on_register_callback)
         .endClass();
 
-    dispatcher_->trigger<j_script_loaded_event>(&script, reloaded);
-
     luabridge::setGlobal(script, script.id().c_str(), "script_id");
-
+    
     script.run();
-
-    auto on_load = luabridge::getGlobal(script, "on_load");
+    // execute the on_load function, passing the script env proxy
+    auto on_load { luabridge::getGlobal(script, "on_load") };
     if (on_load.isFunction()) {
         pcall_into(on_load, this);
     }

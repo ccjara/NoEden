@@ -56,7 +56,7 @@ struct j_key_up_event {
 };
 
 /**
- * @brief Triggered every time the system script is (re)loaded
+ * @brief Triggered every time the root configuration updates (usually from within lua)
  */
 struct j_root_config_updated_event {
     j_root_config prev;

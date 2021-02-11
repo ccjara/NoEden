@@ -3,7 +3,7 @@ function on_update_inventory_window(window)
     window:set_title(string.format("Title update!"));
 end
 
-function on_load(env)
+function on_load()
     local inventory_window = ui:create_window("inventory", "window");
     if inventory_window then
         inventory_window:set_title("Inventory from Lua!");

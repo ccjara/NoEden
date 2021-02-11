@@ -33,6 +33,8 @@ private:
     j_texture load_text_texture(const fs::path&) const;
 
     void adjust_display();
+
+    void configure(const j_root_config& cfg);
 public:
     j_gfx_system(j_window* window);
 

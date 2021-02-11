@@ -61,6 +61,7 @@ void j_script::load() {
     }
     LOG(INFO) << "Script " << id_ << " has been loaded";
     status_ = j_script_status::loaded;
+    luaL_openlibs(state_);
 }
 
 j_script_status j_script::status() const {

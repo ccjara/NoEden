@@ -8,6 +8,7 @@
 #include "../components/components.hxx"
 #include "ui_tree.hxx"
 #include "ui_proxy.hxx"
+#include "ui_window_proxy.hxx"
 
 class j_hud_system : public j_system<j_hud_system> {
 private:

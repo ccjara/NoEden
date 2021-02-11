@@ -4,6 +4,9 @@
 #include "../hud/ui_tree.hxx"
 #include "ui_window_proxy.hxx"
 
+/**
+ * @brief Lua facing proxy for j_ui_tree
+ */
 class j_ui_proxy {
 public:
     j_ui_proxy(j_ui_tree* tree);
