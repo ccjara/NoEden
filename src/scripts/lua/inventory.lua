@@ -1,4 +1,3 @@
-
 function on_update_inventory_window(window)
     window:set_title(string.format("Title update!"));
 end

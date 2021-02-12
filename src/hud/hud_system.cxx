@@ -5,6 +5,7 @@ void j_hud_system::on_load() {
     define_task<j_inventory_view_event, &j_hud_system::task_show_inventory_ui>();
 
     dispatcher_->sink<j_script_loaded_event>().connect<&j_hud_system::immediate_on_script_loaded>(this);
+    dispatcher_->sink<j_script_before_unload_event>().connect<&j_hud_system::immediate_on_script_before_unload>(this);
 }
 
 void j_hud_system::update(uint32_t delta_time) {
@@ -18,6 +19,10 @@ void j_hud_system::update(uint32_t delta_time) {
 void j_hud_system::immediate_on_script_loaded(const j_script_loaded_event& e) {
     e.script->declare<j_ui_window_proxy>();
     e.script->define_global("ui", &ui_proxy_);
+}
+
+void j_hud_system::immediate_on_script_before_unload(const j_script_before_unload_event& e) {
+    ui_proxy_.clear_dependencies_by_state(e.script->lua_state());
 }
 
 const std::vector<std::string>& j_hud_system::journal_entries() const {

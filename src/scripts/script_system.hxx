@@ -221,6 +221,7 @@ void j_script_system::reload(string_like script_id) {
     auto it = scripts_.find(script_id);
     if (it == scripts_.end()) {
         LOG(ERROR) << "Can not reload unknown script " << script_id;
+        return;
     }
     unload(script_id);
     setup(it->second, true);
@@ -232,6 +233,7 @@ void j_script_system::unload(string_like script_id) {
     if (it == scripts_.end()) {
         return;
     }
+    dispatcher_->trigger<j_script_before_unload_event>(*it);
     // OPTIMIZE: this is an extremely slow operation.
     //           improve script_id <-> handle tracking.
     for (auto& [_, refs] : listeners_) {

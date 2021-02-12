@@ -15,6 +15,7 @@ private:
     j_journal journal_;
 
     void immediate_on_script_loaded(const j_script_loaded_event& e);
+    void immediate_on_script_before_unload(const j_script_before_unload_event& e);
 
     void task_show_inventory_ui(const j_inventory_view_event& e);
     void task_journal_item_pickup(const j_gathering_completed_event& e);

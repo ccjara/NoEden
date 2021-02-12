@@ -46,6 +46,7 @@ add_executable(
     "hud/ui_node_proxy.hxx"
     "hud/ui_node_proxy_interface.hxx"
     "hud/ui_proxy.cxx"
+    "hud/ui_lua_dependency_store.hxx"
     "hud/ui_tree.hxx"
     "hud/ui_window.cxx"
     "hud/ui_window_proxy.hxx"

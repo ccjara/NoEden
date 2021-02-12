@@ -2,6 +2,7 @@
 #define JARALYN_UI_NODE_PROXY_HXX
 
 #include "ui_node_proxy_interface.hxx"
+#include "ui_lua_dependency_store.hxx"
 
 /**
  * @brief Lua facing proxy interface for a basic j_ui_node
@@ -9,19 +10,31 @@
 template<typename proxy, typename node>
 class j_ui_node_proxy : public j_ui_node_proxy_interface {
 public:
-    explicit j_ui_node_proxy(node* node) : node_ { node } {
+    explicit j_ui_node_proxy(
+        node* node,
+        j_ui_lua_dependency_store* dependencies_
+    ) : node_ { node }, dependencies_ { dependencies_ } {
         assert(node_);
+        assert(dependencies_);
     }
 
     virtual void set_handler(luabridge::LuaRef ref) override {
         if (ref.isFunction()) {
             handler_ = ref;
+            dependencies_->store_dependency(ref.state(), this);
         }
     }
 
     virtual void call_handler() override {
-        if (handler_.isFunction()) {
-            handler_(static_cast<proxy*>(this));
+        if (handler_) {
+            handler_.value()(static_cast<proxy*>(this));
+        }
+    }
+
+    virtual void invalidate_lua_state(lua_State* state) override {
+        if (handler_ && handler_->state() == state) {
+            handler_ = std::nullopt;
+            return;
         }
     }
 
@@ -33,13 +46,10 @@ public:
         node_->resize({ width, height });
     }
 
-    luabridge::LuaRef& handler() { return handler_; };
-
-    virtual ~j_ui_node_proxy() {
-        handler_ = nullptr;
-    };
+    virtual ~j_ui_node_proxy() = default;
 protected:
-    luabridge::LuaRef handler_ { nullptr };
+    j_ui_lua_dependency_store* dependencies_ { nullptr };
+    std::optional<luabridge::LuaRef> handler_;
     node* node_ { nullptr };
 
     template<typename extension>

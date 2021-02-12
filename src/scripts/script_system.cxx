@@ -12,9 +12,9 @@ void j_script_system::on_load() {
 }
 
 void j_script_system::reset() {
-    // FIXME: need to clear all refs ahead of the scripts, this causes memory corruption as of now
-    //        bind the refs to the j_script instances somehow so the script
-    //        can get rid of them?
+    for (auto& entry : scripts_) {
+        dispatcher_->trigger<j_script_before_unload_event>(&entry.second);
+    }
     listeners_.clear();
     scripts_.clear();
 }
