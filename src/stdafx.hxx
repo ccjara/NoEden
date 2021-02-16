@@ -29,6 +29,10 @@
 #include "lua.hpp"
 #include <LuaBridge/LuaBridge.h>
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_sdl.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 #define SDL_MAIN_HANDLED
 #define ELPP_NO_DEFAULT_LOG_FILE
 

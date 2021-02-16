@@ -15,7 +15,7 @@ public:
     /**
      * @brief Creates an SDL window with the given size
      */
-    explicit j_window(j_vec2<uint32_t> size);
+    explicit j_window(j_vec2<uint32_t> size, const char* title);
 
     /**
      * @brief Frees the SDL window handle

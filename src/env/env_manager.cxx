@@ -26,7 +26,7 @@ void j_env_manager::start() {
     window_ = std::make_unique<j_window>(j_vec2<uint32_t>{
         static_cast<uint32_t>(display_bounds.w) / 2,
         static_cast<uint32_t>(display_bounds.h) / 2
-    });
+    }, "Jaralyn");
 
     is_running_ = true;
 }

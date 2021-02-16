@@ -17,7 +17,7 @@ entt::dispatcher* j_game::events() {
     return &dispatcher_;
 }
 
-const j_env_manager& j_game::env() const {
+j_env_manager& j_game::env() {
     return *env_;
 }
 

@@ -5,25 +5,29 @@ j_game* game { nullptr };
 void test_arena();
 
 void j_game_factory::run() {
-    game = new j_game();
+    auto game_janitor = std::make_unique<j_game>();
+    game = game_janitor.get();
+
     if (!game) {
         LOG(ERROR) << "Could not allocate game memory";
         std::abort();
     }
 
     game->env_->start();
+    auto scripts { game->systems_->emplace<j_script_system>() };
     game->systems_->emplace<j_input_system>();
     game->systems_->emplace<j_player_system>();
     game->systems_->emplace<j_unit_system>();
     game->systems_->emplace<j_hud_system>();
-    game->systems_->emplace<j_gfx_system>(&game->env_->window());
-    game->systems_->emplace<j_script_system>();
+    game->systems_->emplace<j_gfx_system>();
+    game->systems_->emplace<j_xray_system>();
+
+    scripts->preload(j_script_system::default_script_path);
 
     test_arena();
 
     game->run();
-
-    delete game;
+    game->systems_->unload();
 }
 
 void test_arena() {

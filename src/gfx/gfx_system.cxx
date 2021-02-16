@@ -1,18 +1,15 @@
 #include "gfx_system.hxx"
 
-j_gfx_system::j_gfx_system(j_window* window) : window_(window) {
-    assert(window_);
+void j_gfx_system::on_load() {
+    window_ = &game->env().window();
 
-    if (gl_context != nullptr) {
-        SDL_GL_DeleteContext(gl_context);
-    }
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-    gl_context = SDL_GL_CreateContext(*window_);
+    gl_context_ = SDL_GL_CreateContext(*window_);
 
-    if (gl_context == nullptr) {
+    if (gl_context_ == nullptr) {
         LOG(ERROR) << "Could not initialize opengl";
         std::abort();
     }
@@ -23,17 +20,9 @@ j_gfx_system::j_gfx_system(j_window* window) : window_(window) {
         std::abort();
     }
 
-    renderer_.set_context(gl_context);
+    renderer_.set_context(gl_context_);
     renderer_.set_viewport(window_->size());
-}
 
-j_gfx_system::~j_gfx_system() {
-    if (gl_context != nullptr) {
-        SDL_GL_DeleteContext(gl_context);
-    }
-}
-
-void j_gfx_system::on_load() {
     dispatcher_->sink<j_resize_event>().connect<&j_gfx_system::on_resize>(this);
     dispatcher_->sink<j_root_config_updated_event>().connect<&j_gfx_system::on_root_config_updated>(this);
 
@@ -44,6 +33,12 @@ void j_gfx_system::on_load() {
     configure(game->env().config());
 }
 
+void j_gfx_system::on_unload() {
+    if (gl_context_ != nullptr) {
+        SDL_GL_DeleteContext(gl_context_);
+    }
+}
+
 void j_gfx_system::update(uint32_t delta_time) {
     fps_.pre_render();
     display_.reset();
@@ -52,6 +47,8 @@ void j_gfx_system::update(uint32_t delta_time) {
     ui_->draw();
 
     renderer_.render(display_);
+
+    dispatcher_->trigger<j_post_render_event>();
 
     SDL_GL_SwapWindow(*window_);
 }
@@ -102,4 +99,8 @@ void j_gfx_system::adjust_display() {
         scaled_size.x / cfg_.glyph_size.x,
         scaled_size.y / cfg_.glyph_size.y
     });
+}
+
+SDL_GLContext j_gfx_system::gl_context() {
+    return gl_context_;
 }

@@ -17,7 +17,7 @@ public:
     entt::registry* entities();
     entt::dispatcher* events();
     
-    const j_env_manager& env() const;
+    j_env_manager& env();
 
     void run();
 };

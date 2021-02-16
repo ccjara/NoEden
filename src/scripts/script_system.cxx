@@ -7,8 +7,6 @@ j_script_system::~j_script_system() {
 void j_script_system::on_load() {
     dispatcher_->sink<j_item_stored_event>().connect<&j_script_system::on_item_stored>(this);
     dispatcher_->sink<j_key_down_event>().connect<&j_script_system::on_key_down>(this);
-
-    preload(default_script_path);
 }
 
 void j_script_system::reset() {

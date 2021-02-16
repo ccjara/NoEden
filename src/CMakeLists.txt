@@ -2,16 +2,24 @@ add_executable(
     jaralyn
     "../deps/easyloggingpp/easyloggingpp.cxx"
 
+    "../deps/imgui/imgui.cpp"
+    "../deps/imgui/imgui_demo.cpp"
+    "../deps/imgui/imgui_draw.cpp"
+    "../deps/imgui/imgui_impl_sdl.cpp"
+    "../deps/imgui/imgui_impl_opengl3.cpp"
+    "../deps/imgui/imgui_tables.cpp"
+    "../deps/imgui/imgui_widgets.cpp"
+
     "components/attribute.hxx"
     "components/attribute_bearing.cxx"
     "components/components.hxx"
     
-
     "env/clock.hxx"
     "env/env_manager.cxx"
     "env/root_config.hxx"
     "env/window.cxx"
 
+    "event/gfx_event.hxx"
     "event/inventory_event.hxx"
     "event/platform_event.hxx"
     "event/player_event.hxx"
@@ -70,6 +78,8 @@ add_executable(
     "systems.cxx"
 
     "unit/unit_system.cxx"
+
+    "xray/xray_system.cxx"
 )
 
 target_link_libraries(jaralyn ${LUA_LIBRARIES})

@@ -7,6 +7,7 @@
 #include "player/player_system.hxx"
 #include "hud/hud_system.hxx"
 #include "unit/unit_system.hxx"
+#include "xray/xray_system.hxx"
 
 class j_game_factory {
 public:

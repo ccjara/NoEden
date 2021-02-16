@@ -1,8 +1,8 @@
 #include "window.hxx"
 
-j_window::j_window(j_vec2<uint32_t> s) : size_ { s } {
+j_window::j_window(j_vec2<uint32_t> s, const char *title) : size_ { s } {
     handle_ = SDL_CreateWindow(
-        "Jaralyn",
+        title,
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
         static_cast<int> (size_.x),
