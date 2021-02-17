@@ -25,4 +25,15 @@ struct j_script_before_unload_event {
     }
 };
 
+/**
+ * @brief Triggered after a script unloaded
+ */
+struct j_script_unloaded_event {
+    j_script* script { nullptr };
+
+    constexpr j_script_unloaded_event(j_script* script) : script { script } {
+        assert(this->script);
+    }
+};
+
 #endif

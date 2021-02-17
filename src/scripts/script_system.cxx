@@ -71,6 +71,7 @@ void j_script_system::unload(j_script& script) {
     }
     dispatcher_->trigger<j_script_before_unload_event>(&script);
     script.unload();
+    dispatcher_->trigger<j_script_unloaded_event>(&script);
     LOG(INFO) << "Script " << script.name() << " (" << script.id() << ") has been unloaded";
 }
 
