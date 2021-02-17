@@ -5,6 +5,7 @@
 #include "../game.hxx"
 #include "../gfx/gfx_system.hxx"
 #include "../event/gfx_event.hxx"
+#include "script_xray.hxx"
 
 class j_xray_system : public j_system<j_xray_system> {
 public:
@@ -16,6 +17,8 @@ private:
 
     ImGuiContext* imgui_context_ { nullptr };
     j_window* window_ { nullptr };
+
+    std::vector<std::unique_ptr<j_xray_interface>> xrays_;
 };
 
 #endif

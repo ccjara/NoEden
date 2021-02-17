@@ -4,6 +4,8 @@
 using j_id_t = uint64_t;
 using j_static_id_t = uint64_t;
 
+constexpr uint64_t j_id_invalid { std::numeric_limits<j_id_t>::max() };
+
 /**
  * @brief Atomic, auto incrementing entity id generator
  */

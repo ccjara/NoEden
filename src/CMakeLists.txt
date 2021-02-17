@@ -79,6 +79,8 @@ add_executable(
 
     "unit/unit_system.cxx"
 
+    "xray/script_xray.cxx"
+    "xray/xray_interface.hxx"
     "xray/xray_system.cxx"
 )
 

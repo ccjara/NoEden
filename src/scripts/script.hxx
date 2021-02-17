@@ -20,9 +20,9 @@ enum class j_script_error {
 /**
  * @brief Wrapper which manages a lua state
  */
-class j_script {
+class j_script : public j_identity<j_script> {
 private:
-    std::string id_;
+    std::string name_;
     lua_State* state_ { nullptr };
     j_script_status status_ { j_script_status::indeterminate };
     j_script_error error_ { j_script_error::none };
@@ -40,12 +40,12 @@ public:
      * If the file does not exist, the status flag will be switched
      * to `error` and the script state will be empty (but remain allocated).
      */
-    j_script(const std::string& id, const fs::path& path);
+    j_script(const std::string& name, const fs::path& path);
 
     /**
      * @brief Loads a script from a source string
      */
-    j_script(const std::string& id, const std::string& source);
+    j_script(const std::string& name, const std::string& source);
 
     /**
      * @brief Frees the currently managed lua state if allocated
@@ -89,8 +89,9 @@ public:
     bool called() const;
     bool callable() const;
     bool loaded() const;
-    const std::string& id() const;
+    const std::string& name() const;
     lua_State* lua_state() const;
+    const std::vector<std::string>& globals() const;
 
     // move the managed script state between j_script instances
     j_script(j_script&&);
@@ -104,7 +105,7 @@ public:
 template<typename t>
 void j_script::define_global(std::string_view name, t value) {
     if (!loaded()) {
-        LOG(ERROR) << "Cannot set global '" << name << "' in script '" << id_ << "': " 
+        LOG(ERROR) << "Cannot set global '" << name << "' in script '" << name_ << "': " 
                    << "script is not loaded";
         return;
     }

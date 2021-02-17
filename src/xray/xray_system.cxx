@@ -14,6 +14,8 @@ void j_xray_system::on_load() {
 
     ImGui_ImplSDL2_InitForOpenGL(game->env().window(), gfx->gl_context());
     ImGui_ImplOpenGL3_Init();
+
+    xrays_.emplace_back(std::make_unique<j_script_xray>());
 }
 
 void j_xray_system::on_unload() {
@@ -36,8 +38,12 @@ void j_xray_system::immediate_on_post_render(const j_post_render_event&) {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window_->handle());
     ImGui::NewFrame();
-    bool shown = true;
-    ImGui::ShowDemoWindow(&shown);
+
+    for (const auto& xray : xrays_) {
+        xray->update();
+    }
+
+    ImGui::End();
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }

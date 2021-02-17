@@ -1,12 +1,12 @@
 #include "script.hxx"
 
-j_script::j_script(const std::string& id, const fs::path& path) :
-    id_(id),
+j_script::j_script(const std::string& name, const fs::path& path) :
+    name_(name),
     path_(path.string().c_str()) {
 }
 
-j_script::j_script(const std::string& id, const std::string& source) :
-    id_(id),
+j_script::j_script(const std::string& name, const std::string& source) :
+    name_(name),
     source_(source) {
 }
 
@@ -22,7 +22,7 @@ j_script::operator lua_State* () const {
 
 bool j_script::run() {
     if (status_ != j_script_status::loaded) {
-        LOG(ERROR) << "Cannot run script " << id_ << ": script must be loaded";
+        LOG(ERROR) << "Cannot run script " << name_ << ": script must be loaded";
         return false;
     }
     if (lua_pcall(state_, 0, 0, 0) != LUA_OK) {
@@ -59,7 +59,7 @@ void j_script::load() {
     if (luaL_loadstring(state_, source_.c_str()) != LUA_OK) {
         return fail(j_script_error::script_corrupted);
     }
-    LOG(INFO) << "Script " << id_ << " has been loaded";
+    LOG(INFO) << "Script " << name_ << " has been loaded";
     status_ = j_script_status::loaded;
     luaL_openlibs(state_);
 }
@@ -80,12 +80,16 @@ bool j_script::loaded() const {
     return callable();
 }
 
-const std::string& j_script::id() const {
-    return id_;
+const std::string& j_script::name() const {
+    return name_;
 }
 
 lua_State* j_script::lua_state() const {
     return state_;
+}
+
+const std::vector<std::string>& j_script::globals() const {
+    return globals_;
 }
 
 j_script::j_script(j_script&& other) {
@@ -93,7 +97,7 @@ j_script::j_script(j_script&& other) {
 }
 
 j_script& j_script::operator=(j_script&& other) {
-    id_ = std::move(other.id_);
+    name_ = std::move(other.name_);
     if (other.state_ != nullptr) {
         state_ = std::exchange(other.state_, nullptr);
     }
@@ -112,20 +116,20 @@ void j_script::fail(j_script_error err) {
         break;
     case j_script_error::runtime_error:
         assert(lua_gettop(state_) == -1);
-        LOG(ERROR) << "Runtime error in script " << id_ << ": " << lua_tostring(state_, -1);
+        LOG(ERROR) << "Runtime error in script " << name_ << ": " << lua_tostring(state_, -1);
         break;
     case j_script_error::script_path_not_found:
-        LOG(ERROR) << "Cannot load script " << id_ << ": path " << path_ << " not found";
+        LOG(ERROR) << "Cannot load script " << name_ << ": path " << path_ << " not found";
         break;
     case j_script_error::bad_script_input:
-        LOG(ERROR) << "Cannot load script " << id_ << ": bad input";
+        LOG(ERROR) << "Cannot load script " << name_ << ": bad input";
         break;
     case j_script_error::script_corrupted:
-        LOG(ERROR) << "Cannot load script " << id_ << ": " << lua_tostring(state_, -1);
+        LOG(ERROR) << "Cannot load script " << name_ << ": " << lua_tostring(state_, -1);
     case j_script_error::none:
         return;
     default:
-        LOG(ERROR) << "Unknown error in script " << id_;
+        LOG(ERROR) << "Unknown error in script " << name_;
     }
     status_ = j_script_status::error;
     error_ = err;
