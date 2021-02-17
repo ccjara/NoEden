@@ -4,14 +4,12 @@
 class j_script;
 
 /**
- * @brief Triggered after a script (re)loaded
+ * @brief Triggered after a script loaded
  */
 struct j_script_loaded_event {
     j_script* script { nullptr };
-    bool reloaded { false };
 
-    constexpr j_script_loaded_event(j_script* script, bool reloaded) :
-        script { script }, reloaded { reloaded } {
+    constexpr j_script_loaded_event(j_script* script) : script { script } {
         assert(this->script);
     }
 };

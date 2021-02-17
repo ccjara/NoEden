@@ -10,24 +10,35 @@ void j_script_system::on_load() {
 
 void j_script_system::reset() {
     for (auto& [id, script] : scripts_) {
-        dispatcher_->trigger<j_script_before_unload_event>(script.get());
+        unload(*script.get());
     }
     scripts_.clear();
 }
 
+void j_script_system::update(uint32_t delta_time) {
+}
+
 void j_script_system::on_key_down(const j_key_down_event& e) {
     if (e.key == SDLK_F5) {
+        reset();
         preload(default_script_path);
     }
 }
 
-void j_script_system::setup(j_script& script, bool reloaded) {
-    script.load();
-    if (!script.loaded()) {
+void j_script_system::load(j_script& script) {
+    if (script.status() != j_script_status::unloaded) {
+        LOG(ERROR) << "Cannot load script "
+                   << script.name() << ": script is already loaded. "
+                   << "Call reload instead.";
         return;
     }
-    // allow other parts of the system contribute to the scripting env
-    dispatcher_->trigger<j_script_loaded_event>(&script, reloaded);
+    script.load();
+    if (script.status() != j_script_status::loaded) {
+        return;
+    }
+    LOG(INFO) << "Script " << script.name() << " (" << script.id() << ") has been loaded";
+    // allow other parts of the system to contribute to the scripting env
+    dispatcher_->trigger<j_script_loaded_event>(&script);
     script.run();
     // execute the on_load function, passing the script env proxy
     auto on_load { luabridge::getGlobal(script, "on_load") };
@@ -36,28 +47,45 @@ void j_script_system::setup(j_script& script, bool reloaded) {
     }
 }
 
-void j_script_system::update(uint32_t delta_time) {
-}
-
-void j_script_system::reload(j_id_t id) {
+void j_script_system::load(j_id_t id) {
     auto it = scripts_.find(id);
     if (it == scripts_.end()) {
-        LOG(ERROR) << "Can not reload unknown script " << id;
+        LOG(ERROR) << "Can not load script " << id << ": script does not exist";
         return;
     }
-    unload(it->first);
-    setup(*it->second, true);
+    return load(*it->second.get());
 }
 
 void j_script_system::unload(j_id_t id) {
     auto it = scripts_.find(id);
     if (it == scripts_.end()) {
+        LOG(ERROR) << "Can not unload script " << id << ": script does not exist";
         return;
     }
-    const std::string name { it->second->name() };
-    dispatcher_->trigger<j_script_before_unload_event>(it->second.get());
-    scripts_.erase(it);
-    LOG(INFO) << "Script " << id << " (" << name << ") has been unloaded";
+    return unload(*it->second.get());
+}
+
+void j_script_system::unload(j_script& script) {
+    if (script.status() == j_script_status::unloaded) {
+        return;
+    }
+    dispatcher_->trigger<j_script_before_unload_event>(&script);
+    script.unload();
+    LOG(INFO) << "Script " << script.name() << " (" << script.id() << ") has been unloaded";
+}
+
+void j_script_system::reload(j_id_t id) {
+    auto it = scripts_.find(id);
+    if (it == scripts_.end()) {
+        LOG(ERROR) << "Can not reload script " << id << ": script does not exist";
+        return;
+    }
+    reload(*it->second.get());
+}
+
+void j_script_system::reload(j_script& script) {
+    unload(script);
+    load(script);
 }
 
 const std::unordered_map<j_id_t, std::unique_ptr<j_script>>& j_script_system::scripts() const {

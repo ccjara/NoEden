@@ -2,10 +2,9 @@
 #define JARALYN_SCRIPT_HXX
 
 enum class j_script_status {
-    indeterminate,
-    error,
+    unloaded,
     loaded,
-    called,
+    executed,
 };
 
 enum class j_script_error {
@@ -21,10 +20,11 @@ enum class j_script_error {
  * @brief Wrapper which manages a lua state
  */
 class j_script : public j_identity<j_script> {
+    friend class j_script_system;
 private:
     std::string name_;
     lua_State* state_ { nullptr };
-    j_script_status status_ { j_script_status::indeterminate };
+    j_script_status status_ { j_script_status::unloaded };
     j_script_error error_ { j_script_error::none };
 
     std::string path_;
@@ -35,17 +35,9 @@ private:
     void fail(j_script_error err);
 public:
     /**
-     * @brief Loads a script from the given path
-     *
-     * If the file does not exist, the status flag will be switched
-     * to `error` and the script state will be empty (but remain allocated).
+     * @brief Instantiates a script from a source string
      */
-    j_script(const std::string& name, const fs::path& path);
-
-    /**
-     * @brief Loads a script from a source string
-     */
-    j_script(const std::string& name, const std::string& source);
+    j_script(const std::string& name);
 
     /**
      * @brief Frees the currently managed lua state if allocated
@@ -71,11 +63,13 @@ public:
      *
      * Sets the script status to `loaded` if loaded successfully or
      * `error` on failure. This also sets the `error_` member accordingly.
-     *
-     * A script can be loaded multiple times. The previous script state is
-     * discarded and reallocated on each load.
      */
     void load();
+
+    /**
+     * @brief Unloads the script, freeing its resources
+     */
+    void unload();
 
     template<typename t>
     void define_global(std::string_view name, t value);
@@ -86,12 +80,11 @@ public:
     }
 
     j_script_status status() const;
-    bool called() const;
-    bool callable() const;
-    bool loaded() const;
     const std::string& name() const;
     lua_State* lua_state() const;
     const std::vector<std::string>& globals() const;
+    const std::string& source() const;
+    void set_source(std::string&& source);
 
     // move the managed script state between j_script instances
     j_script(j_script&&);
@@ -104,7 +97,7 @@ public:
 
 template<typename t>
 void j_script::define_global(std::string_view name, t value) {
-    if (!loaded()) {
+    if (status_ != j_script_status::loaded) {
         LOG(ERROR) << "Cannot set global '" << name << "' in script '" << name_ << "': " 
                    << "script is not loaded";
         return;

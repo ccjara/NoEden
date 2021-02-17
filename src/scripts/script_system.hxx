@@ -14,14 +14,6 @@ private:
     void on_key_down(const j_key_down_event& e);
 
     /**
-     * @brief Loads and runs the script
-     *
-     * TODO: Make scripts loadable on demand
-     * TODO: handle reloaded internally by checking if a script was loaded already
-     */
-    void setup(j_script& script, bool reloaded);
-
-    /**
      * @brief Resets the script system to its initial state
      *
      * In this state, no script or any reference thereof is held
@@ -69,25 +61,47 @@ public:
     void preload(path_like base_path);
 
     /**
+     * @brief Loads a script by id
+     * 
+     * @see load(j_script& script)
+     */
+    void load(j_id_t id);
+
+    /**
+     * @brief Loads an unloaded script
+     * 
+     * You can call this method after a script has been unloaded before.
+     * 
+     * This method bails if called with a loaded or even executed script.
+     */
+    void load(j_script& script);
+
+    /**
      * @brief Unloads a script by id
-     *
-     * An unloaded script can later be reloaded.
-     *
-     * @see reload
+     * 
+    * @see unload(j_script& script)
      */
     void unload(j_id_t id);
 
     /**
-     * @brief Reloads a script by id
-     *
-     * The script must be known to the script engine.
-     * Scripts which have been added after {@link preload} was called are not
-     * known to the script system (TODO).
-     *
-     * If the script was loaded from a file, the source will also be reloaded
-     * from the file system, making changes at runtime possible.
+     * @brief Unloads a loaded script, freeing its resources
+     * 
+     * If the script is not in a loaded or executed state, this method
+     * will do nothing.
+     */
+    void unload(j_script& script);
+
+    /**
+     * @brief Reloads a script by id then forwards to reload(j_script& script)
+     * 
+     * @see reload(j_script& script)
      */
     void reload(j_id_t id);
+
+    /**
+     * @brief Unloads a script if loaded, then loads it again
+     */
+    void reload(j_script& script);
 
     void on_load() override;
     void update(uint32_t delta_time) override;
@@ -118,16 +132,24 @@ void j_script_system::preload(path_like base_path) {
             continue;
         }
         if (path.extension().string() == ".lua") {
-            const std::string& name { prefix + path.stem().string() };
+            const auto& name { prefix + path.stem().string() };
+            LOG(INFO) << "Found script file " << name;
 
-            LOG(INFO) << "Found script " << name;
-
-            auto script { std::make_unique<j_script>(name, path) };
+            auto script { std::make_unique<j_script>(name) };
+            script->path_ = path.string().c_str();
+            std::ifstream input { path, std::ios::ate };
+            if (input.bad()) {
+                script->fail(j_script_error::bad_script_input);
+            }
+            const auto size { input.tellg() };
+            script->source_.resize(size);
+            input.seekg(0);
+            input.read(script->source_.data(), size);
             // TODO: gracefully handle case insensitive file systems (script ids must be unique)
             // TODO: locale-lowercase script_id for convenience and consistency?
             // TODO: check against unicode file names
             auto [iter, b] { scripts_.try_emplace(script->id(), std::move(script)) };
-            setup(*iter->second, false);
+            load(*iter->second);
         }
     }
 }

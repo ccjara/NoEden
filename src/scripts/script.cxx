@@ -1,19 +1,10 @@
 #include "script.hxx"
 
-j_script::j_script(const std::string& name, const fs::path& path) :
-    name_(name),
-    path_(path.string().c_str()) {
-}
-
-j_script::j_script(const std::string& name, const std::string& source) :
-    name_(name),
-    source_(source) {
+j_script::j_script(const std::string& name) : name_(name) {
 }
 
 j_script::~j_script() {
-    if (state_) {
-        lua_close(state_);
-    }
+    unload();
 }
 
 j_script::operator lua_State* () const {
@@ -21,7 +12,7 @@ j_script::operator lua_State* () const {
 }
 
 bool j_script::run() {
-    if (status_ != j_script_status::loaded) {
+    if (status_ == j_script_status::unloaded) {
         LOG(ERROR) << "Cannot run script " << name_ << ": script must be loaded";
         return false;
     }
@@ -29,55 +20,37 @@ bool j_script::run() {
         fail(j_script_error::runtime_error);
         return false;
     }
-    status_ = j_script_status::called;
+    status_ = j_script_status::executed;
     return true;
 }
 
 void j_script::load() {
-    // realloc / reset script state if reloading
     if (state_) {
-        lua_close(state_);
+        unload();
     }
     state_ = luaL_newstate();
     if (!state_) {
         return fail(j_script_error::state_alloc_failed);
     }
-    // load source from file if path is given
-    if (!path_.empty()) {
-        if (!fs::exists(path_)) {
-            return fail(j_script_error::script_path_not_found);
-        }
-        std::ifstream input { path_, std::ios::ate };
-        if (input.bad()) {
-            return fail(j_script_error::bad_script_input);
-        }
-        const auto size { input.tellg() };
-        source_.resize(size);
-        input.seekg(0);
-        input.read(source_.data(), size);
-    }
     if (luaL_loadstring(state_, source_.c_str()) != LUA_OK) {
+        unload();
         return fail(j_script_error::script_corrupted);
     }
-    LOG(INFO) << "Script " << name_ << " has been loaded";
-    status_ = j_script_status::loaded;
     luaL_openlibs(state_);
+    status_ = j_script_status::loaded;
+}
+
+void j_script::unload() {
+    if (state_) {
+        lua_close(state_);
+        state_ = nullptr;
+        status_ = j_script_status::unloaded;
+    }
+    globals_.clear();
 }
 
 j_script_status j_script::status() const {
     return status_;
-}
-
-bool j_script::callable() const {
-    return status_ == j_script_status::loaded;
-}
-
-bool j_script::called() const {
-    return status_ == j_script_status::called;
-}
-
-bool j_script::loaded() const {
-    return callable();
 }
 
 const std::string& j_script::name() const {
@@ -90,6 +63,14 @@ lua_State* j_script::lua_state() const {
 
 const std::vector<std::string>& j_script::globals() const {
     return globals_;
+}
+
+const std::string& j_script::source() const {
+    return source_;
+}
+
+void j_script::set_source(std::string&& source) {
+    source_ = std::move(source);
 }
 
 j_script::j_script(j_script&& other) {
@@ -131,6 +112,5 @@ void j_script::fail(j_script_error err) {
     default:
         LOG(ERROR) << "Unknown error in script " << name_;
     }
-    status_ = j_script_status::error;
     error_ = err;
 }
