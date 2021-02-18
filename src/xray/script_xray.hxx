@@ -2,6 +2,7 @@
 #define JARALYN_SCRIPT_XRAY_HXX
 
 #include "xray_interface.hxx"
+#include "xray_style.hxx"
 #include "../game.hxx"
 #include "../scripts/script_system.hxx"
 #include "../hud/hud_system.hxx"

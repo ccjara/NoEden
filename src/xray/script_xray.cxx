@@ -36,9 +36,32 @@ void j_script_xray::update() {
         ImGui::EndCombo();
     }
     if (selected_script) {
+        ImGui::PushID(0);
         if (ImGui::Button("Reload")) {
             script_system->reload(selected_script->id());
         }
+        ImGui::PopID();
+        ImGui::SameLine();
+
+        ImGui::PushID(1);
+        if (selected_script->status() == j_script_status::unloaded) {
+            ImGui::PushStyleColor(ImGuiCol_Button, COLOR_GREEN);
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, COLOR_GREEN_HOVER);
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, COLOR_GREEN_ACTIVE);
+            if (ImGui::Button("Load")) {
+                script_system->load(selected_script->id());
+            }
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Button, COLOR_RED);
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, COLOR_RED_HOVER);
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, COLOR_RED_ACTIVE);
+            if (ImGui::Button("Unload")) {
+                script_system->unload(selected_script->id());
+            }
+        }
+        ImGui::PopStyleColor(3);
+        ImGui::PopID();
+
         ImGui::Separator();
         if (ImGui::TreeNode("Globals")) {
             for (const auto& global : selected_script->globals()) {
