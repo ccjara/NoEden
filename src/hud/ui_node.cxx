@@ -91,7 +91,7 @@ j_vec2<uint32_t> j_ui_node::size() const {
 }
 
 bool j_ui_node::is_root() const {
-    return parent_ == this;
+    return parent_ == nullptr;
 }
 
 bool j_ui_node::can_anchor_to(j_ui_node* node) const {
