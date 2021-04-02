@@ -72,6 +72,7 @@ add_executable(
 
     "scripts/script.cxx"
     "scripts/script_system.cxx"
+    "scripts/script_util.hxx"
 
     "system.hxx"
     "system_interface.cxx"

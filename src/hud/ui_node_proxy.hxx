@@ -3,6 +3,7 @@
 
 #include "ui_node_proxy_interface.hxx"
 #include "ui_lua_dependency_store.hxx"
+#include "../scripts/script_util.hxx"
 
 /**
  * @brief Lua facing proxy interface for a basic j_ui_node
@@ -27,7 +28,7 @@ public:
 
     virtual void call_handler() override {
         if (handler_) {
-            handler_.value()(static_cast<proxy*>(this));
+            pcall_into(handler_.value(), static_cast<proxy*>(this));
         }
     }
 

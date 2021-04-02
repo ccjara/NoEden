@@ -4,6 +4,7 @@
 #include "../system.hxx"
 #include "../event/script_event.hxx"
 #include "../event/platform_event.hxx"
+#include "script_util.hxx"
 #include "script.hxx"
 
 class j_script_system : public j_system<j_script_system> {
@@ -19,15 +20,6 @@ private:
      * In this state, no script or any reference thereof is held
      */
     void reset();
-
-    /**
-     * @brief Does a protected call into the given lua ref
-     *
-     * Checks whether the call was successful. In case of an error, the error
-     * is logged, *no* exception is thrown.
-     */
-    template<typename... varg_t>
-    inline void pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const;
 public:
     constexpr static const char* default_script_path {
 #ifdef NDEBUG
@@ -62,30 +54,30 @@ public:
 
     /**
      * @brief Loads a script by id
-     * 
+     *
      * @see load(j_script& script)
      */
     void load(j_id_t id);
 
     /**
      * @brief Loads an unloaded script
-     * 
+     *
      * You can call this method after a script has been unloaded before.
-     * 
+     *
      * This method bails if called with a loaded or even executed script.
      */
     void load(j_script& script);
 
     /**
      * @brief Unloads a script by id
-     * 
+     *
     * @see unload(j_script& script)
      */
     void unload(j_id_t id);
 
     /**
      * @brief Unloads a loaded script, freeing its resources
-     * 
+     *
      * If the script is not in a loaded or executed state, this method
      * will do nothing.
      */
@@ -93,7 +85,7 @@ public:
 
     /**
      * @brief Reloads a script by id then forwards to reload(j_script& script)
-     * 
+     *
      * @see reload(j_script& script)
      */
     void reload(j_id_t id);
@@ -151,25 +143,6 @@ void j_script_system::preload(path_like base_path) {
             auto [iter, b] { scripts_.try_emplace(script->id(), std::move(script)) };
             load(*iter->second);
         }
-    }
-}
-
-template<typename... varg_t>
-inline void j_script_system::pcall_into(luabridge::LuaRef& ref, varg_t&&... args) const {
-    const auto result { ref(std::forward<varg_t>(args)...) };
-    if (result == std::nullopt) {
-        const auto state { ref.state() };
-
-        std::string err { "Caught error during script execution" };
-
-        if (lua_gettop(state) > 0) {
-            const char* e = lua_tostring(state, -1);
-            if (e) {
-                err.append(": ");
-                err.append(e);
-            }
-        }
-        LOG(ERROR) << err;
     }
 }
 
