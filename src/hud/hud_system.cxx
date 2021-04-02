@@ -4,6 +4,7 @@ void j_hud_system::on_load() {
     define_task<j_gathering_completed_event, &j_hud_system::task_journal_item_pickup>();
     define_task<j_inventory_view_event, &j_hud_system::task_show_inventory_ui>();
 
+    dispatcher_->sink<j_display_resized_event>().connect<&j_hud_system::immediate_on_display_resized>(this);
     dispatcher_->sink<j_script_loaded_event>().connect<&j_hud_system::immediate_on_script_loaded>(this);
     dispatcher_->sink<j_script_before_unload_event>().connect<&j_hud_system::immediate_on_script_before_unload>(this);
 }
@@ -23,6 +24,10 @@ void j_hud_system::immediate_on_script_loaded(const j_script_loaded_event& e) {
 
 void j_hud_system::immediate_on_script_before_unload(const j_script_before_unload_event& e) {
     ui_proxy_.clear_dependencies_by_state(e.script->lua_state());
+}
+
+void j_hud_system::immediate_on_display_resized(const j_display_resized_event& e) {
+    ui_.root()->resize(e.size);
 }
 
 const std::vector<std::string>& j_hud_system::journal_entries() const {
@@ -46,9 +51,6 @@ void j_hud_system::task_journal_item_pickup(const j_gathering_completed_event& e
 
 void j_hud_system::task_show_inventory_ui(const j_inventory_view_event& e) {
     if (!inventory_window_) {
-        // TODO: create j_display_resized event or some sort to update the root's size
-        ui_.root()->resize({ 120, 38 });
-
         inventory_window_ = ui_.create_node<j_ui_window>(ui_.root(), "inventory_window");
         assert(inventory_window_);
 

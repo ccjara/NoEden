@@ -6,6 +6,7 @@
 #include "../gfx/gfx_system.hxx"
 #include "../event/gfx_event.hxx"
 #include "script_xray.hxx"
+#include "ui_xray.hxx"
 
 class j_xray_system : public j_system<j_xray_system> {
 public:

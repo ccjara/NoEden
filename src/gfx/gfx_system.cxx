@@ -95,10 +95,13 @@ void j_gfx_system::adjust_display() {
     // calculate resolution
     const auto scaled_size { window_->size() / cfg_.scaling };
     // calculate how many cells will fit on the screen given that resolution
-    display_.resize({
+    const j_vec2<uint32_t> display_size {
         scaled_size.x / cfg_.glyph_size.x,
         scaled_size.y / cfg_.glyph_size.y
-    });
+    };
+    // resize and notify
+    display_.resize(display_size);
+    dispatcher_->trigger<j_display_resized_event>(display_size);
 }
 
 SDL_GLContext j_gfx_system::gl_context() {

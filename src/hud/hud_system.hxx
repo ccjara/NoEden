@@ -4,6 +4,7 @@
 #include "../game.hxx"
 #include "../system.hxx"
 #include "../event/inventory_event.hxx"
+#include "../event/gfx_event.hxx"
 #include "journal.hxx"
 #include "../components/components.hxx"
 #include "ui_tree.hxx"
@@ -14,6 +15,7 @@ class j_hud_system : public j_system<j_hud_system> {
 private:
     j_journal journal_;
 
+    void immediate_on_display_resized(const j_display_resized_event& e);
     void immediate_on_script_loaded(const j_script_loaded_event& e);
     void immediate_on_script_before_unload(const j_script_before_unload_event& e);
 

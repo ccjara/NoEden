@@ -13,7 +13,7 @@ add_executable(
     "components/attribute.hxx"
     "components/attribute_bearing.cxx"
     "components/components.hxx"
-    
+
     "env/clock.hxx"
     "env/env_manager.cxx"
     "env/root_config.hxx"
@@ -80,6 +80,7 @@ add_executable(
     "unit/unit_system.cxx"
 
     "xray/script_xray.cxx"
+    "xray/ui_xray.cxx"
     "xray/xray_interface.hxx"
     "xray/xray_style.hxx"
     "xray/xray_system.cxx"

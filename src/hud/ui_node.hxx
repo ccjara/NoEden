@@ -28,46 +28,24 @@ class j_ui_node {
     friend class j_ui_tree;
 public:
     /**
-     * @brief Encapsulates information about this node's anchoring
-     */
-    struct j_ui_anchor {
-        /**
-         * @brief A destination node this node is anchored to or nullptr if not anchored
-         * 
-         * If a node is removed, all anchor node pointers are nulled.
-         */
-        j_ui_node* node { nullptr };
-
-        /**
-         * @brief A list of nodes anchored to this node
-         */
-        std::vector<j_ui_node*> nodes;
-
-        /**
-         * @brief The anchor origin used to calculate an absolute position
-         */
-        j_ui_anchor_origin origin = j_ui_anchor_origin::top_left;
-    };
-
-    /**
      * @brief Readonly accessor for the id_ attribute
-     * 
+     *
      * Written to by the factory after construction
      */
     std::string_view id() const;
 
     /**
      * @brief Readonly accessor for the type_ attribute
-     * 
+     *
      * Written to by the factory after construction
      */
     j_ui_node_type type() const;
 
     /**
      * @brief Sets the current, relative (untranslated) position of this node
-     * 
+     *
      * Its absolute position will be calculated based on its anchor.
-     * 
+     *
      * Also recursivly moves all anchored nodes based on their anchor settings.
      */
     void move(j_vec2<uint32_t> position);
@@ -79,27 +57,29 @@ public:
 
     /**
      * @brief Returns the position relative to its anchor
-     * 
+     *
      * This position may be modified using move()
-     * 
+     *
      * @see move()
      */
     j_vec2<uint32_t> relative_position() const;
 
     /**
      * @brief Returns the translated position (as it will appear on screen)
-     * 
+     *
      * This value depends on the relative position and anchoring and is updated
      * whenever the move() function adjusts the relative position of a node.
-     * 
+     *
      * @see move()
      */
     j_vec2<uint32_t> absolute_position() const;
 
     /**
-     * @brief Readonly accessor for the anchor_ attribute
+     * @brief Anchors this node to the given node
+     *
+     * Existing anchor references will be updated accordingly.
      */
-    const j_ui_anchor& anchor() const;
+    void anchor_to(j_ui_node& node);
 
     /**
      * @brief Updates the anchor origin and recalculates its absolute position
@@ -107,20 +87,63 @@ public:
     void set_anchor_origin(j_ui_anchor_origin origin);
 
     /**
+     * @brief Returns the node this node is currently anchored to
+     */
+    j_ui_node* anchored_to() const;
+
+    /**
+     * @brief Readonly accessor for the anchored_by_ attribute
+     */
+    const std::vector<j_ui_node*>& anchored_by() const;
+
+    /**
+     * @brief Readonly accessor for the origin_ attribute
+     */
+    j_ui_anchor_origin anchor_origin() const;
+
+    /**
      * @brief Readonly accessor for the children_ attribute
      */
     const std::vector<j_ui_node*>& children() const;
 
     /**
+     * @brief Returns true if this node can be anchored to the given one
+     */
+    bool can_anchor_to(j_ui_node* node) const;
+
+    /**
      * @brief Readonly accessor for the size_ attribute
      */
     j_vec2<uint32_t> size() const;
+
+    bool is_root() const;
 protected:
     /**
+     * @brief A list of nodes anchored to this node
+     *
+     * When accessing this list, check for nullptrs as the list is not
+     * defragmented on every frame.
+     */
+    std::vector<j_ui_node*> anchored_by_;
+
+    /**
+     * @brief A destination node this node is anchored to
+     *
+     * If the destination node is removed and this node is not a child node
+     * thereof this node will be re-anchored to the root node.
+     */
+    j_ui_node* anchored_to_ { nullptr };
+
+    /**
+     * @brief Origin used to calculate an absolute position
+     */
+    j_ui_anchor_origin anchor_origin_ = j_ui_anchor_origin::top_left;
+
+    /**
      * @brief Unique id referencing this node
-     * 
+     *
      * The pointer is owned by the tree
-     * 
+     *
      * @see j_ui_tree::nodes_
      */
     std::string_view id_;
@@ -131,13 +154,8 @@ protected:
     j_ui_node_type type_ = j_ui_node_type::generic_wrapper;
 
     /**
-     * @brief Anchor settings for this node
-     */
-    j_ui_anchor anchor_;
-
-    /**
      * @brief Logical grouping of several nodes, does not affect positioning, but existence.
-     * 
+     *
      * If a parent container is removed, all child containers are also removed.
      */
     std::vector<j_ui_node*> children_;
@@ -149,9 +167,9 @@ protected:
 
     /**
      * @brief Relative position as specified by the ui code
-     * 
+     *
      * An absolute position will be calculated using anchor information.
-     * 
+     *
      * @see absolute_position
      * @see anchor
      */
@@ -163,7 +181,7 @@ protected:
      * The absolute position should not be written to directly by ui code.
      * The j_ui_tree implementation is responsible to arrange all nodes
      * based on their relative position and anchor.
-     * 
+     *
      * @see relative_position
      */
     j_vec2<uint32_t> absolute_position_;
@@ -172,14 +190,16 @@ protected:
      * @brief Size of this node, affects positioning of anchored nodes
      */
     j_vec2<uint32_t> size_;
+
+    void move_anchors();
 private:
     /**
      * @brief Assigns an absolute position to this node
-     * 
+     *
      * If the node has anchored nodes, these will be repositioned
      * subsequently, repeating the process recursively for all anchors
      * until no anchors are left.
-     * 
+     *
      * Note that this method assigns the position as-is so the given absolute
      * position must be verified.
      */

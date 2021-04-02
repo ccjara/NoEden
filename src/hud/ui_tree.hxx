@@ -24,11 +24,11 @@ public:
 
     /**
      * @brief Creates and tracks a node
-     * 
+     *
      * The node will become a child of the optionally given parent node. If
      * no parent is specified, i.e. nullptr is given, the root node will be
      * automatically assumed. The only node without a parent is the root node.
-     * 
+     *
      * The given id must be unique, otherwise the creation will fail and nullptr
      * will be returned instead.
      */
@@ -48,7 +48,7 @@ public:
         auto n = iterator->second.get();
         n->id_ = id;
         n->parent_ = parent;
-        n->anchor_.node = root_;
+        n->anchor_to(*root_);
         parent->children_.push_back(n);
         return static_cast<node*>(n);
     }
