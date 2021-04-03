@@ -20,6 +20,7 @@ private:
     j_window* window_ { nullptr };
     j_root_config cfg_;
     j_fps_provider fps_;
+    j_texture text_texture_;
 
     std::unique_ptr<j_ui_renderer> ui_;
     std::unique_ptr<j_world_renderer> world_;
@@ -30,7 +31,7 @@ private:
     void on_resize(const j_resize_event&);
     void on_root_config_updated(const j_root_config_updated_event&);
 
-    j_texture load_text_texture(const fs::path&) const;
+    void load_text_texture(const fs::path&) const;
 
     void adjust_display();
     void render_entities();

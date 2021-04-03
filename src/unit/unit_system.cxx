@@ -1,7 +1,7 @@
 #include "unit_system.hxx"
 
 void j_unit_system::on_load() {
-    define_task<j_gathering_started_event, &j_unit_system::task_pickup_item>();
+    events_->bind<j_gathering_started_event, &j_unit_system::task_pickup_item>(this);
 }
 
 void j_unit_system::task_pickup_item(const j_gathering_started_event& e) {
@@ -35,5 +35,5 @@ void j_unit_system::task_pickup_item(const j_gathering_started_event& e) {
 }
 
 void j_unit_system::update(uint32_t delta_time) {
-    queue_.update();
+    events_->process();
 }

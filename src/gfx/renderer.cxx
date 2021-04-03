@@ -35,8 +35,8 @@ void j_renderer::set_viewport(j_vec2<uint32_t> size) {
     text_shader_->use_resolution(view_port_ / scaling_);
 }
 
-void j_renderer::set_font(j_texture&& tex) {
-    text_shader_->use_texture(std::move(tex));
+void j_renderer::set_font(j_texture* tex) {
+    text_shader_->use_texture(tex);
 }
 
 void j_renderer::set_glyph_size(j_vec2<uint32_t> glyph_size) {

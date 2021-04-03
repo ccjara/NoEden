@@ -1,12 +1,12 @@
 #include "player_system.hxx"
 
 void j_player_system::on_load() {
-    define_task<j_player_control_event, &j_player_system::task_player_control>();
-    define_task<j_key_down_event, &j_player_system::task_key_down>();
+    events_->bind<j_player_control_event, &j_player_system::task_player_control>(this);
+    events_->bind<j_key_down_event, &j_player_system::task_key_down>(this);
 }
 
 void j_player_system::update(uint32_t delta_time) {
-    queue_.update();
+    events_->process();
 
     if (player_ == entt::null) {
         return;

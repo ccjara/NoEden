@@ -32,7 +32,7 @@ public:
      *
      * Written to by the factory after construction
      */
-    std::string_view id() const;
+    const std::string& id() const;
 
     /**
      * @brief Readonly accessor for the type_ attribute
@@ -116,7 +116,25 @@ public:
      */
     j_vec2<uint32_t> size() const;
 
+    /**
+     * @brief Returns true if the node is the root node
+     */
     bool is_root() const;
+
+    /**
+     * @brief Readonly accessor for the visible_ attribute
+     */
+    bool visible() const;
+
+    /**
+     * @brief Sets visibility to true
+     */
+    void show();
+
+    /**
+     * @brief Sets visibility to false
+     */
+    void hide();
 protected:
     /**
      * @brief A list of nodes anchored to this node
@@ -141,12 +159,8 @@ protected:
 
     /**
      * @brief Unique id referencing this node
-     *
-     * The pointer is owned by the tree
-     *
-     * @see j_ui_tree::nodes_
      */
-    std::string_view id_;
+    std::string id_;
 
     /**
      * @brief RTTI
@@ -191,6 +205,14 @@ protected:
      */
     j_vec2<uint32_t> size_;
 
+    /**
+     * @brief Visibility behavior is node specific
+     */
+    bool visible_ = false;
+
+    /**
+     * @brief Updates the position of this node's anchors
+     */
     void move_anchors();
 private:
     /**

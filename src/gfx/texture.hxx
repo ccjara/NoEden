@@ -16,8 +16,8 @@ public:
     j_texture() = default;
     ~j_texture();
 
-    j_texture(j_texture&&);
-    j_texture& operator=(j_texture&&);
+    j_texture(j_texture&&) = delete;
+    j_texture& operator=(j_texture&&) = delete;
 
     j_texture(const j_texture&) = delete;
     j_texture& operator=(const j_texture&) = delete;

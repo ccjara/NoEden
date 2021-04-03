@@ -19,6 +19,7 @@ add_executable(
     "env/root_config.hxx"
     "env/window.cxx"
 
+    "event/event_queue.hxx"
     "event/gfx_event.hxx"
     "event/inventory_event.hxx"
     "event/platform_event.hxx"

@@ -47,6 +47,18 @@ public:
         node_->resize({ width, height });
     }
 
+    virtual void show() override {
+        node_->show();
+    }
+
+    virtual void hide() override {
+        node_->hide();
+    }
+
+    j_ui_node_type type() {
+        return node_->type();
+    }
+
     virtual ~j_ui_node_proxy() = default;
 protected:
     j_ui_lua_dependency_store* dependencies_ { nullptr };
@@ -62,7 +74,9 @@ protected:
         auto scope = ns.beginClass<proxy>(name)
             .addFunction("set_handler", &proxy::set_handler)
             .addFunction("move", &proxy::move)
-            .addFunction("resize", &proxy::resize);
+            .addFunction("resize", &proxy::resize)
+            .addFunction("show", &proxy::show)
+            .addFunction("hide", &proxy::hide);
 
         ext(scope);
 

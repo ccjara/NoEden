@@ -65,6 +65,7 @@ public:
         systems_by_id_.try_emplace(id, system);
         system->systems_ = this;
         system->dispatcher_ = dispatcher_;
+        system->events_ = std::make_unique<j_event_queue>(dispatcher_);
         system->on_load();
 
         return system;

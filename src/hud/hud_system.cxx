@@ -1,16 +1,25 @@
 #include "hud_system.hxx"
 
 void j_hud_system::on_load() {
-    define_task<j_gathering_completed_event, &j_hud_system::task_journal_item_pickup>();
-    define_task<j_inventory_view_event, &j_hud_system::task_show_inventory_ui>();
+    events_->bind<j_gathering_completed_event, &j_hud_system::task_journal_item_pickup>(this);
+    events_->bind<j_display_resized_event, &j_hud_system::immediate_on_display_resized>(
+        this,
+        queue_consume_immediate_tag{}
+    );
+    events_->bind<j_script_loaded_event, &j_hud_system::immediate_on_script_loaded>(
+        this,
+        queue_consume_immediate_tag{}
+    );
+    events_->bind<j_script_before_unload_event, &j_hud_system::immediate_on_script_before_unload>(
+        this,
+        queue_consume_immediate_tag{}
+    );
 
-    dispatcher_->sink<j_display_resized_event>().connect<&j_hud_system::immediate_on_display_resized>(this);
-    dispatcher_->sink<j_script_loaded_event>().connect<&j_hud_system::immediate_on_script_loaded>(this);
-    dispatcher_->sink<j_script_before_unload_event>().connect<&j_hud_system::immediate_on_script_before_unload>(this);
+    ui_.root()->show();
 }
 
 void j_hud_system::update(uint32_t delta_time) {
-    queue_.update();
+    events_->process();
 
     for (auto& [_, node_proxy] : ui_proxy_.node_proxies()) { // scripts
         node_proxy->call_handler();
@@ -47,18 +56,6 @@ void j_hud_system::task_journal_item_pickup(const j_gathering_completed_event& e
     }
 
     journal_.emplace_back(std::move(log_str));
-}
-
-void j_hud_system::task_show_inventory_ui(const j_inventory_view_event& e) {
-    if (!inventory_window_) {
-        inventory_window_ = ui_.create_node<j_ui_window>(ui_.root(), "inventory_window");
-        assert(inventory_window_);
-
-        inventory_window_->set_title("Inventory");
-        inventory_window_->set_anchor_origin(j_ui_anchor_origin::center);
-        inventory_window_->resize({ 20, 10 });
-        inventory_window_->move({ 0, 0 });
-    }
 }
 
 j_ui_tree& j_hud_system::ui_tree() {

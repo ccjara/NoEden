@@ -13,7 +13,7 @@ private:
     GLint u_glyph_size_; // size of an individual character
     GLint u_tex_size_; // size of the bitmap font texture
 
-    j_texture tex_;
+    j_texture* tex_ { nullptr };
     j_vec2<uint32_t> glyph_size_;
     j_vec2<uint32_t> resolution_;
 
@@ -29,7 +29,7 @@ public:
     /**
      * @brief Uses the given, loaded texture as part of the shader program
      */
-    void use_texture(j_texture&& tex);
+    void use_texture(j_texture* tex);
 
     /**
      * @brief Configures the render resolution of the shader program

@@ -1,17 +1,7 @@
 #include "texture.hxx"
 
-j_texture::j_texture(j_texture&& other) {
-    *this = std::move(other);
-}
-
 j_texture::~j_texture() {
     unload();
-}
-
-j_texture& j_texture::operator=(j_texture&& other) {
-    id_ = std::exchange(other.id_, 0);
-    size_ = std::exchange(other.size_, { 0, 0 });
-    return *this;
 }
 
 void j_texture::unload() {

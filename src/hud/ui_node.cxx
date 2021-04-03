@@ -54,7 +54,7 @@ void j_ui_node::anchor_to(j_ui_node& node) {
     move(relative_position_);
 }
 
-std::string_view j_ui_node::id() const {
+const std::string& j_ui_node::id() const {
     return id_;
 }
 
@@ -96,6 +96,18 @@ bool j_ui_node::is_root() const {
 
 bool j_ui_node::can_anchor_to(j_ui_node* node) const {
     return !is_root() && node != this;
+}
+
+bool j_ui_node::visible() const {
+    return visible_;
+}
+
+void j_ui_node::show() {
+    visible_ = true;
+}
+
+void j_ui_node::hide() {
+    visible_ = false;
 }
 
 j_vec2<uint32_t> calc_anchor_offset(

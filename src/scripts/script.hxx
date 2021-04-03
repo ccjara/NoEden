@@ -32,6 +32,8 @@ private:
 
     std::vector<std::string> globals_;
 
+    std::unordered_map<std::string, luabridge::LuaRef> callbacks_;
+
     void fail(j_script_error err);
 public:
     /**
@@ -98,7 +100,7 @@ public:
 template<typename t>
 void j_script::define_global(std::string_view name, t value) {
     if (status_ != j_script_status::loaded) {
-        LOG(ERROR) << "Cannot set global '" << name << "' in script '" << name_ << "': " 
+        LOG(ERROR) << "Cannot set global '" << name << "' in script '" << name_ << "': "
                    << "script is not loaded";
         return;
     }

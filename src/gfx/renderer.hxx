@@ -55,7 +55,7 @@ public:
     /**
      * @brief Sets the font texture used to display text.
      */
-    void set_font(j_texture&& tex);
+    void set_font(j_texture* tex);
 
     /**
      * @brief Sets the font's glyph size

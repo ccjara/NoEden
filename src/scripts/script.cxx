@@ -47,6 +47,7 @@ void j_script::unload() {
         status_ = j_script_status::unloaded;
     }
     globals_.clear();
+    callbacks_.clear();
 }
 
 j_script_status j_script::status() const {
@@ -86,6 +87,8 @@ j_script& j_script::operator=(j_script&& other) {
     error_ = other.error_;
     path_ = std::move(other.path_);
     source_ = std::move(other.source_);
+    callbacks_ = std::move(other.callbacks_);
+    globals_ = std::move(other.globals_);
 
     return *this;
 }

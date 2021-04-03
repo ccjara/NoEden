@@ -19,6 +19,9 @@ void j_ui_renderer::draw() {
 
 void j_ui_renderer::draw_node(j_ui_node* node) {
     assert(node);
+    if (!node->visible()) {
+        return;
+    }
     if (node->type() == j_ui_node_type::window) {
         auto window { static_cast<j_ui_window*>(node) };
         const auto pos { window->absolute_position() };

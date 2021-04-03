@@ -3,16 +3,50 @@
 
 #include "../system.hxx"
 #include "../event/script_event.hxx"
+#include "../event/inventory_event.hxx"
 #include "../event/platform_event.hxx"
 #include "script_util.hxx"
 #include "script.hxx"
+
+using lua_event_type = uint32_t;
+namespace lua_event { // FIXME: luabridge does not support enums
+    static lua_event_type inventory_view { 1000 };
+}
 
 class j_script_system : public j_system<j_script_system> {
 private:
     std::unordered_map<j_id_t, std::unique_ptr<j_script>> scripts_;
 
+    struct j_script_ref {
+        j_id_t script_id;
+        luabridge::LuaRef ref;
+    };
+    std::unordered_map<lua_event_type, std::vector<j_script_ref>> listeners_;
+
+    bool register_lua_callback(lua_event_type event_type, luabridge::LuaRef ref);
+
+
     // internal testing
     void on_key_down(const j_key_down_event& e);
+
+    void on_inventory_view(const j_inventory_view_event& e);
+
+    /**
+     * @brief Calls all registered lua callbacks for a specific event type.
+     *
+     * The arguments are forwarded to each callback.
+     */
+    template<typename... args>
+    void invoke_lua_callbacks(lua_event_type event_type, args&&... arguments) {
+        const auto it { listeners_.find(event_type) };
+        if (it == listeners_.end()) {
+            return;
+        }
+        for (auto& script_ref : it->second) {
+            pcall_into(script_ref.ref, std::forward<args>(arguments)...);
+        }
+    }
+
 
     /**
      * @brief Resets the script system to its initial state

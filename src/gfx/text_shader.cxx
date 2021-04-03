@@ -145,9 +145,9 @@ void j_text_shader::use_glyph_size(j_vec2<uint32_t> glyph_size) {
     glyph_size_ = glyph_size;
 }
 
-void j_text_shader::use_texture(j_texture&& tex) {
-    assert(tex.is_loaded());
-    tex_ = std::move(tex);
+void j_text_shader::use_texture(j_texture* tex) {
+    assert(tex);
+    tex_ = tex;
 }
 
 void j_text_shader::use_resolution(j_vec2<uint32_t> resolution) {
@@ -158,8 +158,8 @@ void j_text_shader::prepare() {
     glUniform2ui(u_glyph_size_, glyph_size_.x, glyph_size_.y);
     glUniform2ui(u_resolution_, resolution_.x, resolution_.y);
 
-    const auto tex_size { tex_.size() };
+    const auto tex_size { tex_->size() };
     glUniform2ui(u_tex_size_, tex_size.x, tex_size.y);
 
-    tex_.bind();
+    tex_->bind();
 }

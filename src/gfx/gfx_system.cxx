@@ -61,7 +61,14 @@ void j_gfx_system::on_resize(const j_resize_event& e) {
 void j_gfx_system::configure(const j_root_config& cfg) {
     cfg_ = cfg;
 
-    renderer_.set_font(load_text_texture(cfg_.font_texture_path));
+    const auto path_str { cfg_.font_texture_path.u8string() };
+    if (!fs::exists(cfg_.font_texture_path)) {
+        LOG(ERROR) << "Could not read text font at path " << path_str;
+        std::abort();
+    }
+    text_texture_.load(path_str);
+
+    renderer_.set_font(&text_texture_);
     renderer_.set_glyph_size(cfg_.glyph_size);
     renderer_.set_scaling(cfg_.scaling);
     adjust_display();
@@ -69,18 +76,6 @@ void j_gfx_system::configure(const j_root_config& cfg) {
 
 void j_gfx_system::on_root_config_updated(const j_root_config_updated_event& e) {
     configure(e.next);
-}
-
-j_texture j_gfx_system::load_text_texture(const fs::path& path) const {
-    j_texture tex;
-    const auto path_str { path.u8string() };
-    if (!fs::exists(path)) {
-        LOG(ERROR) << "Could not read text font at path " << path_str;
-        std::abort();
-    }
-    tex.load(path_str);
-    assert(tex.is_loaded());
-    return tex;
 }
 
 j_renderer& j_gfx_system::renderer() {
