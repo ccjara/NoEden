@@ -8,7 +8,7 @@ public:
      */
     virtual void update() = 0;
 
-    ~j_xray_interface() = default;
+    virtual ~j_xray_interface() = default;
 };
 
 #endif

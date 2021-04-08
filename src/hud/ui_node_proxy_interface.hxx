@@ -13,11 +13,6 @@ public:
     virtual void set_handler(luabridge::LuaRef ref) = 0;
 
     /**
-     * @brief Orders the node to cleanup all lua resources belonging to the given state
-     */
-    virtual void invalidate_lua_state(lua_State* state) = 0;
-
-    /**
      * @brief Invokes the handler assigned from lua code
      *
      * This method is called by the script system. If no handler is assigned

@@ -5,7 +5,7 @@ j_script_system::~j_script_system() {
 }
 
 void j_script_system::on_load() {
-    events_->bind<j_key_down_event, &j_script_system::on_key_down>(
+    events_->bind<j_key_down_event, &j_script_system::immediate_on_key_down>(
         this,
         queue_consume_immediate_tag{}
     );
@@ -13,9 +13,8 @@ void j_script_system::on_load() {
 }
 
 void j_script_system::reset() {
-    for (auto& [id, script] : scripts_) {
-        unload(*script.get());
-    }
+    dispatcher_->trigger<j_script_reset_event>();
+    listeners_.clear();
     scripts_.clear();
 }
 
@@ -23,10 +22,9 @@ void j_script_system::update(uint32_t delta_time) {
     events_->process();
 }
 
-void j_script_system::on_key_down(const j_key_down_event& e) {
+void j_script_system::immediate_on_key_down(const j_key_down_event& e) {
     if (e.key == SDLK_F5) {
-        reset();
-        preload(default_script_path);
+        load_from_path(default_script_path);
     }
 }
 
@@ -63,63 +61,6 @@ void j_script_system::load(j_script& script) {
     }
 }
 
-void j_script_system::load(j_id_t id) {
-    auto it = scripts_.find(id);
-    if (it == scripts_.end()) {
-        LOG(ERROR) << "Can not load script " << id << ": script does not exist";
-        return;
-    }
-    return load(*it->second.get());
-}
-
-void j_script_system::unload(j_id_t id) {
-    auto it = scripts_.find(id);
-    if (it == scripts_.end()) {
-        LOG(ERROR) << "Can not unload script " << id << ": script does not exist";
-        return;
-    }
-    return unload(*it->second.get());
-}
-
-void j_script_system::unload(j_script& script) {
-    if (script.status() == j_script_status::unloaded) {
-        return;
-    }
-    dispatcher_->trigger<j_script_before_unload_event>(&script);
-
-    // remove all referenced lua callbacks for this script
-    for (auto& [event_type, script_refs] : listeners_) {
-        script_refs.erase( // C++20 erase_if
-            std::remove_if(
-                script_refs.begin(),
-                script_refs.end(),
-                [&script](const j_script_ref& ref) {
-                    return ref.script_id == script.id();
-                }
-            ),
-            script_refs.end()
-        );
-    }
-    script.unload();
-
-    dispatcher_->trigger<j_script_unloaded_event>(&script);
-    LOG(INFO) << "Script " << script.name() << " (" << script.id() << ") has been unloaded";
-}
-
-void j_script_system::reload(j_id_t id) {
-    auto it = scripts_.find(id);
-    if (it == scripts_.end()) {
-        LOG(ERROR) << "Can not reload script " << id << ": script does not exist";
-        return;
-    }
-    reload(*it->second.get());
-}
-
-void j_script_system::reload(j_script& script) {
-    unload(script);
-    load(script);
-}
-
 const std::unordered_map<j_id_t, std::unique_ptr<j_script>>& j_script_system::scripts() const {
     return scripts_;
 }
@@ -138,5 +79,5 @@ bool j_script_system::register_lua_callback(lua_event_type event_type, luabridge
 }
 
 void j_script_system::on_inventory_view(const j_inventory_view_event& e) {
-    invoke_lua_callbacks(lua_event::inventory_view);
+    invoke_lua_callbacks(lua_event::inventory_view, to_integral(e.owner));
 }

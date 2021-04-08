@@ -1,11 +1,15 @@
 function on_update_inventory_window(window)
-    window:set_title(string.format("Title update!"));
 end
 
 function on_load()
     local inventory_window = ui:create_window("inventory_window", "window");
 
-    function on_inventory_view()
+    function on_inventory_view(owner)
+        if owner then
+            inventory_window:set_title(string.format("Inventory of %s", owner));
+        else
+            inventory_window:set_title("Inventory");
+        end
         inventory_window:show();
     end
 

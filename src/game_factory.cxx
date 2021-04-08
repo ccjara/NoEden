@@ -22,7 +22,7 @@ void j_game_factory::run() {
     game->systems_->emplace<j_gfx_system>();
     game->systems_->emplace<j_xray_system>();
 
-    scripts->preload(j_script_system::default_script_path);
+    scripts->load_from_path(j_script_system::default_script_path);
 
     test_arena();
 

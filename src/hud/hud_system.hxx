@@ -17,11 +17,9 @@ private:
 
     void immediate_on_display_resized(const j_display_resized_event& e);
     void immediate_on_script_loaded(const j_script_loaded_event& e);
-    void immediate_on_script_before_unload(const j_script_before_unload_event& e);
+    void immediate_on_script_reset(const j_script_reset_event& e);
 
     void task_journal_item_pickup(const j_gathering_completed_event& e);
-
-    j_ui_window* inventory_window_ { nullptr };
 
     j_ui_tree ui_;
     j_ui_proxy ui_proxy_;
@@ -37,7 +35,7 @@ public:
      *
      * The return type will change later as soon as "render jobs" are implemented
      */
-    const std::vector<std::string>& journal_entries() const;
+    [[nodiscard]] const std::vector<std::string>& journal_entries() const;
 
     j_ui_tree& ui_tree();
 };

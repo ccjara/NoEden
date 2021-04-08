@@ -14,6 +14,42 @@ namespace lua_event { // FIXME: luabridge does not support enums
 }
 
 class j_script_system : public j_system<j_script_system> {
+public:
+    constexpr static const char* default_script_path {
+#ifdef NDEBUG
+        "scripts"
+#else
+        "../src/scripts/lua"
+#endif
+    };
+
+    /**
+     * @brief Unloads all scripts before freeing resources
+     */
+    ~j_script_system() override;
+
+    /**
+     * @brief Recursively loads all scripts from the given directory path
+     *
+     * Script files must have a lowercased `.lua` extension.
+     *
+     * The script name will be constructed from the file path stem (filename
+     * without extension) and its directory level.
+     * For each directory level visited, the stem will be prefixed with
+     * the visited directory name.
+     *
+     * Examples (assuming `scripts` as the `base_path`):
+     *   - `scripts/extra/optional.lua` -> `extra/optional`
+     *   - `scripts/very/deep/file.lua` -> `very/deep/file`
+     *   - `scripts/system.lua` -> `system`
+     */
+    template<typename path_like>
+    void load_from_path(path_like base_path);
+
+    void on_load() override;
+    void update(uint32_t delta_time) override;
+
+    [[nodiscard]] const std::unordered_map<j_id_t, std::unique_ptr<j_script>>& scripts() const;
 private:
     std::unordered_map<j_id_t, std::unique_ptr<j_script>> scripts_;
 
@@ -23,13 +59,17 @@ private:
     };
     std::unordered_map<lua_event_type, std::vector<j_script_ref>> listeners_;
 
+    /**
+     * @brief Tracks a lua function that should be invoked on a specific event
+     *
+     * The stored refs must be removed before the scripts are unloaded
+     */
     bool register_lua_callback(lua_event_type event_type, luabridge::LuaRef ref);
 
-
-    // internal testing
-    void on_key_down(const j_key_down_event& e);
-
+    // --> Game Events
+    void immediate_on_key_down(const j_key_down_event& e);
     void on_inventory_view(const j_inventory_view_event& e);
+    // <-- Game Events
 
     /**
      * @brief Calls all registered lua callbacks for a specific event type.
@@ -47,6 +87,10 @@ private:
         }
     }
 
+    /**
+     * @brief Loads a script after collecting all scripts in {@see load_from_path}
+     */
+    void load(j_script& script);
 
     /**
      * @brief Resets the script system to its initial state
@@ -54,89 +98,10 @@ private:
      * In this state, no script or any reference thereof is held
      */
     void reset();
-public:
-    constexpr static const char* default_script_path {
-#ifdef NDEBUG
-        "scripts"
-#else
-        "../src/scripts/lua"
-#endif
-    };
-
-    /**
-     * @brief Unloads all scripts before freeing resources
-     */
-    ~j_script_system();
-
-    /**
-     * @brief Recursively preloads all scripts from the given directory path
-     *
-     * Script files must have a lowercased `.lua` extension.
-     *
-     * The script name will be constructed from the file path stem (filename
-     * without extension) and its directory level.
-     * For each directory level visited, the stem will be prefixed with
-     * the visited directory name.
-     *
-     * Examples (assuming `scripts` as the `base_path`):
-     *   - `scripts/extra/optional.lua` -> `extra/optional`
-     *   - `scripts/very/deep/file.lua` -> `very/deep/file`
-     *   - `scripts/system.lua` -> `system`
-     */
-    template<typename path_like>
-    void preload(path_like base_path);
-
-    /**
-     * @brief Loads a script by id
-     *
-     * @see load(j_script& script)
-     */
-    void load(j_id_t id);
-
-    /**
-     * @brief Loads an unloaded script
-     *
-     * You can call this method after a script has been unloaded before.
-     *
-     * This method bails if called with a loaded or even executed script.
-     */
-    void load(j_script& script);
-
-    /**
-     * @brief Unloads a script by id
-     *
-    * @see unload(j_script& script)
-     */
-    void unload(j_id_t id);
-
-    /**
-     * @brief Unloads a loaded script, freeing its resources
-     *
-     * If the script is not in a loaded or executed state, this method
-     * will do nothing.
-     */
-    void unload(j_script& script);
-
-    /**
-     * @brief Reloads a script by id then forwards to reload(j_script& script)
-     *
-     * @see reload(j_script& script)
-     */
-    void reload(j_id_t id);
-
-    /**
-     * @brief Unloads a script if loaded, then loads it again
-     */
-    void reload(j_script& script);
-
-    void on_load() override;
-    void update(uint32_t delta_time) override;
-
-    const std::unordered_map<j_id_t, std::unique_ptr<j_script>>& scripts() const;
 };
 
 template<typename path_like>
-void j_script_system::preload(path_like base_path) {
+void j_script_system::load_from_path(path_like base_path) {
     reset();
 
     const auto abs_path { fs::absolute(base_path) };
@@ -171,7 +136,7 @@ void j_script_system::preload(path_like base_path) {
             script->source_.resize(size);
             input.seekg(0);
             input.read(script->source_.data(), size);
-            // TODO: gracefully handle case insensitive file systems (script ids must be unique)
+            // TODO: gracefully handle case insensitive file systems (script names must be unique)
             // TODO: locale-lowercase script_id for convenience and consistency?
             // TODO: check against unicode file names
             auto [iter, b] { scripts_.try_emplace(script->id(), std::move(script)) };

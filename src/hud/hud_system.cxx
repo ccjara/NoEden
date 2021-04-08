@@ -10,12 +10,10 @@ void j_hud_system::on_load() {
         this,
         queue_consume_immediate_tag{}
     );
-    events_->bind<j_script_before_unload_event, &j_hud_system::immediate_on_script_before_unload>(
+    events_->bind<j_script_reset_event, &j_hud_system::immediate_on_script_reset>(
         this,
         queue_consume_immediate_tag{}
     );
-
-    ui_.root()->show();
 }
 
 void j_hud_system::update(uint32_t delta_time) {
@@ -31,12 +29,13 @@ void j_hud_system::immediate_on_script_loaded(const j_script_loaded_event& e) {
     e.script->define_global("ui", &ui_proxy_);
 }
 
-void j_hud_system::immediate_on_script_before_unload(const j_script_before_unload_event& e) {
-    ui_proxy_.clear_dependencies_by_state(e.script->lua_state());
-}
-
 void j_hud_system::immediate_on_display_resized(const j_display_resized_event& e) {
     ui_.root()->resize(e.size);
+}
+
+void j_hud_system::immediate_on_script_reset(const j_script_reset_event& e) {
+    ui_proxy_.reset();
+    ui_.reset();
 }
 
 const std::vector<std::string>& j_hud_system::journal_entries() const {

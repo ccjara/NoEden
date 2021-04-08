@@ -15,8 +15,9 @@ void j_xray_system::on_load() {
     ImGui_ImplSDL2_InitForOpenGL(game->env().window(), gfx->gl_context());
     ImGui_ImplOpenGL3_Init();
 
-    xrays_.emplace_back(std::make_unique<j_script_xray>());
     xrays_.emplace_back(std::make_unique<j_ui_xray>());
+    xrays_.emplace_back(std::make_unique<j_script_xray>());
+    xrays_.emplace_back(std::make_unique<j_entity_xray>());
 }
 
 void j_xray_system::on_unload() {

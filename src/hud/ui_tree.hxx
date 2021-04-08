@@ -13,7 +13,7 @@ private:
     /**
      * @brief The head of the tree, must not be nullptr after construction
      */
-    j_ui_node* root_;
+    j_ui_node* root_ { nullptr };
 public:
     /**
      * @brief Constructs the root node
@@ -78,6 +78,7 @@ public:
 
         root_ = iterator->second.get();
         root_->id_ = iterator->first;
+        root_->visible_ = true;
     }
 };
 
