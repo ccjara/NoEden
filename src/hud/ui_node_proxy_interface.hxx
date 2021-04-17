@@ -31,6 +31,14 @@ public:
     virtual void resize(uint32_t width, uint32_t height) = 0;
 
     /**
+     * @brief Proxies j_ui_node::set_anchor_origin
+     *
+     * `origin` is compared with the j_ui_anchor_origin as enums are not
+     * supported by luabridge.
+     */
+    virtual void set_anchor_origin(uint32_t origin) = 0;
+
+    /**
      * @brief Proxies j_ui_node::show
      */
     virtual void show() = 0;

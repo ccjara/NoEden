@@ -16,8 +16,9 @@ function on_load()
     if inventory_window then
         inventory_window:set_title("Inventory");
         inventory_window:set_handler(on_update_inventory_window);
-        inventory_window:move(10, 10);
+        inventory_window:move(0, 0);
         inventory_window:resize(20, 20);
+        inventory_window:set_anchor_origin(anchor_origin.center);
     end
 
     script:on(event.inventory_view, on_inventory_view);

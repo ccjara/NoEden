@@ -50,9 +50,9 @@ void j_script_system::load(j_script& script) {
         .endNamespace();
     luabridge::setGlobal(script, this, "script");
 
-    LOG(INFO) << "Script " << script.name() << " (" << script.id() << ") has been loaded";
     // allow other parts of the system to contribute to the scripting env
     dispatcher_->trigger<j_script_loaded_event>(&script);
+    LOG(INFO) << "Script " << script.name() << " (" << script.id() << ") has been loaded";
     script.run();
     // execute the on_load function, passing the script env proxy
     auto on_load { luabridge::getGlobal(script, "on_load") };

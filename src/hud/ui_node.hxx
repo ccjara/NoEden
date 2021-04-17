@@ -4,7 +4,7 @@
 /**
  * @brief Affects position of elements, allowing relative positioning
  */
-enum class j_ui_anchor_origin {
+enum class j_ui_anchor_origin : uint32_t {
     top,
     top_right,
     right,
