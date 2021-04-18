@@ -1,6 +1,8 @@
 #ifndef JARALYN_SCRIPT_SYSTEM_HXX
 #define JARALYN_SCRIPT_SYSTEM_HXX
 
+#include "../game.hxx"
+#include "../components/components.hxx"
 #include "../system.hxx"
 #include "../event/script_event.hxx"
 #include "../event/inventory_event.hxx"
@@ -50,6 +52,11 @@ public:
     void update(uint32_t delta_time) override;
 
     [[nodiscard]] const std::unordered_map<j_id_t, std::unique_ptr<j_script>>& scripts() const;
+
+    /**
+     * @briefs Setups up globals and namespaces for every script
+     */
+    void setup_script_env(j_script& script);
 private:
     std::unordered_map<j_id_t, std::unique_ptr<j_script>> scripts_;
 
@@ -137,7 +144,7 @@ void j_script_system::load_from_path(path_like base_path) {
             input.seekg(0);
             input.read(script->source_.data(), size);
             // TODO: gracefully handle case insensitive file systems (script names must be unique)
-            // TODO: locale-lowercase script_id for convenience and consistency?
+            // TODO: locale-lowercase script id for convenience and consistency?
             // TODO: check against unicode file names
             auto [iter, b] { scripts_.try_emplace(script->id(), std::move(script)) };
             load(*iter->second);

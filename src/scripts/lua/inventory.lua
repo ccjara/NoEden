@@ -6,7 +6,10 @@ function on_load()
 
     function on_inventory_view(owner)
         if owner then
-            inventory_window:set_title(string.format("Inventory of %s", owner));
+            inventory_window:set_title(string.format(
+                "Inventory of %s",
+                entity.name(owner) or "Unknown"
+            ));
         else
             inventory_window:set_title("Inventory");
         end

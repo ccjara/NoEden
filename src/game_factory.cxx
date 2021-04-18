@@ -37,12 +37,14 @@ void test_arena() {
     entities->assign<jc_position>(dwarf, 0, 1);
     entities->assign<jc_renderable>(dwarf, jc_renderable { '@', j_color::white() });
     entities->assign<jc_attribute_bearing>(dwarf);
+    entities->assign<jc_object_descriptor>(dwarf, "Jara");
     auto& inventory { entities->assign<jc_inventory>(dwarf) };
 
     auto troll = entities->create();
     entities->assign<jc_position>(troll, 5, 5);
     entities->assign<jc_renderable>(troll, jc_renderable { 'T', j_color::red() });
     entities->assign<jc_attribute_bearing>(troll);
+    entities->assign<jc_object_descriptor>(troll, "Gargroll");
 
     auto item { entities->create() };
     entities->assign<jc_position>(item, 2, 3);
