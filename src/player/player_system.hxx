@@ -6,7 +6,12 @@
 #include "../event/platform_event.hxx"
 #include "../event/player_event.hxx"
 #include "../event/inventory_event.hxx"
+#include "../event/world_event.hxx"
 #include "../components/components.hxx"
+
+namespace j_player_steps {
+    constexpr uint32_t move { 100 };
+}
 
 class j_player_system : public j_system<j_player_system> {
 private:

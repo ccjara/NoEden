@@ -1,6 +1,7 @@
 #ifndef JARALYN_GAME_FACTORY_HXX
 #define JARALYN_GAME_FACTORY_HXX
 
+#include "ai/ai_system.hxx"
 #include "gfx/gfx_system.hxx"
 #include "scripts/script_system.hxx"
 #include "input/input_system.hxx"

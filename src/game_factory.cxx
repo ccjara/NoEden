@@ -3,6 +3,7 @@
 j_game* game { nullptr };
 
 void test_arena();
+void test_ai(entt::entity entity);
 
 void j_game_factory::run() {
     auto game_janitor = std::make_unique<j_game>();
@@ -16,6 +17,7 @@ void j_game_factory::run() {
     game->env_->start();
     auto scripts { game->systems_->emplace<j_script_system>() };
     game->systems_->emplace<j_input_system>();
+    game->systems_->emplace<j_ai_system>();
     game->systems_->emplace<j_player_system>();
     game->systems_->emplace<j_unit_system>();
     game->systems_->emplace<j_hud_system>();
@@ -45,6 +47,7 @@ void test_arena() {
     entities->assign<jc_renderable>(troll, jc_renderable { 'T', j_color::red() });
     entities->assign<jc_attribute_bearing>(troll);
     entities->assign<jc_object_descriptor>(troll, "Gargroll");
+    test_ai(troll);
 
     auto item { entities->create() };
     entities->assign<jc_position>(item, 2, 3);
@@ -65,4 +68,11 @@ void test_arena() {
     entities->assign<jc_item>(item);
 
     game->events()->trigger<j_player_control_event>(dwarf);
+}
+
+void test_ai(entt::entity entity) {
+    auto root { std::make_unique<j_ai_priority_selector>() };
+    auto action = root->add<j_ai_action>(0);
+
+    game->entities()->assign<jc_ai>(entity, jc_ai { std::move(root) });
 }

@@ -15,6 +15,8 @@ void j_player_system::update(uint32_t delta_time) {
     auto& position { game->entities()->get<jc_position>(player_) };
 
     if (velocity_.x || velocity_.y) {
+        game->events()->trigger<j_world_step_event>(j_player_steps::move);
+
         if (position.x + velocity_.x >= 0) {
             position.x += velocity_.x;
         }

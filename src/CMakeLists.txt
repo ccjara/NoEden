@@ -10,6 +10,9 @@ add_executable(
     "../deps/imgui/imgui_tables.cpp"
     "../deps/imgui/imgui_widgets.cpp"
 
+    "ai/ai_system.cxx"
+    "ai/ai_node.hxx"
+
     "components/attribute.hxx"
     "components/attribute_bearing.cxx"
     "components/components.hxx"
@@ -25,6 +28,7 @@ add_executable(
     "event/platform_event.hxx"
     "event/player_event.hxx"
     "event/script_event.hxx"
+    "event/world_event.hxx"
 
     "game.cxx"
     "game_factory.cxx"
