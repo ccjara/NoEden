@@ -5,7 +5,7 @@ j_script_system::~j_script_system() {
 }
 
 void j_script_system::on_load() {
-    events_->bind<j_key_down_event, &j_script_system::immediate_on_key_down>(
+    events_->bind<KeyDownEvent, &j_script_system::immediate_on_key_down>(
         this,
         queue_consume_immediate_tag{}
     );
@@ -22,8 +22,8 @@ void j_script_system::update(uint32_t delta_time) {
     events_->process();
 }
 
-void j_script_system::immediate_on_key_down(const j_key_down_event& e) {
-    if (e.key == SDLK_F5) {
+void j_script_system::immediate_on_key_down(const KeyDownEvent& e) {
+    if (e.key == Key::F5) {
         load_from_path(default_script_path);
     }
 }

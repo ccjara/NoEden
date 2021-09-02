@@ -135,7 +135,6 @@ class j_ai_sequence_selector : j_ai_node {
 };
 
 class j_ai_condition : j_ai_node {
-    // TODO!
 };
 
 class j_ai_action : public j_ai_node {
@@ -143,7 +142,6 @@ class j_ai_action : public j_ai_node {
 public:
     j_ai_node_state visit() override {
         LOG(INFO) << "AI action";
-
         return mod_state(j_ai_node_state::succeeded);
     }
 

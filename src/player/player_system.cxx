@@ -2,7 +2,7 @@
 
 void j_player_system::on_load() {
     events_->bind<j_player_control_event, &j_player_system::task_player_control>(this);
-    events_->bind<j_key_down_event, &j_player_system::task_key_down>(this);
+    events_->bind<KeyDownEvent, &j_player_system::task_key_down>(this);
 }
 
 void j_player_system::update(uint32_t delta_time) {
@@ -38,27 +38,27 @@ void j_player_system::task_player_control(const j_player_control_event& e) {
     controlling_ = true;
 }
 
-void j_player_system::task_key_down(const j_key_down_event& e) {
+void j_player_system::task_key_down(const KeyDownEvent& e) {
     if (player_ == entt::null || !controlling_) {
         return;
     }
     switch (e.key) {
-        case SDL_KeyCode::SDLK_UP:
+        case Key::Up:
             velocity_.y -= 1;
             break;
-        case SDL_KeyCode::SDLK_DOWN:
+        case Key::Down:
             velocity_.y += 1;
             break;
-        case SDL_KeyCode::SDLK_LEFT:
+        case Key::Left:
             velocity_.x -= 1;
             break;
-        case SDL_KeyCode::SDLK_RIGHT:
+        case Key::Right:
             velocity_.x += 1;
             break;
-        case SDL_KeyCode::SDLK_g:
+        case Key::G:
             gathering_ = true;
             break;
-        case SDL_KeyCode::SDLK_i:
+        case Key::I:
             auto& inv { game->entities()->get<jc_inventory>(player_) };
             game->events()->trigger<j_inventory_view_event>(player_, &inv);
     }

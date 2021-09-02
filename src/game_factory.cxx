@@ -16,7 +16,6 @@ void j_game_factory::run() {
 
     game->env_->start();
     auto scripts { game->systems_->emplace<j_script_system>() };
-    game->systems_->emplace<j_input_system>();
     game->systems_->emplace<j_ai_system>();
     game->systems_->emplace<j_player_system>();
     game->systems_->emplace<j_unit_system>();

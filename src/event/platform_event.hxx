@@ -1,8 +1,8 @@
 #ifndef JARALYN_PLATFORM_EVENT_HXX
 #define JARALYN_PLATFORM_EVENT_HXX
 
-#include "../input/mouse_state.hxx"
 #include "../env/root_config.hxx"
+#include "../core/input/input_state.hxx"
 
 /**
  * @brief Triggered on SDL_QUIT when closing the window
@@ -14,45 +14,75 @@ struct j_quit_event {
 };
 
 /**
- * @brief Triggered on SDL_WINDOWEVENT_RESIZED as the user resizes the window.
+ * @brief Triggered as the user resizes the window.
  */
 struct j_resize_event {
     j_vec2<uint32_t> size;
 };
 
 /**
- * @brief Triggered on SDL_MOUSEMOTION as the user moves the mouse inside the window.
+ * @brief Triggered as the user moves the mouse inside the window.
  */
-struct j_mouse_move_event {
+struct MouseMoveEvent {
     j_vec2<int32_t> position;
+    const InputState* state;
+
+    MouseMoveEvent(j_vec2<int32_t> position, InputState* state) :
+        position { position }, state { state } {
+        assert(state);
+    }
 };
 
 /**
- * @brief Triggered on SDL_MOUSEBUTTONDOWN (only when inside the window)
+ * @brief Triggered clicking a mouse button (only when inside the window)
  */
-struct j_mouse_down_event {
-    j_mouse_button button;
+struct MouseDownEvent {
+    MouseButton button;
+    const InputState* state;
+
+    MouseDownEvent(MouseButton button, InputState* state) :
+        button { button }, state { state } {
+        assert(state);
+    }
 };
 
 /**
- * @brief Triggered on SDL_MOUSEBUTTONUP (only when inside the window)
+ * @brief Triggered when releasing a mouse button (only when inside the window)
  */
-struct j_mouse_up_event {
-    j_mouse_button button;
+struct MouseUpEvent {
+    MouseButton button;
+    const InputState* state;
+
+    MouseUpEvent(MouseButton button, InputState* state) :
+        button { button }, state { state } {
+        assert(state);
+    }
 };
 
 /**
- * @brief Triggered on SDL_KEYDOWN (only when window is focused)
+ * @brief Triggered when pressing a key (only if the window is focused)
  */
-struct j_key_down_event {
-    SDL_Keycode key;
+struct KeyDownEvent {
+    Key key;
+    const InputState* state;
+
+    KeyDownEvent(Key key, InputState* state) :
+        key { key }, state { state } {
+        assert(state);
+    }
 };
 
 /**
- * @brief Triggered on SDL_KEYUP (only when window is focused)
+ * @brief Triggered when releasing a key (only if the window is focused)
  */
-struct j_key_up_event {
-    SDL_Keycode key;
+struct KeyUpEvent {
+    Key key;
+    const InputState* state;
+
+    KeyUpEvent(Key key, InputState* state) :
+        key { key }, state { state } {
+        assert(state);
+    }
 };
 
 /**

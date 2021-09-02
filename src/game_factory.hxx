@@ -4,7 +4,6 @@
 #include "ai/ai_system.hxx"
 #include "gfx/gfx_system.hxx"
 #include "scripts/script_system.hxx"
-#include "input/input_system.hxx"
 #include "player/player_system.hxx"
 #include "hud/hud_system.hxx"
 #include "unit/unit_system.hxx"

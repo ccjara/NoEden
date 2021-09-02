@@ -3,14 +3,10 @@
 
 #include "systems.hxx"
 #include "env/env_manager.hxx"
+#include "core/input/input.hxx"
 
 class j_game {
     friend class j_game_factory;
-
-    std::unique_ptr<j_env_manager> env_;
-    std::unique_ptr<j_systems> systems_;
-    entt::registry entities_;
-    entt::dispatcher dispatcher_;
 public:
     j_game();
     j_systems* systems();
@@ -20,6 +16,12 @@ public:
     j_env_manager& env();
 
     void run();
+private:
+    std::unique_ptr<Input> input_;
+    std::unique_ptr<j_env_manager> env_;
+    std::unique_ptr<j_systems> systems_;
+    entt::registry entities_;
+    entt::dispatcher dispatcher_;
 };
 
 /**

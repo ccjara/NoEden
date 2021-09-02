@@ -65,11 +65,12 @@ add_executable(
 
     "identity.hxx"
 
-    "input/input_system.cxx"
-    "input/keyboard.cxx"
-    "input/keyboard_state.hxx"
-    "input/mouse.cxx"
-    "input/mouse_state.hxx"
+    "core/input/input_state.cxx"
+    "core/input/input.cxx"
+    "core/input/key.hxx"
+    "core/input/keyboard_state.cxx"
+    "core/input/mouse_button.hxx"
+    "core/input/mouse_state.cxx"
 
     "player/player_system.cxx"
     "pagination.hxx"

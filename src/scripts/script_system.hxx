@@ -74,7 +74,7 @@ private:
     bool register_lua_callback(lua_event_type event_type, luabridge::LuaRef ref);
 
     // --> Game Events
-    void immediate_on_key_down(const j_key_down_event& e);
+    void immediate_on_key_down(const KeyDownEvent& e);
     void on_inventory_view(const j_inventory_view_event& e);
     // <-- Game Events
 

@@ -20,7 +20,7 @@ private:
     entt::entity player_ { entt::null };
 
     void task_player_control(const j_player_control_event& e);
-    void task_key_down(const j_key_down_event& e);
+    void task_key_down(const KeyDownEvent& e);
 
     bool gathering_ { false };
     bool controlling_ { false };
