@@ -1,12 +1,12 @@
 #include "display.hxx"
 
-j_display::j_display() : j_grid<j_display_cell>(j_display_cell{}) {
+Display::Display() : Grid<DisplayCell>(DisplayCell{}) {
 }
 
-void j_display::text(std::string_view t, j_vec2<uint32_t> position, j_vec2<uint32_t> clamp) {
+void Display::text(std::string_view t, Vec2<u32> position, Vec2<u32> clamp) {
     state_ = first_state_; // reset state stack
 
-    const j_vec2<uint32_t> limit {
+    const Vec2<u32> limit {
         std::min(clamp.x, dimensions_.x),
         std::min(clamp.y, dimensions_.y)
     };
@@ -131,21 +131,21 @@ break_line:
     }
 }
 
-void j_display::rectangle(const j_rect_options& options) {
-    if (!in_bounds(j_vec2<uint32_t>{ options.span.right, options.span.bottom })) {
+void Display::rectangle(const RectOptions& options) {
+    if (!in_bounds(Vec2<u32>{ options.span.right, options.span.bottom })) {
         return;
     }
-    for (uint32_t y { options.span.top }; y <= options.span.bottom; y++) {
+    for (u32 y { options.span.top }; y <= options.span.bottom; y++) {
         const bool t_span { y == options.span.top };
         const bool b_span { y == options.span.bottom };
 
-        for (uint32_t x { options.span.left }; x <= options.span.right; x++) {
+        for (u32 x { options.span.left }; x <= options.span.right; x++) {
             const bool l_span { x == options.span.left };
             const bool r_span { x == options.span.right };
-            const auto index { to_index(j_vec2<uint32_t>{ x, y }) };
+            const auto index { to_index(Vec2<u32>{ x, y }) };
 
-            uint32_t glyph;
-            j_color color = options.color;
+            u32 glyph;
+            Color color = options.color;
 
             if (l_span) {
                 if (t_span) {
@@ -180,13 +180,13 @@ void j_display::rectangle(const j_rect_options& options) {
     }
 }
 
-void j_display::line(j_vec2<uint32_t> from, j_vec2<uint32_t> to, uint32_t glyph, j_color color) {
+void Display::line(Vec2<u32> from, Vec2<u32> to, u32 glyph, Color color) {
     clamp(from);
     clamp(to);
     bresenham(
-        static_cast<j_vec2<int32_t>>(from),
-        static_cast<j_vec2<int32_t>>(to),
-        [&](j_vec2<int32_t> pos) {
+        static_cast<Vec2<i32>>(from),
+        static_cast<Vec2<i32>>(to),
+        [&](Vec2<i32> pos) {
             auto& cell { cells_.at(to_index(pos)) };
 
             cell.glyph = glyph;
@@ -195,18 +195,18 @@ void j_display::line(j_vec2<uint32_t> from, j_vec2<uint32_t> to, uint32_t glyph,
     );
 }
 
-inline j_color j_display::parse_color(std::string_view text) const {
+inline Color Display::parse_color(std::string_view text) const {
     // not really sure why std::from_chars does not have a string_view friendly
     // and constexpr interface (C++23 maybe?)
-    int32_t hex_color { 0xFFFFFF };
+    i32 hex_color { 0xFFFFFF };
     // note: from_chars processes the interval [first,last),
     //       so the null terminator must be included
     std::from_chars(&text.front(), &text.back() + 1, hex_color, 16);
-    return j_color(hex_color);
+    return Color(hex_color);
 }
 
-inline void j_display::push_copy() {
-    j_text_state* const next_state { state_ + 1 };
+inline void Display::push_copy() {
+    TextState* const next_state { state_ + 1 };
     *next_state = *state_;
     state_ = next_state;
 }

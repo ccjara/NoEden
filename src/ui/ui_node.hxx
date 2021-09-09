@@ -1,0 +1,236 @@
+#ifndef JARALYN_UI_NODE_HXX
+#define JARALYN_UI_NODE_HXX
+
+/**
+ * @brief Affects position of elements, allowing relative positioning
+ */
+enum class AnchorOrigin : u32 {
+    top,
+    top_right,
+    right,
+    bottom_right,
+    bottom,
+    bottom_left,
+    left,
+    top_left,
+    center,
+};
+
+/**
+ * @brief RTTI for ui nodes
+ */
+enum class UiNodeType {
+    generic_wrapper,
+    window,
+};
+
+class UiNode {
+    friend class UiTree;
+public:
+    /**
+     * @brief Readonly accessor for the id_ attribute
+     *
+     * Written to by the factory after construction
+     */
+    const std::string& id() const;
+
+    /**
+     * @brief Readonly accessor for the type_ attribute
+     *
+     * Written to by the factory after construction
+     */
+    UiNodeType type() const;
+
+    /**
+     * @brief Sets the current, relative (untranslated) position of this node
+     *
+     * Its absolute position will be calculated based on its anchor.
+     *
+     * Also recursivly moves all anchored nodes based on their anchor settings.
+     */
+    void move(Vec2<u32> position);
+
+    /**
+     * @brief Writing accessor for the size_ attribute
+     */
+    void resize(Vec2<u32> size);
+
+    /**
+     * @brief Returns the position relative to its anchor
+     *
+     * This position may be modified using move()
+     *
+     * @see move()
+     */
+    Vec2<u32> relative_position() const;
+
+    /**
+     * @brief Returns the translated position (as it will appear on screen)
+     *
+     * This value depends on the relative position and anchoring and is updated
+     * whenever the move() function adjusts the relative position of a node.
+     *
+     * @see move()
+     */
+    Vec2<u32> absolute_position() const;
+
+    /**
+     * @brief Anchors this node to the given node
+     *
+     * Existing anchor references will be updated accordingly.
+     */
+    void anchor_to(UiNode& node);
+
+    /**
+     * @brief Updates the anchor origin and recalculates its absolute position
+     */
+    void set_anchor_origin(AnchorOrigin origin);
+
+    /**
+     * @brief Returns the node this node is currently anchored to
+     */
+    UiNode* anchored_to() const;
+
+    /**
+     * @brief Readonly accessor for the anchored_by_ attribute
+     */
+    const std::vector<UiNode*>& anchored_by() const;
+
+    /**
+     * @brief Readonly accessor for the origin_ attribute
+     */
+    AnchorOrigin anchor_origin() const;
+
+    /**
+     * @brief Readonly accessor for the children_ attribute
+     */
+    const std::vector<UiNode*>& children() const;
+
+    /**
+     * @brief Returns true if this node can be anchored to the given one
+     */
+    bool can_anchor_to(UiNode* node) const;
+
+    /**
+     * @brief Readonly accessor for the size_ attribute
+     */
+    Vec2<u32> size() const;
+
+    /**
+     * @brief Returns true if the node is the root node
+     */
+    bool is_root() const;
+
+    /**
+     * @brief Readonly accessor for the visible_ attribute
+     */
+    bool visible() const;
+
+    /**
+     * @brief Sets visibility to true
+     */
+    void show();
+
+    /**
+     * @brief Sets visibility to false
+     */
+    void hide();
+protected:
+    /**
+     * @brief A list of nodes anchored to this node
+     *
+     * When accessing this list, check for nullptrs as the list is not
+     * defragmented on every frame.
+     */
+    std::vector<UiNode*> anchored_by_;
+
+    /**
+     * @brief A destination node this node is anchored to
+     *
+     * If the destination node is removed and this node is not a child node
+     * thereof this node will be re-anchored to the root node.
+     */
+    UiNode* anchored_to_ { nullptr };
+
+    /**
+     * @brief Origin used to calculate an absolute position
+     */
+    AnchorOrigin anchor_origin_ = AnchorOrigin::top_left;
+
+    /**
+     * @brief Unique id referencing this node
+     */
+    std::string id_;
+
+    /**
+     * @brief RTTI
+     */
+    UiNodeType type_ = UiNodeType::generic_wrapper;
+
+    /**
+     * @brief Logical grouping of several nodes, does not affect positioning, but existence.
+     *
+     * If a parent container is removed, all child containers are also removed.
+     */
+    std::vector<UiNode*> children_;
+
+    /**
+     * @brief Containing parent node of this node, always set unless root
+     */
+    UiNode* parent_ { nullptr };
+
+    /**
+     * @brief Relative position as specified by the ui code
+     *
+     * An absolute position will be calculated using anchor information.
+     *
+     * @see absolute_position
+     * @see anchor
+     */
+    Vec2<u32> relative_position_;
+
+    /**
+     * @brief Absolute position, used by the renderer
+     *
+     * The absolute position should not be written to directly by ui code.
+     * The UiTree implementation is responsible to arrange all nodes
+     * based on their relative position and anchor.
+     *
+     * @see relative_position
+     */
+    Vec2<u32> absolute_position_;
+
+    /**
+     * @brief Size of this node, affects positioning of anchored nodes
+     */
+    Vec2<u32> size_;
+
+    /**
+     * @brief Visibility behavior is node specific
+     */
+    bool visible_ = false;
+
+    /**
+     * @brief Updates the position of this node's anchors
+     */
+    void move_anchors();
+private:
+    /**
+     * @brief Assigns an absolute position to this node
+     *
+     * If the node has anchored nodes, these will be repositioned
+     * subsequently, repeating the process recursively for all anchors
+     * until no anchors are left.
+     *
+     * Note that this method assigns the position as-is so the given absolute
+     * position must be verified.
+     */
+    void move_abs(Vec2<u32> pos);
+};
+
+Vec2<u32> calc_anchor_offset(
+    const UiNode& target,
+    const UiNode& parent
+);
+
+#endif

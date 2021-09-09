@@ -2,7 +2,7 @@
 #define JARALYN_SCRIPT_UTIL_HXX
 
 /**
- * @brief Does a protected call into the given lua ref
+ * @brief Invokes a protected call on the given lua ref
  *
  * Checks whether the call was successful. In case of an error, the error
  * is logged, *no* exception is thrown.

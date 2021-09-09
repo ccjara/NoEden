@@ -3,13 +3,16 @@
 
 #include "xray_interface.hxx"
 #include "xray_style.hxx"
-#include "../game.hxx"
-#include "../hud/hud_system.hxx"
+#include "../ui/ui.hxx"
 
-class j_ui_xray : public j_xray_interface {
+class UiXray : public IXray {
 public:
+    explicit UiXray(entt::dispatcher& dispatcher, Ui& ui);
+
     void update() override;
 private:
+    Ui& ui_;
+    entt::dispatcher& dispatcher_;
 };
 
 #endif

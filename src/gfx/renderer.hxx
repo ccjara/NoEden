@@ -1,71 +1,95 @@
 #ifndef JARALYN_RENDERER_HXX
 #define JARALYN_RENDERER_HXX
 
-#include "../env/window.hxx"
 #include "display.hxx"
 #include "texture.hxx"
 #include "text_shader.hxx"
-#include "fps_provider.hxx"
+#include "../game/platform_event.hxx"
+#include "../game/window.hxx"
+#include "../game/config.hxx"
+#include "../scene/scene.hxx"
+#include "gfx_event.hxx"
 
 /**
  * @brief Executes GL rendering operations
  */
-class j_renderer {
-private:
-    j_vec2<uint32_t> view_port_;
-    uint32_t scaling_ { 1 };
-    std::unique_ptr<j_text_shader> text_shader_ { nullptr };
-
-    SDL_GLContext gl_context_ { nullptr };
-    GLuint vbo { 0 };
-    GLuint vao { 0 };
-
-    size_t last_size_ { 0 };
-
-    void reset();
+class Renderer {
 public:
-    /**
-     * @brief Initializes all renderer resources
-     *
-     * Loads the text shader used to render everything.
-     */
-    j_renderer() = default;
+    Renderer(Window& window, entt::dispatcher& dispatcher);
+    ~Renderer();
 
-    j_renderer(const j_renderer&) = delete;
-    j_renderer(j_renderer&&) = delete;
-    j_renderer& operator=(j_renderer&&) = delete;
-    const j_renderer& operator=(const j_renderer&) = delete;
-
-    ~j_renderer();
-
-    void set_context(SDL_GLContext context);
+    Renderer(const Renderer&) = delete;
+    Renderer(Renderer&&) = delete;
+    Renderer& operator=(Renderer&&) = delete;
+    const Renderer& operator=(const Renderer&) = delete;
 
     /**
-     * @brief Renders the game based on the current state of the given display.
+     * @brief Starts the underlying graphics api
      */
-    void render(const j_display& display);
+    void initialize();
+
+    /**
+     * @brief Renders the game based on the current display state.
+     */
+    void render(const Scene& scene);
 
     /**
      * @brief Sets the viewport.
      *
      * Must be called if the user resized the game window.
      */
-    void set_viewport(j_vec2<uint32_t> size);
+    void set_viewport(Vec2<u32> size);
 
     /**
      * @brief Sets the font texture used to display text.
      */
-    void set_font(j_texture* tex);
+    void set_font(Texture* tex);
 
     /**
      * @brief Sets the font's glyph size
      */
-    void set_glyph_size(j_vec2<uint32_t> glyph_size);
+    void set_glyph_size(Vec2<u32> glyph_size);
 
     /**
      * @brief Sets the render scaling
      */
-    void set_scaling(uint32_t scaling);
+    void set_scaling(u32 scaling);
+
+    /**
+     * @brief Returns the current gl context
+     */
+    SDL_GLContext gl_context() const;
+private:
+    Window& window_;
+
+    entt::dispatcher& dispatcher_;
+    SDL_GLContext gl_context_ { nullptr };
+    Config cfg_;
+    Texture text_texture_;
+    Display display_;
+
+    Vec2<u32> view_port_;
+    u32 scaling_ { 1 };
+    std::unique_ptr<TextShader> text_shader_ { nullptr };
+
+    GLuint vbo { 0 };
+    GLuint vao { 0 };
+
+    size_t last_size_ { 0 };
+
+    void update_display(const Scene& scene);
+
+    void on_resize(const ResizeEvent&);
+    void on_config_updated(const ConfigUpdatedEvent&);
+
+    void load_text_texture(const fs::path&) const;
+
+    void adjust_display();
+    void render_entities();
+
+    void configure(const Config& cfg);
+
+    void reset();
 };
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef JARALYN_AI_NODE_HXX
 #define JARALYN_AI_NODE_HXX
 
-enum class j_ai_node_state {
+enum class AiNodeState {
     ready,
     running,
     failed,
@@ -9,39 +9,39 @@ enum class j_ai_node_state {
 };
 
 /**
- * @brief Base class for every behavior tree node.
+ * @brief Base class for every behavior tree node, abbrev. as 'Ai'
  * 
- * The current implementation is a cache trasher and has lots of indirections, 
- * but it will do fine for now.
+ * The current implementation is probably a cache trasher and has lots of 
+ * indirections, but it will do fine for now.
  */
-class j_ai_node {
+class AiNode {
 public:
-    j_ai_node* parent_ { this };
+    AiNode* parent_ { this };
 
     /**
      * @brief Visits and runs a node. The behavior is implementation defined.
      */
-    virtual j_ai_node_state visit() = 0;
+    virtual AiNodeState visit() = 0;
 
     /**
      * @brief The implementation
      */
     virtual void clear() = 0;
 
-    constexpr j_ai_node_state state() const {
+    constexpr AiNodeState state() const {
         return state_;
     };
 
     constexpr bool failed() const {
-        return state_ == j_ai_node_state::failed;
+        return state_ == AiNodeState::failed;
     }
 protected:
-    constexpr j_ai_node_state mod_state(j_ai_node_state s) {
+    constexpr AiNodeState mod_state(AiNodeState s) {
         state_ = s;
         return s;
     }
 private:
-    j_ai_node_state state_ { j_ai_node_state::ready };
+    AiNodeState state_ { AiNodeState::ready };
 };
 
 /**
@@ -49,7 +49,7 @@ private:
  * 
  * This node fails if no child node produced a state other than `failed`.
  */
-class j_ai_priority_selector : public j_ai_node {
+class AiPrioritySelector : public AiNode {
 public:
     /**
      * @brief Traverses the prioritized list, visiting child nodes in order.
@@ -59,11 +59,11 @@ public:
      * `ready` to `running` state, the `continuation_iterator` is updated so
      * execution can continue immediately on the next visit.
      */
-    j_ai_node_state visit() override {
+    AiNodeState visit() override {
         while (continuation_iterator != nodes_.end()) {
             const auto child_state { continuation_iterator->ptr->visit() };
 
-            if (child_state == j_ai_node_state::failed) {
+            if (child_state == AiNodeState::failed) {
                 // continue iteration, trying the next node available
                 continue;
             } else {
@@ -72,7 +72,7 @@ public:
             }
         }
         // fail as no child node resulted in a non-failure state
-        return mod_state(j_ai_node_state::failed);
+        return mod_state(AiNodeState::failed);
     }
 
     /**
@@ -82,14 +82,14 @@ public:
      * 
      * Clears the state of all child nodes on each invocation.
      */
-    template<typename ai_node, typename... node_args>
-    ai_node& add(int32_t priority, node_args&&... args) {
+    template<typename Node, typename... NodeArgs>
+    Node& add(i32 priority, NodeArgs&&... args) {
         // inefficient, but shouldn't get us into trouble unless we construct
         // massive behavior trees
         // reset state of all child nodes
         clear();
 
-        auto node_ptr { new ai_node(std::forward<node_args>(args)...) };
+        auto node_ptr { new Node(std::forward<NodeArgs>(args)...) };
         node_ptr->parent_ = this;
         auto& node { nodes_.emplace_back(node_ptr, priority) };
         // enter poor man's priority queue
@@ -115,39 +115,26 @@ public:
         continuation_iterator = nodes_.begin();
     }
 private:
-    struct prioritized_node {
-        std::unique_ptr<j_ai_node> ptr { nullptr };
-        int32_t priority { 0 };
+    struct PrioritizedNode {
+        std::unique_ptr<AiNode> ptr { nullptr };
+        i32 priority { 0 };
 
-        prioritized_node(j_ai_node* ptr, int32_t priority = 0) :
+        PrioritizedNode(AiNode* ptr, i32 priority = 0) :
             ptr { ptr },
             priority { priority } {
             assert(this->ptr);
         }
     };
     
-    std::vector<prioritized_node> nodes_;
-    std::vector<prioritized_node>::iterator continuation_iterator { nodes_.begin() };
+    std::vector<PrioritizedNode> nodes_;
+    std::vector<PrioritizedNode>::iterator continuation_iterator { nodes_.begin() };
 };
 
-class j_ai_sequence_selector : j_ai_node {
+class AiSequenceSelector : AiNode {
     // TODO!
 };
 
-class j_ai_condition : j_ai_node {
-};
-
-class j_ai_action : public j_ai_node {
-    // TODO!
-public:
-    j_ai_node_state visit() override {
-        LOG(INFO) << "AI action";
-        return mod_state(j_ai_node_state::succeeded);
-    }
-
-    void clear() override {
-
-    }
+class AiCondition : AiNode {
 };
 
 #endif

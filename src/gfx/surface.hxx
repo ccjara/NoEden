@@ -4,24 +4,24 @@
 /**
  * @brief Wrapper around an SDL_Surface, used in textures
  *
- * @see j_texture
+ * @see Texture
  */
-class j_surface {
+class Surface {
 private:
     SDL_Surface* surf_ { nullptr };
-    j_vec2<uint32_t> size_;
+    Vec2<u32> size_;
 public:
     /**
      * @brief Loads a surface immediately
      */
-    explicit j_surface(std::string_view path);
+    explicit Surface(std::string_view path);
 
-    j_surface() = default;
-    j_surface(const j_surface&) = delete;
-    j_surface(j_surface&&);
-    j_surface& operator=(j_surface&&);
-    j_surface& operator=(const j_surface&) = delete;
-    ~j_surface();
+    Surface() = default;
+    Surface(const Surface&) = delete;
+    Surface(Surface&&);
+    Surface& operator=(Surface&&);
+    Surface& operator=(const Surface&) = delete;
+    ~Surface();
 
     /**
      * @brief Loads a surface from the given file path
@@ -35,9 +35,9 @@ public:
      */
     void* data() const;
 
-    uint32_t width() const;
-    uint32_t height() const;
-    j_vec2<uint32_t> size() const;
+    u32 width() const;
+    u32 height() const;
+    Vec2<u32> size() const;
 };
 
 #endif

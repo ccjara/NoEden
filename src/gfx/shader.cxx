@@ -1,15 +1,15 @@
 #include "shader.hxx"
 
-j_shader::j_shader() {
+Shader::Shader() {
     program_ = glCreateProgram();
 }
 
-j_shader::~j_shader() {
+Shader::~Shader() {
     unload();
     clear_stages();
 }
 
-bool j_shader::compile(j_shader_type type, std::string_view src) {
+bool Shader::compile(Shader_type type, std::string_view src) {
     if (stages_.find(type) != stages_.end()) {
         LOG(ERROR) << "Shader stage " << static_cast<int>(type) << " is already sourced";
         return false;
@@ -40,7 +40,7 @@ bool j_shader::compile(j_shader_type type, std::string_view src) {
     return true;
 }
 
-bool j_shader::link() {
+bool Shader::link() {
     int ok { 0 };
 
     glLinkProgram(program_);
@@ -63,7 +63,7 @@ bool j_shader::link() {
     return true;
 }
 
-void j_shader::clear_stages() {
+void Shader::clear_stages() {
     if (stages_.empty()) {
         return;
     }
@@ -73,26 +73,26 @@ void j_shader::clear_stages() {
     stages_.clear();
 }
 
-void j_shader::unload() {
+void Shader::unload() {
     if (is_loaded()) {
         glDeleteProgram(program_);
         program_ = 0;
     }
 }
 
-void j_shader::use() {
+void Shader::use() {
     glUseProgram(program_);
     prepare();
 }
 
-void j_shader::prepare() {
+void Shader::prepare() {
 
 }
 
-bool j_shader::is_loaded() const {
+bool Shader::is_loaded() const {
     return !!program_;
 }
 
-GLint j_shader::id() const {
+GLint Shader::id() const {
     return program_;
 }

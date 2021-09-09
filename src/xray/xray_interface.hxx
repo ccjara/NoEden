@@ -1,14 +1,14 @@
 #ifndef JARALYN_XRAY_INTERFACE_HXX
 #define JARALYN_XRAY_INTERFACE_HXX
 
-class j_xray_interface {
+class IXray {
 public:
     /**
-     * @brief Called by the xray_system on each update
+     * @brief Called by `Xray` on each update
      */
     virtual void update() = 0;
 
-    virtual ~j_xray_interface() = default;
+    virtual ~IXray() = default;
 };
 
 #endif

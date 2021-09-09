@@ -1,24 +1,24 @@
 #include "texture.hxx"
 
-j_texture::~j_texture() {
+Texture::~Texture() {
     unload();
 }
 
-void j_texture::unload() {
+void Texture::unload() {
     if (is_loaded()) {
         glDeleteTextures(1, &id_);
         id_ = 0;
     }
 }
 
-bool j_texture::is_loaded() const {
+bool Texture::is_loaded() const {
     return !!id_;
 }
 
-void j_texture::load(std::string_view path) {
+void Texture::load(std::string_view path) {
     unload();
 
-    j_surface surf { path };
+    Surface surf { path };
 
     glGenTextures(1, &id_);
     glBindTexture(GL_TEXTURE_2D, id_);
@@ -46,18 +46,18 @@ void j_texture::load(std::string_view path) {
     size_ = surf.size();
 }
 
-GLuint j_texture::id() const {
+GLuint Texture::id() const {
     return id_;
 }
 
-void j_texture::bind() {
+void Texture::bind() {
     glBindTexture(GL_TEXTURE_2D, id_);
 }
 
-void j_texture::unbind() {
+void Texture::unbind() {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-j_vec2<uint32_t> j_texture::size() const {
+Vec2<u32> Texture::size() const {
     return size_;
 }

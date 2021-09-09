@@ -20,19 +20,19 @@ struct safe_grid_access_tag : grid_access_tag {};
  * @brief Generic implementation of a two-dimensional grid
  *
  * Most methods which access specific locations using a templatized `location_type`
- * accept either coordinates packed into a `j_vec2<uint32_t>` or an integral typed index
+ * accept either coordinates packed into a `Vec2<u32>` or an integral typed index
  *
  * Grid is not suitable for very large dimensions, i.e. dimensions which would
- * produce indices larger than uint32_t could represent. (TODO: assertions)
+ * produce indices larger than u32 could represent. (TODO: assertions)
  */
 template<typename cell>
-class j_grid {
+class Grid {
 public:
     using cell_type = cell;
     using container_type = std::vector<cell_type>;
 protected:
     container_type cells_;
-    j_vec2<uint32_t> dimensions_;
+    Vec2<u32> dimensions_;
 
     /**
      * @brief Fallback during safe-access when accessing an out of bounds location
@@ -47,7 +47,7 @@ protected:
      */
     template<typename location_type>
     [[nodiscard]] constexpr size_t ensure_index(location_type location) const {
-        if constexpr (std::is_base_of_v<j_vec2<uint32_t>, location_type>) {
+        if constexpr (std::is_base_of_v<Vec2<u32>, location_type>) {
             return to_index(location);
         } else {
             return location;
@@ -61,8 +61,8 @@ protected:
      * otherwise the location is converted from the assumed index location.
      */
     template<typename location_type>
-    [[nodiscard]] constexpr j_vec2<uint32_t> ensure_coordinates(location_type location) const {
-        if constexpr (std::is_base_of_v<j_vec2<uint32_t>, location_type>) {
+    [[nodiscard]] constexpr Vec2<u32> ensure_coordinates(location_type location) const {
+        if constexpr (std::is_base_of_v<Vec2<u32>, location_type>) {
             return location;
         } else {
             static_assert(std::is_integral_v<location_type>);
@@ -75,13 +75,13 @@ public:
      *
      * The null cell is returned as an alternative if grid access is out of bounds
      */
-    constexpr explicit j_grid(cell &&null_cell) : null_cell_(std::move(null_cell)) {
+    constexpr explicit Grid(cell &&null_cell) : null_cell_(std::move(null_cell)) {
     }
 
     /**
      * @brief Resets and resizes the grid to the given cell dimensions
      */
-    constexpr void resize(const j_vec2<uint32_t>& dimensions) {
+    constexpr void resize(const Vec2<u32>& dimensions) {
         cells_.resize(dimensions.x * dimensions.y, null_cell_);
         dimensions_ = dimensions;
         reset();
@@ -118,7 +118,7 @@ public:
     /**
      * @brief Returns the width and height in of the grid
      */
-    [[nodiscard]] constexpr j_vec2<uint32_t> dimensions() const {
+    [[nodiscard]] constexpr Vec2<u32> dimensions() const {
         return dimensions_;
     }
 
@@ -175,12 +175,12 @@ public:
     /**
      * @brief Returns whether the given location is contained by the grid
      *
-     * You may either pass a j_vec2<uint32_t> to indicate a cartesian coordinate
+     * You may either pass a Vec2<u32> to indicate a cartesian coordinate
      * or an index, in which case `location_type` must be integral.
      */
     template<typename location_type>
     [[nodiscard]] constexpr bool in_bounds(location_type location) const {
-        if constexpr (std::is_base_of_v<j_vec2<uint32_t>, location_type>) {
+        if constexpr (std::is_base_of_v<Vec2<u32>, location_type>) {
             return location.x + 1 <= dimensions_.x && location.y + 1 <= dimensions_.y;
         } else {
             static_assert(std::is_integral_v<location_type>);
@@ -193,7 +193,7 @@ public:
      *
      * This ensures that the coordinates are contained by the grid
      */
-    constexpr void clamp(j_vec2<uint32_t>& coord) const {
+    constexpr void clamp(Vec2<u32>& coord) const {
         if (coord.x > dimensions_.x) {
             coord.x = dimensions_.x;
         }
@@ -212,15 +212,15 @@ public:
      *
      * This does *not* verify the resulting coordinates.
      */
-    [[nodiscard]] constexpr j_vec2<uint32_t> to_coordinates(size_t index, grid_access_tag = fast_grid_access_tag {}) const {
+    [[nodiscard]] constexpr Vec2<u32> to_coordinates(size_t index, grid_access_tag = fast_grid_access_tag {}) const {
         if constexpr (std::is_same_v<grid_access_tag, safe_grid_access_tag>) {
             if (!dimensions_.x) {
                 return { 0, 0 };
             }
         }
-        return j_vec2<uint32_t> {
-            static_cast<uint32_t> (index) % dimensions_.x,
-            static_cast<uint32_t> (index) / dimensions_.x
+        return Vec2<u32> {
+            static_cast<u32> (index) % dimensions_.x,
+            static_cast<u32> (index) / dimensions_.x
         };
     }
 
@@ -229,7 +229,7 @@ public:
      *
      * This method does *not* verify the resulting index.
      */
-    [[nodiscard]] constexpr size_t to_index(j_vec2<uint32_t> coord) const {
+    [[nodiscard]] constexpr size_t to_index(Vec2<u32> coord) const {
         return coord.y * dimensions_.x + coord.x;
     }
 };

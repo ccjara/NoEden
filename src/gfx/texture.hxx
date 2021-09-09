@@ -6,21 +6,21 @@
 /**
  * @brief Wrapper around a GL texture
  */
-class j_texture {
+class Texture {
 private:
     GLuint id_ { 0 };
-    j_vec2<uint32_t> size_;
+    Vec2<u32> size_;
 public:
     GLuint id() const;
 
-    j_texture() = default;
-    ~j_texture();
+    Texture() = default;
+    ~Texture();
 
-    j_texture(j_texture&&) = delete;
-    j_texture& operator=(j_texture&&) = delete;
+    Texture(Texture&&) = delete;
+    Texture& operator=(Texture&&) = delete;
 
-    j_texture(const j_texture&) = delete;
-    j_texture& operator=(const j_texture&) = delete;
+    Texture(const Texture&) = delete;
+    Texture& operator=(const Texture&) = delete;
 
     /**
      * @briefs Load a texture from the given path
@@ -50,7 +50,7 @@ public:
     void unbind();
 
     bool is_loaded() const;
-    j_vec2<uint32_t> size() const;
+    Vec2<u32> size() const;
 };
 
 #endif

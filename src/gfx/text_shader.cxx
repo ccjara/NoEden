@@ -1,6 +1,6 @@
 #include "text_shader.hxx"
 
-j_text_shader::j_text_shader() {
+TextShader::TextShader() {
     const std::string_view vss = R"RAW(
 #version 400 core
 layout (location = 0) in int glyph;
@@ -124,9 +124,9 @@ void main() {
     gl_FragColor = texture(tex, fragment.tex_coord) * vec4(fragment.color, 1.0);
 }
 )RAW";
-    if (!(compile(j_shader_type::vertex, vss)
-        && compile(j_shader_type::geometry, gss)
-        && compile(j_shader_type::fragment, fss)
+    if (!(compile(Shader_type::vertex, vss)
+        && compile(Shader_type::geometry, gss)
+        && compile(Shader_type::fragment, fss)
         && link())) {
         LOG(ERROR) << "Text shader creation failed";
         return;
@@ -141,20 +141,20 @@ void main() {
     assert(u_tex_size_ > -1);
 }
 
-void j_text_shader::use_glyph_size(j_vec2<uint32_t> glyph_size) {
+void TextShader::use_glyph_size(Vec2<u32> glyph_size) {
     glyph_size_ = glyph_size;
 }
 
-void j_text_shader::use_texture(j_texture* tex) {
+void TextShader::use_texture(Texture* tex) {
     assert(tex);
     tex_ = tex;
 }
 
-void j_text_shader::use_resolution(j_vec2<uint32_t> resolution) {
+void TextShader::use_resolution(Vec2<u32> resolution) {
     resolution_ = resolution;
 }
 
-void j_text_shader::prepare() {
+void TextShader::prepare() {
     glUniform2ui(u_glyph_size_, glyph_size_.x, glyph_size_.y);
     glUniform2ui(u_resolution_, resolution_.x, resolution_.y);
 

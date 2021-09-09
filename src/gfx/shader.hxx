@@ -1,7 +1,7 @@
 #ifndef JARALYN_SHADER_HXX
 #define JARALYN_SHADER_HXX
 
-enum class j_shader_type : GLenum {
+enum class Shader_type : GLenum {
     vertex = GL_VERTEX_SHADER,
     geometry = GL_GEOMETRY_SHADER,
     fragment = GL_FRAGMENT_SHADER
@@ -14,9 +14,9 @@ enum class j_shader_type : GLenum {
  * for the text_shader. There probably won't be any other shaders
  * in this game.
  */
-class j_shader {
+class Shader {
 private:
-    std::unordered_map<j_shader_type, GLuint> stages_;
+    std::unordered_map<Shader_type, GLuint> stages_;
 
     void clear_stages();
 protected:
@@ -39,7 +39,7 @@ protected:
      *
      * @returns true if compilation was successful.
      */
-    bool compile(j_shader_type type, std::string_view source);
+    bool compile(Shader_type type, std::string_view source);
 
     /**
      * @brief Links all shader stages into a shader program.
@@ -53,12 +53,12 @@ public:
     /**
      * @brief Creates the shader program resource
      */
-    j_shader();
+    Shader();
 
     /**
      * @brief Unloads the program and leftover shader stages
      */
-    virtual ~j_shader();
+    virtual ~Shader();
 
     /**
      * @brief Unloads the shader program and resets its handle
@@ -85,10 +85,10 @@ public:
      */
     GLint id() const;
 
-    j_shader(const j_shader&) = delete;
-    j_shader(j_shader&&) = delete;
-    j_shader& operator=(j_shader&&) = delete;
-    const j_shader& operator=(const j_shader&) = delete;
+    Shader(const Shader&) = delete;
+    Shader(Shader&&) = delete;
+    Shader& operator=(Shader&&) = delete;
+    const Shader& operator=(const Shader&) = delete;
 };
 
 #endif

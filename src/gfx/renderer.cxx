@@ -1,10 +1,60 @@
 #include "renderer.hxx"
 
-j_renderer::~j_renderer() {
+Renderer::Renderer(Window& window, entt::dispatcher& dispatcher) : 
+    dispatcher_ { dispatcher },
+    window_ { window } {
+
+    dispatcher_.sink<ResizeEvent>().connect<&Renderer::on_resize>(this);
+    dispatcher_.sink<ConfigUpdatedEvent>().connect<&Renderer::on_config_updated>(this);
+}
+
+Renderer::~Renderer() {
     reset();
 }
 
-void j_renderer::render(const j_display& display) {
+void Renderer::initialize() {
+    reset();
+
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+
+    gl_context_ = SDL_GL_CreateContext(window_);
+
+    if (gl_context_ == nullptr) {
+        LOG(ERROR) << "Could not initialize opengl";
+        std::abort();
+    }
+    SDL_GL_SetSwapInterval(1);
+
+    if (glewInit() != GLEW_OK) {
+        LOG(ERROR) << "Could not initialize glew";
+        std::abort();
+    }
+
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+    // glyph
+    glVertexAttribIPointer(0, 1, GL_INT, sizeof(Display::cell_type), nullptr);
+    glEnableVertexAttribArray(0);
+
+    // color
+    glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Display::cell_type), reinterpret_cast<void*> (sizeof(Display::cell_type::glyph)));
+    glEnableVertexAttribArray(1);
+
+    text_shader_ = std::make_unique<TextShader>();
+
+    set_viewport(window_.size());
+
+    configure(Config());
+}
+
+void Renderer::render(const Scene& scene) {
+    update_display(scene);
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, view_port_.x, view_port_.y);
@@ -13,69 +63,117 @@ void j_renderer::render(const j_display& display) {
 
     glBindVertexArray(vao);
 
-    const auto byte_size { display.byte_size() };
+    const auto byte_size { display_.byte_size() };
 
     if (last_size_ == byte_size) {
         auto data = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 
-        std::memcpy(data, display.data(), byte_size);
+        std::memcpy(data, display_.data(), byte_size);
 
         glUnmapBuffer(GL_ARRAY_BUFFER);
     } else {
         // glBindBuffer(GL_ARRAY_BUFFER, vbo); // not necessary - autobound by vao
-        glBufferData(GL_ARRAY_BUFFER, byte_size, display.data(), GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, byte_size, display_.data(), GL_DYNAMIC_DRAW);
 
         last_size_ = byte_size;
     }
-    glDrawArrays(GL_POINTS, 0, display.cell_count());
+    glDrawArrays(GL_POINTS, 0, display_.cell_count());
+
+    dispatcher_.trigger<PostRenderEvent>();
+
+    SDL_GL_SwapWindow(window_);
 }
 
-void j_renderer::set_viewport(j_vec2<uint32_t> size) {
+void Renderer::update_display(const Scene& scene) {
+    display_.reset();
+
+    for (const auto& actor : scene.read_actors()) {
+        // FIXME -> migrate grid to i32
+        const Vec2<u32> pos {
+            static_cast<u32> (actor->position.x >= 0 ? actor->position.x : 0),
+            static_cast<u32> (actor->position.y >= 0 ? actor->position.y : 0)
+        };
+        if (!display_.in_bounds(pos)) {
+            return; // do not render entities outside of view
+        }
+        const auto& display_info { actor->archetype->display_info };
+        display_.put(
+            DisplayCell(display_info.glyph, display_info.color),
+            pos,
+            fast_grid_access_tag {} // bounds checked above
+        );
+    }
+}
+
+void Renderer::set_viewport(Vec2<u32> size) {
     view_port_ = size;
     text_shader_->use_resolution(view_port_ / scaling_);
 }
 
-void j_renderer::set_font(j_texture* tex) {
+void Renderer::set_font(Texture* tex) {
     text_shader_->use_texture(tex);
 }
 
-void j_renderer::set_glyph_size(j_vec2<uint32_t> glyph_size) {
+void Renderer::set_glyph_size(Vec2<u32> glyph_size) {
     text_shader_->use_glyph_size(glyph_size);
 }
 
-void j_renderer::set_scaling(uint32_t scaling) {
+void Renderer::set_scaling(u32 scaling) {
     scaling_ = scaling;
     text_shader_->use_resolution(view_port_ / scaling);
 }
 
-void j_renderer::reset() {
-    gl_context_ = nullptr; // not owned by this class
+void Renderer::reset() {
     if (vao) {
         glDeleteBuffers(1, &vao);
     }
     if (vbo) {
         glDeleteBuffers(1, &vbo);
     }
+    if (gl_context_ != nullptr) {
+        SDL_GL_DeleteContext(gl_context_);
+        gl_context_ = nullptr;
+    }
 }
 
-void j_renderer::set_context(SDL_GLContext context) {
-    reset();
+void Renderer::on_resize(const ResizeEvent& e) {
+    set_viewport(e.size);
+    adjust_display();
+}
 
-    gl_context_ = context;
+void Renderer::configure(const Config& cfg) {
+    cfg_ = cfg;
 
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glBindVertexArray(vao);
+    const auto path_str { cfg_.font_texture_path.u8string() };
+    if (!fs::exists(cfg_.font_texture_path)) {
+        LOG(ERROR) << "Could not read text font at path " << path_str;
+        std::abort();
+    }
+    text_texture_.load(path_str);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    set_font(&text_texture_);
+    set_glyph_size(cfg_.glyph_size);
+    set_scaling(cfg_.scaling);
+    adjust_display();
+}
 
-    // glyph
-    glVertexAttribIPointer(0, 1, GL_INT, sizeof(j_display::cell_type), nullptr);
-    glEnableVertexAttribArray(0);
+void Renderer::on_config_updated(const ConfigUpdatedEvent& e) {
+    configure(e.next);
+}
 
-    // color
-    glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(j_display::cell_type), reinterpret_cast<void*> (sizeof(j_display::cell_type::glyph)));
-    glEnableVertexAttribArray(1);
+void Renderer::adjust_display() {
+    // calculate resolution
+    const auto scaled_size { window_.size() / cfg_.scaling };
+    // calculate how many cells will fit on the screen given that resolution
+    const Vec2<u32> display_size {
+        scaled_size.x / cfg_.glyph_size.x,
+        scaled_size.y / cfg_.glyph_size.y
+    };
+    // resize and notify
+    display_.resize(display_size);
+    dispatcher_.trigger<Display_resized_event>(display_size);
+}
 
-    text_shader_ = std::make_unique<j_text_shader>();
+SDL_GLContext Renderer::gl_context() const {
+    return gl_context_;
 }

@@ -1,12 +1,17 @@
 #include "ui_xray.hxx"
 
+UiXray::UiXray(entt::dispatcher& dispatcher, Ui& ui) :
+    ui_ { ui },
+    dispatcher_ { dispatcher } {
+}
+
 /**
  * @brief Recursively renders the given node and its anchored nodes
  *
  * Returns false if anchoring has altered and recursive rendering must
  * be cancelled due to reference invalidation.
  */
-bool render_anchor(j_ui_node* node) {
+bool render_anchor(UiNode* node) {
     if (!node) {
         return true;
     }
@@ -20,8 +25,8 @@ bool render_anchor(j_ui_node* node) {
     if (ImGui::TreeNodeEx(id, imgui_tree_node_flags, id)) {
         if (ImGui::BeginDragDropTarget()) {
             if (auto payload = ImGui::AcceptDragDropPayload("_TREENODE")) {
-                j_ui_node* accepted_node { nullptr };
-                std::memcpy(&accepted_node, payload->Data, sizeof(j_ui_node*));
+                UiNode* accepted_node { nullptr };
+                std::memcpy(&accepted_node, payload->Data, sizeof(UiNode*));
                 if (accepted_node->can_anchor_to(node)) {
                     accepted_node->anchor_to(*node);
                     ImGui::EndDragDropTarget();
@@ -32,7 +37,7 @@ bool render_anchor(j_ui_node* node) {
             ImGui::EndDragDropTarget();
         }
         if (!node->is_root() && ImGui::BeginDragDropSource()) {
-            ImGui::SetDragDropPayload("_TREENODE", &node, sizeof(j_ui_node*));
+            ImGui::SetDragDropPayload("_TREENODE", &node, sizeof(UiNode*));
             ImGui::Text("Drag to a new anchor node");
             ImGui::EndDragDropSource();
         }
@@ -47,7 +52,7 @@ bool render_anchor(j_ui_node* node) {
     return true;
 }
 
-void render_hierarchy(j_ui_node* node) {
+void render_hierarchy(UiNode* node) {
     if (!node) {
         return;
     }
@@ -59,17 +64,15 @@ void render_hierarchy(j_ui_node* node) {
     }
 }
 
-void j_ui_xray::update() {
+void UiXray::update() {
     ImGui::Begin("UI");
 
-    auto hud_system { game->systems()->get<j_hud_system>() };
-
     if (ImGui::CollapsingHeader("Hierarchy")) {
-        render_hierarchy(hud_system->ui_tree().root());
+        render_hierarchy(ui_.ui_tree().root());
     }
 
     if (ImGui::CollapsingHeader("Anchors")) {
-        render_anchor(hud_system->ui_tree().root());
+        render_anchor(ui_.ui_tree().root());
     }
 
     ImGui::End();

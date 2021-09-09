@@ -3,36 +3,36 @@
 
 #include "../grid.hxx"
 
-struct j_text_state {
-    j_color color { j_color::white() };
+struct TextState {
+    Color color { Color::white() };
     bool break_word { true };
 };
 
-struct j_rect_options {
+struct RectOptions {
     /**
      * @brief Rectangle span (coordinates)
      */
-    j_rect<uint32_t> span;
+    Rect<u32> span;
 
     /**
      * @brief Border color to use
      */
-    j_color color;
+    Color color;
 
     /**
      * @brief Optional fill color to use (transparent, if omitted)
      */
-    std::optional<j_color> fill_color { std::nullopt };
+    std::optional<Color> fill_color { std::nullopt };
 
     /**
      * @brief Glyphs to use when rendering its sides
      */
-    j_rect<uint32_t> border_glyphs { 745U, 745U, 745U, 745U };
+    Rect<u32> border_glyphs { 745U, 745U, 745U, 745U };
 
     /**
      * @brief Glyphs to use when rendering its corners
      */
-    j_rect_corners<uint32_t> corner_glyphs {
+    RectCorners<u32> corner_glyphs {
         745U,
         745U,
         745U,
@@ -43,22 +43,22 @@ struct j_rect_options {
 /**
  * @brief A single element of a display.
  *
- * @see j_display
+ * @see Display
  */
-struct j_display_cell {
+struct DisplayCell {
     /**
      * @brief code point (arbitrary code page) to render from this cell
      */
-    int32_t glyph { 0 };
+    i32 glyph { 0 };
 
     /**
      * @brief Color to use when rendering this cell
      */
-    j_color color = j_color::white();
+    Color color = Color::white();
 
-    j_display_cell() = default;
+    DisplayCell() = default;
 
-    j_display_cell(int32_t glyph, j_color color) : glyph(glyph), color(color) {
+    DisplayCell(i32 glyph, Color color) : glyph(glyph), color(color) {
     }
 };
 
@@ -68,29 +68,29 @@ struct j_display_cell {
  * On each frame the current display state is copied into the text shader
  * which handles the rendering of each individual character.
  *
- * @see j_text_shader
+ * @see TextShader
  */
-class j_display: public j_grid<j_display_cell> {
+class Display: public Grid<DisplayCell> {
 private:
     constexpr static unsigned char CONTROL_CHAR { '$' };
 
     constexpr static size_t MAX_STATES { 128 };
-    std::array<j_text_state, MAX_STATES> states_;
-    j_text_state* state_ { states_.data() };
-    j_text_state* const first_state_ { &states_.front() };
-    j_text_state* const last_state_ { &states_.back() };
+    std::array<TextState, MAX_STATES> states_;
+    TextState* state_ { states_.data() };
+    TextState* const first_state_ { &states_.front() };
+    TextState* const last_state_ { &states_.back() };
 
     /**
      * @brief Attempts to parse a color from the given string. Returns white on failure.
      */
-    inline j_color parse_color(std::string_view text) const;
+    inline Color parse_color(std::string_view text) const;
 
     /**
      * @brief Copies the current state into the subsequent state, updating the state pointer accordingly
      */
     inline void push_copy();
 public:
-    j_display();
+    Display();
 
     /**
      * @brief Render a text to the display
@@ -119,22 +119,22 @@ public:
      */
     void text(
         std::string_view t,
-        j_vec2<uint32_t> position,
-        j_vec2<uint32_t> clamp = {
-            std::numeric_limits<uint32_t>::max(),
-            std::numeric_limits<uint32_t>::max()
+        Vec2<u32> position,
+        Vec2<u32> clamp = {
+            std::numeric_limits<u32>::max(),
+            std::numeric_limits<u32>::max()
         }
     );
 
     /**
      * @brief Render a rectangle on the display
      */
-    void rectangle(const j_rect_options& options);
+    void rectangle(const RectOptions& options);
 
     /**
      * @brief Render a line on the display using bresenham's algorithm
      */
-    void line(j_vec2<uint32_t> from, j_vec2<uint32_t> to, uint32_t glyph = 750, j_color color = j_color());
+    void line(Vec2<u32> from, Vec2<u32> to, u32 glyph = 750, Color color = Color());
 };
 
 #endif

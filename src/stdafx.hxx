@@ -4,7 +4,6 @@
 #define NOMINMAX
 
 #include <algorithm>
-#include <atomic>
 #include <charconv>
 #include <chrono>
 #include <cmath>
@@ -15,19 +14,17 @@
 #include <functional>
 #include <iterator>
 #include <memory>
-#include <mutex>
 #include <optional>
-#include <queue>
 #include <random>
-#include <sstream>
 #include <string>
-#include <thread>
 #include <unordered_map>
 
 #include <GL/glew.h>
 
 #include "lua.hpp"
 #include <LuaBridge/LuaBridge.h>
+
+#define IMGUI_IMPL_OPENGL_LOADER_GLEW
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -42,9 +39,12 @@
 #include <entt/entt.hxx>
 #include <easyloggingpp/easyloggingpp.hxx>
 
-namespace fs = std::filesystem;
+using u32 = uint32_t;
+using u64 = uint64_t;
+using i32 = int32_t;
+using i64 = int64_t;
 
-#include "identity.hxx"
+namespace fs = std::filesystem;
 
 #include "math/vec2.hxx"
 #include "math/bresenham.hxx"

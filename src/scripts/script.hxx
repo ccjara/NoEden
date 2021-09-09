@@ -1,13 +1,13 @@
 #ifndef JARALYN_SCRIPT_HXX
 #define JARALYN_SCRIPT_HXX
 
-enum class j_script_status {
+enum class ScriptStatus {
     unloaded,
     loaded,
     executed,
 };
 
-enum class j_script_error {
+enum class ScriptError {
     none,
     runtime_error,
     state_alloc_failed,
@@ -19,13 +19,15 @@ enum class j_script_error {
 /**
  * @brief Wrapper which manages a lua state
  */
-class j_script : public j_identity<j_script> {
-    friend class j_script_system;
+class Script {
+    friend class Scripts;
 private:
+    static u64 next_id_;
+
     std::string name_;
     lua_State* state_ { nullptr };
-    j_script_status status_ { j_script_status::unloaded };
-    j_script_error error_ { j_script_error::none };
+    ScriptStatus status_ { ScriptStatus::unloaded };
+    ScriptError error_ { ScriptError::none };
 
     std::string path_;
     std::string source_;
@@ -34,22 +36,24 @@ private:
 
     std::unordered_map<std::string, luabridge::LuaRef> callbacks_;
 
-    void fail(j_script_error err);
+    void fail(ScriptError err);
 public:
+    const u64 id;
+
     /**
      * @brief Instantiates a script from a source string
      */
-    j_script(const std::string& name);
+    Script(const std::string& name);
 
     /**
      * @brief Frees the currently managed lua state if allocated
      */
-    ~j_script();
+    ~Script();
 
     /**
-     * @brief Implicit conversion from a j_script instance to a lua state
+     * @brief Implicit conversion from a script instance to a lua state
      *
-     * This allows passing a j_script to lua C functions.
+     * This allows passing a Script to lua C functions.
      */
     operator lua_State* () const;
 
@@ -81,25 +85,22 @@ public:
         (types::declare(luabridge::getGlobalNamespace(state_)), ...);
     }
 
-    j_script_status status() const;
+    ScriptStatus status() const;
     const std::string& name() const;
     lua_State* lua_state() const;
     const std::vector<std::string>& globals() const;
     const std::string& source() const;
     void set_source(std::string&& source);
 
-    // move the managed script state between j_script instances
-    j_script(j_script&&);
-    j_script& operator=(j_script&&);
-
-    // not sure if script copies are needed, disable for now
-    j_script(const j_script&) = delete;
-    j_script& operator=(const j_script&) = delete;
+    Script(Script&&) = delete;
+    Script& operator=(Script&&) = delete;
+    Script(const Script&) = delete;
+    Script& operator=(const Script&) = delete;
 };
 
 template<typename t>
-void j_script::define_global(std::string_view name, t value) {
-    if (status_ != j_script_status::loaded) {
+void Script::define_global(std::string_view name, t value) {
+    if (status_ != ScriptStatus::loaded) {
         LOG(ERROR) << "Cannot set global '" << name << "' in script '" << name_ << "': "
                    << "script is not loaded";
         return;

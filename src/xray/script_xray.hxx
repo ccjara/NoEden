@@ -3,15 +3,24 @@
 
 #include "xray_interface.hxx"
 #include "xray_style.hxx"
-#include "../game.hxx"
-#include "../scripts/script_system.hxx"
-#include "../hud/hud_system.hxx"
+#include "../scripts/Scripts.hxx"
 
-class j_script_xray : public j_xray_interface {
+class ScriptXray : public IXray {
 public:
+    explicit ScriptXray(entt::dispatcher& dispatcher, Scripts& scripts);
+
     void update() override;
 private:
-    j_id_t script_id_ { j_id_invalid };
+    Scripts& scripts_;
+    entt::dispatcher& dispatcher_;
+
+    void render_current_script(Script *current);
+
+    void on_script_loaded(const ScriptLoadedEvent& e);
+    void on_script_reset(const ScriptResetEvent& e);
+
+    // ui vars
+    std::optional<u64> selected_script_id_;
 };
 
 #endif
