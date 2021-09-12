@@ -29,13 +29,15 @@ void UiApi::on_register(Script* script) {
                             n->set_anchor_origin(unsafe_origin);
                             return;
                         default:
-                            LOG(ERROR) << "Unknown anchor origin " << origin
-                                    << ". Please use one of the following: "
-                                        "AnchorOrigin.top, AnchorOrigin.top_right, "
-                                        "AnchorOrigin.right, AnchorOrigin.bottom_right, "
-                                        "AnchorOrigin.bottom, AnchorOrigin.bottom_left, "
-                                        "AnchorOrigin.left, AnchorOrigin.top_left or "
-                                        "AnchorOrigin.center.";
+                            Log::error(
+                                "Unknown anchor origin {}, please use one of "
+                                "the following: AnchorOrigin.top, AnchorOrigin.top_right, "
+                                "AnchorOrigin.right, AnchorOrigin.bottom_right, "
+                                "AnchorOrigin.bottom, AnchorOrigin.bottom_left, "
+                                "AnchorOrigin.left, AnchorOrigin.top_left or "
+                                "AnchorOrigin.center.",
+                                origin
+                            );
                     }
                 }
             )

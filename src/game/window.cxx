@@ -6,7 +6,7 @@ Window::~Window() {
 
 void Window::open(Vec2<u32> size, const char *title) {
     if (handle_) {
-        LOG(ERROR) << "Window is already open";
+        Log::error("Window is already open");
         return;
     }
     size_ = size;
@@ -22,7 +22,7 @@ void Window::open(Vec2<u32> size, const char *title) {
     );
 
     if (handle_ == nullptr) {
-        LOG(ERROR) << "Could not create window: " << SDL_GetError();
+        Log::error("Could not create window: {}", SDL_GetError());
         std::abort();
     }
 }

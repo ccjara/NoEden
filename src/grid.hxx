@@ -162,10 +162,10 @@ public:
             if (!in_bounds(location)) {
                 const auto coord { ensure_coordinates(location) };
 
-                LOG(ERROR)
-                    << "Placement at " << coord.x << ", " << coord.y
-                    << " not within bounds ("
-                    << dimensions_.x << ", " << dimensions_.y << ")";
+                Log::error(
+                    "Placement at {}, {}, not within bounds ({}, {})",
+                    coord.x, coord.y, dimensions_.x, dimensions_.y
+                )
                 return;
             }
         }

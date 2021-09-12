@@ -11,7 +11,7 @@ Shader::~Shader() {
 
 bool Shader::compile(Shader_type type, std::string_view src) {
     if (stages_.find(type) != stages_.end()) {
-        LOG(ERROR) << "Shader stage " << static_cast<int>(type) << " is already sourced";
+        Log::error("Shader stage {} is already compiled", static_cast<u32>(type));
         return false;
     }
     const auto shader { glCreateShader(static_cast<GLenum>(type)) };
@@ -19,7 +19,6 @@ bool Shader::compile(Shader_type type, std::string_view src) {
 
     const auto p_source { src.data() };
     int ok { 0 };
-
     glShaderSource(shader, 1, &p_source, nullptr);
     glCompileShader(shader);
     glGetShaderiv(shader, GL_COMPILE_STATUS, &ok);
@@ -33,7 +32,7 @@ bool Shader::compile(Shader_type type, std::string_view src) {
         } else {
             info = "No opengl error info is available";
         }
-        LOG(ERROR) << "Could not compile shader: " << info;
+        Log::error("Could not compile shader stage {}: {}", type, info);
         return false;
     }
     glAttachShader(program_, shader);
@@ -56,7 +55,7 @@ bool Shader::link() {
         else {
             info = "No opengl error info is available";
         }
-        LOG(ERROR) << "Could not link shader: " << info;
+        Log::info("Could not link shader: {}", info);
         return false;
     }
     clear_stages();

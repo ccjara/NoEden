@@ -12,8 +12,11 @@ void pcall_into(luabridge::LuaRef& ref, varg_t&&... args) {
     const luabridge::LuaResult result { ref(std::forward<varg_t>(args)...) };
 
     if (!result) {
-        LOG(ERROR) << "Caught error during script execution: "
-                   << result.errorMessage() << " (" << result.errorCode() << ")";
+        Log::error(
+            "Caught error during script execution: #{}: {}",
+            result.errorCode().value(),
+            result.errorMessage()
+        );
     }
 }
 

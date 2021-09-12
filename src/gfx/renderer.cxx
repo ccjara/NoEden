@@ -22,13 +22,13 @@ void Renderer::initialize() {
     gl_context_ = SDL_GL_CreateContext(window_);
 
     if (gl_context_ == nullptr) {
-        LOG(ERROR) << "Could not initialize opengl";
+        Log::error("Could not initialize opengl");
         std::abort();
     }
     SDL_GL_SetSwapInterval(1);
 
     if (glewInit() != GLEW_OK) {
-        LOG(ERROR) << "Could not initialize glew";
+        Log::error("Could not initialize glew");
         std::abort();
     }
 
@@ -146,7 +146,7 @@ void Renderer::configure(const Config& cfg) {
 
     const auto path_str { cfg_.font_texture_path.u8string() };
     if (!fs::exists(cfg_.font_texture_path)) {
-        LOG(ERROR) << "Could not read text font at path " << path_str;
+        Log::error("Could not read text font at path {}", path_str);
         std::abort();
     }
     text_texture_.load(path_str);

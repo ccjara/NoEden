@@ -99,10 +99,9 @@ public:
 };
 
 template<typename t>
-void Script::define_global(std::string_view name, t value) {
+void Script::define_global(std::string_view key, t value) {
     if (status_ != ScriptStatus::loaded) {
-        LOG(ERROR) << "Cannot set global '" << name << "' in script '" << name_ << "': "
-                   << "script is not loaded";
+        Log::error("Could not set global {} in script {}: script is not loaded", key, name_);
         return;
     }
     const auto& stored_name { globals_.emplace_back(name) };

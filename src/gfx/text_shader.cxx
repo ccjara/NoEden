@@ -124,11 +124,13 @@ void main() {
     gl_FragColor = texture(tex, fragment.tex_coord) * vec4(fragment.color, 1.0);
 }
 )RAW";
+    Log::info("Compiling text shader ...");
+
     if (!(compile(Shader_type::vertex, vss)
         && compile(Shader_type::geometry, gss)
         && compile(Shader_type::fragment, fss)
         && link())) {
-        LOG(ERROR) << "Text shader creation failed";
+        Log::error("Text shader creation failed");
         return;
     }
 

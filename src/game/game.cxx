@@ -11,7 +11,7 @@ Game::Game() :
 
 void Game::start() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        LOG(ERROR) << "SDL could not initialize! (" << SDL_GetError() << ")";
+        Log::error("SDL could not initialize: {}", SDL_GetError());
         std::abort();
     }
 
@@ -110,7 +110,7 @@ void Game::configure_from_lua(luabridge::LuaRef cfg) {
     Config cfg_prev = config_;
 
     constexpr const auto report = [](std::string_view reason) -> void {
-        LOG(ERROR) << "Error in root config: " << reason << ".";
+        Log::error("Error in root config: {}.", reason);
     };
 
     if (!cfg.isTable()) {

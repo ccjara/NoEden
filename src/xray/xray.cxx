@@ -8,7 +8,7 @@ Xray::Xray(Window& window, entt::dispatcher& dispatcher) :
 void Xray::startup(SDL_GLContext context) {
     imgui_context_ = ImGui::CreateContext();
     if (!imgui_context_) {
-        LOG(ERROR) << "Could not create imgui context";
+        Log::error("Could not create imgui context");
         return;
     }
     dispatcher_.sink<PostRenderEvent>().connect<&Xray::on_post_render>(this);

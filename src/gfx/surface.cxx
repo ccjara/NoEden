@@ -23,7 +23,7 @@ Surface::~Surface() {
 void Surface::load(std::string_view path) {
     surf_ = SDL_LoadBMP(path.data());
     if (!surf_) {
-        LOG(ERROR) << "Could not load surface (" << SDL_GetError() << ")";
+        Log::info("Could not load surface {}: {}", path, SDL_GetError());
         std::abort();
     }
 

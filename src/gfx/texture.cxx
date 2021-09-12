@@ -39,7 +39,7 @@ void Texture::load(std::string_view path) {
 
     const auto glError = glGetError();
     if (glError) {
-        LOG(ERROR) << "Could not generate texture from surface (" << glError << ")";
+        Log::error("Could not generate texture from surface: {}", glError);
         std::abort();
     }
 

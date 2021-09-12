@@ -29,9 +29,7 @@ void Scripting::on_key_down(const KeyDownEvent& e) {
 
 void Scripting::load(Script& script) {
     if (script.status() != ScriptStatus::unloaded) {
-        LOG(ERROR) << "Cannot load script "
-                   << script.name() << ": script is already loaded. "
-                   << "Call reload instead.";
+        Log::error("Could not load script {}: script is already loaded.", script.name());
         return;
     }
     script.load();
@@ -42,7 +40,7 @@ void Scripting::load(Script& script) {
 
     // allow other parts of the system to contribute to the scripting env
     dispatcher_.trigger<ScriptLoadedEvent>(&script);
-    LOG(INFO) << "Script " << script.name() << " (" << script.id << ") has been loaded";
+    Log::info("Script #{}: {} has been loaded", script.id, script.name());
     script.run();
     // execute the on_load function, passing the script env proxy
     auto on_load { luabridge::getGlobal(script, "on_load") };
@@ -65,11 +63,11 @@ bool Scripting::register_lua_callback(lua_event_type event_type, luabridge::LuaR
         luabridge::getGlobal(ref.state(), "script_id").cast<u64>()
     };
     if (!ref.isFunction()) {
-        LOG(ERROR) << "Lua callback must be a function";
+        Log::error("Could not register lua callback for {} on script #{}: Lua callback must be a function", event_type, script_id);
         return false;
     }
     listeners_[event_type].emplace_back(ScriptRef{ script_id, ref });
-    LOG(INFO) << "Lua callback registered on event type " << event_type;
+    Log::info("Lua callback for {} registered in script #{}", event_type, script_id);
     return true;
 }
 

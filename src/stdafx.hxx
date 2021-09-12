@@ -19,6 +19,8 @@
 #include <string>
 #include <unordered_map>
 
+#include <spdlog/spdlog.h>
+
 #define FMT_HEADER_ONLY
 #include <fmt/format.h>
 
@@ -40,7 +42,6 @@
 #include <SDL2/SDL_opengl.h>
 
 #include <entt/entt.hxx>
-#include <easyloggingpp/easyloggingpp.hxx>
 
 using u32 = uint32_t;
 using u64 = uint64_t;
@@ -48,6 +49,8 @@ using i32 = int32_t;
 using i64 = int64_t;
 
 namespace fs = std::filesystem;
+
+#include "game/log.hxx"
 
 #include "math/vec2.hxx"
 #include "math/bresenham.hxx"

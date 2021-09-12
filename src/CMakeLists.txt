@@ -1,7 +1,5 @@
 add_executable(
     jaralyn
-    "../deps/easyloggingpp/easyloggingpp.cxx"
-
     "../deps/imgui/imgui.cpp"
     "../deps/imgui/imgui_demo.cpp"
     "../deps/imgui/imgui_draw.cpp"
@@ -23,6 +21,7 @@ add_executable(
     "game/config.hxx"
     "game/game.cxx"
     "game/game_factory.cxx"
+    "game/log.cxx"
     "game/platform_event.hxx"
     "game/window.cxx"
 

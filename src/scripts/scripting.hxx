@@ -114,7 +114,7 @@ void Scripting::load_from_path(path_like base_path) {
     const auto abs_path { fs::absolute(base_path) };
 
     if (!fs::is_directory(abs_path)) {
-        LOG(ERROR) << "Script path " << abs_path << " must be a readable directory";
+        Log::error("Script path {} must be a readable directory", abs_path.string());
         std::abort();
     }
 
@@ -131,7 +131,7 @@ void Scripting::load_from_path(path_like base_path) {
         }
         if (path.extension().string() == ".lua") {
             const auto& name { prefix + path.stem().string() };
-            LOG(INFO) << "Found script file " << name;
+            Log::info("Found script file {}", name);
 
             auto script { std::make_unique<Script>(name) };
             script->path_ = path.string().c_str();
