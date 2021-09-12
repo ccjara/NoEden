@@ -19,10 +19,10 @@
 #include <string>
 #include <unordered_map>
 
-#include <spdlog/spdlog.h>
-
 #define FMT_HEADER_ONLY
-#include <fmt/format.h>
+#define SPDLOG_FMT_EXTERNAL
+#include <spdlog/spdlog.h>
+// #include <fmt/format.h> -- included by spdlog
 
 #include <GL/glew.h>
 
@@ -36,7 +36,6 @@
 #include "imgui/imgui_impl_opengl3.h"
 
 #define SDL_MAIN_HANDLED
-#define ELPP_NO_DEFAULT_LOG_FILE
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
