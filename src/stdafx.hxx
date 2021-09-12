@@ -19,6 +19,9 @@
 #include <string>
 #include <unordered_map>
 
+#define FMT_HEADER_ONLY
+#include <fmt/format.h>
+
 #include <GL/glew.h>
 
 #include "lua.hpp"
