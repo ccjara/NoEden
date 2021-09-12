@@ -35,8 +35,9 @@ void Script::load() {
         return fail(ScriptError::state_alloc_failed);
     }
     if (luaL_loadstring(state_, source_.c_str()) != LUA_OK) {
+        fail(ScriptError::script_corrupted);
         unload();
-        return fail(ScriptError::script_corrupted);
+        return;
     }
     luaL_openlibs(state_);
     status_ = ScriptStatus::loaded;
@@ -82,7 +83,6 @@ void Script::fail(ScriptError err) {
         LOG(ERROR) << "Could not allocate new lua state";
         break;
     case ScriptError::runtime_error:
-        assert(lua_gettop(state_) == -1);
         LOG(ERROR) << "Runtime error in script " << name_ << ": " << lua_tostring(state_, -1);
         break;
     case ScriptError::script_path_not_found:

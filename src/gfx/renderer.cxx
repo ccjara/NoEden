@@ -171,7 +171,7 @@ void Renderer::adjust_display() {
     };
     // resize and notify
     display_.resize(display_size);
-    dispatcher_.trigger<Display_resized_event>(display_size);
+    dispatcher_.trigger<DisplayResizedEvent>(display_size);
 }
 
 SDL_GLContext Renderer::gl_context() const {

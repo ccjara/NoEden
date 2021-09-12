@@ -1,10 +1,13 @@
-// https://github.com/vinniefalco/LuaBridge
-//
-// Copyright 2019, Dmitry Tarakanov
+// https://github.com/kunitoki/LuaBridge3
+// Copyright 2020, Lucio Asnaghi
+// Copyright 2020, Dmitry Tarakanov
+// Copyright 2019, George Tokmaji
 // SPDX-License-Identifier: MIT
 
 #pragma once
 
-#if !defined (LUABRIDGE_NO_CXX11) && (__cplusplus >= 201103L || (defined (_MSC_VER) && _MSC_VER >= 1900))
-#define LUABRIDGE_CXX11
+#if !(__cplusplus >= 201703L || (defined(_MSC_VER) && _HAS_CXX17))
+#error LuaBridge 3 requires a compliant C++17 compiler, or C++17 has not been enabled !
 #endif
+
+#define LUABRIDGE_HAS_EXCEPTIONS 0

@@ -1,622 +1,796 @@
-//------------------------------------------------------------------------------
-/*
-  https://github.com/vinniefalco/LuaBridge
-
-  Copyright 2019, Dmitry Tarakanov
-  Copyright 2012, Vinnie Falco <vinnie.falco@gmail.com>
-  Copyright 2007, Nathan Reed
-
-  License: The MIT License (http://www.opensource.org/licenses/mit-license.php)
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to deal
-  in the Software without restriction, including without limitation the rights
-  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in all
-  copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-  SOFTWARE.
-*/
-//==============================================================================
+// https://github.com/kunitoki/LuaBridge3
+// Copyright 2020, Lucio Asnaghi
+// Copyright 2019, Dmitry Tarakanov
+// Copyright 2012, Vinnie Falco <vinnie.falco@gmail.com>
+// Copyright 2007, Nathan Reed
+// SPDX-License-Identifier: MIT
 
 #pragma once
 
-#include <LuaBridge/detail/LuaHelpers.h>
-#include <LuaBridge/detail/Userdata.h>
+#include "LuaHelpers.h"
+#include "Userdata.h"
 
+#include <cstddef>
+#include <functional>
 #include <string>
+#include <string_view>
+#include <system_error>
+#include <tuple>
+
+#include <iostream>
 
 namespace luabridge {
 
-template <class T>
+//=================================================================================================
+/**
+ * @brief Lua stack traits for C++ types.
+ *
+ * @tparam T A C++ type.
+ */
+template <class T, class>
 struct Stack;
 
-template <>
-struct Stack <void>
-{
-  static void push (lua_State* L)
-  {
-  }
-};
-
-//------------------------------------------------------------------------------
+//=================================================================================================
 /**
-    Receive the lua_State* as an argument.
-*/
+ * @brief Specialization for void type.
+ */
 template <>
-struct Stack <lua_State*>
+struct Stack<void>
 {
-  static lua_State* get (lua_State* L, int)
-  {
-    return L;
-  }
+    static bool push(lua_State*, std::error_code&)
+    {
+        return true;
+    }
 };
 
-//------------------------------------------------------------------------------
+//=================================================================================================
 /**
-    Push a lua_CFunction.
-*/
+ * @brief Specialization for nullptr_t.
+ */
 template <>
-struct Stack <lua_CFunction>
+struct Stack<std::nullptr_t>
 {
-  static void push (lua_State* L, lua_CFunction f)
-  {
-    lua_pushcfunction (L, f);
-  }
+    static bool push(lua_State* L, std::nullptr_t, std::error_code&)
+    {
+        lua_pushnil(L);
+        return true;
+    }
 
-  static lua_CFunction get (lua_State* L, int index)
-  {
-    return lua_tocfunction (L, index);
-  }
+    static std::nullptr_t get(lua_State*, int)
+    {
+        return nullptr;
+    }
 
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_iscfunction (L, index);
-  }
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_isnil(L, index);
+    }
 };
 
-//------------------------------------------------------------------------------
+//=================================================================================================
 /**
-    Stack specialization for `int`.
-*/
+ * @brief Receive the lua_State* as an argument.
+ */
 template <>
-struct Stack <int>
+struct Stack<lua_State*>
 {
-  static void push (lua_State* L, int value)
-  {
-    lua_pushinteger (L, static_cast <lua_Integer> (value));
-  }
-  
-  static int get (lua_State* L, int index)
-  {
-    return static_cast <int> (luaL_checkinteger (L, index));
-  }
-
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_type (L, index) == LUA_TNUMBER;
-  }
+    static lua_State* get(lua_State* L, int)
+    {
+        return L;
+    }
 };
 
-//------------------------------------------------------------------------------
+//=================================================================================================
 /**
-    Stack specialization for `unsigned int`.
-*/
+ * @brief Stack specialization for a lua_CFunction.
+ */
 template <>
-struct Stack <unsigned int>
+struct Stack<lua_CFunction>
 {
-  static void push (lua_State* L, unsigned int value)
-  {
-    lua_pushinteger (L, static_cast <lua_Integer> (value));
-  }
-  
-  static unsigned int get (lua_State* L, int index)
-  {
-    return static_cast <unsigned int> (luaL_checkinteger (L, index));
-  }
+    static bool push(lua_State* L, lua_CFunction f, std::error_code&)
+    {
+        lua_pushcfunction(L, f);
+        return true;
+    }
 
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_type (L, index) == LUA_TNUMBER;
-  }
+    static lua_CFunction get(lua_State* L, int index)
+    {
+        return lua_tocfunction(L, index);
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_iscfunction(L, index);
+    }
 };
 
-//------------------------------------------------------------------------------
+//=================================================================================================
 /**
-    Stack specialization for `unsigned char`.
-*/
+ * @brief Stack specialization for `bool`.
+ */
 template <>
-struct Stack <unsigned char>
+struct Stack<bool>
 {
-  static void push (lua_State* L, unsigned char value)
-  {
-    lua_pushinteger (L, static_cast <lua_Integer> (value));
-  }
-  
-  static unsigned char get (lua_State* L, int index)
-  {
-    return static_cast <unsigned char> (luaL_checkinteger (L, index));
-  }
+    static bool push(lua_State* L, bool value, std::error_code&)
+    {
+        lua_pushboolean(L, value ? 1 : 0);
+        return true;
+    }
 
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_type (L, index) == LUA_TNUMBER;
-  }
+    static bool get(lua_State* L, int index)
+    {
+        return lua_toboolean(L, index) ? true : false;
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_isboolean(L, index);
+    }
 };
 
-//------------------------------------------------------------------------------
+//=================================================================================================
+/**
+ * @brief Stack specialization for `std::byte`.
+ */
+template <>
+struct Stack<std::byte>
+{
+    static bool push(lua_State* L, std::byte value, std::error_code&)
+    {
+        pushunsigned(L, std::to_integer<lua_Unsigned>(value));
+        return true;
+    }
+
+    static std::byte get(lua_State* L, int index)
+    {
+        return static_cast<std::byte>(luaL_checkinteger(L, index));
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TNUMBER;
+    }
+};
+
+//=================================================================================================
+/**
+ * @brief Stack specialization for `char`.
+ */
+template <>
+struct Stack<char>
+{
+    static bool push(lua_State* L, char value, std::error_code&)
+    {
+        lua_pushlstring(L, &value, 1);
+        return true;
+    }
+
+    static char get(lua_State* L, int index)
+    {
+        return luaL_checkstring(L, index)[0];
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TSTRING;
+    }
+};
+
+//=================================================================================================
+/**
+ * @brief Stack specialization for `unsigned char`.
+ */
+template <>
+struct Stack<unsigned char>
+{
+    static bool push(lua_State* L, unsigned char value, std::error_code&)
+    {
+        pushunsigned(L, value);
+        return true;
+    }
+
+    static unsigned char get(lua_State* L, int index)
+    {
+        return static_cast<unsigned char>(luaL_checkinteger(L, index));
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TNUMBER;
+    }
+};
+
+//=================================================================================================
 /**
     Stack specialization for `short`.
 */
 template <>
-struct Stack <short>
+struct Stack<short>
 {
-  static void push (lua_State* L, short value)
-  {
-    lua_pushinteger (L, static_cast <lua_Integer> (value));
-  }
-  
-  static short get (lua_State* L, int index)
-  {
-    return static_cast <short> (luaL_checkinteger (L, index));
-  }
-
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_type (L, index) == LUA_TNUMBER;
-  }
-};
-
-//------------------------------------------------------------------------------
-/**
-    Stack specialization for `unsigned short`.
-*/
-template <>
-struct Stack <unsigned short>
-{
-  static void push (lua_State* L, unsigned short value)
-  {
-    lua_pushinteger (L, static_cast <lua_Integer> (value));
-  }
-  
-  static unsigned short get (lua_State* L, int index)
-  {
-    return static_cast <unsigned short> (luaL_checkinteger (L, index));
-  }
-
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_type (L, index) == LUA_TNUMBER;
-  }
-};
-
-//------------------------------------------------------------------------------
-/**
-    Stack specialization for `long`.
-*/
-template <>
-struct Stack <long>
-{
-  static void push (lua_State* L, long value)
-  {
-    lua_pushinteger (L, static_cast <lua_Integer> (value));
-  }
-  
-  static long get (lua_State* L, int index)
-  {
-    return static_cast <long> (luaL_checkinteger (L, index));
-  }
-
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_type (L, index) == LUA_TNUMBER;
-  }
-};
-
-//------------------------------------------------------------------------------
-/**
-    Stack specialization for `unsigned long`.
-*/
-template <>
-struct Stack <unsigned long>
-{
-  static void push (lua_State* L, unsigned long value)
-  {
-    lua_pushinteger (L, static_cast <lua_Integer> (value));
-  }
-  
-  static unsigned long get (lua_State* L, int index)
-  {
-    return static_cast <unsigned long> (luaL_checkinteger (L, index));
-  }
-
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_type (L, index) == LUA_TNUMBER;
-  }
-};
-
-//------------------------------------------------------------------------------
-/**
- * Stack specialization for `long long`.
- */
-template <>
-struct Stack <long long>
-{
-  static void push (lua_State* L, long long value)
-  {
-    lua_pushinteger (L, static_cast <lua_Integer> (value));
-  }
-
-  static long long get (lua_State* L, int index)
-  {
-    return static_cast <long long> (luaL_checkinteger (L, index));
-  }
-
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_type (L, index) == LUA_TNUMBER;
-  }
-};
-
-//------------------------------------------------------------------------------
-/**
- * Stack specialization for `unsigned long long`.
- */
-template <>
-struct Stack <unsigned long long>
-{
-  static void push (lua_State* L, unsigned long long value)
-  {
-    lua_pushinteger (L, static_cast <lua_Integer> (value));
-  }
-  static unsigned long long get (lua_State* L, int index)
-  {
-    return static_cast <unsigned long long> (luaL_checkinteger (L, index));
-  }
-
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_type (L, index) == LUA_TNUMBER;
-  }
-};
-
-//------------------------------------------------------------------------------
-/**
-    Stack specialization for `float`.
-*/
-template <>
-struct Stack <float>
-{
-  static void push (lua_State* L, float value)
-  {
-    lua_pushnumber (L, static_cast <lua_Number> (value));
-  }
-  
-  static float get (lua_State* L, int index)
-  {
-    return static_cast <float> (luaL_checknumber (L, index));
-  }
-
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_type (L, index) == LUA_TNUMBER;
-  }
-};
-
-//------------------------------------------------------------------------------
-/**
-    Stack specialization for `double`.
-*/
-template <>
-struct Stack <double>
-{
-  static void push (lua_State* L, double value)
-  {
-    lua_pushnumber (L, static_cast <lua_Number> (value));
-  }
-  
-  static double get (lua_State* L, int index)
-  {
-    return static_cast <double> (luaL_checknumber (L, index));
-  }
-
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_type (L, index) == LUA_TNUMBER;
-  }
-};
-
-//------------------------------------------------------------------------------
-/**
-    Stack specialization for `bool`.
-*/
-template <>
-struct Stack <bool>
-{
-  static void push (lua_State* L, bool value)
-  {
-    lua_pushboolean (L, value ? 1 : 0);
-  }
-  
-  static bool get (lua_State* L, int index)
-  {
-    return lua_toboolean (L, index) ? true : false;
-  }
-
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_isboolean (L, index);
-  }
-};
-
-//------------------------------------------------------------------------------
-/**
-    Stack specialization for `char`.
-*/
-template <>
-struct Stack <char>
-{
-  static void push (lua_State* L, char value)
-  {
-    lua_pushlstring (L, &value, 1);
-  }
-  
-  static char get (lua_State* L, int index)
-  {
-    return luaL_checkstring (L, index) [0];
-  }
-
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_type (L, index) == LUA_TSTRING;
-  }
-};
-
-//------------------------------------------------------------------------------
-/**
-    Stack specialization for `const char*`.
-*/
-template <>
-struct Stack <char const*>
-{
-  static void push (lua_State* L, char const* str)
-  {
-    if (str != 0)
-      lua_pushstring (L, str);
-    else
-      lua_pushnil (L);
-  }
-
-  static char const* get (lua_State* L, int index)
-  {
-    return lua_isnil (L, index) ? 0 : luaL_checkstring (L, index);
-  }
-
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_isnil (L, index) || lua_type (L, index) == LUA_TSTRING;
-  }
-};
-
-//------------------------------------------------------------------------------
-/**
-    Stack specialization for `std::string`.
-*/
-template <>
-struct Stack <std::string>
-{
-  static void push (lua_State* L, std::string const& str)
-  {
-    lua_pushlstring (L, str.data (), str.size ());
-  }
-
-  static std::string get (lua_State* L, int index)
-  {
-    size_t len;
-    if (lua_type (L, index) == LUA_TSTRING)
+    static bool push(lua_State* L, short value, std::error_code&)
     {
-      const char* str = lua_tolstring (L, index, &len);
-      return std::string (str, len);
+        lua_pushinteger(L, static_cast<lua_Integer>(value));
+        return true;
     }
 
-    // Lua reference manual:
-    // If the value is a number, then lua_tolstring also changes the actual value in the stack to a string.
-    // (This change confuses lua_next when lua_tolstring is applied to keys during a table traversal.)
-    lua_pushvalue (L, index);
-    const char* str = lua_tolstring(L, -1, &len);
-    std::string string (str, len);
-    lua_pop (L, 1); // Pop the temporary string
-    return string;
-  }
+    static short get(lua_State* L, int index)
+    {
+        return static_cast<short>(luaL_checkinteger(L, index));
+    }
 
-  static bool isInstance (lua_State* L, int index)
-  {
-    return lua_type (L, index) == LUA_TSTRING;
-  }
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TNUMBER;
+    }
 };
 
+//=================================================================================================
+/**
+ * @brief Stack specialization for `unsigned short`.
+ */
+template <>
+struct Stack<unsigned short>
+{
+    static bool push(lua_State* L, unsigned short value, std::error_code&)
+    {
+        pushunsigned(L, value);
+        return true;
+    }
+
+    static unsigned short get(lua_State* L, int index)
+    {
+        return static_cast<unsigned short>(luaL_checkinteger(L, index));
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TNUMBER;
+    }
+};
+
+//=================================================================================================
+/**
+ * @brief Stack specialization for `int`.
+ */
+template <>
+struct Stack<int>
+{
+    static bool push(lua_State* L, int value, std::error_code&)
+    {
+        lua_pushinteger(L, static_cast<lua_Integer>(value));
+        return true;
+    }
+
+    static int get(lua_State* L, int index)
+    {
+        return static_cast<int>(luaL_checkinteger(L, index));
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TNUMBER;
+    }
+};
+
+//=================================================================================================
+/**
+ * @brief Stack specialization for `unsigned int`.
+ */
+template <>
+struct Stack<unsigned int>
+{
+    static bool push(lua_State* L, unsigned int value, std::error_code&)
+    {
+        pushunsigned(L, value);
+        return true;
+    }
+
+    static unsigned int get(lua_State* L, int index)
+    {
+        return static_cast<unsigned int>(luaL_checkinteger(L, index));
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TNUMBER;
+    }
+};
+
+//=================================================================================================
+/**
+ * @brief Stack specialization for `long`.
+ */
+template <>
+struct Stack<long>
+{
+    static bool push(lua_State* L, long value, std::error_code&)
+    {
+        lua_pushinteger(L, static_cast<lua_Integer>(value));
+        return true;
+    }
+
+    static long get(lua_State* L, int index)
+    {
+        return static_cast<long>(luaL_checkinteger(L, index));
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TNUMBER;
+    }
+};
+
+//=================================================================================================
+/**
+ * @brief Stack specialization for `unsigned long`.
+ */
+template <>
+struct Stack<unsigned long>
+{
+    static bool push(lua_State* L, unsigned long value, std::error_code&)
+    {
+        pushunsigned(L, value);
+        return true;
+    }
+
+    static unsigned long get(lua_State* L, int index)
+    {
+        return static_cast<unsigned long>(luaL_checkinteger(L, index));
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TNUMBER;
+    }
+};
+
+//=================================================================================================
+/**
+ * @brief Stack specialization for `long long`.
+ */
+template <>
+struct Stack<long long>
+{
+    static bool push(lua_State* L, long long value, std::error_code&)
+    {
+        lua_pushinteger(L, static_cast<lua_Integer>(value));
+        return true;
+    }
+
+    static long long get(lua_State* L, int index)
+    {
+        return static_cast<long long>(luaL_checkinteger(L, index));
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TNUMBER;
+    }
+};
+
+//=================================================================================================
+/**
+ * @brief Stack specialization for `unsigned long long`.
+ */
+template <>
+struct Stack<unsigned long long>
+{
+    static bool push(lua_State* L, unsigned long long value, std::error_code&)
+    {
+        pushunsigned(L, value);
+        return true;
+    }
+
+    static unsigned long long get(lua_State* L, int index)
+    {
+        return static_cast<unsigned long long>(luaL_checkinteger(L, index));
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TNUMBER;
+    }
+};
+
+//=================================================================================================
+/**
+ * @brief Stack specialization for `float`.
+ */
+template <>
+struct Stack<float>
+{
+    static bool push(lua_State* L, float value, std::error_code&)
+    {
+        lua_pushnumber(L, static_cast<lua_Number>(value));
+        return true;
+    }
+
+    static float get(lua_State* L, int index)
+    {
+        return static_cast<float>(luaL_checknumber(L, index));
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TNUMBER;
+    }
+};
+
+//=================================================================================================
+/**
+ * @brief Stack specialization for `double`.
+ */
+template <>
+struct Stack<double>
+{
+    static bool push(lua_State* L, double value, std::error_code&)
+    {
+        lua_pushnumber(L, static_cast<lua_Number>(value));
+        return true;
+    }
+
+    static double get(lua_State* L, int index)
+    {
+        return static_cast<double>(luaL_checknumber(L, index));
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TNUMBER;
+    }
+};
+
+//=================================================================================================
+/**
+ * @brief Stack specialization for `long double`.
+ */
+template <>
+struct Stack<long double>
+{
+    static bool push(lua_State* L, long double value, std::error_code&)
+    {
+        lua_pushnumber(L, static_cast<lua_Number>(value));
+        return true;
+    }
+
+    static long double get(lua_State* L, int index)
+    {
+        return static_cast<long double>(luaL_checknumber(L, index));
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TNUMBER;
+    }
+};
+
+//=================================================================================================
+/**
+ * @brief Stack specialization for `const char*`.
+ */
+template <>
+struct Stack<const char*>
+{
+    static bool push(lua_State* L, const char* str, std::error_code&)
+    {
+        if (str != nullptr)
+            lua_pushstring(L, str);
+        else
+            lua_pushnil(L);
+
+        return true;
+    }
+
+    static const char* get(lua_State* L, int index)
+    {
+        return lua_isnil(L, index) ? nullptr : luaL_checkstring(L, index);
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_isnil(L, index) || lua_type(L, index) == LUA_TSTRING;
+    }
+};
+
+//=================================================================================================
+/**
+ * @brief Stack specialization for `const char[N]` literals.
+ */
+namespace detail {
+template <class T>
+struct IsStringLiteral : std::is_same<T,
+    std::add_lvalue_reference_t<const char[std::extent_v<std::remove_reference_t<T>>]>>
+{
+};
+} // namespace detail
 
 template <class T>
-struct StackOpSelector <T&, false>
+struct Stack<T, std::enable_if_t<detail::IsStringLiteral<T>::value>>
 {
-  typedef T ReturnType;
+    static bool push(lua_State* L, const char (&str)[std::extent_v<std::remove_reference_t<T>>], std::error_code&)
+    {
+        lua_pushlstring(L, str, std::extent_v<std::remove_reference_t<T>>);
+        return true;
+    }
+};
 
-  static void push (lua_State* L, T& value)
-  {
-    Stack <T>::push (L, value);
-  }
+//=================================================================================================
+/**
+ * @brief Stack specialization for `std::string_view`.
+ */
+template <>
+struct Stack<std::string_view>
+{
+    static bool push(lua_State* L, std::string_view str, std::error_code&)
+    {
+        lua_pushlstring(L, str.data(), str.size());
+        return true;
+    }
 
-  static ReturnType get (lua_State* L, int index)
-  {
-    return Stack <T>::get (L, index);
-  }
+    static std::string_view get(lua_State* L, int index)
+    {
+        return lua_isnil(L, index) ? std::string_view() : luaL_checkstring(L, index);
+    }
 
-  static bool isInstance (lua_State* L, int index)
-  {
-    return Stack <T>::isInstance (L, index);
-  }
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_isnil(L, index) || lua_type(L, index) == LUA_TSTRING;
+    }
+};
+
+//=================================================================================================
+/**
+ * @brief Stack specialization for `std::string`.
+ */
+template <>
+struct Stack<std::string>
+{
+    static bool push(lua_State* L, const std::string& str, std::error_code&)
+    {
+        lua_pushlstring(L, str.data(), str.size());
+        return true;
+    }
+
+    static std::string get(lua_State* L, int index)
+    {
+        std::size_t len;
+        if (lua_type(L, index) == LUA_TSTRING)
+        {
+            const char* str = lua_tolstring(L, index, &len);
+            return std::string(str, len);
+        }
+
+        // Lua reference manual:
+        // If the value is a number, then lua_tolstring also changes the actual value in the stack
+        // to a string. (This change confuses lua_next when lua_tolstring is applied to keys during
+        // a table traversal.)
+        lua_pushvalue(L, index);
+        const char* str = lua_tolstring(L, -1, &len);
+        std::string string(str, len);
+        lua_pop(L, 1); // Pop the temporary string
+        return string;
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TSTRING;
+    }
+};
+
+//=================================================================================================
+/**
+ * @brief Stack specialization for `std::tuple`.
+ */
+template <class... Types>
+struct Stack<std::tuple<Types...>>
+{
+    static bool push(lua_State* L, const std::tuple<Types...>& t, std::error_code& ec)
+    {
+        lua_createtable(L, static_cast<int>(Size), 0);
+
+        return push_element(L, t, ec);
+    }
+
+    static std::tuple<Types...> get(lua_State* L, int index)
+    {
+        if (!lua_istable(L, index))
+            luaL_error(L, "#%d argment must be a table", index);
+
+        if (get_length(L, index) != Size)
+            luaL_error(L, "table size should be %d but is %d", Size, get_length(L, index));
+
+        std::tuple<Types...> value;
+
+        int absIndex = lua_absindex(L, index);
+        lua_pushnil(L);
+
+        pop_element(L, absIndex, value);
+
+        return value;
+    }
+
+    static bool isInstance(lua_State* L, int index)
+    {
+        return lua_type(L, index) == LUA_TTABLE;
+    }
+
+private:
+    static constexpr std::size_t Size = std::tuple_size_v<std::tuple<Types...>>;
+
+    template <std::size_t Index = 0>
+    static auto push_element(lua_State*, const std::tuple<Types...>&, std::error_code&)
+        -> std::enable_if_t<Index == sizeof...(Types), bool>
+    {
+        return true;
+    }
+
+    template <std::size_t Index = 0>
+    static auto push_element(lua_State* L, const std::tuple<Types...>& t, std::error_code& ec)
+        -> std::enable_if_t<Index < sizeof...(Types), bool>
+    {
+        using T = std::tuple_element_t<Index, std::tuple<Types...>>;
+
+        lua_pushinteger(L, static_cast<lua_Integer>(Index + 1));
+
+        std::error_code push_ec;
+        bool result = Stack<T>::push(L, std::get<Index>(t), push_ec);
+        if (! result)
+        {
+            lua_pushnil(L);
+            lua_settable(L, -3);
+            ec = push_ec;
+            return false;
+        }
+
+        lua_settable(L, -3);
+
+        return push_element<Index + 1>(L, t, ec);
+    }
+
+    template <std::size_t Index = 0>
+    static auto pop_element(lua_State*, int, std::tuple<Types...>&)
+        -> std::enable_if_t<Index == sizeof...(Types)>
+    {
+    }
+
+    template <std::size_t Index = 0>
+    static auto pop_element(lua_State* L, int absIndex, std::tuple<Types...>& t)
+        -> std::enable_if_t<Index < sizeof...(Types)>
+    {
+        using T = std::tuple_element_t<Index, std::tuple<Types...>>;
+
+        if (lua_next(L, absIndex) == 0)
+            return;
+
+        std::get<Index>(t) = Stack<T>::get(L, -1);
+        lua_pop(L, 1);
+
+        pop_element<Index + 1>(L, absIndex, t);
+    }
+};
+
+namespace detail {
+
+template <class T>
+struct StackOpSelector<T&, false>
+{
+    using ReturnType = T;
+
+    static bool push(lua_State* L, T& value, std::error_code& ec) { return Stack<T>::push(L, value, ec); }
+
+    static ReturnType get(lua_State* L, int index) { return Stack<T>::get(L, index); }
+
+    static bool isInstance(lua_State* L, int index) { return Stack<T>::isInstance(L, index); }
 };
 
 template <class T>
-struct StackOpSelector <const T&, false>
+struct StackOpSelector<const T&, false>
 {
-  typedef T ReturnType;
+    using ReturnType = T;
 
-  static void push (lua_State* L, const T& value)
-  {
-    Stack <T>::push (L, value);
-  }
+    static bool push(lua_State* L, const T& value, std::error_code& ec) { return Stack<T>::push(L, value, ec); }
 
-  static ReturnType get (lua_State* L, int index)
-  {
-    return Stack <T>::get (L, index);
-  }
+    static ReturnType get(lua_State* L, int index) { return Stack<T>::get(L, index); }
 
-  static bool isInstance (lua_State* L, int index)
-  {
-    return Stack <T>::isInstance (L, index);
-  }
+    static bool isInstance(lua_State* L, int index) { return Stack<T>::isInstance(L, index); }
 };
 
 template <class T>
-struct StackOpSelector <T*, false>
+struct StackOpSelector<T*, false>
 {
-  typedef T ReturnType;
+    using ReturnType = T;
 
-  static void push (lua_State* L, T* value)
-  {
-    Stack <T>::push (L, *value);
-  }
+    static bool push(lua_State* L, T* value, std::error_code& ec) { return Stack<T>::push(L, *value, ec); }
 
-  static ReturnType get (lua_State* L, int index)
-  {
-    return Stack <T>::get (L, index);
-  }
+    static ReturnType get(lua_State* L, int index) { return Stack<T>::get(L, index); }
 
-  static bool isInstance (lua_State* L, int index)
-  {
-    return Stack <T>::isInstance (L, index);
-  }
+    static bool isInstance(lua_State* L, int index) { return Stack<T>::isInstance(L, index); }
 };
 
 template <class T>
-struct StackOpSelector <const T*, false>
+struct StackOpSelector<const T*, false>
 {
-  typedef T ReturnType;
+    using ReturnType = T;
 
-  static void push (lua_State* L, const T* value)
-  {
-    Stack <T>::push (L, *value);
-  }
+    static bool push(lua_State* L, const T* value, std::error_code& ec) { return Stack<T>::push(L, *value, ec); }
 
-  static ReturnType get (lua_State* L, int index)
-  {
-    return Stack <T>::get (L, index);
-  }
+    static ReturnType get(lua_State* L, int index) { return Stack<T>::get(L, index); }
 
-  static bool isInstance (lua_State* L, int index)
-  {
-    return Stack <T>::isInstance (L, index);
-  }
+    static bool isInstance(lua_State* L, int index) { return Stack<T>::isInstance(L, index); }
 };
 
+} // namespace detail
 
 template <class T>
-struct Stack <T&>
+struct Stack<T&, std::enable_if_t<!detail::IsStringLiteral<T&>::value>>
 {
-  typedef StackOpSelector <T&, IsUserdata <T>::value> Helper;
-  typedef typename Helper::ReturnType ReturnType;
+    using Helper = detail::StackOpSelector<T&, detail::IsUserdata<T>::value>;
+    using ReturnType = typename Helper::ReturnType;
 
-  static void push (lua_State* L, T& value)
-  {
-    Helper::push (L, value);
-  }
+    static bool push(lua_State* L, T& value, std::error_code& ec) { return Helper::push(L, value, ec); }
 
-  static ReturnType get (lua_State* L, int index)
-  {
-    return Helper::get (L, index);
-  }
+    static ReturnType get(lua_State* L, int index) { return Helper::get(L, index); }
+
+    static bool isInstance(lua_State* L, int index) { return Helper::template isInstance<T>(L, index); }
 };
 
 template <class T>
-struct Stack <const T&>
+struct Stack<const T&, std::enable_if_t<!detail::IsStringLiteral<const T&>::value>>
 {
-  typedef StackOpSelector <const T&, IsUserdata <T>::value> Helper;
-  typedef typename Helper::ReturnType ReturnType;
+    using Helper = detail::StackOpSelector<const T&, detail::IsUserdata<T>::value>;
+    using ReturnType = typename Helper::ReturnType;
 
-  static void push (lua_State* L, const T& value)
-  {
-    Helper::push (L, value);
-  }
+    static bool push(lua_State* L, const T& value, std::error_code& ec) { return Helper::push(L, value, ec); }
 
-  static ReturnType get (lua_State* L, int index)
-  {
-    return Helper::get (L, index);
-  }
+    static ReturnType get(lua_State* L, int index) { return Helper::get(L, index); }
+
+    static bool isInstance(lua_State* L, int index) { return Helper::template isInstance<T>(L, index); }
 };
 
 template <class T>
-struct Stack <T*>
+struct Stack<T*>
 {
-  typedef StackOpSelector <T*, IsUserdata <T>::value> Helper;
-  typedef typename Helper::ReturnType ReturnType;
+    using Helper = detail::StackOpSelector<T*, detail::IsUserdata<T>::value>;
+    using ReturnType = typename Helper::ReturnType;
 
-  static void push (lua_State* L, T* value)
-  {
-    Helper::push (L, value);
-  }
+    static bool push(lua_State* L, T* value, std::error_code& ec) { return Helper::push(L, value, ec); }
 
-  static ReturnType get (lua_State* L, int index)
-  {
-    return Helper::get (L, index);
-  }
+    static ReturnType get(lua_State* L, int index) { return Helper::get(L, index); }
+    
+    static bool isInstance(lua_State* L, int index) { return Helper::template isInstance<T>(L, index); }
 };
 
-template <class T>
-struct Stack <const T*>
+template<class T>
+struct Stack<const T*>
 {
-  typedef StackOpSelector <const T*, IsUserdata <T>::value> Helper;
-  typedef typename Helper::ReturnType ReturnType;
+    using Helper = detail::StackOpSelector<const T*, detail::IsUserdata<T>::value>;
+    using ReturnType = typename Helper::ReturnType;
 
-  static void push (lua_State* L, const T* value)
-  {
-    Helper::push (L, value);
-  }
+    static bool push(lua_State* L, const T* value, std::error_code& ec) { return Helper::push(L, value, ec); }
 
-  static ReturnType get (lua_State* L, int index)
-  {
-    return Helper::get (L, index);
-  }
+    static ReturnType get(lua_State* L, int index) { return Helper::get(L, index); }
+
+    static bool isInstance(lua_State* L, int index) { return Helper::template isInstance<T>(L, index); }
 };
 
 //------------------------------------------------------------------------------
 /**
- * Push an object onto the Lua stack.
+ * @brief Push an object onto the Lua stack.
  */
 template <class T>
-inline void push (lua_State* L, T t)
+bool push(lua_State* L, T t, std::error_code& ec)
 {
-  Stack <T>::push (L, t);
+    return Stack<T>::push(L, t, ec);
 }
 
 //------------------------------------------------------------------------------
 /**
- * Check whether an object on the Lua stack is of type T.
+ * @brief Check whether an object on the Lua stack is of type T.
  */
 template <class T>
-inline bool isInstance (lua_State* L, int index)
+bool isInstance(lua_State* L, int index)
 {
-  return Stack <T>::isInstance (L, index);
+    return Stack<T>::isInstance(L, index);
 }
 
 } // namespace luabridge

@@ -13,7 +13,7 @@
 #include "../gfx/renderer.hxx"
 #include "../actor/player_controller.hxx"
 #include "../actor/action_queue.hxx"
-#include "../scripts/scripts.hxx"
+#include "../scripts/scripting.hxx"
 #include "../xray/xray.hxx"
 
 /**
@@ -23,13 +23,6 @@ class Game {
     friend class GameFactory;
 public:
     Game();
-
-    /**
-     * @brief Frees resources in case stop() was not invoked.
-     * 
-     * @see stop
-     */
-    ~Game();
 
     /**
      * @brief Returns whether the game is still running.
@@ -70,7 +63,7 @@ private:
     PlayerController player_controller_;
     ActionQueue action_queue_;
     Scene scene_;
-    Scripts scripts_;
+    Scripting scripting_;
 
     Input input_;
     Window window_;

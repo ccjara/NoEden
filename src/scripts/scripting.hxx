@@ -3,6 +3,7 @@
 
 #include "../game/platform_event.hxx"
 #include "../input/input_event.hxx"
+#include "api/api_registrar.hxx"
 #include "script_event.hxx"
 #include "script_util.hxx"
 #include "script.hxx"
@@ -12,9 +13,9 @@ namespace lua_event { // FIXME: luabridge does not support enums
     static lua_event_type inventory_view { 1000 };
 }
 
-class Scripts {
+class Scripting {
 public:
-    Scripts(entt::dispatcher& dispatcher);
+    Scripting(entt::dispatcher& dispatcher);
 
     constexpr static const char* default_script_path {
 #ifdef NDEBUG
@@ -23,11 +24,6 @@ public:
         "../src/scripts/lua"
 #endif
     };
-
-    /**
-     * @brief Unloads all scripts before freeing resources.
-     */
-    ~Scripts();
 
     /**
      * @brief Recursively loads all scripts from the given directory path.
@@ -47,8 +43,6 @@ public:
     template<typename path_like>
     void load_from_path(path_like base_path);
 
-    void update();
-
     [[nodiscard]] const std::unordered_map<u64, std::unique_ptr<Script>>& scripts() const;
 
     Script* get_by_id(u64 id) const;
@@ -57,8 +51,14 @@ public:
      * @brief Setups up globals and namespaces for every script.
      */
     void setup_script_env(Script& script);
+
+    ApiRegistrar& registrar();
+
+    void startup();
+    void shutdown();
 private:
     entt::dispatcher& dispatcher_;
+    ApiRegistrar api_registrar_;
 
     std::unordered_map<u64, std::unique_ptr<Script>> scripts_;
 
@@ -107,9 +107,10 @@ private:
 };
 
 template<typename path_like>
-void Scripts::load_from_path(path_like base_path) {
-    reset();
-
+void Scripting::load_from_path(path_like base_path) {
+    if (!scripts_.empty()) {
+        reset();
+    }
     const auto abs_path { fs::absolute(base_path) };
 
     if (!fs::is_directory(abs_path)) {

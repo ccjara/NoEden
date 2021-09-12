@@ -5,7 +5,7 @@ Xray::Xray(Window& window, entt::dispatcher& dispatcher) :
     dispatcher_ { dispatcher } {
 }
 
-void Xray::start(SDL_GLContext context) {
+void Xray::startup(SDL_GLContext context) {
     imgui_context_ = ImGui::CreateContext();
     if (!imgui_context_) {
         LOG(ERROR) << "Could not create imgui context";
@@ -20,7 +20,7 @@ void Xray::start(SDL_GLContext context) {
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 }
 
-void Xray::stop() {
+void Xray::shutdown() {
     if (imgui_context_) {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplSDL2_Shutdown();

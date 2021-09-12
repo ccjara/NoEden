@@ -46,12 +46,8 @@ add_executable(
 
     "ui/ui.cxx"
     "ui/ui_node.cxx"
-    "ui/ui_node_proxy.hxx"
-    "ui/ui_node_proxy_interface.hxx"
-    "ui/ui_proxy.cxx"
-    "ui/ui_tree.hxx"
+    "ui/ui_tree.cxx"
     "ui/ui_window.cxx"
-    "ui/ui_window_proxy.hxx"
 
     "input/input.cxx"
     "input/input_event.hxx"
@@ -64,10 +60,15 @@ add_executable(
     "scene/scene.hxx"
     "scene/scene_events.hxx"
 
+    "scripts/api/api_registrar.cxx"
+    "scripts/api/lua_api.hxx"
+    "scripts/api/scene_api.cxx"
+    "scripts/api/ui/ui_api.cxx"
+    
     "scripts/script.cxx"
     "scripts/script_event.hxx"
     "scripts/script_util.hxx"
-    "scripts/scripts.cxx"
+    "scripts/scripting.cxx"
 
     "xray/scene_xray.cxx"
     "xray/script_xray.cxx"

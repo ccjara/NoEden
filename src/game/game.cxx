@@ -5,14 +5,8 @@ Game::Game() :
     renderer_ { window_, dispatcher_ },
     ui_ { dispatcher_ },
     player_controller_ { action_queue_, dispatcher_ },
-    scripts_ { dispatcher_ },
+    scripting_ { dispatcher_ },
     xray_ { window_, dispatcher_ } {
-}
-
-Game::~Game() {
-    if (is_running_) {
-        stop();
-    }
 }
 
 void Game::start() {
@@ -31,13 +25,10 @@ void Game::start() {
 
     renderer_.initialize();
 
-    dispatcher_.sink<QuitEvent>().connect<&Game::on_quit>(this);
     dispatcher_.sink<ResizeEvent>().connect<&Game::on_resize>(this);
     dispatcher_.sink<ScriptLoadedEvent>().connect<&Game::on_script_loaded>(this);
 
     is_running_ = true;
-
-    scripts_.load_from_path(Scripts::default_script_path);
 }
 
 void Game::process_os_messages() {
@@ -47,7 +38,7 @@ void Game::process_os_messages() {
     while (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_EventType::SDL_FIRSTEVENT, SDL_EventType::SDL_WINDOWEVENT) != 0) {
         switch (e.type) {
         case SDL_EventType::SDL_QUIT:
-            dispatcher_.trigger<QuitEvent>();
+            is_running_ = false;
             return;
         case SDL_EventType::SDL_WINDOWEVENT:
             if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
@@ -63,7 +54,9 @@ void Game::process_os_messages() {
 }
 
 void Game::run() {
-    xray_.start(renderer_.gl_context());
+    ui_.startup();
+    scripting_.startup();
+    xray_.startup(renderer_.gl_context());
 
     dispatcher_.trigger<SceneLoadedEvent>(&scene_);
 
@@ -86,17 +79,18 @@ void Game::run() {
         }
 
         // update engine submodules
-        // ui_.update();
+        ui_.update();
 
         // render
         renderer_.render(scene_);
     }
 
-    xray_.stop();
-}
+    xray_.shutdown();
+    scripting_.shutdown();
+    ui_.shutdown();
 
-void Game::on_quit(const QuitEvent&) {
-    stop();
+    window_.close();
+    SDL_Quit();
 }
 
 void Game::on_resize(const ResizeEvent& e) {
@@ -156,10 +150,4 @@ void Game::configure_from_lua(luabridge::LuaRef cfg) {
 
 bool Game::running() const {
     return is_running_;
-}
-
-void Game::stop() {
-    window_.close();
-    SDL_Quit();
-    is_running_ = false;
 }

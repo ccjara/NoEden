@@ -42,6 +42,16 @@ public:
     UiNodeType type() const;
 
     /**
+     * @brief Invokes the current lua handler for this node
+     */
+    void call_handler();
+
+    /**
+     * @brief Updates the current lua handler for this node
+     */
+    void set_handler(luabridge::LuaRef ref);
+
+    /**
      * @brief Sets the current, relative (untranslated) position of this node
      *
      * Its absolute position will be calculated based on its anchor.
@@ -214,6 +224,11 @@ protected:
      * @brief Updates the position of this node's anchors
      */
     void move_anchors();
+
+    /**
+     * @brief Lua handler that will be invoked to update this node
+     */
+    std::optional<luabridge::LuaRef> handler_;
 private:
     /**
      * @brief Assigns an absolute position to this node

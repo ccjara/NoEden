@@ -7,7 +7,7 @@
 
 #include "detail/Stack.h"
 
-#include <list>
+#include <array>
 
 namespace luabridge {
 
@@ -15,24 +15,24 @@ namespace luabridge {
 /**
  * @brief Stack specialization for `std::array`.
  */
-template <class T>
-struct Stack<std::list<T>>
+template <class T, std::size_t Size>
+struct Stack<std::array<T, Size>>
 {
-    using Type = std::list<T>;
-    
-    static bool push(lua_State* L, const Type& list, std::error_code& ec)
+    using Type = std::array<T, Size>;
+
+    static bool push(lua_State* L, const Type& array, std::error_code& ec)
     {
         const int initialStackSize = lua_gettop(L);
+        
+        lua_createtable(L, static_cast<int>(Size), 0);
 
-        lua_createtable(L, static_cast<int>(list.size()), 0);
-
-        auto it = list.cbegin();
-        for (lua_Integer tableIndex = 1; it != list.cend(); ++tableIndex, ++it)
+        for (std::size_t i = 0; i < Size; ++i)
         {
-            lua_pushinteger(L, tableIndex);
+            lua_pushinteger(L, static_cast<lua_Integer>(i + 1));
 
             std::error_code errorCode;
-            if (! Stack<T>::push(L, *it, errorCode))
+            bool result = Stack<T>::push(L, array[i], errorCode);
+            if (!result)
             {
                 ec = errorCode;
                 lua_pop(L, lua_gettop(L) - initialStackSize);
@@ -48,25 +48,24 @@ struct Stack<std::list<T>>
     static Type get(lua_State* L, int index)
     {
         if (!lua_istable(L, index))
-            luaL_error(L, "#%d argument must be a table", index);
+            luaL_error(L, "#%d argment must be a table", index);
 
-        Type list;
+        if (get_length(L, index) != Size)
+            luaL_error(L, "table size should be %d but is %d", Size, get_length(L, index));
+
+        Type array;
 
         int absIndex = lua_absindex(L, index);
         lua_pushnil(L);
 
+        int arrayIndex = 0;
         while (lua_next(L, absIndex) != 0)
         {
-            list.emplace_back(Stack<T>::get(L, -1));
+            array[arrayIndex++] = Stack<T>::get(L, -1);
             lua_pop(L, 1);
         }
 
-        return list;
-    }
-
-    static bool isInstance(lua_State* L, int index)
-    {
-        return lua_istable(L, index);
+        return array;
     }
 };
 

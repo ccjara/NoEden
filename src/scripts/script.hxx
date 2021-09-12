@@ -20,7 +20,7 @@ enum class ScriptError {
  * @brief Wrapper which manages a lua state
  */
 class Script {
-    friend class Scripts;
+    friend class Scripting;
 private:
     static u64 next_id_;
 

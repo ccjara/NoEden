@@ -17,8 +17,8 @@ public:
         xrays_.emplace_back(new Xray(std::forward<XrayArgs>(xray_args)...));
     }
 
-    void start(SDL_GLContext context);
-    void stop();
+    void startup(SDL_GLContext context);
+    void shutdown();
 
     void update();
 private:

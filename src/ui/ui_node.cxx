@@ -54,6 +54,18 @@ void UiNode::anchor_to(UiNode& node) {
     move(relative_position_);
 }
 
+void UiNode::call_handler() {
+    if (handler_) {
+        handler_.value()(this);
+    }
+}
+
+void UiNode::set_handler(luabridge::LuaRef ref) {
+    if (ref.isCallable()) {
+        handler_ = ref;
+    }
+}
+
 const std::string& UiNode::id() const {
     return id_;
 }

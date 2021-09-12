@@ -4,24 +4,8 @@
 #include "ui_window.hxx"
 
 class UiTree {
-private:
-    /**
-     * @brief A key value store mapping id to node
-     */
-    std::unordered_map<std::string, std::unique_ptr<UiNode>> nodes_;
-
-    /**
-     * @brief The head of the tree, must not be nullptr after construction
-     */
-    UiNode* root_ { nullptr };
+    using NodeContainer = std::vector<std::unique_ptr<UiNode>>;
 public:
-    /**
-     * @brief Constructs the root node
-     */
-    UiTree() {
-        reset();
-    }
-
     /**
      * @brief Creates and tracks a node
      *
@@ -32,54 +16,69 @@ public:
      * The given id must be unique, otherwise the creation will fail and nullptr
      * will be returned instead.
      */
-    template<typename node>
-    node* create_node(UiNode* parent, std::string_view id) {
+    template<typename Node>
+    Node* create_node(UiNode* parent, std::string_view id) {
         if (parent == nullptr) {
             parent = root_;
         }
-        auto [iterator, inserted] = nodes_.try_emplace(
-            std::string(id),
-            std::make_unique<node>()
-        );
-        if (!inserted) {
+
+        if (nodes_by_id_.find(std::string(id)) != nodes_by_id_.end()) {
             LOG(ERROR) << "Cannot create node " << id << ": a node with this id already exists";
             return nullptr;
         }
-        auto n = iterator->second.get();
-        n->id_ = id;
-        n->parent_ = parent;
-        n->anchor_to(*root_);
-        parent->children_.push_back(n);
-        return static_cast<node*>(n);
+
+        auto node { new Node() };
+        nodes_.emplace_back(node);
+        nodes_by_id_.emplace(std::string(id), node);
+        node->id_ = id;
+        node->parent_ = parent;
+        node->anchor_to(*root_);
+        parent->children_.push_back(node);
+        return node;
     }
 
-    UiNode* get_node_by_id(std::string_view id) {
-        auto node_iter { nodes_.find(std::string(id)) };
-        if (node_iter == nodes_.end()) {
-            return nullptr;
-        }
-        return node_iter->second.get();
-    }
+    UiNode* get_node_by_id(std::string_view id);
 
     /**
      * @brief Returns the head of the tree, guaranteed to be non-null
      */
-    UiNode* root() const {
-        return root_;
-    }
+    UiNode* root() const;
 
-    void reset() {
-        nodes_.clear();
-        auto [iterator, inserted] = nodes_.try_emplace(
-            std::string("root"),
-            std::make_unique<UiNode>()
-        );
-        assert(inserted);
+    /**
+     * @brief Resets the entire tree and its references and recreates the root node.
+     */
+    void reset();
 
-        root_ = iterator->second.get();
-        root_->id_ = iterator->first;
-        root_->visible_ = true;
-    }
+    /**
+     * @brief Resets the entire tree and its references.
+     * 
+     * Used during shutdown.
+     */
+    void clear();
+
+    NodeContainer& nodes();
+
+    /**
+     * @brief Create the root node.
+     * 
+     * Should only be called if the root node does not exist yet.
+     */
+    void create_root_node();
+private:
+    /**
+     * @brief Primary owning container for each node
+     */
+    NodeContainer nodes_;
+
+    /**
+     * @brief A key value store mapping id to node
+     */
+    std::unordered_map<std::string, UiNode*> nodes_by_id_;
+
+    /**
+     * @brief The head of the tree
+     */
+    UiNode* root_ { nullptr };
 };
 
 #endif

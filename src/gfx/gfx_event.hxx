@@ -13,13 +13,13 @@ struct PostRenderEvent {
  * The display is resized in the gfx system just after the low level event
  * ResizeEvent has been handled there (for example due to a window resize).
  */
-struct Display_resized_event {
+struct DisplayResizedEvent {
     /**
      * @brief The new display size in cell units
      */
     Vec2<u32> size;
 
-    constexpr Display_resized_event(Vec2<u32> size) : size(size) {
+    constexpr DisplayResizedEvent(Vec2<u32> size) : size(size) {
     }
 };
 

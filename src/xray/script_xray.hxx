@@ -3,15 +3,15 @@
 
 #include "xray_interface.hxx"
 #include "xray_style.hxx"
-#include "../scripts/Scripts.hxx"
+#include "../scripts/Scripting.hxx"
 
 class ScriptXray : public IXray {
 public:
-    explicit ScriptXray(entt::dispatcher& dispatcher, Scripts& scripts);
+    explicit ScriptXray(entt::dispatcher& dispatcher, Scripting& scripts);
 
     void update() override;
 private:
-    Scripts& scripts_;
+    Scripting& scripting_;
     entt::dispatcher& dispatcher_;
 
     void render_current_script(Script *current);

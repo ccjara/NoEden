@@ -2,13 +2,17 @@
 
 void GameFactory::run() {
     auto game { std::make_unique<Game>() };
+    
+    // scripting
+    auto& lua_registrar { game->scripting_.registrar() };
+    lua_registrar.add_api<SceneApi>(game->scene_);
+    lua_registrar.add_api<UiApi>(game->ui_.ui_tree());
+    // xray / engine ui
+    game->xray_.add<SceneXray>(game->dispatcher_);
+    game->xray_.add<ScriptXray>(game->dispatcher_, game->scripting_);
+    game->xray_.add<UiXray>(game->dispatcher_, game->ui_);
 
     game->start();
-    //xrays_.emplace_back(std::make_unique<UiXray>());
-    //xrays_.emplace_back(std::make_unique<ScriptXray>());
-    game->xray_.add<SceneXray>(game->dispatcher_);
-    game->xray_.add<ScriptXray>(game->dispatcher_, game->scripts_);
-    game->xray_.add<UiXray>(game->dispatcher_, game->ui_);
 
     auto& player { game->scene_.create_actor(&Archetypes::Dwarf) };
     auto& troll { game->scene_.create_actor(&Archetypes::Troll) };

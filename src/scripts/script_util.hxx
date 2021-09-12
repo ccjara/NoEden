@@ -9,20 +9,11 @@
  */
 template<typename... varg_t>
 void pcall_into(luabridge::LuaRef& ref, varg_t&&... args) {
-    const auto result { ref(std::forward<varg_t>(args)...) };
-    if (result == std::nullopt) {
-        const auto state { ref.state() };
+    const luabridge::LuaResult result { ref(std::forward<varg_t>(args)...) };
 
-        std::string err { "Caught error during script execution" };
-
-        if (lua_gettop(state) > 0) {
-            const char* e = lua_tostring(state, -1);
-            if (e) {
-                err.append(": ");
-                err.append(e);
-            }
-        }
-        LOG(ERROR) << err;
+    if (!result) {
+        LOG(ERROR) << "Caught error during script execution: "
+                   << result.errorMessage() << " (" << result.errorCode() << ")";
     }
 }
 
