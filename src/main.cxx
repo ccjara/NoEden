@@ -4,7 +4,6 @@ static_assert(!LUABRIDGE_HAS_EXCEPTIONS);
 
 int main(int argc, char* argv[]) {
     SDL_SetMainReady();
-    Log::startup();
     GameFactory::run();
     return 0;
 }

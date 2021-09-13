@@ -1,16 +1,19 @@
 #include "game_factory.hxx"
 
 void GameFactory::run() {
+    Log::startup();
+
     auto game { std::make_unique<Game>() };
+    // xray / engine ui
+    game->xray_.add<LogXray>();
+    game->xray_.add<SceneXray>(game->dispatcher_);
+    game->xray_.add<ScriptXray>(game->dispatcher_, game->scripting_);
+    game->xray_.add<UiXray>(game->dispatcher_, game->ui_);
     
     // scripting
     auto& lua_registrar { game->scripting_.registrar() };
     lua_registrar.add_api<SceneApi>(game->scene_);
     lua_registrar.add_api<UiApi>(game->ui_.ui_tree());
-    // xray / engine ui
-    game->xray_.add<SceneXray>(game->dispatcher_);
-    game->xray_.add<ScriptXray>(game->dispatcher_, game->scripting_);
-    game->xray_.add<UiXray>(game->dispatcher_, game->ui_);
 
     game->start();
 

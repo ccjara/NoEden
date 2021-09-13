@@ -21,11 +21,13 @@ add_executable(
     "game/config.hxx"
     "game/game.cxx"
     "game/game_factory.cxx"
-    "game/log.cxx"
     "game/platform_event.hxx"
     "game/window.cxx"
 
     "grid.hxx"
+
+    "log/log.cxx"
+    "log/memory_sink.cxx"
 
     "main.cxx"
 
@@ -69,6 +71,7 @@ add_executable(
     "scripts/script_util.hxx"
     "scripts/scripting.cxx"
 
+    "xray/log_xray.cxx"
     "xray/scene_xray.cxx"
     "xray/script_xray.cxx"
     "xray/ui_xray.cxx"

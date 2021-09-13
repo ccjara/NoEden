@@ -49,7 +49,7 @@ using i64 = int64_t;
 
 namespace fs = std::filesystem;
 
-#include "game/log.hxx"
+#include "log/log.hxx"
 
 #include "math/vec2.hxx"
 #include "math/bresenham.hxx"
