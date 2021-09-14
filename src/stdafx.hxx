@@ -23,6 +23,7 @@
 #define SPDLOG_FMT_EXTERNAL
 #include <spdlog/spdlog.h>
 // #include <fmt/format.h> -- included by spdlog
+#include <fmt/chrono.h>
 
 #include <GL/glew.h>
 

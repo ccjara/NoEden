@@ -2,9 +2,9 @@
 
 void MemorySink::sink_it_(const spdlog::details::log_msg& msg) {
     Log::logs_.push_back(LogEntry {
-        LogEntry::LogLevel::Info,
+        static_cast<LogEntry::LogLevel>(msg.level),
         msg.time,
-        fmt::format("{}", 999),
+        fmt::format("{:%H:%M:%S}", fmt::localtime(msg.time)),
         std::string(msg.payload.data(), msg.payload.size())
     });
 }
