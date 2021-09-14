@@ -4,6 +4,7 @@
 #include "../gfx/gfx_event.hxx"
 #include "../game/window.hxx"
 #include "xray_interface.hxx"
+#include "xray_event.hxx"
 
 class Xray {
 public:
@@ -19,9 +20,9 @@ public:
 
     void startup(SDL_GLContext context);
     void shutdown();
-
-    void update();
 private:
+    bool focused_ { false };
+
     Window& window_;
     entt::dispatcher& dispatcher_;
 

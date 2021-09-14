@@ -29,13 +29,6 @@ void Xray::shutdown() {
     }
 }
 
-void Xray::update() {
-    SDL_Event e;
-    while (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_EventType::SDL_KEYDOWN, SDL_EventType::SDL_MOUSEWHEEL)) {
-        ImGui_ImplSDL2_ProcessEvent(&e);
-    }
-}
-
 void Xray::on_post_render(const PostRenderEvent&) {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window_.handle());
@@ -71,4 +64,14 @@ void Xray::on_post_render(const PostRenderEvent&) {
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    const bool any_active { ImGui::IsAnyItemActive() };
+
+    if (focused_ && !any_active) {
+        dispatcher_.trigger<XrayFocusEvent>(false);
+        focused_ = false;
+    } else if (!focused_ && any_active) {
+        dispatcher_.trigger<XrayFocusEvent>(true);
+        focused_ = true;
+    }
 }

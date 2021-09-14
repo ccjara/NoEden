@@ -76,6 +76,7 @@ add_executable(
     "xray/script_xray.cxx"
     "xray/ui_xray.cxx"
     "xray/xray.cxx"
+    "xray/xray_event.hxx"
     "xray/xray_interface.hxx"
     "xray/xray_style.hxx"
 )

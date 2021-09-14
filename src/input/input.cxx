@@ -1,9 +1,17 @@
 #include "input.hxx"
 
+Input::Input(entt::dispatcher& dispatcher) : dispatcher_ { dispatcher } {
+    dispatcher_.sink<XrayFocusEvent>().connect<&Input::on_xray_focus>(this);
+}
+
 void Input::poll_platform() {
     SDL_Event e;
 
     while (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_EventType::SDL_KEYDOWN, SDL_EventType::SDL_MOUSEWHEEL)) {
+        ImGui_ImplSDL2_ProcessEvent(&e);
+        if (input_blocked_) {
+            continue;
+        }
         switch (e.type) {
             case SDL_EventType::SDL_KEYDOWN: {
                 const auto key { static_cast<Key>(e.key.keysym.sym) };
@@ -39,3 +47,10 @@ void Input::poll_platform() {
     }
 }
 
+void Input::on_xray_focus(const XrayFocusEvent& e) {
+    input_blocked_ = e.focused;
+}
+
+const InputState& Input::state() const {
+    return state_;
+}
