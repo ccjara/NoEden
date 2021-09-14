@@ -7,6 +7,10 @@ class LogXray : public IXray {
 public:
     void update() override;
 private:
+    struct LogFilter {
+        Log::LogStore results;
+        bool active { false };
+    } filter_;
 };
 
 #endif
