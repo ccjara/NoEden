@@ -21,11 +21,10 @@ struct LogEntry {
 class Log {
     friend class LogXray;
     friend class MemorySink;
+    friend class GameFactory;
     using LogPtr = std::shared_ptr<spdlog::logger>;
     using LogStore = std::deque<LogEntry>;
 public:
-    static void startup();
-
     template<typename... Args>
     inline static void debug(Args&&... args) {
         log_->debug(std::forward<Args>(args)...);
@@ -50,6 +49,8 @@ public:
      */
     static void set_level(LogLevel level);
 private:
+    static void startup();
+
     /**
      * @brief Library logger this class wraps.
      */

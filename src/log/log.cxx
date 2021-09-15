@@ -7,7 +7,7 @@ u16 Log::max_entries_ { 1000U };
 
 void Log::startup() {
     log_ = spdlog::create<MemorySink>("Core");
-    set_level(LogLevel::Debug);
+    set_level(LogLevel::Info);
     log_->set_pattern("[%H:%M:%S][%^%L%$] %v");
 }
 
