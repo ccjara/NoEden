@@ -6,7 +6,7 @@ void MemorySink::sink_it_(const spdlog::details::log_msg& msg) {
         logs.pop_front();
     }
     logs.emplace_back(LogEntry {
-        static_cast<LogEntry::LogLevel>(msg.level),
+        static_cast<LogLevel>(msg.level),
         msg.time,
         fmt::format("{:%H:%M:%S}", fmt::localtime(msg.time)),
         std::string(msg.payload.data(), msg.payload.size())

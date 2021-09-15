@@ -4,13 +4,14 @@
 #include <spdlog/sinks/base_sink.h>
 #include "memory_sink.hxx"
 
+enum class LogLevel {
+    Debug = spdlog::level::debug,
+    Info = spdlog::level::info,
+    Warn = spdlog::level::warn,
+    Error = spdlog::level::err,
+};
+
 struct LogEntry {
-    enum class LogLevel {
-        Debug = spdlog::level::debug,
-        Info = spdlog::level::info,
-        Warn = spdlog::level::warn,
-        Error = spdlog::level::err,
-    };
     LogLevel level;
     spdlog::log_clock::time_point time_point;
     std::string time_point_formatted;
@@ -43,6 +44,11 @@ public:
     inline static void error(Args&&... args) {
         log_->error(std::forward<Args>(args)...);
     }
+
+    /**
+     * @brief Sets the current log level. Existing logs will be unaffected.
+     */
+    static void set_level(LogLevel level);
 private:
     /**
      * @brief Library logger this class wraps.
@@ -60,6 +66,11 @@ private:
      * @brief Maximum amount of log entries before evicting the next front entry.
      */
     static u16 max_entries_;
+
+    /**
+     * @brief The current log level.
+     */
+    static LogLevel level_;
 
     /**
      * @brief Clears and resizes the log store to the given size.
