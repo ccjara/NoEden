@@ -2,6 +2,7 @@
 #define JARALYN_LOG_HXX
 
 #include <spdlog/sinks/base_sink.h>
+#include <spdlog/sinks/basic_file_sink.h>
 #include "memory_sink.hxx"
 
 enum class LogLevel {
@@ -18,11 +19,15 @@ struct LogEntry {
     std::string message;
 };
 
+/**
+ * TODO: Not a big fan of all this staticness - use a global pointer instead
+ *       so a cleaner interface can be defined without all the friend classes?
+ */
 class Log {
     friend class LogXray;
     friend class MemorySink;
     friend class GameFactory;
-    using LogPtr = std::shared_ptr<spdlog::logger>;
+    using LogPtr = std::unique_ptr<spdlog::logger>;
     using LogStore = std::deque<LogEntry>;
 public:
     template<typename... Args>
