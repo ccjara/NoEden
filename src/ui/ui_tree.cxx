@@ -8,6 +8,7 @@ void UiTree::reset() {
 void UiTree::clear() {
     nodes_by_id_.clear();
     nodes_.clear();
+    root_ = nullptr;
 }
 
 void UiTree::create_root_node() {
