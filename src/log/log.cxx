@@ -16,7 +16,7 @@ void Log::startup() {
     log_->sinks().push_back(file_sink);
     file_sink->set_pattern("[%H:%M:%S][%L] %v");
 
-    set_level(LogLevel::Info);
+    set_level(LogLevel::Debug);
 }
 
 void Log::set_capacity(u16 new_capacity) {
@@ -45,4 +45,5 @@ void Log::set_level(LogLevel level) {
     for (auto& sink : log_->sinks()) {
         sink->set_level(target_level);
     }
+    log_->set_level(target_level);
 }

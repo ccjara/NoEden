@@ -94,8 +94,6 @@ private:
      */
     void process_os_messages();
 
-    void on_quit(const QuitEvent&);
-    void on_resize(const ResizeEvent&);
     void on_script_loaded(const ScriptLoadedEvent&);
 
     /**

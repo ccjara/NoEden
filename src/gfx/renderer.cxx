@@ -87,6 +87,30 @@ void Renderer::render(const Scene& scene) {
 void Renderer::update_display(const Scene& scene) {
     display_.reset();
 
+    const auto& tiles { scene.read_tiles() };
+    const auto& last_tile_index { display_.cell_count() };
+    const auto scene_dim { tiles.dimensions() };
+    const auto display_dim { display_.dimensions() };
+    const Vec2<u32> tile_render_dim (
+        std::min<u32>(scene_dim.x, display_dim.x),
+        std::min<u32>(scene_dim.y, display_dim.y)
+    );
+
+    for (u32 y = 0; y < tile_render_dim.y; ++y) {
+        for (u32 x = 0; x < tile_render_dim.x; ++x) {
+            const Vec2<u32> tile_pos { x, y };
+            const Tile* tile { tiles.at(tile_pos) };
+            DisplayCell display_info { tile->display_info };
+            if (!tile->revealed) {
+                continue;
+            }
+            if (!tile->visited) {
+                display_info.color = Color::mono(128);
+            }
+            display_.put(display_info, tile_pos);
+        }
+    }
+
     for (const auto& actor : scene.read_actors()) {
         // FIXME -> migrate grid to i32
         const Vec2<u32> pos {
@@ -99,8 +123,7 @@ void Renderer::update_display(const Scene& scene) {
         const auto& display_info { actor->archetype->display_info };
         display_.put(
             DisplayCell(display_info.glyph, display_info.color),
-            pos,
-            fast_grid_access_tag {} // bounds checked above
+            pos
         );
     }
 }
@@ -172,6 +195,7 @@ void Renderer::adjust_display() {
     // resize and notify
     display_.resize(display_size);
     dispatcher_.trigger<DisplayResizedEvent>(display_size);
+    Log::debug("Display resized to {}x{} cells", display_size.x, display_size.y);
 }
 
 SDL_GLContext Renderer::gl_context() const {

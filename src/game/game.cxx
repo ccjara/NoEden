@@ -19,13 +19,12 @@ void Game::start() {
     SDL_GetDisplayBounds(0, &display_bounds);
 
     window_.open(Vec2<u32>{
-        static_cast<u32>(display_bounds.w) / 2,
-        static_cast<u32>(display_bounds.h) / 2
+        static_cast<u32>(static_cast<float>(display_bounds.w) / 1.25f),
+        static_cast<u32>(static_cast<float>(display_bounds.h) / 1.25f)
     }, "Jaralyn");
 
     renderer_.initialize();
 
-    dispatcher_.sink<ResizeEvent>().connect<&Game::on_resize>(this);
     dispatcher_.sink<ScriptLoadedEvent>().connect<&Game::on_script_loaded>(this);
 
     is_running_ = true;
@@ -42,10 +41,11 @@ void Game::process_os_messages() {
             return;
         case SDL_EventType::SDL_WINDOWEVENT:
             if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
-                dispatcher_.trigger<ResizeEvent>(Vec2<u32> {
+                window_.resize(Vec2<u32> {
                     static_cast<u32> (e.window.data1),
                     static_cast<u32> (e.window.data2)
                 });
+                dispatcher_.trigger<ResizeEvent>(window_.size());
             }
             break;
         }
@@ -76,6 +76,9 @@ void Game::run() {
                 actor->ai.visit();
             }
             action_queue_.process();
+
+            // update pov
+            scene_.update_pov(player_controller_.player());
         }
 
         // update engine submodules
@@ -91,10 +94,6 @@ void Game::run() {
 
     window_.close();
     SDL_Quit();
-}
-
-void Game::on_resize(const ResizeEvent& e) {
-    window_.resize(e.size);
 }
 
 void Game::on_script_loaded(const ScriptLoadedEvent& e) {

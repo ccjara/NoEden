@@ -32,6 +32,11 @@ public:
      * May be null if the user did not request any action for this frame.
      */
     Action* pull_player_action();
+
+    /**
+     * @brief Returns the current actor regarded as a player if any.
+     */
+    Actor* player();
 private:
 
     void on_key_press(const KeyDownEvent& e);

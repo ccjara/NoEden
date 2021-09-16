@@ -4,15 +4,6 @@
 #include "../game/config.hxx"
 
 /**
- * @brief Triggered on SDL_QUIT when closing the window
- *
- * This may occur when Alt+F4 is pressed or the X window
- * button is closed.
- */
-struct QuitEvent {
-};
-
-/**
  * @brief Triggered as the user resizes the window.
  */
 struct ResizeEvent {

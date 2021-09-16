@@ -40,3 +40,7 @@ void PlayerController::on_key_press(const KeyDownEvent& e) {
             break;
     }
 }
+
+Actor* PlayerController::player() {
+    return player_;
+}

@@ -2,21 +2,6 @@
 #define JARALYN_GRID_HXX
 
 /**
- * @brief Tag group determining access behavior on the grid
- */
-struct grid_access_tag {};
-
-/**
- * @brief Fast access behavior, no bounds checking, invokes UB when accessing invalid locations
- */
-struct fast_grid_access_tag : grid_access_tag {};
-
-/**
- * @brief Safe access behavior, includes bounds checking and returns fallbacks for invalid locations
- */
-struct safe_grid_access_tag : grid_access_tag {};
-
-/**
  * @brief Generic implementation of a two-dimensional grid
  *
  * Most methods which access specific locations using a templatized `location_type`
@@ -33,11 +18,6 @@ public:
 protected:
     container_type cells_;
     Vec2<u32> dimensions_;
-
-    /**
-     * @brief Fallback during safe-access when accessing an out of bounds location
-     */
-    const cell null_cell_;
 
     /**
      * @brief Helper which guarantees an index location return type
@@ -75,14 +55,14 @@ public:
      *
      * The null cell is returned as an alternative if grid access is out of bounds
      */
-    constexpr explicit Grid(cell &&null_cell) : null_cell_(std::move(null_cell)) {
+    constexpr explicit Grid(cell &&null_cell) {
     }
 
     /**
      * @brief Resets and resizes the grid to the given cell dimensions
      */
     constexpr void resize(const Vec2<u32>& dimensions) {
-        cells_.resize(dimensions.x * dimensions.y, null_cell_);
+        cells_.resize(dimensions.x * dimensions.y);
         dimensions_ = dimensions;
         reset();
     }
@@ -91,7 +71,7 @@ public:
      * @brief Fills all cells in the grid with a copy of the null cell
      */
     constexpr void reset() {
-        std::fill(cells_.begin(), cells_.end(), null_cell_);
+        std::fill(cells_.begin(), cells_.end(), cell{});
     }
 
     /**
@@ -130,7 +110,7 @@ public:
     }
 
     /**
-     * @brief Returns a readonly reference to the cell at the given location.
+     * @brief Returns a reference to the cell at the given location.
      *
      * The location is range checked by default, but you may override this behavior
      * by providing the `fast_grid_access_tag` which places the burden of bounds
@@ -141,14 +121,21 @@ public:
      * null-cell is returned instead.
      */
     template<typename location_type>
-    [[nodiscard]] constexpr const cell& at(location_type location, grid_access_tag = safe_grid_access_tag {}) const {
-        if constexpr (std::is_same_v<grid_access_tag, safe_grid_access_tag>) {
-            if (!in_bounds(location)) {
-                return null_cell_;
-            }
+    [[nodiscard]] constexpr cell* at(location_type location) {
+        if (!in_bounds(location)) {
+            return nullptr;
         }
-        return cells_.at(ensure_index(location));
+        return &cells_[ensure_index(location)];
     }
+
+    template<typename location_type>
+    [[nodiscard]] constexpr const cell* at(location_type location) const {
+        if (!in_bounds(location)) {
+            return nullptr;
+        }
+        return &cells_[ensure_index(location)];
+    }
+
 
     /**
      * @brief Assigns the given cell to the given location
@@ -157,17 +144,15 @@ public:
      * the operation will be ignored.
      */
     template<typename cel, typename location_type>
-    constexpr void put(cel&& c, location_type location, grid_access_tag = safe_grid_access_tag {}) {
-        if constexpr (std::is_same_v<grid_access_tag, safe_grid_access_tag>) {
-            if (!in_bounds(location)) {
-                const auto coord { ensure_coordinates(location) };
+    constexpr void put(cel&& c, location_type location) {
+        if (!in_bounds(location)) {
+            const auto coord { ensure_coordinates(location) };
 
-                Log::error(
-                    "Placement at {}, {}, not within bounds ({}, {})",
-                    coord.x, coord.y, dimensions_.x, dimensions_.y
-                )
-                return;
-            }
+            Log::error(
+                "Placement at {}, {}, not within bounds ({}, {})",
+                coord.x, coord.y, dimensions_.x, dimensions_.y
+            );
+            return;
         }
         cells_[ensure_index(location)] = std::forward<cel>(c);
     }
@@ -212,12 +197,7 @@ public:
      *
      * This does *not* verify the resulting coordinates.
      */
-    [[nodiscard]] constexpr Vec2<u32> to_coordinates(size_t index, grid_access_tag = fast_grid_access_tag {}) const {
-        if constexpr (std::is_same_v<grid_access_tag, safe_grid_access_tag>) {
-            if (!dimensions_.x) {
-                return { 0, 0 };
-            }
-        }
+    [[nodiscard]] constexpr Vec2<u32> to_coordinates(size_t index) const {
         return Vec2<u32> {
             static_cast<u32> (index) % dimensions_.x,
             static_cast<u32> (index) / dimensions_.x

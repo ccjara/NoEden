@@ -24,6 +24,17 @@ add_executable(
     "game/platform_event.hxx"
     "game/window.cxx"
 
+    "gfx/display_cell.hxx"
+    "gfx/color.hxx"
+    "gfx/display.cxx"
+    "gfx/gfx_event.hxx"
+    "gfx/renderer.cxx"
+    "gfx/shader.cxx"
+    "gfx/surface.cxx"
+    "gfx/text_shader.cxx"
+    "gfx/texture.cxx"
+    "gfx/ui_renderer.cxx"
+
     "grid.hxx"
 
     "log/log.cxx"
@@ -34,16 +45,6 @@ add_executable(
     "math/bresenham.hxx"
     "math/rect.hxx"
     "math/vec2.hxx"
-
-    "gfx/color.hxx"
-    "gfx/display.cxx"
-    "gfx/gfx_event.hxx"
-    "gfx/renderer.cxx"
-    "gfx/shader.cxx"
-    "gfx/surface.cxx"
-    "gfx/text_shader.cxx"
-    "gfx/texture.cxx"
-    "gfx/ui_renderer.cxx"
 
     "ui/ui.cxx"
     "ui/ui_node.cxx"
@@ -58,8 +59,10 @@ add_executable(
     "input/mouse_button.hxx"
     "input/mouse_state.cxx"
 
-    "scene/scene.hxx"
+    "scene/scene.cxx"
     "scene/scene_events.hxx"
+    "scene/tile.cxx"
+    "scene/tile_builder.cxx"
 
     "scripts/api/api_registrar.cxx"
     "scripts/api/lua_api.hxx"
