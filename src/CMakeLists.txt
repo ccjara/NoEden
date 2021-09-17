@@ -59,6 +59,7 @@ add_executable(
     "input/mouse_button.hxx"
     "input/mouse_state.cxx"
 
+    "scene/fov.cxx"
     "scene/scene.cxx"
     "scene/scene_events.hxx"
     "scene/tile.cxx"

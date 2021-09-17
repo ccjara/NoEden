@@ -12,7 +12,7 @@ void SceneXray::update() {
     if (!scene_) {
         return;
     }
-    ImGui::Begin("Entities");
+    ImGui::Begin("Scene");
 
     for (auto& actor : scene_->actors()) {
         ImGui::Text("[%i] %s", actor->id, actor->archetype->name.c_str());

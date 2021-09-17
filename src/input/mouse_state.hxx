@@ -8,6 +8,8 @@
  */
 class MouseState {
 public:
+    MouseState();
+
     Vec2<i32> position() const;
 
     i32 x() const;

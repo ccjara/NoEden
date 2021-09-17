@@ -4,6 +4,7 @@
 #include "../actor/actor.hxx"
 #include "../grid.hxx"
 #include "tile_builder.hxx"
+#include "fov.hxx"
 
 /**
  * @brief Contains and manages actors.

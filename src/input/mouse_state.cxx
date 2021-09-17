@@ -1,5 +1,9 @@
 #include "mouse_state.hxx"
 
+MouseState::MouseState() {
+    std::fill(button_state_.begin(), button_state_.end(), false);
+}
+
 Vec2<i32> MouseState::position() const {
     return position_;
 }
