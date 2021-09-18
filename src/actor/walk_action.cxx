@@ -18,7 +18,10 @@ bool WalkAction::perform() {
         return false;
     }
 
-    // todo: check for collisions on the way etc...
+    const Vec2<u32> tile_dest = destination;
+    if (scene->read_tiles().at(tile_dest)->solid) {
+        return false;
+    }
 
     actor->position = destination;
 

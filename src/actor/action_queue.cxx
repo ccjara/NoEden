@@ -1,5 +1,8 @@
 #include "action_queue.hxx"
 
+ActionQueue::ActionQueue(Scene& scene) : scene_ { scene } {
+}
+
 void ActionQueue::process() {
     sort_by_speed();
     for (auto& action : actions_) {

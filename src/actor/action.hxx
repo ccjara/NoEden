@@ -2,6 +2,7 @@
 #define JARALYN_ACTION_HXX
 
 #include "actor.hxx"
+#include "../scene/scene.hxx"
 
 /**
  * @brief Base class for an action any controller may produce for an actor.
@@ -23,7 +24,17 @@ struct Action {
      */
     virtual u32 base_cost() const = 0;
 
+    /**
+     * @brief Points to the actor performing this action.
+     *
+     * Injected by the ActionQueue
+     */
     Actor* actor { nullptr };
+
+    /**
+     * @brief Points to the scene where this action will be on
+     */
+    Scene* scene { nullptr };
 
     /**
      * @brief Speed at which this action performs.

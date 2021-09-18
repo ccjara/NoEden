@@ -6,7 +6,8 @@ Game::Game() :
     ui_ { dispatcher_ },
     player_controller_ { action_queue_, dispatcher_ },
     scripting_ { dispatcher_ },
-    xray_ { window_, dispatcher_ } {
+    xray_ { window_, dispatcher_ },
+    action_queue_ { scene_ } {
 }
 
 void Game::start() {
@@ -66,6 +67,28 @@ void Game::run() {
             break;
         }
 
+        if (input_.state().is_mouse_pressed(MouseButton::Left)) {
+            const auto mp = input_.state().mouse_position();
+            const Vec2<u32> tp = { mp.x / 16, mp.y / 28 };
+
+            if (scene_.tiles().at(tp)) {
+                auto w = TileBuilder::wall();
+                w.revealed = true;
+                scene_.tiles().put(w, tp);
+                scene_.update_fov(player_controller_.player());
+            }
+        } else if (input_.state().is_mouse_pressed(MouseButton::Right)) {
+            const auto mp = input_.state().mouse_position();
+            const Vec2<u32> tp = { mp.x / 16, mp.y / 28 };
+
+            if (scene_.tiles().at(tp)) {
+                auto f = TileBuilder::floor();
+                f.revealed = true;
+                scene_.tiles().put(f, tp);
+                scene_.update_fov(player_controller_.player());
+            }
+        }
+
         // world clock advances upon player commands
         if (auto player_action = player_controller_.pull_player_action()) {
             for (auto& actor : scene_.actors()) {
@@ -78,7 +101,7 @@ void Game::run() {
             action_queue_.process();
 
             // update pov
-            scene_.update_pov(player_controller_.player());
+            scene_.update_fov(player_controller_.player());
         }
 
         // update engine submodules

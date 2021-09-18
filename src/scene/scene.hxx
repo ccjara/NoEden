@@ -46,7 +46,7 @@ public:
      */
     const Grid<Tile>& read_tiles() const;
 
-    void update_pov(Actor* player);
+    void update_fov(Actor* player);
 private:
     ActorContainer actors_;
     std::unordered_map<u64, Actor*> actors_by_id_;

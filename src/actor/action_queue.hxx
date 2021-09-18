@@ -3,6 +3,7 @@
 
 #include "action.hxx"
 #include "actor.hxx"
+#include "../scene/scene.hxx"
 
 /**
  * @brief Stores and processes actions created by the AI.
@@ -11,6 +12,8 @@ class ActionQueue {
     using ActionPtr = std::unique_ptr<Action>;
     using ActionContainer = std::vector<ActionPtr>;
 public:
+    explicit ActionQueue(Scene& scene);
+
     /**
      * @brief Constructs an action in place inside the action queue.
      * 
@@ -28,6 +31,7 @@ public:
             new A(std::forward<ActorArgs>(args)...)
         ).get();
 
+        action.scene = &scene_;
         action.actor = actor;
         action.cost = action.speed * action.base_cost();
         return action;
@@ -48,6 +52,7 @@ private:
     void sort_by_speed();
 
     ActionContainer actions_;
+    Scene& scene_;
 };
 
 #endif
