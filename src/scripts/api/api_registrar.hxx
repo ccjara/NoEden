@@ -14,7 +14,7 @@ public:
      * @see LuaApi
      */
     template<typename Api, typename... ApiArgs>
-    void add_api(ApiArgs&... api_args);
+    void add_api(ApiArgs&&... api_args);
 private:
     entt::dispatcher& dispatcher_;
     std::vector<std::unique_ptr<LuaApi>> apis_;
@@ -23,7 +23,7 @@ private:
 };
 
 template<typename Api, typename... ApiArgs>
-void ApiRegistrar::add_api(ApiArgs&... api_args) {
+void ApiRegistrar::add_api(ApiArgs&&... api_args) {
     auto& api {
         apis_.emplace_back(new Api(std::forward<ApiArgs>(api_args)...))
     };
