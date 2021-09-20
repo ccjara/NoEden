@@ -16,6 +16,8 @@ void Display::text(std::string_view t, Vec2<u32> position, Vec2<u32> clamp) {
     const auto origin { position };
     const size_t text_length { t.length() };
 
+    // REFACTOR!
+
     const auto needs_break = [&](size_t i) -> bool {
         auto x { position.x };
 
@@ -52,6 +54,8 @@ void Display::text(std::string_view t, Vec2<u32> position, Vec2<u32> clamp) {
         return true;
     };
 
+    bool immediate_break = false;
+
     for (size_t i { 0 }; i < text_length; ++i) {
         if (t[i] == CONTROL_CHAR) {
             switch (t[i + 1]) {
@@ -85,7 +89,7 @@ void Display::text(std::string_view t, Vec2<u32> position, Vec2<u32> clamp) {
                     // only inc by one as jumping to break_line only sets up the
                     // line break and then immediately continues the loop
                     ++i;
-                    goto break_line;
+                    immediate_break = true;
                 case CONTROL_CHAR:
                     ++i;
                     break;
@@ -94,6 +98,22 @@ void Display::text(std::string_view t, Vec2<u32> position, Vec2<u32> clamp) {
                     break;
             }
         }
+
+        if (immediate_break) {
+            if (position.y == limit.y) {
+                break;
+            }
+            position.x = origin.x;
+            ++position.y;
+
+            if (i + 1 < text_length && t[i + 1] == ' ') {
+                // skip immediate space at new line
+                ++i;
+                continue;
+            }
+            return;
+        }
+
         const char c { t[i] };
         auto& cell { cells_.at(to_index(position)) };
         bool is_last_char_of_line { position.x == limit.x };
@@ -113,7 +133,6 @@ void Display::text(std::string_view t, Vec2<u32> position, Vec2<u32> clamp) {
         }
 
         if (is_last_char_of_line) {
-break_line:
             if (position.y == limit.y) {
                 break;
             }

@@ -18,6 +18,8 @@ class AiNode {
 public:
     AiNode* parent_ { this };
 
+    virtual ~AiNode() = default;
+
     /**
      * @brief Visits and runs a node. The behavior is implementation defined.
      */

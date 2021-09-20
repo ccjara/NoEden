@@ -4,12 +4,6 @@
 #include "lua_api.hxx"
 #include "../../scene/scene.hxx"
 
-/*
-FIX CRASH ON EXIT
-Improve lua error handling (probably a rare opportunity to use a global static for this one)
-    that does nothing but dispatch a LuaErrorEvent so the xray can pick it up
-*/
-
 class SceneApi final : public LuaApi {
 public:
     SceneApi(Scene& scene);

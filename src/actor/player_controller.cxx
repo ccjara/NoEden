@@ -38,6 +38,8 @@ void PlayerController::on_key_press(const KeyDownEvent& e) {
         case Key::D:
             walk_relative(Vec2<i32> { 1, 0 });
             break;
+        default:
+            break;
     }
 }
 

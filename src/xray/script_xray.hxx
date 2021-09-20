@@ -3,7 +3,7 @@
 
 #include "xray_interface.hxx"
 #include "xray_style.hxx"
-#include "../scripts/Scripting.hxx"
+#include "../scripts/scripting.hxx"
 
 class ScriptXray : public IXray {
 public:

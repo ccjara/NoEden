@@ -9,6 +9,8 @@
 class LuaApi {
     friend class ApiRegistrar;
 public:
+    virtual ~LuaApi() = default;
+
     /**
      * @brief Called for each loaded script.
      * 
