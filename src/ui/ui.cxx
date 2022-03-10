@@ -1,9 +1,9 @@
 #include "ui.hxx"
 
-Ui::Ui(entt::dispatcher& dispatcher) :
-    dispatcher_ { dispatcher } {
-    dispatcher_.sink<DisplayResizedEvent>().connect<&Ui::on_display_resized>(this);
-    dispatcher_.sink<ScriptResetEvent>().connect<&Ui::on_script_reset>(this);
+Ui::Ui(EventManager& dispatcher) :
+    events_ { dispatcher } {
+    events_.on<DisplayResizedEvent>(this, &Ui::on_display_resized);
+    events_.on<ScriptResetEvent>(this, &Ui::on_script_reset);
 }
 
 void Ui::update() {
@@ -20,14 +20,16 @@ void Ui::shutdown() {
     ui_tree_.clear();
 }
 
-void Ui::on_display_resized(const DisplayResizedEvent& e) {
+bool Ui::on_display_resized(DisplayResizedEvent& e) {
     if (auto root = ui_tree_.root()) {
         root->resize(e.size);
     }
+    return false;
 }
 
-void Ui::on_script_reset(const ScriptResetEvent& e) {
+bool Ui::on_script_reset(ScriptResetEvent& e) {
     ui_tree_.reset();
+    return false;
 }
 
 UiTree& Ui::ui_tree() {

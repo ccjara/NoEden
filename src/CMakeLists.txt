@@ -18,6 +18,8 @@ add_executable(
     "ai/ai_node.hxx"
     "ai/ai_walk.hxx"
 
+    "events/event_manager.hxx"
+
     "game/config.hxx"
     "game/game.cxx"
     "game/game_factory.cxx"

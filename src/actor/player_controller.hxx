@@ -15,7 +15,7 @@
  */
 class PlayerController {
 public:
-    explicit PlayerController(ActionQueue& queue, entt::dispatcher& dispatcher);
+    explicit PlayerController(ActionQueue& queue, EventManager& events);
 
     /**
      * @brief Declares the given actor as the new player to control.
@@ -39,12 +39,12 @@ public:
     Actor* player();
 private:
 
-    void on_key_press(const KeyDownEvent& e);
+    bool on_key_press(KeyDownEvent& e);
 
     Actor* player_;
     Action* player_action_ { nullptr };
     ActionQueue& queue_;
-    entt::dispatcher& dispatcher_;
+    EventManager& events_;
 };
 
 #endif

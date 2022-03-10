@@ -1,8 +1,8 @@
 #include "xray.hxx"
 
-Xray::Xray(Window& window, entt::dispatcher& dispatcher) :
+Xray::Xray(Window& window, EventManager& events) :
     window_ { window },
-    dispatcher_ { dispatcher } {
+    events_ { events } {
 }
 
 void Xray::startup(SDL_GLContext context) {
@@ -11,7 +11,11 @@ void Xray::startup(SDL_GLContext context) {
         Log::error("Could not create imgui context");
         return;
     }
-    dispatcher_.sink<PostRenderEvent>().connect<&Xray::on_post_render>(this);
+    events_.on<PostRenderEvent>(this, &Xray::on_post_render);
+    events_.on<MouseDownEvent>(this, &Xray::on_mouse_down, 10000);
+    events_.on<MouseUpEvent>(this, &Xray::on_mouse_up, 10000);
+    events_.on<KeyDownEvent>(this, &Xray::on_key_down, 10000);
+    events_.on<KeyUpEvent>(this, &Xray::on_key_up, 10000);
 
     ImGui_ImplSDL2_InitForOpenGL(window_, context);
     ImGui_ImplOpenGL3_Init();
@@ -29,7 +33,23 @@ void Xray::shutdown() {
     }
 }
 
-void Xray::on_post_render(const PostRenderEvent&) {
+bool Xray::on_mouse_down(MouseDownEvent &e) {
+    return ImGui::GetIO().WantCaptureMouse;
+}
+
+bool Xray::on_mouse_up(MouseUpEvent &e) {
+    return ImGui::GetIO().WantCaptureMouse;
+}
+
+bool Xray::on_key_down(KeyDownEvent &e) {
+    return ImGui::GetIO().WantCaptureKeyboard;
+}
+
+bool Xray::on_key_up(KeyUpEvent &e) {
+    return ImGui::GetIO().WantCaptureKeyboard;
+}
+
+bool Xray::on_post_render(PostRenderEvent&) {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window_.handle());
     ImGui::NewFrame();
@@ -64,14 +84,5 @@ void Xray::on_post_render(const PostRenderEvent&) {
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    const bool any_active { ImGui::IsAnyItemActive() };
-
-    if (focused_ && !any_active) {
-        dispatcher_.trigger<XrayFocusEvent>(false);
-        focused_ = false;
-    } else if (!focused_ && any_active) {
-        dispatcher_.trigger<XrayFocusEvent>(true);
-        focused_ = true;
-    }
+    return false;
 }

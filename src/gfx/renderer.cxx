@@ -1,11 +1,11 @@
 #include "renderer.hxx"
 
-Renderer::Renderer(Window& window, entt::dispatcher& dispatcher) : 
-    dispatcher_ { dispatcher },
+Renderer::Renderer(Window& window, EventManager& dispatcher) :
+    events_ { dispatcher },
     window_ { window } {
 
-    dispatcher_.sink<ResizeEvent>().connect<&Renderer::on_resize>(this);
-    dispatcher_.sink<ConfigUpdatedEvent>().connect<&Renderer::on_config_updated>(this);
+    events_.on<ResizeEvent>(this, &Renderer::on_resize);
+    events_.on<ConfigUpdatedEvent>(this, &Renderer::on_config_updated);
 }
 
 Renderer::~Renderer() {
@@ -79,7 +79,7 @@ void Renderer::render(const Scene& scene) {
     }
     glDrawArrays(GL_POINTS, 0, display_.cell_count());
 
-    dispatcher_.trigger<PostRenderEvent>();
+    events_.trigger<PostRenderEvent>();
 
     SDL_GL_SwapWindow(window_);
 }
@@ -159,9 +159,10 @@ void Renderer::reset() {
     }
 }
 
-void Renderer::on_resize(const ResizeEvent& e) {
+bool Renderer::on_resize(ResizeEvent& e) {
     set_viewport(e.size);
     adjust_display();
+    return false;
 }
 
 void Renderer::configure(const Config& cfg) {
@@ -180,8 +181,9 @@ void Renderer::configure(const Config& cfg) {
     adjust_display();
 }
 
-void Renderer::on_config_updated(const ConfigUpdatedEvent& e) {
+bool Renderer::on_config_updated(ConfigUpdatedEvent& e) {
     configure(e.next);
+    return false;
 }
 
 void Renderer::adjust_display() {
@@ -194,7 +196,7 @@ void Renderer::adjust_display() {
     };
     // resize and notify
     display_.resize(display_size);
-    dispatcher_.trigger<DisplayResizedEvent>(display_size);
+    events_.trigger<DisplayResizedEvent>(display_size);
     Log::debug("Display resized to {}x{} cells", display_size.x, display_size.y);
 }
 

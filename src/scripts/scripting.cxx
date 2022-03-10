@@ -1,12 +1,12 @@
 #include "scripting.hxx"
 
-Scripting::Scripting(entt::dispatcher& dispatcher) :
-    dispatcher_ { dispatcher },
-    api_registrar_ { dispatcher } {
+Scripting::Scripting(EventManager& events) :
+    events_ { events },
+    api_registrar_ { events } {
 }
 
 void Scripting::startup() {
-    dispatcher_.sink<KeyDownEvent>().connect<&Scripting::on_key_down>(this);
+    events_.on<KeyDownEvent>(this, &Scripting::on_key_down);
     load_from_path(Scripting::default_script_path);
 }
 
@@ -16,15 +16,17 @@ void Scripting::shutdown() {
 }
 
 void Scripting::reset() {
-    dispatcher_.trigger<ScriptResetEvent>();
+    events_.trigger<ScriptResetEvent>();
     listeners_.clear();
     scripts_.clear();
 }
 
-void Scripting::on_key_down(const KeyDownEvent& e) {
+bool Scripting::on_key_down(KeyDownEvent& e) {
     if (e.key == Key::F5) {
         load_from_path(default_script_path);
+        return true;
     }
+    return false;
 }
 
 void Scripting::load(Script& script) {
@@ -39,7 +41,7 @@ void Scripting::load(Script& script) {
     setup_script_env(script);
 
     // allow other parts of the system to contribute to the scripting env
-    dispatcher_.trigger<ScriptLoadedEvent>(&script);
+    events_.trigger<ScriptLoadedEvent>(&script);
     Log::info("Script #{}: {} has been loaded", script.id, script.name());
     script.run();
     // execute the on_load function, passing the script env proxy

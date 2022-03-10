@@ -7,12 +7,12 @@
 
 class UiXray : public IXray {
 public:
-    explicit UiXray(entt::dispatcher& dispatcher, Ui& ui);
+    explicit UiXray(EventManager& dispatcher, Ui& ui);
 
     void update() override;
 private:
     Ui& ui_;
-    entt::dispatcher& dispatcher_;
+    EventManager& events_;
 };
 
 #endif

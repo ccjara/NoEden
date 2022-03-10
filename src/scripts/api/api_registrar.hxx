@@ -6,7 +6,7 @@
 
 class ApiRegistrar {
 public:
-    explicit ApiRegistrar(entt::dispatcher& dispatcher);
+    explicit ApiRegistrar(EventManager& events);
 
     /**
      * @brief Constructs a lua api fragment in place
@@ -16,10 +16,10 @@ public:
     template<typename Api, typename... ApiArgs>
     void add_api(ApiArgs&&... api_args);
 private:
-    entt::dispatcher& dispatcher_;
+    EventManager& events_;
     std::vector<std::unique_ptr<LuaApi>> apis_;
 
-    void on_script_loaded(const ScriptLoadedEvent& e);
+    bool on_script_loaded(ScriptLoadedEvent& e);
 };
 
 template<typename Api, typename... ApiArgs>
@@ -27,7 +27,7 @@ void ApiRegistrar::add_api(ApiArgs&&... api_args) {
     auto& api {
         apis_.emplace_back(new Api(std::forward<ApiArgs>(api_args)...))
     };
-    api->dispatcher_ = &dispatcher_;
+    api->events_ = &events_;
 }
 
 #endif

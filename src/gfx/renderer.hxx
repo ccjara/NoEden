@@ -15,7 +15,7 @@
  */
 class Renderer {
 public:
-    Renderer(Window& window, entt::dispatcher& dispatcher);
+    Renderer(Window& window, EventManager& dispatcher);
     ~Renderer();
 
     Renderer(const Renderer&) = delete;
@@ -62,7 +62,7 @@ public:
 private:
     Window& window_;
 
-    entt::dispatcher& dispatcher_;
+    EventManager& events_;
     SDL_GLContext gl_context_ { nullptr };
     Config cfg_;
     Texture text_texture_;
@@ -79,8 +79,8 @@ private:
 
     void update_display(const Scene& scene);
 
-    void on_resize(const ResizeEvent&);
-    void on_config_updated(const ConfigUpdatedEvent&);
+    bool on_resize(ResizeEvent&);
+    bool on_config_updated(ConfigUpdatedEvent&);
 
     void load_text_texture(const fs::path&) const;
 

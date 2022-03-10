@@ -3,12 +3,13 @@
 
 #include "../gfx/gfx_event.hxx"
 #include "../game/window.hxx"
+#include "../input/input_event.hxx"
 #include "xray_interface.hxx"
 #include "xray_event.hxx"
 
 class Xray {
 public:
-    Xray(Window& window, entt::dispatcher& dispatcher);
+    Xray(Window& window, EventManager& events);
 
     /**
      * @brief Adds an xray implementation to the xray container
@@ -21,12 +22,14 @@ public:
     void startup(SDL_GLContext context);
     void shutdown();
 private:
-    bool focused_ { false };
-
     Window& window_;
-    entt::dispatcher& dispatcher_;
+    EventManager& events_;
 
-    void on_post_render(const PostRenderEvent& e);
+    bool on_post_render(PostRenderEvent& e);
+    bool on_mouse_down(MouseDownEvent& e);
+    bool on_mouse_up(MouseUpEvent& e);
+    bool on_key_down(KeyDownEvent& e);
+    bool on_key_up(KeyUpEvent& e);
 
     ImGuiContext* imgui_context_ { nullptr };
 

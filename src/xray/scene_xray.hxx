@@ -10,14 +10,14 @@
 
 class SceneXray : public IXray {
 public:
-    explicit SceneXray(entt::dispatcher& dispatcher);
+    explicit SceneXray(EventManager& dispatcher);
 
     void update() override;
 private:
-    entt::dispatcher& dispatcher_;
+    EventManager& events_;
     Scene* scene_ { nullptr };
 
-    void on_scene_loaded(const SceneLoadedEvent& e);
+    bool on_scene_loaded(SceneLoadedEvent& e);
 };
 
 #endif

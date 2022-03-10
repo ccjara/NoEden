@@ -1,12 +1,12 @@
 #include "game.hxx"
 
 Game::Game() :
-    input_ { dispatcher_ },
-    renderer_ { window_, dispatcher_ },
-    ui_ { dispatcher_ },
-    player_controller_ { action_queue_, dispatcher_ },
-    scripting_ { dispatcher_ },
-    xray_ { window_, dispatcher_ },
+    input_ { events_ },
+    renderer_ { window_, events_ },
+    ui_ { events_ },
+    player_controller_ { action_queue_, events_ },
+    scripting_ { events_ },
+    xray_ { window_, events_ },
     action_queue_ { scene_ } {
 }
 
@@ -26,7 +26,8 @@ void Game::start() {
 
     renderer_.initialize();
 
-    dispatcher_.sink<ScriptLoadedEvent>().connect<&Game::on_script_loaded>(this);
+    events_.on<ScriptLoadedEvent>(this, &Game::on_script_loaded);
+    events_.on<MouseDownEvent>(this, &Game::on_mouse_down, -10000);
 
     is_running_ = true;
 }
@@ -46,7 +47,7 @@ void Game::process_os_messages() {
                     static_cast<u32> (e.window.data1),
                     static_cast<u32> (e.window.data2)
                 });
-                dispatcher_.trigger<ResizeEvent>(window_.size());
+                events_.trigger<ResizeEvent>(window_.size());
             }
             break;
         }
@@ -59,34 +60,12 @@ void Game::run() {
     scripting_.startup();
     xray_.startup(renderer_.gl_context());
 
-    dispatcher_.trigger<SceneLoadedEvent>(&scene_);
+    events_.trigger<SceneLoadedEvent>(&scene_);
 
     while (true) {
         process_os_messages();
         if (!is_running_) {
             break;
-        }
-
-        if (input_.state().is_mouse_pressed(MouseButton::Left)) {
-            const auto mp = input_.state().mouse_position();
-            const Vec2<u32> tp = { mp.x / 16, mp.y / 28 };
-
-            if (scene_.tiles().at(tp)) {
-                auto w = TileBuilder::wall();
-                w.revealed = true;
-                scene_.tiles().put(w, tp);
-                scene_.update_fov(player_controller_.player());
-            }
-        } else if (input_.state().is_mouse_pressed(MouseButton::Right)) {
-            const auto mp = input_.state().mouse_position();
-            const Vec2<u32> tp = { mp.x / 16, mp.y / 28 };
-
-            if (scene_.tiles().at(tp)) {
-                auto f = TileBuilder::floor();
-                f.revealed = true;
-                scene_.tiles().put(f, tp);
-                scene_.update_fov(player_controller_.player());
-            }
         }
 
         // world clock advances upon player commands
@@ -119,13 +98,14 @@ void Game::run() {
     SDL_Quit();
 }
 
-void Game::on_script_loaded(const ScriptLoadedEvent& e) {
+bool Game::on_script_loaded(ScriptLoadedEvent& e) {
     luabridge::getGlobalNamespace(e.script->lua_state())
         .beginClass<Game>("Env")
             .addFunction("configure", &Game::configure_from_lua)
         .endClass();
 
     luabridge::setGlobal(e.script->lua_state(), this, "env");
+    return false;
 }
 
 void Game::configure_from_lua(luabridge::LuaRef cfg) {
@@ -167,7 +147,7 @@ void Game::configure_from_lua(luabridge::LuaRef cfg) {
     } else {
         report("Expected gfx:glyph_size to be a table");
     }
-    dispatcher_.trigger(ConfigUpdatedEvent(std::move(cfg_prev), config_));
+    events_.trigger<ConfigUpdatedEvent>(std::move(cfg_prev), config_);
 }
 
 bool Game::running() const {

@@ -10,7 +10,7 @@
  */
 class Input {
 public:
-    explicit Input(entt::dispatcher& dispatcher);
+    explicit Input(EventManager& events);
 
     /**
      * @brief Processes the platform specific message queue for user input.
@@ -26,20 +26,7 @@ public:
     [[nodiscard]] const InputState& state() const;
 private:
     InputState state_;
-    entt::dispatcher& dispatcher_;
-
-    /**
-     * @brief If true, no input will be forwarded the game.
-     *
-     * This is required by the xray (engine ui) otherwise typing in inputs
-     * will also cause the player to move for instance.
-     */
-    bool input_blocked_ { false };
-
-    /**
-     * @brief Updates the input_blocked_ property based on engine ui focus.
-     */
-    void on_xray_focus(const XrayFocusEvent& e);
+    EventManager& events_;
 };
 
 #endif

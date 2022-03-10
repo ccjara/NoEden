@@ -1,8 +1,8 @@
 #include "ui_xray.hxx"
 
-UiXray::UiXray(entt::dispatcher& dispatcher, Ui& ui) :
+UiXray::UiXray(EventManager& dispatcher, Ui& ui) :
     ui_ { ui },
-    dispatcher_ { dispatcher } {
+    events_ { dispatcher } {
 }
 
 /**

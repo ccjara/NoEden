@@ -15,7 +15,7 @@ namespace lua_event { // FIXME: luabridge does not support enums
 
 class Scripting {
 public:
-    Scripting(entt::dispatcher& dispatcher);
+    Scripting(EventManager& events);
 
     constexpr static const char* default_script_path {
 #ifdef NDEBUG
@@ -57,7 +57,7 @@ public:
     void startup();
     void shutdown();
 private:
-    entt::dispatcher& dispatcher_;
+    EventManager& events_;
     ApiRegistrar api_registrar_;
 
     std::unordered_map<u64, std::unique_ptr<Script>> scripts_;
@@ -75,7 +75,7 @@ private:
      */
     bool register_lua_callback(lua_event_type event_type, luabridge::LuaRef ref);
 
-    void on_key_down(const KeyDownEvent& e);
+    bool on_key_down(KeyDownEvent& e);
 
     /**
      * @brief Calls all registered lua callbacks for a specific event type.

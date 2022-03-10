@@ -1,11 +1,12 @@
 #include "scene_xray.hxx"
 
-SceneXray::SceneXray(entt::dispatcher& dispatcher) : dispatcher_ { dispatcher } {
-    dispatcher_.sink<SceneLoadedEvent>().connect<&SceneXray::on_scene_loaded>(this);
+SceneXray::SceneXray(EventManager& dispatcher) : events_ { dispatcher } {
+    events_.on<SceneLoadedEvent>(this, &SceneXray::on_scene_loaded);
 }
 
-void SceneXray::on_scene_loaded(const SceneLoadedEvent& e) {
+bool SceneXray::on_scene_loaded(SceneLoadedEvent& e) {
     scene_ = e.scene;
+    return false;
 }
 
 void SceneXray::update() {

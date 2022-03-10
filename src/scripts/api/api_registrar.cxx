@@ -1,12 +1,13 @@
 #include "api_registrar.hxx"
 
-ApiRegistrar::ApiRegistrar(entt::dispatcher& dispatcher) : 
-    dispatcher_ { dispatcher } {
-    dispatcher_.sink<ScriptLoadedEvent>().connect<&ApiRegistrar::on_script_loaded>(this);
+ApiRegistrar::ApiRegistrar(EventManager& events) :
+    events_ { events } {
+    events_.on<ScriptLoadedEvent>(this, &ApiRegistrar::on_script_loaded);
 }
 
-void ApiRegistrar::on_script_loaded(const ScriptLoadedEvent& e) {
+bool ApiRegistrar::on_script_loaded(ScriptLoadedEvent& e) {
     for (auto& api : apis_) {
         api->on_register(e.script);
     }
+    return false;
 }

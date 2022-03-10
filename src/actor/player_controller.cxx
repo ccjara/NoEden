@@ -2,9 +2,9 @@
 
 PlayerController::PlayerController(
     ActionQueue& queue,
-    entt::dispatcher& dispatcher
-) : queue_ { queue }, dispatcher_ { dispatcher } {
-    dispatcher_.sink<KeyDownEvent>().connect<&PlayerController::on_key_press>(this);
+    EventManager& events
+) : queue_ { queue }, events_ { events } {
+    events.on<KeyDownEvent>(this, &PlayerController::on_key_press);
 }
 
 void PlayerController::control(Actor* actor) {
@@ -15,9 +15,9 @@ Action* PlayerController::pull_player_action() {
     return std::exchange(player_action_, nullptr);
 }
 
-void PlayerController::on_key_press(const KeyDownEvent& e) {
+bool PlayerController::on_key_press(KeyDownEvent& e) {
     if (!player_) {
-        return;
+        return false;
     }
     auto walk_relative = [&](Vec2<i32> direction) {
         player_action_ = &queue_.push<WalkAction>(
@@ -28,18 +28,18 @@ void PlayerController::on_key_press(const KeyDownEvent& e) {
     switch (e.key) {
         case Key::W:
             walk_relative(Vec2<i32> { 0, -1 });
-            break;
+            return true;
         case Key::A:
             walk_relative(Vec2<i32> { -1, 0 });
-            break;
+            return true;
         case Key::S:
             walk_relative(Vec2<i32> { 0, 1 });
-            break;
+            return true;
         case Key::D:
             walk_relative(Vec2<i32> { 1, 0 });
-            break;
+            return true;
         default:
-            break;
+            return false;
     }
 }
 

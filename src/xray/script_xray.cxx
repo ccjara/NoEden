@@ -1,17 +1,19 @@
 #include "script_xray.hxx"
 
-ScriptXray::ScriptXray(entt::dispatcher& dispatcher, Scripting& scripts) :
-    dispatcher_ { dispatcher },
+ScriptXray::ScriptXray(EventManager& dispatcher, Scripting& scripts) :
+    events_ { dispatcher },
     scripting_ { scripts } {
-    dispatcher_.sink<ScriptLoadedEvent>().connect<&ScriptXray::on_script_loaded>(this);
-    dispatcher_.sink<ScriptResetEvent>().connect<&ScriptXray::on_script_reset>(this);
+    events_.on<ScriptLoadedEvent>(this, &ScriptXray::on_script_loaded);
+    events_.on<ScriptResetEvent>(this, &ScriptXray::on_script_reset);
 }
 
-void ScriptXray::on_script_loaded(const ScriptLoadedEvent& e) {
+bool ScriptXray::on_script_loaded(ScriptLoadedEvent& e) {
+    return false;
 }
 
-void ScriptXray::on_script_reset(const ScriptResetEvent& e) {
+bool ScriptXray::on_script_reset(ScriptResetEvent& e) {
     selected_script_id_ = std::nullopt;
+    return false;
 }
 
 void ScriptXray::update() {

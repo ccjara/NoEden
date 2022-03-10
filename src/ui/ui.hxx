@@ -7,7 +7,7 @@
 
 class Ui {
 public:
-    explicit Ui(entt::dispatcher& dispatcher);
+    explicit Ui(EventManager& dispatcher);
 
     void startup();
     void shutdown();
@@ -15,11 +15,11 @@ public:
 
     UiTree& ui_tree();
 private:
-    entt::dispatcher& dispatcher_;
+    EventManager& events_;
     UiTree ui_tree_;
 
-    void on_display_resized(const DisplayResizedEvent& e);
-    void on_script_reset(const ScriptResetEvent& e);
+    bool on_display_resized(DisplayResizedEvent& e);
+    bool on_script_reset(ScriptResetEvent& e);
 };
 
 #endif

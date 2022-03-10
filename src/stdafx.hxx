@@ -42,8 +42,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
-#include <entt/entt.hxx>
-
 using u16 = uint16_t;
 using u32 = uint32_t;
 using u64 = uint64_t;
@@ -53,6 +51,7 @@ using i64 = int64_t;
 
 namespace fs = std::filesystem;
 
+#include "events/event_manager.hxx"
 #include "log/log.hxx"
 
 #include "math/vec2.hxx"

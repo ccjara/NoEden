@@ -35,7 +35,7 @@ protected:
     /**
      * @brief Injected by the Scripting class upon creation of an API instance.
      */
-    entt::dispatcher* dispatcher_ { nullptr };
+    EventManager* events_ { nullptr };
 };
 
 #endif
