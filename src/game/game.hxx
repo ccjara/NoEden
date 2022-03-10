@@ -79,7 +79,6 @@ public:
                 scene_.update_fov(player_controller_.player());
             }
         }
-        Log::debug("MOUSE DOWN IN GAME");
         return false;
     }
 private:
