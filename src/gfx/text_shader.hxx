@@ -13,11 +13,12 @@ private:
     GLint u_glyph_size_; // size of an individual character
     GLint u_tex_size_; // size of the bitmap font texture
 
-    Texture* tex_ { nullptr };
+    Texture *tex_{nullptr};
     Vec2<u32> glyph_size_;
     Vec2<u32> resolution_;
 
     void prepare() override;
+
 public:
     TextShader();
 
@@ -29,12 +30,23 @@ public:
     /**
      * @brief Uses the given, loaded texture as part of the shader program
      */
-    void use_texture(Texture* tex);
+    void use_texture(Texture *tex);
 
     /**
      * @brief Configures the render resolution of the shader program
      */
     void use_resolution(Vec2<u32> resolution);
+
+    /**
+     * @brief Readonly accessor of the glyph size in pixels
+     */
+    Vec2<u32> glyph_size() const;
+
+    /**
+     * @brief Readonly accessor of the texture size in pixels
+     */
+    Vec2<u32> texture_size() const;
+
 };
 
 #endif

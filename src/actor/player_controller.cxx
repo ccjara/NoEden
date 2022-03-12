@@ -4,7 +4,7 @@ PlayerController::PlayerController(
     ActionQueue& queue,
     EventManager& events
 ) : queue_ { queue }, events_ { events } {
-    events.on<KeyDownEvent>(this, &PlayerController::on_key_press);
+    events_.on<KeyDownEvent>(this, &PlayerController::on_key_press);
 }
 
 void PlayerController::control(Actor* actor) {

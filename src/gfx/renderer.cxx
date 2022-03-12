@@ -203,3 +203,37 @@ void Renderer::adjust_display() {
 SDL_GLContext Renderer::gl_context() const {
     return gl_context_;
 }
+
+std::array<float, 4> Renderer::calculate_glyph_uv(u32 glyph) const {
+    const Vec2<float> glyph_size = {
+        static_cast<float>(text_shader_->glyph_size().x),
+        static_cast<float>(text_shader_->glyph_size().y)
+    };
+    const Vec2<float> tex_size = {
+        static_cast<float>(text_shader_->texture_size().x),
+        static_cast<float>(text_shader_->texture_size().y)
+    };
+    const int chars_per_row_in_texture = static_cast<i32>(tex_size.x / glyph_size.x);
+
+    const Vec2<float> tex_origin {
+        static_cast<float>(glyph % chars_per_row_in_texture) * glyph_size.x,
+        static_cast<float>(std::floor(glyph / chars_per_row_in_texture)) * glyph_size.y
+    };
+
+    const float u1 = 1.0f / tex_size.x * tex_origin.x;
+    const float u2 = 1.0f / tex_size.x * (tex_origin.x + glyph_size.x);
+    const float v1 = 1.0f / tex_size.y * tex_origin.y;
+    const float v2 = 1.0f / tex_size.y * (tex_origin.y + glyph_size.y);
+
+    return std::array<float, 4> { u1, v1, u2, v2 };
+}
+
+GLuint Renderer::text_texture() const {
+    return text_texture_.id();
+}
+
+float Renderer::glyph_aspect_ratio() const {
+    return static_cast<float>(
+        text_shader_->glyph_size().x
+    ) / text_shader_->glyph_size().y;
+}

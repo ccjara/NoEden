@@ -6,7 +6,7 @@ void GameFactory::run() {
     auto game { std::make_unique<Game>() };
     // xray / engine ui
     game->xray_.add<LogXray>();
-    game->xray_.add<SceneXray>(game->events_);
+    game->xray_.add<SceneXray>(game->events_, game->player_controller_, game->renderer_);
     game->xray_.add<ScriptXray>(game->events_, game->scripting_);
     game->xray_.add<UiXray>(game->events_, game->ui_);
     

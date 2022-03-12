@@ -56,9 +56,26 @@ public:
     void set_scaling(u32 scaling);
 
     /**
+     * @brief Returns the result of dividing the glyph width by its height
+     */
+    [[nodiscard]] float glyph_aspect_ratio() const;
+
+    /**
      * @brief Returns the current gl context
      */
-    SDL_GLContext gl_context() const;
+    [[nodiscard]] SDL_GLContext gl_context() const;
+
+    /**
+     * @brief Returns the current text texture GL id
+     */
+    [[nodiscard]] GLuint text_texture() const;
+
+    /**
+     * @brief Calculates texture coordinates of a glyph for a custom render
+     *
+     * The array will contain [u1, v1, u2, v2] in this order.
+     */
+    [[nodiscard]] std::array<float, 4> calculate_glyph_uv(u32 glyph) const;
 private:
     Window& window_;
 

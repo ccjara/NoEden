@@ -1,7 +1,7 @@
 #include "script_xray.hxx"
 
-ScriptXray::ScriptXray(EventManager& dispatcher, Scripting& scripts) :
-    events_ { dispatcher },
+ScriptXray::ScriptXray(EventManager& events, Scripting& scripts) :
+    events_ { events },
     scripting_ { scripts } {
     events_.on<ScriptLoadedEvent>(this, &ScriptXray::on_script_loaded);
     events_.on<ScriptResetEvent>(this, &ScriptXray::on_script_reset);

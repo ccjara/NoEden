@@ -156,6 +156,18 @@ void TextShader::use_resolution(Vec2<u32> resolution) {
     resolution_ = resolution;
 }
 
+Vec2<u32> TextShader::glyph_size() const {
+    return glyph_size_;
+}
+
+Vec2<u32> TextShader::texture_size() const {
+    if (!tex_) {
+        return Vec2{ 0, 0 };
+    }
+    return tex_->size();
+}
+
+
 void TextShader::prepare() {
     glUniform2ui(u_glyph_size_, glyph_size_.x, glyph_size_.y);
     glUniform2ui(u_resolution_, resolution_.x, resolution_.y);
