@@ -17,25 +17,25 @@ void UiApi::on_register(Script* script) {
                     const auto unsafe_origin { static_cast<AnchorOrigin> (origin) };
 
                     switch (unsafe_origin) {
-                        case AnchorOrigin::center:
-                        case AnchorOrigin::top:
-                        case AnchorOrigin::top_right:
-                        case AnchorOrigin::right:
-                        case AnchorOrigin::bottom_right:
-                        case AnchorOrigin::bottom:
-                        case AnchorOrigin::bottom_left:
-                        case AnchorOrigin::left:
-                        case AnchorOrigin::top_left:
+                        case AnchorOrigin::Center:
+                        case AnchorOrigin::Top:
+                        case AnchorOrigin::TopRight:
+                        case AnchorOrigin::Right:
+                        case AnchorOrigin::BottomRight:
+                        case AnchorOrigin::Bottom:
+                        case AnchorOrigin::BottomLeft:
+                        case AnchorOrigin::Left:
+                        case AnchorOrigin::TopLeft:
                             n->set_anchor_origin(unsafe_origin);
                             return;
                         default:
                             Log::error(
                                 "Unknown anchor origin {}, please use one of "
-                                "the following: AnchorOrigin.top, AnchorOrigin.top_right, "
-                                "AnchorOrigin.right, AnchorOrigin.bottom_right, "
-                                "AnchorOrigin.bottom, AnchorOrigin.bottom_left, "
-                                "AnchorOrigin.left, AnchorOrigin.top_left or "
-                                "AnchorOrigin.center.",
+                                "the following: AnchorOrigin.Top, AnchorOrigin.TopRight, "
+                                "AnchorOrigin.Right, AnchorOrigin.BottomRight, "
+                                "AnchorOrigin.Bottom, AnchorOrigin.BottomLeft, "
+                                "AnchorOrigin.Left, AnchorOrigin.TopLeft or "
+                                "AnchorOrigin.Center.",
                                 origin
                             );
                     }

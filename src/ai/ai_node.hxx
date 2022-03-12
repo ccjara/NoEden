@@ -2,10 +2,10 @@
 #define JARALYN_AI_NODE_HXX
 
 enum class AiNodeState {
-    ready,
-    running,
-    failed,
-    succeeded,
+    Ready,
+    Running,
+    Failed,
+    Succeeded,
 };
 
 /**
@@ -35,7 +35,7 @@ public:
     };
 
     constexpr bool failed() const {
-        return state_ == AiNodeState::failed;
+        return state_ == AiNodeState::Failed;
     }
 protected:
     constexpr AiNodeState mod_state(AiNodeState s) {
@@ -43,7 +43,7 @@ protected:
         return s;
     }
 private:
-    AiNodeState state_ { AiNodeState::ready };
+    AiNodeState state_ { AiNodeState::Ready };
 };
 
 /**
@@ -65,7 +65,7 @@ public:
         while (continuation_iterator != nodes_.end()) {
             const auto child_state { continuation_iterator->ptr->visit() };
 
-            if (child_state == AiNodeState::failed) {
+            if (child_state == AiNodeState::Failed) {
                 // continue iteration, trying the next node available
                 continue;
             } else {
@@ -74,7 +74,7 @@ public:
             }
         }
         // fail as no child node resulted in a non-failure state
-        return mod_state(AiNodeState::failed);
+        return mod_state(AiNodeState::Failed);
     }
 
     /**

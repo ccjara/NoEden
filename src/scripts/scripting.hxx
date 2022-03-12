@@ -137,7 +137,7 @@ void Scripting::load_from_path(path_like base_path) {
             script->path_ = path.string().c_str();
             std::ifstream input { path, std::ios::ate };
             if (input.bad()) {
-                script->fail(ScriptError::bad_script_input);
+                script->fail(ScriptError::BadScriptInput);
             }
             const auto size { input.tellg() };
             script->source_.resize(size);

@@ -54,6 +54,4 @@ private:
     Grid<Tile> tiles_;
 };
 
-// TODO: add some walls and implement shadow casting
-
 #endif

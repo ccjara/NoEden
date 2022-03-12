@@ -5,15 +5,15 @@
  * @brief Affects position of elements, allowing relative positioning
  */
 enum class AnchorOrigin : u32 {
-    top,
-    top_right,
-    right,
-    bottom_right,
-    bottom,
-    bottom_left,
-    left,
-    top_left,
-    center,
+    Top,
+    TopRight,
+    Right,
+    BottomRight,
+    Bottom,
+    BottomLeft,
+    Left,
+    TopLeft,
+    Center,
 };
 
 /**
@@ -165,7 +165,7 @@ protected:
     /**
      * @brief Origin used to calculate an absolute position
      */
-    AnchorOrigin anchor_origin_ = AnchorOrigin::top_left;
+    AnchorOrigin anchor_origin_ = AnchorOrigin::TopLeft;
 
     /**
      * @brief Unique id referencing this node

@@ -2,18 +2,18 @@
 #define JARALYN_SCRIPT_HXX
 
 enum class ScriptStatus {
-    unloaded,
-    loaded,
-    executed,
+    Unloaded,
+    Loaded,
+    Executed,
 };
 
 enum class ScriptError {
-    none,
-    runtime_error,
-    state_alloc_failed,
-    script_path_not_found,
-    bad_script_input,
-    script_corrupted,
+    None,
+    RuntimeError,
+    StateAllocFailed,
+    ScriptPathNotFound,
+    BadScriptInput,
+    ScriptCorrupted,
 };
 
 /**
@@ -26,8 +26,8 @@ private:
 
     std::string name_;
     lua_State* state_ { nullptr };
-    ScriptStatus status_ { ScriptStatus::unloaded };
-    ScriptError error_ { ScriptError::none };
+    ScriptStatus status_ { ScriptStatus::Unloaded };
+    ScriptError error_ { ScriptError::None };
 
     std::string path_;
     std::string source_;
@@ -100,7 +100,7 @@ public:
 
 template<typename t>
 void Script::define_global(std::string_view key, t value) {
-    if (status_ != ScriptStatus::loaded) {
+    if (status_ != ScriptStatus::Loaded) {
         Log::error("Could not set global {} in script {}: script is not loaded", key, name_);
         return;
     }

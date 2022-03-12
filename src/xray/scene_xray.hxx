@@ -5,9 +5,6 @@
 #include "../scene/scene.hxx"
 #include "../scene/scene_events.hxx"
 
-// script xray fixen
-// enum casing vereinheitlichen
-
 class SceneXray : public IXray {
 public:
     explicit SceneXray(EventManager& dispatcher);

@@ -30,12 +30,12 @@ bool Scripting::on_key_down(KeyDownEvent& e) {
 }
 
 void Scripting::load(Script& script) {
-    if (script.status() != ScriptStatus::unloaded) {
+    if (script.status() != ScriptStatus::Unloaded) {
         Log::error("Could not load script {}: script is already loaded.", script.name());
         return;
     }
     script.load();
-    if (script.status() != ScriptStatus::loaded) {
+    if (script.status() != ScriptStatus::Loaded) {
         return;
     }
     setup_script_env(script);

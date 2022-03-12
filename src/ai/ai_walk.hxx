@@ -20,7 +20,7 @@ public:
     AiNodeState visit() override {
         static int dir = 0;
         if (!actor_) {
-            return mod_state(AiNodeState::failed);
+            return mod_state(AiNodeState::Failed);
         }
         auto pos { actor_->position };
 
@@ -36,7 +36,7 @@ public:
         ++dir %= 4;
 
         action_queue_.push<WalkAction>(actor_, pos);
-        return mod_state(AiNodeState::succeeded);
+        return mod_state(AiNodeState::Succeeded);
     }
 private:
     Actor* actor_ { nullptr };

@@ -127,42 +127,42 @@ Vec2<u32> calc_anchor_offset(
     const UiNode& anchor
 ) {
     switch (target.anchor_origin()) {
-        case AnchorOrigin::top_left:
+        case AnchorOrigin::TopLeft:
         default:
             return anchor.absolute_position();
-        case AnchorOrigin::top:
+        case AnchorOrigin::Top:
             return {
                 (anchor.absolute_position().x + anchor.size().x) / 2,
                 anchor.absolute_position().y
             };
-        case AnchorOrigin::top_right:
+        case AnchorOrigin::TopRight:
             return {
                 anchor.absolute_position().x + anchor.size().x,
                 anchor.absolute_position().y
             };
-        case AnchorOrigin::right:
+        case AnchorOrigin::Right:
             return {
                 anchor.absolute_position().x + anchor.size().x,
                 (anchor.absolute_position().y + anchor.size().y) / 2,
             };
-        case AnchorOrigin::bottom_right:
+        case AnchorOrigin::BottomRight:
             return anchor.absolute_position() + anchor.size();
-        case AnchorOrigin::bottom:
+        case AnchorOrigin::Bottom:
             return {
                 (anchor.absolute_position().x + anchor.size().x) / 2,
                 anchor.absolute_position().y + anchor.size().y,
             };
-        case AnchorOrigin::bottom_left:
+        case AnchorOrigin::BottomLeft:
             return {
                 anchor.absolute_position().x,
                 anchor.absolute_position().y + anchor.size().y,
             };
-        case AnchorOrigin::left:
+        case AnchorOrigin::Left:
             return {
                 anchor.absolute_position().x,
                 (anchor.absolute_position().y + anchor.size().y) / 2,
             };
-        case AnchorOrigin::center:
+        case AnchorOrigin::Center:
             return (anchor.absolute_position() + anchor.size()) / 2u;
     }
 }
