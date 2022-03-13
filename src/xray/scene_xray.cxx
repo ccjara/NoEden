@@ -63,6 +63,7 @@ void SceneXray::actor_panel(std::optional<u64> actor_id) {
         position_raw[1] = std::min(std::max(position_raw[1], 0), 100);
         actor->position.x = position_raw[0];
         actor->position.y = position_raw[1];
+        scene_->update_fov(player_controller_.player());
     }
     if (ImGui::InputInt("Speed", &actor->speed, ImGuiInputTextFlags_None)) {
         actor->speed = std::max(actor->speed, 0);

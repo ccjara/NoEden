@@ -85,8 +85,6 @@ void Renderer::render(const Scene& scene) {
 }
 
 void Renderer::update_display(const Scene& scene) {
-    display_.reset();
-
     const auto& tiles { scene.read_tiles() };
     const auto& last_tile_index { display_.cell_count() };
     const auto scene_dim { tiles.dimensions() };
@@ -100,14 +98,11 @@ void Renderer::update_display(const Scene& scene) {
         for (u32 x = 0; x < tile_render_dim.x; ++x) {
             const Vec2<u32> tile_pos { x, y };
             const Tile* tile { tiles.at(tile_pos) };
-            DisplayCell display_info { tile->display_info };
-            if (!tile->revealed) {
-                continue;
+            if (tile->visited) {
+                display_.put(tile->display_info, tile_pos);
+            } else {
+                display_.at(tile_pos)->color = Color::mono(128);
             }
-            if (!tile->visited) {
-                display_info.color = Color::mono(128);
-            }
-            display_.put(display_info, tile_pos);
         }
     }
 
@@ -118,7 +113,10 @@ void Renderer::update_display(const Scene& scene) {
             static_cast<u32> (actor->position.y >= 0 ? actor->position.y : 0)
         };
         if (!display_.in_bounds(pos)) {
-            return; // do not render entities outside of view
+            continue; // do not render entities outside of view
+        }
+        if (!tiles.at(pos)->visited) {
+            continue;
         }
         const auto& display_info { actor->archetype->display_info };
         display_.put(

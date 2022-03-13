@@ -18,13 +18,13 @@ void GameFactory::run() {
     game->start();
 
     auto& player { game->scene_.create_actor(&Archetypes::Dwarf) };
-    //auto& troll { game->scene_.create_actor(&Archetypes::Troll) };
+    auto& troll { game->scene_.create_actor(&Archetypes::Troll) };
 
     // TODO: move as factory to archetype
-    //troll.ai.add<AiWalk>(0, &troll, game->action_queue_);
+    troll.ai.add<AiWalk>(0, &troll, game->action_queue_);
 
     player.position = { 0, 1 };
-    //troll.position = { 3, 3 };
+    troll.position = { 3, 3 };
 
     game->player_controller_.control(&player);
     game->run();

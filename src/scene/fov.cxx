@@ -20,6 +20,13 @@ void Fov::scan(
     Tile *prev_tile { nullptr };
 
     const i32 max_range = 9; // actor->view_range; TODO
+    const auto viewer_pos = Vec2<u32> {
+        static_cast<u32> (viewer.position.x),
+        static_cast<u32> (viewer.position.y),
+    };
+    auto viewer_tile = tiles.at(viewer_pos);
+    viewer_tile->revealed = true;
+    viewer_tile->visited = true;
 
     for (i32 col = row.min_col; col <= row.max_col; ++col) {
         if (0.5f + std::sqrt(col * col + row.depth * row.depth) > max_range) {
