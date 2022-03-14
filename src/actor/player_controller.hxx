@@ -3,7 +3,7 @@
 
 #include "actor.hxx"
 #include "action_queue.hxx"
-#include "walk_action.hxx"
+#include "move_action.hxx"
 #include "../input/input_state.hxx"
 #include "../input/input_event.hxx"
 

@@ -8,6 +8,7 @@ SceneXray::SceneXray(
     player_controller_ { player_controller },
     renderer_ { renderer } {
     events_.on<SceneLoadedEvent>(this, &SceneXray::on_scene_loaded);
+    events_.on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
 }
 
 bool SceneXray::on_scene_loaded(SceneLoadedEvent& e) {
@@ -15,14 +16,44 @@ bool SceneXray::on_scene_loaded(SceneLoadedEvent& e) {
     return false;
 }
 
-void SceneXray::update() {
-    static std::optional<u64> actor_id = std::nullopt;
-    static std::string combo_label = "Select actor";
+bool SceneXray::on_mouse_down(MouseDownEvent& e) {
+    if (!scene_ || !tile_window_data_.is_editing) {
+        return false;
+    }
 
+    TileType type_to_place;
+    if (e.state->is_mouse_pressed(MouseButton::Left)) {
+        type_to_place = tile_window_data_.lmb_type;
+    } else if (e.state->is_mouse_pressed(MouseButton::Right)) {
+        type_to_place = tile_window_data_.rmb_type;
+    } else {
+        return false;
+    }
+    const auto mp = e.state->mouse_position();
+    const Vec2<u32> tpos = { mp.x / 16, mp.y / 28 }; // TODO
+    if (!scene_->tiles().at(tpos)) {
+        return false;
+    }
+    auto w = TileBuilder::for_type(type_to_place);
+    w.revealed = true;
+    scene_->tiles().put(w, tpos);
+    scene_->update_fov(player_controller_.player());
+    return true;
+}
+
+void SceneXray::update() {
     if (!scene_) {
         return;
     }
-    ImGui::Begin("Scene");
+    entity_window();
+    tile_window();
+}
+
+void SceneXray::entity_window() {
+    static std::optional<u64> actor_id = std::nullopt;
+    static std::string combo_label = "Select actor";
+
+    ImGui::Begin("Entities");
 
     if (ImGui::BeginCombo("Entity", combo_label.c_str())) {
         for (auto& actor : scene_->actors()) {
@@ -37,6 +68,42 @@ void SceneXray::update() {
     }
     actor_panel(actor_id);
 
+    ImGui::End();
+}
+
+void SceneXray::tile_window() {
+    const static std::unordered_map<TileType, std::string> type_options = {
+        { TileType::None, "None" },
+        { TileType::Floor, "Floor" },
+        { TileType::Wall, "Wall" },
+        { TileType::Water, "Water" },
+    };
+
+    ImGui::Begin("Tiles");
+    ImGui::PushItemWidth(ImGui::GetWindowWidth() / 4);
+    if (ImGui::BeginCombo("LMB Tile", type_options.at(tile_window_data_.lmb_type).c_str())) {
+        for (auto& option : type_options) {
+            const bool is_selected = tile_window_data_.lmb_type == option.first;
+            if (ImGui::Selectable(option.second.c_str(), is_selected)) {
+                tile_window_data_.lmb_type = option.first;
+            }
+        }
+        ImGui::EndCombo();
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::BeginCombo("RMB Tile", type_options.at(tile_window_data_.rmb_type).c_str())) {
+        for (auto& option : type_options) {
+            const bool is_selected = tile_window_data_.rmb_type == option.first;
+            if (ImGui::Selectable(option.second.c_str(), is_selected)) {
+                tile_window_data_.rmb_type = option.first;
+            }
+        }
+        ImGui::EndCombo();
+    }
+    ImGui::PopItemWidth(); // select width
+    ImGui::Checkbox("Edit Mode", &tile_window_data_.is_editing);
     ImGui::End();
 }
 

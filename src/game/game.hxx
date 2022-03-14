@@ -56,31 +56,6 @@ public:
      * @see stop
      */
     void run();
-
-    bool on_mouse_down(MouseDownEvent& e) {
-        if (input_.state().is_mouse_pressed(MouseButton::Left)) {
-            const auto mp = input_.state().mouse_position();
-            const Vec2<u32> tp = { mp.x / 16, mp.y / 28 };
-
-            if (scene_.tiles().at(tp)) {
-                auto w = TileBuilder::wall();
-                w.revealed = true;
-                scene_.tiles().put(w, tp);
-                scene_.update_fov(player_controller_.player());
-            }
-        } else if (input_.state().is_mouse_pressed(MouseButton::Right)) {
-            const auto mp = input_.state().mouse_position();
-            const Vec2<u32> tp = { mp.x / 16, mp.y / 28 };
-
-            if (scene_.tiles().at(tp)) {
-                auto f = TileBuilder::floor();
-                f.revealed = true;
-                scene_.tiles().put(f, tp);
-                scene_.update_fov(player_controller_.player());
-            }
-        }
-        return false;
-    }
 private:
     u32 last_ticks_;
 

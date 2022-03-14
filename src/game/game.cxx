@@ -27,7 +27,6 @@ void Game::start() {
     renderer_.initialize();
 
     events_.on<ScriptLoadedEvent>(this, &Game::on_script_loaded);
-    events_.on<MouseDownEvent>(this, &Game::on_mouse_down, -10000);
 
     is_running_ = true;
 }
@@ -61,6 +60,8 @@ void Game::run() {
     xray_.startup(renderer_.gl_context());
 
     events_.trigger<SceneLoadedEvent>(&scene_);
+
+    scene_.update_fov(player_controller_.player());
 
     while (true) {
         process_os_messages();

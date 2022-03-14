@@ -4,7 +4,7 @@
 #include "ai_node.hxx"
 #include "../actor/actor.hxx"
 #include "../actor/action_queue.hxx"
-#include "../actor/walk_action.hxx"
+#include "../actor/move_action.hxx"
 
 class AiWalk : public AiNode {
 public:
@@ -35,7 +35,7 @@ public:
         }
         ++dir %= 4;
 
-        action_queue_.push<WalkAction>(actor_, pos);
+        action_queue_.push<MoveAction>(actor_, pos);
         return mod_state(AiNodeState::Succeeded);
     }
 private:

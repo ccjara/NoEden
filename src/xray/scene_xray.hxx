@@ -25,7 +25,17 @@ private:
     void actor_panel(std::optional<u64> actor_id);
     void actor_glyph(Actor* actor);
 
+    struct TileWindowData {
+        bool is_editing = false;
+        TileType lmb_type = TileType::None;
+        TileType rmb_type = TileType::None;
+    } tile_window_data_;
+
+    void entity_window();
+    void tile_window();
+
     bool on_scene_loaded(SceneLoadedEvent& e);
+    bool on_mouse_down(MouseDownEvent& e);
 };
 
 #endif

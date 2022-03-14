@@ -1,5 +1,5 @@
-#ifndef JARALYN_WALK_ACTION_HXX
-#define JARALYN_WALK_ACTION_HXX
+#ifndef JARALYN_MOVE_ACTION_HXX
+#define JARALYN_MOVE_ACTION_HXX
 
 #include "action.hxx"
 
@@ -8,8 +8,8 @@
  * 
  * Action may fail due to blockages, being movement impaired, etc.
  */
-struct WalkAction : public Action {
-    explicit WalkAction(Vec2<i32> destination);
+struct MoveAction : public Action {
+    explicit MoveAction(Vec2<i32> destination);
 
     bool perform() final override;
 

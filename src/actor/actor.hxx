@@ -3,6 +3,7 @@
 
 #include "archetype.hxx"
 #include "../ai/ai_node.hxx"
+#include "skill.hxx"
 
 struct Actor {
     const u64 id;
@@ -14,6 +15,8 @@ struct Actor {
 
     i32 speed { 0 };
     i32 energy { 0 };
+
+    std::unordered_map<SkillId, Skill> skills;
 
     // FIXME: laying out our data like this kills the cache lol
     AiPrioritySelector ai;

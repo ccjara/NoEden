@@ -4,8 +4,10 @@
 #include "../gfx/display_cell.hxx"
 
 enum class TileType {
-    Wall,
+    None,
     Floor,
+    Wall,
+    Water,
 };
 
 struct Tile {

@@ -13,7 +13,9 @@ add_executable(
     "actor/actor.cxx"
     "actor/archetype.hxx"
     "actor/player_controller.cxx"
-    "actor/walk_action.cxx"
+    "actor/move_action.cxx"
+
+    "actor/skill.hxx"
 
     "ai/ai_node.hxx"
     "ai/ai_walk.hxx"

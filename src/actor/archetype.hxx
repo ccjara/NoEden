@@ -31,6 +31,8 @@ struct Archetype {
 
     /**
      * @brief Name of this archetype, such as "Troll", "Dwarf", etc.
+     *
+     * TODO: Needs to be relocated (centralized language provider)
      */
     std::string name;
 
