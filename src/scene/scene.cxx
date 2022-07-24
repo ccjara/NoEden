@@ -35,7 +35,7 @@ const Grid<Tile>& Scene::read_tiles() const {
 }
 
 void Scene::update_fov(Actor* player) {
-    assert(player);
-
-    Fov::update(*player, tiles_);
+    if (player) {
+        Fov::update(*player, tiles_);
+    }
 }
