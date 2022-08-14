@@ -45,6 +45,12 @@ void Script::load() {
 
 void Script::unload() {
     if (state_) {
+        {
+            auto on_unload { luabridge::getGlobal(state_, "on_unload") };
+            if (on_unload.isFunction()) {
+                pcall_into(on_unload);
+            }
+        }
         lua_close(state_);
         state_ = nullptr;
         status_ = ScriptStatus::Unloaded;

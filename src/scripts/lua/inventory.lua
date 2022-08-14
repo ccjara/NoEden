@@ -15,7 +15,9 @@ function on_update_inventory_window(window)
 end
 
 function on_load()
-    local inventory_window = ui:create_window("inventory_window", "window");
+    log:debug("on_load() - Creating inventory window");
+
+    local inventory_window = ui:create_window("inventory_window");
 
     function on_inventory_view(owner)
         if owner then
@@ -39,4 +41,9 @@ function on_load()
     end
 
     -- script:on(event.inventory_view, on_inventory_view);
+end
+
+function on_unload()
+    log:debug("on_unload() - Destroying inventory window");
+    ui:destroy_window("inventory_window");
 end

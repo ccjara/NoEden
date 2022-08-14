@@ -1,6 +1,8 @@
 #ifndef JARALYN_SCRIPT_HXX
 #define JARALYN_SCRIPT_HXX
 
+#include "script_util.hxx"
+
 enum class ScriptStatus {
     Unloaded,
     Loaded,
