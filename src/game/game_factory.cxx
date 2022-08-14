@@ -13,6 +13,7 @@ void GameFactory::run() {
 
     // scripting
     auto& lua_registrar { game->scripting_.registrar() };
+    lua_registrar.add_api<LogApi>();
     lua_registrar.add_api<SceneApi>(game->scene_);
     lua_registrar.add_api<UiApi>(game->ui_.ui_tree());
 

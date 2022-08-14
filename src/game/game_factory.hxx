@@ -6,6 +6,7 @@
 #include "../scripts/api/api_registrar.hxx"
 #include "../scripts/api/scene_api.hxx"
 #include "../scripts/api/ui/ui_api.hxx"
+#include "../scripts/api/log_api.hxx"
 #include "../xray/log_xray.hxx"
 #include "../xray/scene_xray.hxx"
 #include "../xray/script_xray.hxx"

@@ -67,6 +67,7 @@ add_executable(
     "scene/tile_builder.cxx"
 
     "scripts/api/api_registrar.cxx"
+    "scripts/api/log_api.cxx"
     "scripts/api/lua_api.hxx"
     "scripts/api/scene_api.cxx"
     "scripts/api/ui/ui_api.cxx"
