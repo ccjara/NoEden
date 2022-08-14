@@ -22,7 +22,7 @@ bool render_anchor(UiNode* node) {
     };
     const auto id { node->id().data() };
 
-    if (ImGui::TreeNodeEx(id, imgui_tree_node_flags, id)) {
+    if (ImGui::TreeNodeEx(id, imgui_tree_node_flags, "%s", id)) {
         if (ImGui::BeginDragDropTarget()) {
             if (auto payload = ImGui::AcceptDragDropPayload("_TREENODE")) {
                 UiNode* accepted_node { nullptr };
