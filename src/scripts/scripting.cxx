@@ -77,6 +77,7 @@ void Scripting::setup_script_env(Script& script) {
     // when calling back from lua to engine code it is often useful to identify
     // the calling script. not sure how else to do it.
     luabridge::setGlobal(script, script.id, "script_id"); // TODO: ensure immutability
+    luabridge::setGlobal(script, script.name().c_str(), "script_name"); // TODO: ensure immutability
 
     luabridge::getGlobalNamespace(script)
         .beginClass<Scripting>("Script")
