@@ -20,10 +20,7 @@ void Fov::scan(
     Tile *prev_tile { nullptr };
 
     const i32 max_range = 9; // actor->view_range; TODO
-    const auto viewer_pos = Vec2<u32> {
-        static_cast<u32> (viewer.position.x),
-        static_cast<u32> (viewer.position.y),
-    };
+    const auto viewer_pos = Vec2<u32>(viewer.position);
     auto viewer_tile = tiles.at(viewer_pos);
     viewer_tile->revealed = true;
     viewer_tile->visited = true;

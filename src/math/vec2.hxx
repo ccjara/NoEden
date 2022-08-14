@@ -3,6 +3,8 @@
 
 template<typename t>
 struct Vec2 {
+    using type = t;
+
     t x { 0 };
     t y { 0 };
 

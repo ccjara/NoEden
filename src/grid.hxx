@@ -27,11 +27,10 @@ protected:
      */
     template<typename location_type>
     [[nodiscard]] constexpr size_t ensure_index(location_type location) const {
-        if constexpr (std::is_base_of_v<Vec2<u32>, location_type>) {
-            return to_index(location);
-        } else {
-            return location;
+        if constexpr (std::is_unsigned_v<location_type>) {
+            return static_cast<size_t>(location);
         }
+        return to_index(location);
     }
 
     /**
@@ -42,12 +41,10 @@ protected:
      */
     template<typename location_type>
     [[nodiscard]] constexpr Vec2<u32> ensure_coordinates(location_type location) const {
-        if constexpr (std::is_base_of_v<Vec2<u32>, location_type>) {
-            return location;
-        } else {
-            static_assert(std::is_integral_v<location_type>);
+        if constexpr (std::is_integral_v<location_type>) {
             return to_coordinates(location);
         }
+        return location;
     }
 public:
     /**
@@ -110,15 +107,9 @@ public:
     }
 
     /**
-     * @brief Returns a reference to the cell at the given location.
+     * @brief Returns a pointer to the cell at the given location
      *
-     * The location is range checked by default, but you may override this behavior
-     * by providing the `fast_grid_access_tag` which places the burden of bounds
-     * verification onto you. `fast_grid_access_tag` in conjunction with an invalid
-     * location leads to a dangling reference (UB).
-     *
-     * If using `safe_access_t` and the location is invalid, a reference to the
-     * null-cell is returned instead.
+     * Returns null if the location does not point to an existing cell
      */
     template<typename location_type>
     [[nodiscard]] constexpr cell* at(location_type location) {
@@ -128,6 +119,11 @@ public:
         return &cells_[ensure_index(location)];
     }
 
+    /**
+     * @brief Returns a pointer to the immutable cell at the given location
+     *
+     * Returns null if the location does not point to an existing cell
+     */
     template<typename location_type>
     [[nodiscard]] constexpr const cell* at(location_type location) const {
         if (!in_bounds(location)) {
@@ -139,9 +135,6 @@ public:
 
     /**
      * @brief Assigns the given cell to the given location
-     *
-     * If using `safe_access_t` (default) and the position is out of bounds,
-     * the operation will be ignored.
      */
     template<typename cel, typename location_type>
     constexpr void put(cel&& c, location_type location) {
@@ -165,12 +158,16 @@ public:
      */
     template<typename location_type>
     [[nodiscard]] constexpr bool in_bounds(location_type location) const {
-        if constexpr (std::is_base_of_v<Vec2<u32>, location_type>) {
-            return location.x + 1 <= dimensions_.x && location.y + 1 <= dimensions_.y;
-        } else {
-            static_assert(std::is_integral_v<location_type>);
+        if constexpr (std::is_integral_v<location_type>) {
             return location < cells_.size();
         }
+        if constexpr (std::is_signed_v<typename location_type::type>) {
+            if (location.x < 0 || location.y < 0) {
+                return false;
+            }
+        }
+        return static_cast<u32>(location.x) + 1 <= dimensions_.x &&
+        static_cast<u32>(location.y) + 1 <= dimensions_.y;
     }
 
     /**
@@ -178,22 +175,18 @@ public:
      *
      * This ensures that the coordinates are contained by the grid
      */
-    constexpr void clamp(Vec2<u32>& coord) const {
+    template<typename coord_type>
+    constexpr void clamp(Vec2<coord_type>& coord) const {
         if (coord.x > dimensions_.x) {
-            coord.x = dimensions_.x;
+            coord.x = static_cast<coord_type>(dimensions_.x);
         }
         if (coord.y > dimensions_.y) {
-            coord.y = dimensions_.y;
+            coord.y = static_cast<coord_type>(dimensions_.y);
         }
     }
 
     /**
      * @brief Converts the given index to grid coordinates
-     *
-     * Using the `fast_grid_access_tag` (default), does not ensure that the grid is
-     * non-empty. If using fast access and the grid is empty, the game will
-     * panic due to division by zero. When using the `safe_access_t` tag this
-     * method will return origin coordinates if the grid's width is zero.
      *
      * This does *not* verify the resulting coordinates.
      */
@@ -209,8 +202,9 @@ public:
      *
      * This method does *not* verify the resulting index.
      */
-    [[nodiscard]] constexpr size_t to_index(Vec2<u32> coord) const {
-        return coord.y * dimensions_.x + coord.x;
+    template<typename coord_type>
+    [[nodiscard]] constexpr size_t to_index(Vec2<coord_type> coord) const {
+        return static_cast<u32> (coord.y) * dimensions_.x + static_cast<u32> (coord.x);
     }
 };
 

@@ -107,21 +107,17 @@ void Renderer::update_display(const Scene& scene) {
     }
 
     for (const auto& actor : scene.read_actors()) {
-        // FIXME -> migrate grid to i32
-        const Vec2<u32> pos {
-            static_cast<u32> (actor->position.x >= 0 ? actor->position.x : 0),
-            static_cast<u32> (actor->position.y >= 0 ? actor->position.y : 0)
-        };
-        if (!display_.in_bounds(pos)) {
+        if (!display_.in_bounds(actor->position)) {
             continue; // do not render entities outside of view
         }
-        if (!tiles.at(pos)->visited) {
+        const auto tile { tiles.at(actor->position) };
+        if (!tile || !tile->visited) {
             continue;
         }
         const auto& display_info { actor->archetype->display_info };
         display_.put(
             DisplayCell(display_info.glyph, display_info.color),
-            pos
+            actor->position
         );
     }
 }
