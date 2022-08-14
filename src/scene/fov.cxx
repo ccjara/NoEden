@@ -20,25 +20,24 @@ void Fov::scan(
     Tile *prev_tile { nullptr };
 
     const i32 max_range = 9; // actor->view_range; TODO
-    const auto viewer_pos = Vec2<u32>(viewer.position);
-    auto viewer_tile = tiles.at(viewer_pos);
-    viewer_tile->revealed = true;
-    viewer_tile->visited = true;
+    auto viewer_tile = tiles.at(viewer.position);
+    if (viewer_tile) {
+        viewer_tile->revealed = true;
+        viewer_tile->visited = true;
+    }
 
     for (i32 col = row.min_col; col <= row.max_col; ++col) {
-        if (0.5f + std::sqrt(col * col + row.depth * row.depth) > max_range) {
+        if (!in_range(row.depth, col, max_range)) {
             continue;
         }
-        const auto grid_raw = to_grid_coords((Quadrant) q, viewer.position, row.depth, col);
-        if (grid_raw.y < 0) {
+        const auto grid_pos = to_grid_coords(q, viewer.position, row.depth, col);
+        if (grid_pos.x < 0 || grid_pos.y < 0) {
             continue;
         }
-        if (grid_raw.x < 0) {
-            continue;
-        }
-        const Vec2<u32> grid_pos { (u32) grid_raw.x, (u32) grid_raw.y };
-
         Tile* tile = tiles.at(grid_pos);
+        if (!tile) {
+            continue;
+        }
         if (tile->solid || symmetric(row, col)) {
             tile->revealed = true;
             tile->visited = true;
@@ -71,7 +70,7 @@ constexpr bool Fov::symmetric(Row& row, i32 col) {
 }
 
 constexpr bool Fov::in_range(i32 row, i32 col, i32 max_range) {
-    return false;
+    return 0.5f + std::sqrt(col * col + row * row) <= max_range;
 }
 
 constexpr Vec2<i32> Fov::to_grid_coords(Quadrant q, Vec2<i32> start_pos, i32 depth, i32 col) {
