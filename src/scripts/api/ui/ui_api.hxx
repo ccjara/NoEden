@@ -11,6 +11,7 @@ public:
     void on_register(Script* script) final override;
 private:
     UiWindow* create_window(const char* id);
+    void destroy_window(const char* id);
 
     UiTree& ui_tree_;
 };

@@ -8,6 +8,7 @@ void UiApi::on_register(Script* script) {
     luabridge::getGlobalNamespace(*script)
         .beginClass<UiApi>("UiApi")
             .addFunction("create_window", &UiApi::create_window)
+            .addFunction("destroy_window", &UiApi::destroy_window)
         .endClass()
         // nodes
         .beginClass<UiNode>("UiNode")
@@ -41,7 +42,7 @@ void UiApi::on_register(Script* script) {
                     }
                 }
             )
-            .addFunction("set_handler", 
+            .addFunction("set_handler",
                 +[](UiNode* n, luabridge::LuaRef handler) {
                     return n->set_handler(handler);
                 }
@@ -68,9 +69,19 @@ void UiApi::on_register(Script* script) {
 }
 
 UiWindow* UiApi::create_window(const char* id) {
+    if (!id) {
+        return nullptr;
+    }
     auto window { ui_tree_.create_node<UiWindow>(nullptr, id) };
     if (!window) {
         return nullptr;
     }
     return window;
+}
+
+void UiApi::destroy_window(const char* id) {
+    if (!id) {
+        return;
+    }
+    ui_tree_.remove_node(id);
 }

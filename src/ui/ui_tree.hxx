@@ -37,6 +37,13 @@ public:
         return node;
     }
 
+    /**
+     * @brief Removes a node by the given id
+     *
+     * Does nothing if no node having the given id exists.
+     */
+    void remove_node(std::string_view id);
+
     UiNode* get_node_by_id(std::string_view id);
 
     /**
@@ -51,7 +58,7 @@ public:
 
     /**
      * @brief Resets the entire tree and its references.
-     * 
+     *
      * Used during shutdown.
      */
     void clear();
@@ -60,7 +67,7 @@ public:
 
     /**
      * @brief Create the root node.
-     * 
+     *
      * Should only be called if the root node does not exist yet.
      */
     void create_root_node();
@@ -79,6 +86,11 @@ private:
      * @brief The head of the tree
      */
     UiNode* root_ { nullptr };
+
+    /**
+     * @brief Recursively marks the target node and its children as destroyed
+     */
+    void destroy_node(UiNode* node);
 };
 
 #endif

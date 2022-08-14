@@ -24,6 +24,58 @@ void UiTree::create_root_node() {
     root_->visible_ = true;
 }
 
+void UiTree::remove_node(std::string_view id) {
+    if (!root_) {
+        return;
+    }
+    auto iter = nodes_by_id_.find(std::string(id));
+    if (iter == nodes_by_id_.end()) {
+        return;
+    }
+    if (iter->second->is_root()) {
+        return;
+    }
+    destroy_node(iter->second);
+
+    for (auto& node : nodes_) {
+        if (node->destroyed_) {
+            nodes_by_id_.erase(node->id_);
+        } else {
+            // remove destroyed anchors from non-destroyed node
+            node->anchored_by_.erase(
+                std::remove_if(
+                    node->anchored_by_.begin(),
+                    node->anchored_by_.end(),
+                    [](const UiNode* node) { return node->destroyed_; }
+                ),
+                node->anchored_by_.end()
+            );
+            if (node->anchored_to_ && node->anchored_to_->destroyed_) {
+                node->anchor_to(*root_);
+            }
+        }
+    }
+    // remove all destroyed nodes in owning container
+    nodes_.erase(
+        std::remove_if(
+            nodes_.begin(),
+            nodes_.end(),
+            [](auto& node) { return node->destroyed_; }
+        ),
+        nodes_.end()
+    );
+}
+
+void UiTree::destroy_node(UiNode* node) {
+    if (node == nullptr) {
+        return;
+    }
+    node->destroyed_ = true;
+    for (UiNode* child : node->children_) {
+        destroy_node(child);
+    }
+}
+
 UiNode* UiTree::get_node_by_id(std::string_view id) {
     auto node_iter { nodes_by_id_.find(std::string(id)) };
     if (node_iter == nodes_by_id_.end()) {

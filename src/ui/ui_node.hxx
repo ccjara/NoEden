@@ -221,6 +221,11 @@ protected:
     bool visible_ = false;
 
     /**
+     * @brief Cleanup marker
+     */
+    bool destroyed_ = false;
+
+    /**
      * @brief Updates the position of this node's anchors
      */
     void move_anchors();
