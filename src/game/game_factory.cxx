@@ -2,6 +2,7 @@
 
 void GameFactory::run() {
     Log::startup();
+    Translator::load("en");
 
     auto game { std::make_unique<Game>() };
     // xray / engine ui
@@ -9,7 +10,7 @@ void GameFactory::run() {
     game->xray_.add<SceneXray>(game->events_, game->player_controller_, game->renderer_);
     game->xray_.add<ScriptXray>(game->events_, game->scripting_);
     game->xray_.add<UiXray>(game->events_, game->ui_);
-    
+
     // scripting
     auto& lua_registrar { game->scripting_.registrar() };
     lua_registrar.add_api<SceneApi>(game->scene_);

@@ -50,11 +50,6 @@ add_executable(
     "math/rect.hxx"
     "math/vec2.hxx"
 
-    "ui/ui.cxx"
-    "ui/ui_node.cxx"
-    "ui/ui_tree.cxx"
-    "ui/ui_window.cxx"
-
     "input/input.cxx"
     "input/input_event.hxx"
     "input/input_state.cxx"
@@ -62,6 +57,8 @@ add_executable(
     "input/keyboard_state.cxx"
     "input/mouse_button.hxx"
     "input/mouse_state.cxx"
+
+    "lang/translator.cxx"
 
     "scene/fov.cxx"
     "scene/scene.cxx"
@@ -73,11 +70,16 @@ add_executable(
     "scripts/api/lua_api.hxx"
     "scripts/api/scene_api.cxx"
     "scripts/api/ui/ui_api.cxx"
-    
+
     "scripts/script.cxx"
     "scripts/script_event.hxx"
     "scripts/script_util.hxx"
     "scripts/scripting.cxx"
+
+    "ui/ui.cxx"
+    "ui/ui_node.cxx"
+    "ui/ui_tree.cxx"
+    "ui/ui_window.cxx"
 
     "xray/log_xray.cxx"
     "xray/scene_xray.cxx"
@@ -110,4 +112,12 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/assets
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
+)
+
+# language dictionaries
+add_custom_command(
+    TARGET jaralyn POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/src/lang/dictionaries
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dictionaries
 )

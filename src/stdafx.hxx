@@ -53,6 +53,7 @@ namespace fs = std::filesystem;
 
 #include "events/event_manager.hxx"
 #include "log/log.hxx"
+#include "lang/translator.hxx"
 
 #include "math/vec2.hxx"
 #include "math/bresenham.hxx"
