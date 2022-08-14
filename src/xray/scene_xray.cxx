@@ -138,6 +138,12 @@ void SceneXray::actor_panel(std::optional<u64> actor_id) {
     if (ImGui::InputInt("Energy", &actor->energy, ImGuiInputTextFlags_None)) {
         actor->energy = std::max(actor->energy, 0);
     }
+    for (auto& [id, skill] : actor->skills) {
+        const auto label = Translator::translate(skill.label());
+        if (ImGui::InputInt(label.c_str(), &skill.progress)) {
+            skill.progress = std::max(skill.progress, 0);
+        }
+    }
     ImGui::PopItemWidth();
 }
 
