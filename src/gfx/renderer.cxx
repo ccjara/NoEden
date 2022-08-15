@@ -120,6 +120,8 @@ void Renderer::update_display(const Scene& scene) {
             actor->position
         );
     }
+
+    events_.trigger<PostWorldRenderEvent>();
 }
 
 void Renderer::set_viewport(Vec2<u32> size) {
@@ -230,4 +232,8 @@ float Renderer::glyph_aspect_ratio() const {
     return static_cast<float>(
         text_shader_->glyph_size().x
     ) / text_shader_->glyph_size().y;
+}
+
+Display& Renderer::display() {
+    return display_;
 }

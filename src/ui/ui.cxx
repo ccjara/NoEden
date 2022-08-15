@@ -1,9 +1,11 @@
 #include "ui.hxx"
 
-Ui::Ui(EventManager& dispatcher) :
-    events_ { dispatcher } {
+Ui::Ui(EventManager& dispatcher, Display& display) :
+    events_ { dispatcher },
+    display_ { display } {
     events_.on<DisplayResizedEvent>(this, &Ui::on_display_resized);
     events_.on<ScriptResetEvent>(this, &Ui::on_script_reset);
+    events_.on<PostWorldRenderEvent>(this, &Ui::on_post_world_render);
 }
 
 void Ui::update() {
@@ -32,6 +34,38 @@ bool Ui::on_script_reset(ScriptResetEvent& e) {
     return false;
 }
 
+bool Ui::on_post_world_render(PostWorldRenderEvent& e) {
+    draw_node(ui_tree_.root());
+    return false;
+}
+
 UiTree& Ui::ui_tree() {
     return ui_tree_;
+}
+
+void Ui::draw_node(UiNode* node) {
+    assert(node);
+    if (!node->visible()) {
+        return;
+    }
+    if (node->type() == UiNodeType::window) {
+        auto window { static_cast<UiWindow*>(node) };
+        const auto pos { window->absolute_position() };
+        // border
+        display_.rectangle({
+            {
+                pos.y,
+                pos.x + window->size().x,
+                pos.y + window->size().y,
+                pos.x
+            },
+            Color::mono(128),
+            Color::black(),
+        });
+        // title
+        display_.text(window->title(), pos);
+    }
+    for (UiNode* child_node : node->children()) {
+        draw_node(child_node);
+    }
 }

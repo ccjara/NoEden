@@ -37,7 +37,6 @@ add_executable(
     "gfx/surface.cxx"
     "gfx/text_shader.cxx"
     "gfx/texture.cxx"
-    "gfx/ui_renderer.cxx"
 
     "grid.hxx"
 

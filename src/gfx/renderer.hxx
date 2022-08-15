@@ -76,6 +76,11 @@ public:
      * The array will contain [u1, v1, u2, v2] in this order.
      */
     [[nodiscard]] std::array<float, 4> calculate_glyph_uv(u32 glyph) const;
+
+    /**
+     * @brief Provides writable access to the Display
+     */
+    [[nodiscard]] Display& display();
 private:
     Window& window_;
 

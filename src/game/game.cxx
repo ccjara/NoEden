@@ -3,7 +3,7 @@
 Game::Game() :
     input_ { events_ },
     renderer_ { window_, events_ },
-    ui_ { events_ },
+    ui_ { events_, renderer_.display() },
     player_controller_ { action_queue_, events_ },
     scripting_ { events_ },
     xray_ { window_, events_ },

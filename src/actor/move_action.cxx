@@ -17,9 +17,7 @@ bool MoveAction::perform() {
     if (destination.x < 0 || destination.y < 0) {
         return false;
     }
-
-    const Vec2<u32> dest_upos = destination; // TODO: let's just use ints for simplicity's sake...
-    const auto& dest_tile = scene->read_tiles().at(dest_upos);
+    const auto& dest_tile = scene->tiles().at(destination);
     if (dest_tile->solid) {
         return false;
     }

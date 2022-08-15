@@ -52,7 +52,7 @@ public:
 
     /**
      * @brief Runs the game loop until stopped by the player.
-     * 
+     *
      * @see stop
      */
     void run();
