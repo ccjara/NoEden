@@ -11,6 +11,18 @@ AnchorOrigin = {
     Center = 8,
 }
 
+AlignX = {
+    Left = 0,
+    Center = 1,
+    Right = 2,
+}
+
+AlignY = {
+    Top = 0,
+    Center = 1,
+    Bottom = 2,
+}
+
 function on_update_inventory_window(window)
 end
 
@@ -31,19 +43,36 @@ function on_load()
         inventory_window:show();
     end
 
-    if inventory_window then
-        inventory_window:set_title("Inventory");
-        -- inventory_window:set_handler(on_update_inventory_window);
-        inventory_window:move(0, 0);
-        inventory_window:resize(20, 20);
-        inventory_window:set_anchor_origin(AnchorOrigin.Center);
-        inventory_window:show();
+    if not inventory_window then
+        return;
     end
+
+    inventory_window:set_title("Inventory");
+    -- inventory_window:set_handler(on_update_inventory_window);
+    inventory_window:move(0, 0);
+    inventory_window:resize(40, 20);
+    inventory_window:set_align_x(AlignX.Center);
+    inventory_window:set_align_y(AlignY.Center);
+    inventory_window:set_anchor_origin(AnchorOrigin.Center);
+    inventory_window:show();
+
+    local text = ui:create_text("dummy_text");
+
+    if not text then
+        return;
+    end;
+
+    text:set_parent(inventory_window);
+    text:move(2, 2);
+    text:resize(20, 2);
+    text:anchor_to(inventory_window);
+    text:set_text("Hello World!");
+    text:show();
 
     -- script:on(event.inventory_view, on_inventory_view);
 end
 
 function on_unload()
     log:debug("on_unload() - Destroying inventory window");
-    ui:destroy_window("inventory_window");
+    ui:destroy_node("inventory_window");
 end

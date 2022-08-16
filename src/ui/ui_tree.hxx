@@ -1,7 +1,7 @@
 #ifndef JARALYN_UI_TREE_HXX
 #define JARALYN_UI_TREE_HXX
 
-#include "ui_window.hxx"
+#include "./ui_node.hxx"
 
 class UiTree {
     using NodeContainer = std::vector<std::unique_ptr<UiNode>>;

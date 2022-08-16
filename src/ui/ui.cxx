@@ -48,22 +48,24 @@ void Ui::draw_node(UiNode* node) {
     if (!node->visible()) {
         return;
     }
+
     if (node->type() == UiNodeType::window) {
         auto window { static_cast<UiWindow*>(node) };
         const auto pos { window->absolute_position() };
         // border
         display_.rectangle({
-            {
-                pos.y,
-                pos.x + window->size().x,
-                pos.y + window->size().y,
-                pos.x
-            },
+            Rect<i32> { pos, window->size() },
             Color::mono(128),
             Color::black(),
         });
         // title
         display_.text(window->title(), pos);
+    } else if (node->type() == UiNodeType::text) {
+        auto text_node { static_cast<UiText*>(node) };
+        display_.text(
+            text_node->text(),
+            text_node->absolute_position()
+        );
     }
     for (UiNode* child_node : node->children()) {
         draw_node(child_node);

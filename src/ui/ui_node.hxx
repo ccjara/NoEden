@@ -4,7 +4,7 @@
 /**
  * @brief Affects position of elements, allowing relative positioning
  */
-enum class AnchorOrigin : u32 {
+enum class AnchorOrigin {
     Top,
     TopRight,
     Right,
@@ -16,12 +16,25 @@ enum class AnchorOrigin : u32 {
     Center,
 };
 
+enum class AlignX {
+    Left,
+    Center,
+    Right,
+};
+
+enum class AlignY {
+    Top,
+    Center,
+    Bottom,
+};
+
 /**
  * @brief RTTI for ui nodes
  */
 enum class UiNodeType {
     generic_wrapper,
     window,
+    text,
 };
 
 class UiNode {
@@ -56,9 +69,9 @@ public:
      *
      * Its absolute position will be calculated based on its anchor.
      *
-     * Also recursivly moves all anchored nodes based on their anchor settings.
+     * Also recursively moves all anchored nodes based on their anchor settings.
      */
-    void move(Vec2<u32> position);
+    void move(Vec2<i32> position);
 
     /**
      * @brief Writing accessor for the size_ attribute
@@ -72,7 +85,7 @@ public:
      *
      * @see move()
      */
-    Vec2<u32> relative_position() const;
+    Vec2<i32> relative_position() const;
 
     /**
      * @brief Returns the translated position (as it will appear on screen)
@@ -82,7 +95,7 @@ public:
      *
      * @see move()
      */
-    Vec2<u32> absolute_position() const;
+    Vec2<i32> absolute_position() const;
 
     /**
      * @brief Anchors this node to the given node
@@ -122,6 +135,16 @@ public:
     bool can_anchor_to(UiNode* node) const;
 
     /**
+     * @brief Sets the x alignment
+     */
+    void set_align_x(AlignX align_x);
+
+    /**
+     * @brief Sets the y alignment
+     */
+    void set_align_y(AlignY align_y);
+
+    /**
      * @brief Readonly accessor for the size_ attribute
      */
     Vec2<u32> size() const;
@@ -136,6 +159,12 @@ public:
      */
     bool visible() const;
 
+
+    /**
+     * @brief Assigns the parent and updates the references in the parent and the child
+     */
+    void set_parent(UiNode& parent);
+
     /**
      * @brief Sets visibility to true
      */
@@ -145,6 +174,16 @@ public:
      * @brief Sets visibility to false
      */
     void hide();
+
+    /**
+     * @brief Readonly accessor for the align_x_ attribute
+     */
+    AlignX align_x() const;
+
+    /**
+     * @brief Readonly accessor for the align_y_ attribute
+     */
+    AlignY align_y() const;
 protected:
     /**
      * @brief A list of nodes anchored to this node
@@ -197,7 +236,7 @@ protected:
      * @see absolute_position
      * @see anchor
      */
-    Vec2<u32> relative_position_;
+    Vec2<i32> relative_position_;
 
     /**
      * @brief Absolute position, used by the renderer
@@ -208,7 +247,7 @@ protected:
      *
      * @see relative_position
      */
-    Vec2<u32> absolute_position_;
+    Vec2<i32> absolute_position_;
 
     /**
      * @brief Size of this node, affects positioning of anchored nodes
@@ -234,6 +273,16 @@ protected:
      * @brief Lua handler that will be invoked to update this node
      */
     std::optional<luabridge::LuaRef> handler_;
+
+    /**
+     * @brief Horizontal alignment (requires known size)
+     */
+    AlignX align_x_ = AlignX::Left;
+
+    /**
+     * @brief Vertical alignment (requires known size)
+     */
+    AlignY align_y_ = AlignY::Top;
 private:
     /**
      * @brief Assigns an absolute position to this node
@@ -245,10 +294,10 @@ private:
      * Note that this method assigns the position as-is so the given absolute
      * position must be verified.
      */
-    void move_abs(Vec2<u32> pos);
+    void move_abs(Vec2<i32> pos);
 };
 
-Vec2<u32> calc_anchor_offset(
+Vec2<i32> calc_anchor_offset(
     const UiNode& target,
     const UiNode& parent
 );

@@ -78,6 +78,7 @@ add_executable(
 
     "ui/ui.cxx"
     "ui/ui_node.cxx"
+    "ui/ui_text.cxx"
     "ui/ui_tree.cxx"
     "ui/ui_window.cxx"
 

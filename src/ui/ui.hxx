@@ -5,6 +5,8 @@
 #include "../scripts/script_event.hxx"
 #include "../gfx/display.hxx"
 #include "ui_tree.hxx"
+#include "ui_window.hxx"
+#include "ui_text.hxx"
 
 class Ui {
 public:

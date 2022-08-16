@@ -5,19 +5,63 @@ void UiNode::move_anchors() {
         if (!n) {
             continue;
         }
-        n->move_abs(n->relative_position_ + calc_anchor_offset(*n, *this));
+        auto position = n->relative_position_ + calc_anchor_offset(*n, *this);
+
+        switch (n->align_x_) {
+            case AlignX::Left:
+            default:
+                break;
+            case AlignX::Center:
+                position.x -= n->size_.x / 2;
+                break;
+            case AlignX::Right:
+                position.x -= n->size_.x;
+        }
+        switch (n->align_y_) {
+            case AlignY::Top:
+            default:
+                break;
+            case AlignY::Center:
+                position.y -= n->size_.y / 2;
+                break;
+            case AlignY::Bottom:
+                position.y -= n->size_.y;
+        }
+
+        n->move_abs(position);
     }
 }
 
-void UiNode::move(Vec2<u32> position) {
+void UiNode::move(Vec2<i32> position) {
     relative_position_ = position;
     if (anchored_to_) {
         position += calc_anchor_offset(*this, *anchored_to_);
+
+        switch (align_x_) {
+            case AlignX::Left:
+            default:
+                break;
+            case AlignX::Center:
+                position.x -= size_.x / 2;
+                break;
+            case AlignX::Right:
+                position.x -= size_.x;
+        }
+        switch (align_y_) {
+            case AlignY::Top:
+            default:
+                break;
+            case AlignY::Center:
+                position.y -= size_.y / 2;
+                break;
+            case AlignY::Bottom:
+                position.y -= size_.y;
+        }
     }
     move_abs(position);
 }
 
-void UiNode::move_abs(Vec2<u32> pos) {
+void UiNode::move_abs(Vec2<i32> pos) {
     absolute_position_ = pos;
     move_anchors();
 }
@@ -54,6 +98,19 @@ void UiNode::anchor_to(UiNode& node) {
     move(relative_position_);
 }
 
+void UiNode::set_parent(UiNode& parent) {
+    if (parent_) {
+        for (auto it = parent_->children_.begin(); it != parent_->children_.end(); ++it) {
+            if (*it == this) {
+                parent_->children_.erase(it);
+                break;
+            }
+        }
+    }
+    parent_ = &parent;
+    parent.children_.emplace_back(this);
+}
+
 void UiNode::call_handler() {
     if (handler_) {
         handler_.value()(this);
@@ -74,11 +131,11 @@ UiNodeType UiNode::type() const {
     return type_;
 }
 
-Vec2<u32> UiNode::relative_position() const {
+Vec2<i32> UiNode::relative_position() const {
     return relative_position_;
 }
 
-Vec2<u32> UiNode::absolute_position() const {
+Vec2<i32> UiNode::absolute_position() const {
     return absolute_position_;
 }
 
@@ -122,7 +179,25 @@ void UiNode::hide() {
     visible_ = false;
 }
 
-Vec2<u32> calc_anchor_offset(
+void UiNode::set_align_x(AlignX align_x) {
+    align_x_ = align_x;
+    move(relative_position_);
+}
+
+void UiNode::set_align_y(AlignY align_y) {
+    align_y_ = align_y;
+    move(relative_position_);
+}
+
+AlignX UiNode::align_x() const {
+    return align_x_;
+}
+
+AlignY UiNode::align_y() const {
+    return align_y_;
+}
+
+Vec2<i32> calc_anchor_offset(
     const UiNode& target,
     const UiNode& anchor
 ) {
@@ -132,37 +207,40 @@ Vec2<u32> calc_anchor_offset(
             return anchor.absolute_position();
         case AnchorOrigin::Top:
             return {
-                (anchor.absolute_position().x + anchor.size().x) / 2,
+                (anchor.absolute_position().x + static_cast<i32>(anchor.size().x)) / 2,
                 anchor.absolute_position().y
             };
         case AnchorOrigin::TopRight:
             return {
-                anchor.absolute_position().x + anchor.size().x,
+                anchor.absolute_position().x + static_cast<i32>(anchor.size().x),
                 anchor.absolute_position().y
             };
         case AnchorOrigin::Right:
             return {
-                anchor.absolute_position().x + anchor.size().x,
-                (anchor.absolute_position().y + anchor.size().y) / 2,
+                anchor.absolute_position().x + static_cast<i32>(anchor.size().x),
+                (anchor.absolute_position().y + static_cast<i32>(anchor.size().y)) / 2,
             };
         case AnchorOrigin::BottomRight:
-            return anchor.absolute_position() + anchor.size();
+            return anchor.absolute_position() + Vec2<i32>(anchor.size());
         case AnchorOrigin::Bottom:
             return {
-                (anchor.absolute_position().x + anchor.size().x) / 2,
-                anchor.absolute_position().y + anchor.size().y,
+                (anchor.absolute_position().x + static_cast<i32>(anchor.size().x)) / 2,
+                anchor.absolute_position().y + static_cast<i32>(anchor.size().y),
             };
         case AnchorOrigin::BottomLeft:
             return {
                 anchor.absolute_position().x,
-                anchor.absolute_position().y + anchor.size().y,
+                anchor.absolute_position().y + static_cast<i32>(anchor.size().y),
             };
         case AnchorOrigin::Left:
             return {
                 anchor.absolute_position().x,
-                (anchor.absolute_position().y + anchor.size().y) / 2,
+                (anchor.absolute_position().y + static_cast<i32>(anchor.size().y)) / 2,
             };
         case AnchorOrigin::Center:
-            return (anchor.absolute_position() + anchor.size()) / 2u;
+            return {
+                (anchor.absolute_position().x + static_cast<i32>(anchor.size().x)) / 2,
+                (anchor.absolute_position().y + static_cast<i32>(anchor.size().y)) / 2,
+            };
     }
 }
