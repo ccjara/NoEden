@@ -151,41 +151,42 @@ void Display::text(std::string_view t, Vec2<u32> position, Vec2<u32> clamp) {
 }
 
 void Display::rectangle(const RectOptions& options) {
-    if (!in_bounds(Vec2<u32>{ options.span.right, options.span.bottom })) {
-        return;
-    }
-    for (u32 y { options.span.top }; y <= options.span.bottom; y++) {
-        const bool t_span { y == options.span.top };
-        const bool b_span { y == options.span.bottom };
+    Vec2<i32> pos;
 
-        for (u32 x { options.span.left }; x <= options.span.right; x++) {
-            const bool l_span { x == options.span.left };
-            const bool r_span { x == options.span.right };
-            const auto index { to_index(Vec2<u32>{ x, y }) };
+    for (pos.y = options.span.y1; pos.y <= options.span.y2; ++pos.y) {
+        const bool y_min { pos.y == options.span.y1 };
+        const bool y_max { pos.y == options.span.y2 };
 
+        for (pos.x = options.span.x1; pos.x <= options.span.x2; ++pos.x) {
+            const bool x_min { pos.x == options.span.x1 };
+            const bool x_max { pos.x == options.span.x2 };
+            const size_t index = to_index(pos);
+            if (!in_bounds(index)) {
+                continue;
+            }
             u32 glyph;
             Color color = options.color;
 
-            if (l_span) {
-                if (t_span) {
+            if (x_min) {
+                if (y_min) {
                     glyph = options.corner_glyphs.top_left;
-                } else if (b_span) {
+                } else if (y_max) {
                     glyph = options.corner_glyphs.bottom_left;
                 } else {
-                    glyph = options.border_glyphs.left;
+                    glyph = options.border_glyphs.x1;
                 }
-            } else if (r_span) {
-                if (t_span) {
+            } else if (x_max) {
+                if (y_min) {
                     glyph = options.corner_glyphs.top_right;
-                } else if (b_span) {
+                } else if (y_max) {
                     glyph = options.corner_glyphs.bottom_right;
                 } else {
-                    glyph = options.border_glyphs.right;
+                    glyph = options.border_glyphs.x2;
                 }
-            } else if (t_span) {
-                glyph = options.border_glyphs.top;
-            } else if (b_span) {
-                glyph = options.border_glyphs.bottom;
+            } else if (y_min) {
+                glyph = options.border_glyphs.y1;
+            } else if (y_max) {
+                glyph = options.border_glyphs.y2;
             } else {
                 if (!options.fill_color) {
                     continue;
@@ -193,8 +194,9 @@ void Display::rectangle(const RectOptions& options) {
                 glyph = 745U;
                 color = options.fill_color.value();
             }
-            cells_.at(index).color = color;
-            cells_.at(index).glyph = glyph;
+            auto& cell = cells_.at(index);
+            cell.color = color;
+            cell.glyph = glyph;
         }
     }
 }

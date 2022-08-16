@@ -171,6 +171,16 @@ public:
     }
 
     /**
+     * @brief Returns whether the given location is contained by the grid
+     *
+     * FIXME: Figure out why the non-specialized version does not work in display.cxx
+     */
+    template<>
+    [[nodiscard]] constexpr bool in_bounds(size_t location) const {
+        return location < cells_.size();
+    }
+
+    /**
      * @brief Clamps (mutates) the given coordinates to the grid dimensions
      *
      * This ensures that the coordinates are contained by the grid

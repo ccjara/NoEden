@@ -3,80 +3,80 @@
 
 template<typename t>
 struct Rect {
-    t top { 0 };
-    t right { 0 };
-    t bottom { 0 };
-    t left { 0 };
+    t x1 { 0 };
+    t y1 { 0 };
+    t x2 { 0 };
+    t y2 { 0 };
 
     Rect() = default;
 
-    Rect(t top, t right, t bottom, t left) :
-        top(top),
-        right(right),
-        bottom(bottom),
-        left(left) {
+    Rect(t x1, t y1, t x2, t y2) :
+        x1(x1),
+        y1(y1),
+        x2(x2),
+        y2(y2) {
     }
 
     Rect(Vec2<t> pos, Vec2<t> size) :
-        top(pos.y),
-        right(pos.x + size.x),
-        bottom(pos.y + size.y),
-        left(pos.x) {
+        x1(pos.x),
+        x2(pos.x + size.x),
+        y1(pos.y),
+        y2(pos.y + size.y) {
     }
 
     bool has_corner_at(const Vec2<t> p) const {
-        return (p.x == left && p.y == top)
-            || (p.x == right && p.y == top)
-            || (p.x == left && p.y == bottom)
-            || (p.x == right && p.y == bottom);
+        return (p.x == x1 && p.y == y1)
+            || (p.x == x2 && p.y == y1)
+            || (p.x == x1 && p.y == y2)
+            || (p.x == x2 && p.y == y2);
     }
 
     void expand(t length) {
-        top -= length;
-        right += length;
-        bottom += length;
-        left -= length;
+        y1 -= length;
+        x2 += length;
+        y2 += length;
+        x1 -= length;
     }
 
     void scan(const std::function<void(Vec2<t> p)> callable) const {
-        for (t y { top }; y <= bottom; y++) {
-            for (t x { left }; x <= right; x++) {
+        for (t y { y1 }; y <= y2; y++) {
+            for (t x { x1 }; x <= x2; x++) {
                 callable({ x, y });
             }
         }
     }
 
     void limit(const Rect& other) {
-        if (left < other.left) {
-            left = other.left;
+        if (x1 < other.x1) {
+            x1 = other.x1;
         }
-        if (right < other.right) {
-            right = other.right;
+        if (x2 < other.x2) {
+            x2 = other.x2;
         }
-        if (top < other.top) {
-            top = other.top;
+        if (y1 < other.y1) {
+            y1 = other.y1;
         }
-        if (bottom < other.bottom) {
-            bottom = other.bottom;
+        if (y2 < other.y2) {
+            y2 = other.y2;
         }
     }
 
     [[nodiscard]] bool intersects_with(const Rect& other) const {
-        return !(other.left > right
-            || other.right < left
-            || other.top > bottom
-            || other.bottom < top
+        return !(other.x1 > x2
+            || other.x2 < x1
+            || other.y1 > y2
+            || other.y2 < y1
             );
     }
 
     [[nodiscard]] bool edges(const Vec2<t>& pos) const {
-        return pos.x == left || pos.x == right || pos.y == top || pos.y == bottom;
+        return pos.x == x1 || pos.x == x2 || pos.y == y1 || pos.y == y2;
     }
 
     [[nodiscard]] Vec2<t> center() const {
         return Vec2<t> {
-            static_cast<t> (left + (right - left) / 2),
-                static_cast<t> (top + (bottom - top) / 2)
+            static_cast<t> (x1 + (x2 - x1) / 2),
+                static_cast<t> (y1 + (y2 - y1) / 2)
         };
     }
 };

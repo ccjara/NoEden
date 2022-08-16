@@ -13,7 +13,7 @@ struct RectOptions {
     /**
      * @brief Rectangle span (coordinates)
      */
-    Rect<u32> span;
+    Rect<i32> span;
 
     /**
      * @brief Border color to use
