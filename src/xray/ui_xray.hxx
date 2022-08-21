@@ -10,9 +10,13 @@ public:
     explicit UiXray(EventManager& dispatcher, Ui& ui);
 
     void update() override;
+
 private:
     Ui& ui_;
     EventManager& events_;
+
+    bool render_anchor(UiNode* node);
+    bool render_hierarchy(UiNode* node);
 };
 
 #endif
