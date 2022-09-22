@@ -72,11 +72,13 @@ public:
      * Also recursively moves all anchored nodes based on their anchor settings.
      */
     void move(Vec2<i32> position);
+    void move(i32 x, i32 y);
 
     /**
      * @brief Writing accessor for the size_ attribute
      */
-    void resize(Vec2<u32> size);
+    virtual void resize(Vec2<u32> size);
+    virtual void resize(u32 width, u32 height);
 
     /**
      * @brief Returns the position relative to its anchor
@@ -100,9 +102,10 @@ public:
     /**
      * @brief Anchors this node to the given node
      *
+     * When given a nullptr the node will be anchored to the root node
      * Existing anchor references will be updated accordingly.
      */
-    void anchor_to(UiNode& node);
+    void anchor_to(UiNode* node);
 
     /**
      * @brief Updates the anchor origin and recalculates its absolute position
@@ -159,11 +162,26 @@ public:
      */
     bool visible() const;
 
-
     /**
      * @brief Assigns the parent and updates the references in the parent and the child
+     *
+     * When given a nullptr, the root node will become the parent.
      */
-    void set_parent(UiNode& parent);
+    void set_parent(UiNode* parent);
+
+    /**
+     * @brief Updates the width of the node
+     *
+     * @see resize()
+     */
+    virtual void set_width(u32 width);
+
+    /**
+     * @brief Updates the height of the node
+     *
+     * @see resize()
+     */
+    virtual void set_height(u32 height);
 
     /**
      * @brief Sets visibility to true
@@ -227,6 +245,14 @@ protected:
      * @brief Containing parent node of this node, always set unless root
      */
     UiNode* parent_ { nullptr };
+
+    /**
+     * @brief Pointer to the root node
+     *
+     * Guaranteed to be non-null after initialization of the root node.
+     * Points to itself if the instance is the root node.
+     */
+    UiNode* root_ { nullptr };
 
     /**
      * @brief Relative position as specified by the ui code

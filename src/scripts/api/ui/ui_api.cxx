@@ -44,14 +44,10 @@ void UiApi::on_register(Script* script) {
                 }
             )
             .addFunction("set_parent", +[](UiNode* n, UiNode* target) {
-                if (target) {
-                    n->set_parent(*target);
-                }
+                n->set_parent(target);
             })
             .addFunction("anchor_to", +[](UiNode* n, UiNode* target) {
-                if (target) {
-                    n->anchor_to(*target);
-                }
+                n->anchor_to(target);
             })
             .addFunction("set_align_x", +[](UiNode* n, u32 align_x) {
                 const auto unsafe_align_x { static_cast<AlignX> (align_x) };
@@ -88,7 +84,9 @@ void UiApi::on_register(Script* script) {
             )
             .addFunction(
                 "resize",
-                +[](UiNode* n, u32 x, u32 y) { n->resize({ x, y }); }
+                +[](UiNode* n, u32 x, u32 y) {
+                    n->resize(x, y);
+                }
             )
             .addFunction("show", +[](UiNode* n) { n->show(); })
             .addFunction("hide", +[](UiNode* n) { n->hide(); })
@@ -102,7 +100,10 @@ void UiApi::on_register(Script* script) {
         .deriveClass<UiText, UiNode>("UiText")
             .addFunction(
                 "set_text",
-                +[](UiText* n, const char *text) { n->set_text(text); }
+                +[](UiText* n, const char *text) {
+                    n->text().set_text(text);
+                    n->text().update();
+                }
             )
         .endClass();
 

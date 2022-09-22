@@ -61,6 +61,10 @@ void UiNode::move(Vec2<i32> position) {
     move_abs(position);
 }
 
+void UiNode::move(i32 x, i32 y) {
+    return move(Vec2<i32>(x, y));
+}
+
 void UiNode::move_abs(Vec2<i32> pos) {
     absolute_position_ = pos;
     move_anchors();
@@ -77,8 +81,15 @@ void UiNode::resize(Vec2<u32> size) {
     move_anchors();
 }
 
-void UiNode::anchor_to(UiNode& node) {
-    if (!can_anchor_to(&node)) {
+void UiNode::resize(u32 width, u32 height) {
+    return resize(Vec2<u32>(width, height));
+}
+
+void UiNode::anchor_to(UiNode* node) {
+    if (node == nullptr) {
+        node = root_;
+    }
+    if (!can_anchor_to(node)) {
         return;
     }
     if (anchored_to_ && anchored_to_ != this) {
@@ -92,13 +103,16 @@ void UiNode::anchor_to(UiNode& node) {
         }
     }
     // assign new references on both sides
-    node.anchored_by_.emplace_back(this);
-    anchored_to_ = &node;
+    node->anchored_by_.emplace_back(this);
+    anchored_to_ = node;
     // update position after anchor was changed
     move(relative_position_);
 }
 
-void UiNode::set_parent(UiNode& parent) {
+void UiNode::set_parent(UiNode* parent) {
+    if (parent == nullptr) {
+        parent = root_;
+    }
     if (parent_) {
         for (auto it = parent_->children_.begin(); it != parent_->children_.end(); ++it) {
             if (*it == this) {
@@ -107,8 +121,8 @@ void UiNode::set_parent(UiNode& parent) {
             }
         }
     }
-    parent_ = &parent;
-    parent.children_.emplace_back(this);
+    parent_ = parent;
+    parent->children_.emplace_back(this);
 }
 
 void UiNode::call_handler() {
@@ -187,6 +201,14 @@ void UiNode::set_align_x(AlignX align_x) {
 void UiNode::set_align_y(AlignY align_y) {
     align_y_ = align_y;
     move(relative_position_);
+}
+
+void UiNode::set_width(u32 width) {
+    size_.x = width;
+}
+
+void UiNode::set_height(u32 height) {
+    size_.y = height;
 }
 
 AlignX UiNode::align_x() const {

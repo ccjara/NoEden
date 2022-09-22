@@ -3,6 +3,18 @@
 Display::Display() : Grid<DisplayCell>(DisplayCell{}) {
 }
 
+void Display::text(const Text& text, Vec2<i32> position) {
+    for (const auto& letter : text.letters()) {
+        auto pos = position + letter.offset;
+        if (!in_bounds(pos)) {
+            continue;
+        }
+        auto& cell = cells_.at(to_index(pos));
+        cell.color = letter.color;
+        cell.glyph = letter.glyph;
+    }
+}
+
 void Display::text(std::string_view t, Vec2<u32> position, Vec2<u32> clamp) {
     state_ = first_state_; // reset state stack
 
@@ -54,8 +66,6 @@ void Display::text(std::string_view t, Vec2<u32> position, Vec2<u32> clamp) {
         return true;
     };
 
-    bool immediate_break = false;
-
     for (size_t i { 0 }; i < text_length; ++i) {
         if (t[i] == CONTROL_CHAR) {
             switch (t[i + 1]) {
@@ -74,22 +84,25 @@ void Display::text(std::string_view t, Vec2<u32> position, Vec2<u32> clamp) {
                     if (state_ != last_state_) {
                         push_copy();
                         state_->break_word = t[i + 1] == 'w';
-                        i += 1;
+                        ++i;
                         continue;
                     }
                     break;
                 case '!':
                     if (state_ != first_state_) {
                         --state_;
-                        i += 1;
+                        ++i;
                         continue;
                     }
                     break;
                 case 'n':
-                    // only inc by one as jumping to break_line only sets up the
-                    // line break and then immediately continues the loop
                     ++i;
-                    immediate_break = true;
+                    if (position.y == limit.y) {
+                        return;
+                    }
+                    position.x = origin.x;
+                    ++position.y;
+                    continue;
                 case CONTROL_CHAR:
                     ++i;
                     break;
@@ -98,22 +111,6 @@ void Display::text(std::string_view t, Vec2<u32> position, Vec2<u32> clamp) {
                     break;
             }
         }
-
-        if (immediate_break) {
-            if (position.y == limit.y) {
-                break;
-            }
-            position.x = origin.x;
-            ++position.y;
-
-            if (i + 1 < text_length && t[i + 1] == ' ') {
-                // skip immediate space at new line
-                ++i;
-                continue;
-            }
-            return;
-        }
-
         const char c { t[i] };
         auto& cell { cells_.at(to_index(position)) };
         bool is_last_char_of_line { position.x == limit.x };

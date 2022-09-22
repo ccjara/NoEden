@@ -35,6 +35,7 @@ add_executable(
     "gfx/renderer.cxx"
     "gfx/shader.cxx"
     "gfx/surface.cxx"
+    "gfx/text.cxx"
     "gfx/text_shader.cxx"
     "gfx/texture.cxx"
 

@@ -25,6 +25,11 @@ private:
     Window& window_;
     EventManager& events_;
 
+    /**
+     * @brief Whether the Xray interface is currently visible
+     */
+    bool show_xray_;
+
     bool on_post_render(PostRenderEvent& e);
     bool on_mouse_down(MouseDownEvent& e);
     bool on_mouse_up(MouseUpEvent& e);

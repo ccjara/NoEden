@@ -48,13 +48,13 @@ private:
 
     inline static void scan(Actor& viewer, Grid<Tile>& tiles, Row& row, Quadrant q);
 
-    constexpr Vec2<i32> static to_grid_coords(Quadrant q, Vec2<i32> start_pos, i32 depth, i32 col);
+    inline Vec2<i32> static to_grid_coords(Quadrant q, Vec2<i32> start_pos, i32 depth, i32 col);
 
-    constexpr static float slope(i32 depth, i32 column);
+    inline static float slope(i32 depth, i32 column);
 
-    constexpr static bool symmetric(Row& row, i32 col);
+    inline static bool symmetric(Row& row, i32 col);
 
-    constexpr static bool in_range(i32 row, i32 col, i32 max_range);
+    inline static bool in_range(i32 row, i32 col, i32 max_range);
 };
 
 #endif

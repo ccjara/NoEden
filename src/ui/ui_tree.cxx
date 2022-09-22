@@ -42,28 +42,17 @@ void UiTree::remove_node(std::string_view id) {
             nodes_by_id_.erase(node->id_);
         } else {
             // remove destroyed anchors from non-destroyed node
-            node->anchored_by_.erase(
-                std::remove_if(
-                    node->anchored_by_.begin(),
-                    node->anchored_by_.end(),
-                    [](const UiNode* node) { return node->destroyed_; }
-                ),
-                node->anchored_by_.end()
+            std::erase_if(
+                node->anchored_by_,
+                [](const UiNode* node) { return node->destroyed_; }
             );
             if (node->anchored_to_ && node->anchored_to_->destroyed_) {
-                node->anchor_to(*root_);
+                node->anchor_to(root_);
             }
         }
     }
     // remove all destroyed nodes in owning container
-    nodes_.erase(
-        std::remove_if(
-            nodes_.begin(),
-            nodes_.end(),
-            [](auto& node) { return node->destroyed_; }
-        ),
-        nodes_.end()
-    );
+    std::erase_if(nodes_, [](auto& node) { return node->destroyed_; });
 }
 
 void UiTree::destroy_node(UiNode* node) {

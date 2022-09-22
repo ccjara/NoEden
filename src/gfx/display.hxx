@@ -3,6 +3,7 @@
 
 #include "../grid.hxx"
 #include "display_cell.hxx"
+#include "text.hxx"
 
 struct TextState {
     Color color { Color::white() };
@@ -104,6 +105,8 @@ public:
             std::numeric_limits<u32>::max()
         }
     );
+
+    void text(const Text& t, Vec2<i32> position);
 
     /**
      * @brief Render a rectangle on the display

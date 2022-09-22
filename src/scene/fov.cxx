@@ -60,20 +60,20 @@ void Fov::scan(
     }
 }
 
-constexpr float Fov::slope(i32 depth, i32 column) {
+float Fov::slope(i32 depth, i32 column) {
     return ((float) (2 * column - 1)) / ((float) 2 * depth);
 }
 
-constexpr bool Fov::symmetric(Row& row, i32 col) {
+bool Fov::symmetric(Row& row, i32 col) {
     return ((float) col >= (float) row.depth * row.start_slope) &&
             ((float) col <= (float) row.depth * row.end_slope);
 }
 
-constexpr bool Fov::in_range(i32 row, i32 col, i32 max_range) {
+bool Fov::in_range(i32 row, i32 col, i32 max_range) {
     return 0.5f + std::sqrt(col * col + row * row) <= max_range;
 }
 
-constexpr Vec2<i32> Fov::to_grid_coords(Quadrant q, Vec2<i32> start_pos, i32 depth, i32 col) {
+Vec2<i32> Fov::to_grid_coords(Quadrant q, Vec2<i32> start_pos, i32 depth, i32 col) {
     switch (q) {
         case Quadrant::N:
         default:

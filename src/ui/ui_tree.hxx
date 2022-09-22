@@ -18,6 +18,7 @@ public:
      */
     template<typename Node>
     Node* create_node(UiNode* parent, std::string_view id) {
+        assert(root_); // root node is created in a dedicate method
         if (parent == nullptr) {
             parent = root_;
         }
@@ -30,9 +31,10 @@ public:
         auto node { new Node() };
         nodes_.emplace_back(node);
         nodes_by_id_.emplace(std::string(id), node);
+        node->root_ = root_;
         node->id_ = id;
         node->parent_ = parent;
-        node->anchor_to(*root_);
+        node->anchor_to(root_);
         parent->children_.push_back(node);
         return node;
     }

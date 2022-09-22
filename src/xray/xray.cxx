@@ -42,7 +42,14 @@ bool Xray::on_mouse_up(MouseUpEvent &e) {
 }
 
 bool Xray::on_key_down(KeyDownEvent &e) {
-    return ImGui::GetIO().WantCaptureKeyboard;
+    if (ImGui::GetIO().WantCaptureKeyboard) {
+        return true;
+    }
+    if (e.key == Key::F1) {
+        show_xray_ = !show_xray_;
+        return true;
+    }
+    return false;
 }
 
 bool Xray::on_key_up(KeyUpEvent &e) {
@@ -50,6 +57,9 @@ bool Xray::on_key_up(KeyUpEvent &e) {
 }
 
 bool Xray::on_post_render(PostRenderEvent&) {
+    if (!show_xray_) {
+        return false;
+    }
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window_.handle());
     ImGui::NewFrame();
@@ -60,7 +70,7 @@ bool Xray::on_post_render(PostRenderEvent&) {
     ImGui::SetNextWindowViewport(viewport->ID);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2 { 0.0f, 0.0f });
 
-    constexpr auto window_flags = 
+    constexpr auto window_flags =
         ImGuiWindowFlags_NoDocking |
         ImGuiWindowFlags_NoTitleBar |
         ImGuiWindowFlags_NoBackground |

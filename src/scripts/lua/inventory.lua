@@ -62,11 +62,20 @@ function on_load()
         return;
     end;
 
+    local inventory_lines = "";
+
+    for i = 1,10,1
+    do
+        inventory_lines = inventory_lines..string.format("$c00ff00%3i$! %s$n", i, "Some Item");
+    end
+
+    print(inventory_lines);
+
     text:set_parent(inventory_window);
     text:move(2, 2);
-    text:resize(20, 2);
+    text:resize(20, 20);
     text:anchor_to(inventory_window);
-    text:set_text("Hello World!");
+    text:set_text(inventory_lines);
     text:show();
 
     -- script:on(event.inventory_view, on_inventory_view);
