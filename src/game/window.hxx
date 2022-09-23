@@ -3,28 +3,10 @@
 
 /**
  * @brief Represents the game window by owning an SDL_Window
- *
- * Only a single window will be managed by the engine and we don't expect it
- * to be moved or even copied around
  */
 class Window {
 public:
-    Window() = default;
-
-    /**
-     * @brief Frees the SDL window handle
-     */
-    ~Window();
-
-    Window(const Window&) = delete;
-    Window(Window&&) = delete;
-    Window& operator=(const Window&) = delete;
-    Window& operator=(Window&&) = delete;
-
-    /**
-     * @brief Implicit conversion to the managed handle
-     */
-    operator SDL_Window* () const;
+    Window() = delete;
 
     /**
      * @brief Updates the window size
@@ -35,24 +17,24 @@ public:
      *
      * @see ResizeEvent
      */
-    void resize(Vec2<u32> s);
+    static void resize(Vec2<u32> s);
 
     /**
      * @brief Creates the SDL managed window
      */
-    void open(Vec2<u32> size, const char *title);
+    static void open(Vec2<u32> size, const char *title);
 
     /**
      * @brief Destroys the underlying SDL managed window
      */
-    void close();
+    static void close();
 
-    [[nodiscard]] SDL_Window* handle() const;
-    [[nodiscard]] Vec2<u32> size() const;
+    static [[nodiscard]] SDL_Window* handle();
+    static [[nodiscard]] Vec2<u32> size();
 private:
-    Vec2<u32> size_;
-    std::string title_;
-    SDL_Window* handle_ { nullptr };
+    static inline Vec2<u32> size_;
+    static inline std::string title_;
+    static inline SDL_Window* handle_ = nullptr;
 };
 
 #endif

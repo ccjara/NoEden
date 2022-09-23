@@ -8,6 +8,12 @@ public:
      */
     virtual void update() = 0;
 
+    virtual void init() {
+    }
+
+    virtual void shutdown() {
+    }
+
     virtual ~IXray() = default;
 };
 

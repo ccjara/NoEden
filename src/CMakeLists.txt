@@ -9,10 +9,8 @@ add_executable(
     "../deps/imgui/imgui_widgets.cpp"
 
     "actor/action.hxx"
-    "actor/action_queue.cxx"
     "actor/actor.cxx"
     "actor/archetype.hxx"
-    "actor/player_controller.cxx"
     "actor/move_action.cxx"
 
     "actor/skill.hxx"
@@ -20,11 +18,10 @@ add_executable(
     "ai/ai_node.hxx"
     "ai/ai_walk.hxx"
 
-    "events/event_manager.hxx"
+    "events/event_manager.cxx"
 
     "game/config.hxx"
     "game/game.cxx"
-    "game/game_factory.cxx"
     "game/platform_event.hxx"
     "game/window.cxx"
 
@@ -52,7 +49,6 @@ add_executable(
 
     "input/input.cxx"
     "input/input_event.hxx"
-    "input/input_state.cxx"
     "input/key.hxx"
     "input/keyboard_state.cxx"
     "input/mouse_button.hxx"
@@ -62,11 +58,9 @@ add_executable(
 
     "scene/fov.cxx"
     "scene/scene.cxx"
-    "scene/scene_events.hxx"
     "scene/tile.cxx"
     "scene/tile_builder.cxx"
 
-    "scripts/api/api_registrar.cxx"
     "scripts/api/log_api.cxx"
     "scripts/api/lua_api.hxx"
     "scripts/api/scene_api.cxx"

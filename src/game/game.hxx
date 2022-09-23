@@ -3,74 +3,31 @@
 
 #include "config.hxx"
 #include "window.hxx"
+#include "../ai/ai_walk.hxx"
+#include "../scripts/api/scene_api.hxx"
+#include "../scripts/api/ui/ui_api.hxx"
+#include "../scripts/api/log_api.hxx"
+#include "../xray/log_xray.hxx"
+#include "../xray/scene_xray.hxx"
+#include "../xray/script_xray.hxx"
+#include "../xray/ui_xray.hxx"
 #include "../input/input.hxx"
 #include "../ui/ui.hxx"
 #include "../scene/scene.hxx"
-#include "../scene/scene_events.hxx"
 #include "../scripts/script.hxx"
 #include "../scripts/script_event.hxx"
-#include "../game/platform_event.hxx"
+#include "platform_event.hxx"
 #include "../gfx/renderer.hxx"
-#include "../actor/player_controller.hxx"
-#include "../actor/action_queue.hxx"
 #include "../scripts/scripting.hxx"
 #include "../xray/xray.hxx"
 
-/**
- * @brief Facade around the game platform (OS) and its specificities
- */
 class Game {
-    friend class GameFactory;
 public:
-    Game();
-
-    /**
-     * @brief Returns whether the game is still running.
-     *
-     * When false, the game loop will break after the current cycle,
-     * effectively triggering the exit routine.
-     */
-    bool running() const;
-
-    /**
-     * @brief Starts the environment.
-     *
-     * Loads the configuration, reads hardware capabilities and initializes
-     * the platform (using SDL2) thereafter by creating the game window.
-     */
-    void start();
-
-    /**
-     * @brief Request a stop of the environment.
-     *
-     * Frees owned resources and causes the game loop to break after the
-     * current cycle.
-     *
-     * @see running
-     */
-    void stop();
-
     /**
      * @brief Runs the game loop until stopped by the player.
-     *
-     * @see stop
      */
     void run();
 private:
-    u32 last_ticks_;
-
-    EventManager events_;
-    PlayerController player_controller_;
-    ActionQueue action_queue_;
-    Scene scene_;
-    Scripting scripting_;
-
-    Input input_;
-    Window window_;
-    Renderer renderer_;
-    Ui ui_;
-    Xray xray_;
-
     /**
      * @brief The source of truth of the system configuration.
      *
@@ -86,6 +43,15 @@ private:
      */
     bool is_running_ { false };
 
+    /**
+     * @brief Initializes the game and its subsystems
+     */
+    void init();
+
+    /**
+     * @brief Shuts down the game and its subsystems
+     */
+    void shutdown();
 
     /**
      * @brief Polls for pending OS messages and dispatches env events.
@@ -94,12 +60,12 @@ private:
      */
     void process_os_messages();
 
-    bool on_script_loaded(ScriptLoadedEvent&);
-
     /**
      * @brief Updates the config from inside a lua script.
      */
     void configure_from_lua(luabridge::LuaRef cfg);
+
+    bool on_script_loaded(ScriptLoadedEvent&);
 };
 
 #endif

@@ -7,13 +7,10 @@
 
 class ScriptXray : public IXray {
 public:
-    explicit ScriptXray(EventManager& dispatcher, Scripting& scripts);
+    ScriptXray();
 
     void update() override;
 private:
-    Scripting& scripting_;
-    EventManager& events_;
-
     void render_current_script(Script *current);
 
     bool on_script_loaded(ScriptLoadedEvent& e);

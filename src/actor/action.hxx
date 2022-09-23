@@ -2,11 +2,10 @@
 #define JARALYN_ACTION_HXX
 
 #include "actor.hxx"
-#include "../scene/scene.hxx"
 
 /**
  * @brief Base class for an action any controller may produce for an actor.
- * 
+ *
  * TODO: Rename to Command?
  */
 struct Action {
@@ -14,7 +13,7 @@ struct Action {
 
     /**
      * @brief Extension point for subclasses defining a concrete action.
-     * 
+     *
      * Returns true if the action was performed successfully.
      */
     virtual bool perform() = 0;
@@ -32,13 +31,8 @@ struct Action {
     Actor* actor { nullptr };
 
     /**
-     * @brief Points to the scene where this action will be on
-     */
-    Scene* scene { nullptr };
-
-    /**
      * @brief Speed at which this action performs.
-     * 
+     *
      * This speed is unaffected by changes to the actor's speed being made
      * after this action was created.
      */

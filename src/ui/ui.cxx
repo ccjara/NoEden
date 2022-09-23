@@ -1,25 +1,21 @@
 #include "ui.hxx"
 
-Ui::Ui(EventManager& dispatcher, Display& display) :
-    events_ { dispatcher },
-    display_ { display } {
-    events_.on<DisplayResizedEvent>(this, &Ui::on_display_resized);
-    events_.on<ScriptResetEvent>(this, &Ui::on_script_reset);
-    events_.on<PostWorldRenderEvent>(this, &Ui::on_post_world_render);
+void Ui::init() {
+    ui_tree_.create_root_node();
+
+    Events::on<DisplayResizedEvent>(&Ui::on_display_resized);
+    Events::on<ScriptResetEvent>(&Ui::on_script_reset);
+    Events::on<PostWorldRenderEvent>(&Ui::on_post_world_render);
+}
+
+void Ui::shutdown() {
+    ui_tree_.clear();
 }
 
 void Ui::update() {
     for (auto& node : ui_tree_.nodes()) {
         node->call_handler();
     }
-}
-
-void Ui::startup() {
-    ui_tree_.create_root_node();
-}
-
-void Ui::shutdown() {
-    ui_tree_.clear();
 }
 
 bool Ui::on_display_resized(DisplayResizedEvent& e) {
@@ -39,7 +35,7 @@ bool Ui::on_post_world_render(PostWorldRenderEvent& e) {
     return false;
 }
 
-UiTree& Ui::ui_tree() {
+UiTree& Ui::tree() {
     return ui_tree_;
 }
 
@@ -48,24 +44,22 @@ void Ui::draw_node(UiNode* node) {
     if (!node->visible()) {
         return;
     }
+    auto& display = Renderer::display();
 
     if (node->type() == UiNodeType::window) {
-        auto window { static_cast<UiWindow*>(node) };
-        const auto pos { window->absolute_position() };
+        auto n = static_cast<UiWindow*>(node);
+        const auto pos = n->absolute_position();
         // border
-        display_.rectangle({
-            Rect<i32> { pos, window->size() },
+        display.rectangle({
+            Rect<i32> { pos, n->size() },
             Color::mono(128),
             Color::black(),
         });
         // title
-        display_.text(window->title(), pos);
+        display.text(n->title(), pos);
     } else if (node->type() == UiNodeType::text) {
-        auto text_node { static_cast<UiText*>(node) };
-        display_.text(
-            text_node->text(),
-            text_node->absolute_position()
-        );
+        auto n = static_cast<UiText*>(node);
+        display.text(n->text(), n->absolute_position());
     }
     for (UiNode* child_node : node->children()) {
         draw_node(child_node);

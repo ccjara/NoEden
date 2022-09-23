@@ -1,25 +1,27 @@
 #include "renderer.hxx"
 
-Renderer::Renderer(Window& window, EventManager& dispatcher) :
-    events_ { dispatcher },
-    window_ { window } {
-
-    events_.on<ResizeEvent>(this, &Renderer::on_resize);
-    events_.on<ConfigUpdatedEvent>(this, &Renderer::on_config_updated);
+void Renderer::shutdown() {
+    if (vao) {
+        glDeleteBuffers(1, &vao);
+    }
+    if (vbo) {
+        glDeleteBuffers(1, &vbo);
+    }
+    if (gl_context_ != nullptr) {
+        SDL_GL_DeleteContext(gl_context_);
+        gl_context_ = nullptr;
+    }
 }
 
-Renderer::~Renderer() {
-    reset();
-}
-
-void Renderer::initialize() {
-    reset();
+void Renderer::init() {
+    Events::on<ResizeEvent>(&Renderer::on_resize);
+    Events::on<ConfigUpdatedEvent>(&Renderer::on_config_updated);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-    gl_context_ = SDL_GL_CreateContext(window_);
+    gl_context_ = SDL_GL_CreateContext(Window::handle());
 
     if (gl_context_ == nullptr) {
         Log::error("Could not initialize opengl");
@@ -47,13 +49,13 @@ void Renderer::initialize() {
 
     text_shader_ = std::make_unique<TextShader>();
 
-    set_viewport(window_.size());
+    set_viewport(Window::size());
 
     configure(Config());
 }
 
-void Renderer::render(const Scene& scene) {
-    update_display(scene);
+void Renderer::render() {
+    update_display();
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -79,13 +81,13 @@ void Renderer::render(const Scene& scene) {
     }
     glDrawArrays(GL_POINTS, 0, display_.cell_count());
 
-    events_.trigger<PostRenderEvent>();
+    Events::trigger<PostRenderEvent>();
 
-    SDL_GL_SwapWindow(window_);
+    SDL_GL_SwapWindow(Window::handle());
 }
 
-void Renderer::update_display(const Scene& scene) {
-    const auto& tiles { scene.read_tiles() };
+void Renderer::update_display() {
+    const auto& tiles { Scene::read_tiles() };
     const auto& last_tile_index { display_.cell_count() };
     const auto scene_dim { tiles.dimensions() };
     const auto display_dim { display_.dimensions() };
@@ -106,7 +108,7 @@ void Renderer::update_display(const Scene& scene) {
         }
     }
 
-    for (const auto& actor : scene.read_actors()) {
+    for (const auto& actor : Scene::read_actors()) {
         if (!display_.in_bounds(actor->position)) {
             continue; // do not render entities outside of view
         }
@@ -121,7 +123,7 @@ void Renderer::update_display(const Scene& scene) {
         );
     }
 
-    events_.trigger<PostWorldRenderEvent>();
+    Events::trigger<PostWorldRenderEvent>();
 }
 
 void Renderer::set_viewport(Vec2<u32> size) {
@@ -140,19 +142,6 @@ void Renderer::set_glyph_size(Vec2<u32> glyph_size) {
 void Renderer::set_scaling(u32 scaling) {
     scaling_ = scaling;
     text_shader_->use_resolution(view_port_ / scaling);
-}
-
-void Renderer::reset() {
-    if (vao) {
-        glDeleteBuffers(1, &vao);
-    }
-    if (vbo) {
-        glDeleteBuffers(1, &vbo);
-    }
-    if (gl_context_ != nullptr) {
-        SDL_GL_DeleteContext(gl_context_);
-        gl_context_ = nullptr;
-    }
 }
 
 bool Renderer::on_resize(ResizeEvent& e) {
@@ -184,7 +173,7 @@ bool Renderer::on_config_updated(ConfigUpdatedEvent& e) {
 
 void Renderer::adjust_display() {
     // calculate resolution
-    const auto scaled_size { window_.size() / cfg_.scaling };
+    const auto scaled_size { Window::size() / cfg_.scaling };
     // calculate how many cells will fit on the screen given that resolution
     const Vec2<u32> display_size {
         scaled_size.x / cfg_.glyph_size.x,
@@ -192,15 +181,15 @@ void Renderer::adjust_display() {
     };
     // resize and notify
     display_.resize(display_size);
-    events_.trigger<DisplayResizedEvent>(display_size);
+    Events::trigger<DisplayResizedEvent>(display_size);
     Log::debug("Display resized to {}x{} cells", display_size.x, display_size.y);
 }
 
-SDL_GLContext Renderer::gl_context() const {
+SDL_GLContext Renderer::gl_context() {
     return gl_context_;
 }
 
-std::array<float, 4> Renderer::calculate_glyph_uv(u32 glyph) const {
+std::array<float, 4> Renderer::calculate_glyph_uv(u32 glyph) {
     const Vec2<float> glyph_size = {
         static_cast<float>(text_shader_->glyph_size().x),
         static_cast<float>(text_shader_->glyph_size().y)
@@ -224,11 +213,11 @@ std::array<float, 4> Renderer::calculate_glyph_uv(u32 glyph) const {
     return std::array<float, 4> { u1, v1, u2, v2 };
 }
 
-GLuint Renderer::text_texture() const {
+GLuint Renderer::text_texture() {
     return text_texture_.id();
 }
 
-float Renderer::glyph_aspect_ratio() const {
+float Renderer::glyph_aspect_ratio() {
     return static_cast<float>(
         text_shader_->glyph_size().x
     ) / text_shader_->glyph_size().y;

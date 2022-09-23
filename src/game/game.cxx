@@ -1,16 +1,10 @@
 #include "game.hxx"
 
-Game::Game() :
-    input_ { events_ },
-    renderer_ { window_, events_ },
-    ui_ { events_, renderer_.display() },
-    player_controller_ { action_queue_, events_ },
-    scripting_ { events_ },
-    xray_ { window_, events_ },
-    action_queue_ { scene_ } {
-}
+void Game::init() {
+    Log::init();
+    Events::init();
+    Events::on<ScriptLoadedEvent>(this, &Game::on_script_loaded);
 
-void Game::start() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         Log::error("SDL could not initialize: {}", SDL_GetError());
         std::abort();
@@ -19,84 +13,130 @@ void Game::start() {
     SDL_Rect display_bounds;
     SDL_GetDisplayBounds(0, &display_bounds);
 
-    window_.open(Vec2<u32>{
+    Window::open(Vec2<u32>{
         static_cast<u32>(static_cast<float>(display_bounds.w) / 1.25f),
         static_cast<u32>(static_cast<float>(display_bounds.h) / 1.25f)
     }, "Jaralyn");
 
-    renderer_.initialize();
 
-    events_.on<ScriptLoadedEvent>(this, &Game::on_script_loaded);
+    Renderer::init();
+    Ui::init();
+    Scene::init();
+    Scripting::init();
+
+    Translator::load("en");
+
+    // xray / engine ui
+    Xray::init(Renderer::gl_context());
+    Xray::add<LogXray>();
+    Xray::add<SceneXray>();
+    Xray::add<ScriptXray>();
+    Xray::add<UiXray>();
+
+    // scripting
+    Scripting::add_api<LogApi>();
+    Scripting::add_api<SceneApi>();
+    Scripting::add_api<UiApi>();
+
+    Scripting::load_from_path(Scripting::default_script_path);
 
     is_running_ = true;
+
+    // post initialization experimentation
+    auto& player = Scene::create_actor(&Archetypes::Dwarf);
+    auto& troll = Scene::create_actor(&Archetypes::Troll);
+
+    // TODO: move as factory to archetype
+    troll.ai.add<AiWalk>(0, &troll);
+
+    player.position = { 0, 1 };
+    troll.position = { 3, 3 };
+
+    Scene::set_player(&player);
+}
+
+void Game::shutdown() {
+    Xray::shutdown();
+    Scripting::shutdown();
+    Ui::shutdown();
+    Renderer::shutdown();
+    Window::close();
+    SDL_Quit();
+    Events::shutdown();
 }
 
 void Game::process_os_messages() {
     SDL_PumpEvents();
 
     SDL_Event e;
-    while (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_EventType::SDL_FIRSTEVENT, SDL_EventType::SDL_WINDOWEVENT) != 0) {
+    while (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_EventType::SDL_FIRSTEVENT, SDL_EventType::SDL_MOUSEWHEEL) != 0) {
+        ImGui_ImplSDL2_ProcessEvent(&e);
+
         switch (e.type) {
-        case SDL_EventType::SDL_QUIT:
-            is_running_ = false;
-            return;
-        case SDL_EventType::SDL_WINDOWEVENT:
-            if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
-                window_.resize(Vec2<u32> {
-                    static_cast<u32> (e.window.data1),
-                    static_cast<u32> (e.window.data2)
-                });
-                events_.trigger<ResizeEvent>(window_.size());
+            case SDL_EventType::SDL_QUIT:
+                is_running_ = false;
+                return;
+            case SDL_EventType::SDL_WINDOWEVENT: {
+                if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
+                    Window::resize(Vec2<u32> {
+                        static_cast<u32> (e.window.data1),
+                        static_cast<u32> (e.window.data2)
+                    });
+                    Events::trigger<ResizeEvent>(Window::size());
+                }
+                break;
             }
-            break;
+            case SDL_EventType::SDL_KEYDOWN: {
+                const Key key { static_cast<Key>(e.key.keysym.sym) };
+                Input::keyboard_.key_down(key);
+                Events::trigger<KeyDownEvent>(key);
+                break;
+            }
+            case SDL_EventType::SDL_KEYUP: {
+                const auto key { static_cast<Key>(e.key.keysym.sym) };
+                Input::keyboard_.key_up(key);
+                Events::trigger<KeyUpEvent>(key);
+                break;
+            }
+            case SDL_EventType::SDL_MOUSEBUTTONDOWN: {
+                const auto button { static_cast<MouseButton>(e.button.button) };
+                Input::mouse_.mouse_down(button);
+                Events::trigger<MouseDownEvent>(button);
+                break;
+            }
+            case SDL_EventType::SDL_MOUSEBUTTONUP: {
+                const auto button { static_cast<MouseButton>(e.button.button) };
+                Input::mouse_.mouse_up(button);
+                Events::trigger<MouseUpEvent>(button);
+                break;
+            }
+            case SDL_EventType::SDL_MOUSEMOTION: {
+                const Vec2<i32> pos { e.motion.x, e.motion.y };
+                Input::mouse_.move(pos);
+                Events::trigger<MouseMoveEvent>(pos);
+                break;
+            }
         }
     }
-    input_.poll_platform();
 }
 
 void Game::run() {
-    ui_.startup();
-    scripting_.startup();
-    xray_.startup(renderer_.gl_context());
-
-    events_.trigger<SceneLoadedEvent>(&scene_);
-
-    scene_.update_fov(player_controller_.player());
+    init();
 
     while (true) {
         process_os_messages();
         if (!is_running_) {
             break;
         }
-
         // world clock advances upon player commands
-        if (auto player_action = player_controller_.pull_player_action()) {
-            for (auto& actor : scene_.actors()) {
-                actor->energy += player_action->cost;
-                // TODO: ai must calculate number of possible actions, then push them
-                //       the cost are deducted when performing the action so that
-                //       if an actor gets impaired / slowed the action may fail in that cycle
-                actor->ai.visit();
-            }
-            action_queue_.process();
-
-            // update pov
-            scene_.update_fov(player_controller_.player());
-        }
-
+        Scene::perform_actions();
         // update engine submodules
-        ui_.update();
-
+        Ui::update();
         // render
-        renderer_.render(scene_);
+        Renderer::render();
     }
 
-    xray_.shutdown();
-    scripting_.shutdown();
-    ui_.shutdown();
-
-    window_.close();
-    SDL_Quit();
+    shutdown();
 }
 
 bool Game::on_script_loaded(ScriptLoadedEvent& e) {
@@ -148,9 +188,5 @@ void Game::configure_from_lua(luabridge::LuaRef cfg) {
     } else {
         report("Expected gfx:glyph_size to be a table");
     }
-    events_.trigger<ConfigUpdatedEvent>(std::move(cfg_prev), config_);
-}
-
-bool Game::running() const {
-    return is_running_;
+    Events::trigger<ConfigUpdatedEvent>(cfg_prev, config_);
 }

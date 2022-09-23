@@ -48,14 +48,6 @@ protected:
     }
 public:
     /**
-     * @brief Initializes the grid with the null cell
-     *
-     * The null cell is returned as an alternative if grid access is out of bounds
-     */
-    constexpr explicit Grid(cell &&null_cell) {
-    }
-
-    /**
      * @brief Resets and resizes the grid to the given cell dimensions
      */
     constexpr void resize(const Vec2<u32>& dimensions) {

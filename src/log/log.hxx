@@ -19,33 +19,29 @@ struct LogEntry {
     std::string message;
 };
 
-/**
- * TODO: Not a big fan of all this staticness - use a global pointer instead
- *       so a cleaner interface can be defined without all the friend classes?
- */
 class Log {
     friend class LogXray;
     friend class MemorySink;
-    friend class GameFactory;
+    friend class Game;
     using LogPtr = std::unique_ptr<spdlog::logger>;
     using LogStore = std::deque<LogEntry>;
 public:
     template<typename... Args>
-    inline static void debug(Args&&... args) {
+    static inline void debug(Args&&... args) {
         log_->debug(std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    inline static void info(Args&&... args) {
+    static inline void info(Args&&... args) {
         log_->info(std::forward<Args>(args)...);
     }
     template<typename... Args>
-    inline static void warn(Args&&... args) {
+    static inline void warn(Args&&... args) {
         log_->warn(std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    inline static void error(Args&&... args) {
+    static inline void error(Args&&... args) {
         log_->error(std::forward<Args>(args)...);
     }
 
@@ -54,29 +50,29 @@ public:
      */
     static void set_level(LogLevel level);
 private:
-    static void startup();
+    static void init();
 
     /**
      * @brief Library logger this class wraps.
      */
-    static LogPtr log_;
+    static inline LogPtr log_;
 
     /**
      * @brief Stores logs in a FIFO-like container with random access.
      *
      * The store is currently implemented as a deque.
      */
-    static LogStore logs_;
+    static inline LogStore logs_;
 
     /**
      * @brief Maximum amount of log entries before evicting the next front entry.
      */
-    static u16 max_entries_;
+    static inline u16 max_entries_ = 1000U;
 
     /**
      * @brief The current log level.
      */
-    static LogLevel level_;
+    static inline LogLevel level_ = LogLevel::Debug;
 
     /**
      * @brief Clears and resizes the log store to the given size.

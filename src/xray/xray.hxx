@@ -9,36 +9,33 @@
 
 class Xray {
 public:
-    Xray(Window& window, EventManager& events);
+    Xray() = delete;
 
     /**
      * @brief Adds an xray implementation to the xray container
      */
-    template<typename Xray, typename... XrayArgs>
-    void add(XrayArgs&&... xray_args) {
-        xrays_.emplace_back(new Xray(std::forward<XrayArgs>(xray_args)...));
+    template<typename XrayClass, typename... XrayArgs>
+    static void add(XrayArgs&&... xray_args) {
+        xrays_.emplace_back(new XrayClass(std::forward<XrayArgs>(xray_args)...));
     }
 
-    void startup(SDL_GLContext context);
-    void shutdown();
+    static void init(SDL_GLContext context);
+    static void shutdown();
 private:
-    Window& window_;
-    EventManager& events_;
-
     /**
      * @brief Whether the Xray interface is currently visible
      */
-    bool show_xray_;
+    static inline bool show_xray_ = true;
 
-    bool on_post_render(PostRenderEvent& e);
-    bool on_mouse_down(MouseDownEvent& e);
-    bool on_mouse_up(MouseUpEvent& e);
-    bool on_key_down(KeyDownEvent& e);
-    bool on_key_up(KeyUpEvent& e);
+    static bool on_post_render(PostRenderEvent& e);
+    static bool on_mouse_down(MouseDownEvent& e);
+    static bool on_mouse_up(MouseUpEvent& e);
+    static bool on_key_down(KeyDownEvent& e);
+    static bool on_key_up(KeyUpEvent& e);
 
-    ImGuiContext* imgui_context_ { nullptr };
+    static inline ImGuiContext* imgui_context_ = nullptr;
 
-    std::vector<std::unique_ptr<IXray>> xrays_;
+    static inline std::vector<std::unique_ptr<IXray>> xrays_;
 };
 
 #endif

@@ -17,9 +17,9 @@ struct ConfigUpdatedEvent {
     Config prev;
     Config next;
 
-    ConfigUpdatedEvent(Config cfg_prev, Config cfg_next) :
-        prev(std::move(cfg_prev)),
-        next(std::move(cfg_next)) {
+    explicit ConfigUpdatedEvent(Config& cfg_prev, Config& cfg_next) :
+        prev(cfg_prev),
+        next(cfg_next) {
     }
 };
 

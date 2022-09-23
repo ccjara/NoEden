@@ -1,8 +1,5 @@
 #include "scene_api.hxx"
 
-SceneApi::SceneApi(Scene& scene) : scene_ { scene } {
-}
-
 void SceneApi::on_register(Script* script) {
     luabridge::getGlobalNamespace(*script)
         .beginClass<SceneApi>("SceneApi")
@@ -13,7 +10,7 @@ void SceneApi::on_register(Script* script) {
 }
 
 const char *SceneApi::actor_name(u64 id) const {
-    Actor* actor { scene_.get_actor_by_id(id) };
+    Actor* actor = Scene::get_actor_by_id(id);
     if (!actor) {
         return "Unknown";
     }

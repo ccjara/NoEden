@@ -3,7 +3,7 @@
 
 #include "../game/platform_event.hxx"
 #include "../input/input_event.hxx"
-#include "api/api_registrar.hxx"
+#include "api/lua_api.hxx"
 #include "script_event.hxx"
 #include "script_util.hxx"
 #include "script.hxx"
@@ -15,7 +15,7 @@ namespace lua_event { // FIXME: luabridge does not support enums
 
 class Scripting {
 public:
-    Scripting(EventManager& events);
+    Scripting() = delete;
 
     constexpr static const char* default_script_path {
 #ifdef NDEBUG
@@ -41,41 +41,46 @@ public:
      *   - `scripts/system.lua` -> `system`
      */
     template<typename path_like>
-    void load_from_path(path_like base_path);
+    static void load_from_path(path_like base_path);
 
-    [[nodiscard]] const std::unordered_map<u64, std::unique_ptr<Script>>& scripts() const;
+    static [[nodiscard]] const std::unordered_map<u64, std::unique_ptr<Script>>& scripts();
 
-    Script* get_by_id(u64 id) const;
+    static [[nodiscard]] Script* get_by_id(u64 id);
+
+    /**
+     * @brief Constructs and registers a lua api fragment in place
+     *
+     * @see LuaApi
+     */
+    template<typename Api, typename... ApiArgs>
+    static void add_api(ApiArgs&&... api_args);
 
     /**
      * @brief Setups up globals and namespaces for every script.
      */
-    void setup_script_env(Script& script);
+    static void setup_script_env(Script& script);
 
-    ApiRegistrar& registrar();
-
-    void startup();
-    void shutdown();
+    static void init();
+    static void shutdown();
 private:
-    EventManager& events_;
-    ApiRegistrar api_registrar_;
+    static inline std::vector<std::unique_ptr<LuaApi>> apis_;
 
-    std::unordered_map<u64, std::unique_ptr<Script>> scripts_;
+    static inline std::unordered_map<u64, std::unique_ptr<Script>> scripts_;
 
     struct ScriptRef {
         u64 script_id;
         luabridge::LuaRef ref;
     };
-    std::unordered_map<lua_event_type, std::vector<ScriptRef>> listeners_;
+    static inline std::unordered_map<lua_event_type, std::vector<ScriptRef>> listeners_;
 
     /**
      * @brief Tracks a lua function that should be invoked on a specific event.
      *
      * The stored refs must be removed before the scripts are unloaded
      */
-    bool register_lua_callback(lua_event_type event_type, luabridge::LuaRef ref);
+    static bool register_lua_callback(lua_event_type event_type, luabridge::LuaRef ref);
 
-    bool on_key_down(KeyDownEvent& e);
+    static bool on_key_down(KeyDownEvent& e);
 
     /**
      * @brief Calls all registered lua callbacks for a specific event type.
@@ -83,7 +88,7 @@ private:
      * The arguments are forwarded to each callback.
      */
     template<typename... args>
-    void invoke_lua_callbacks(lua_event_type event_type, args&&... arguments) {
+    static void invoke_lua_callbacks(lua_event_type event_type, args&&... arguments) {
         const auto it { listeners_.find(event_type) };
         if (it == listeners_.end()) {
             return;
@@ -96,14 +101,14 @@ private:
     /**
      * @brief Loads a script after collecting all scripts in {@see load_from_path}
      */
-    void load(Script& script);
+    static void load(Script& script);
 
     /**
      * @brief Resets the script system to its initial state
      *
      * In this state, no script or any reference thereof is held
      */
-    void reset();
+    static void reset();
 };
 
 template<typename path_like>
@@ -150,6 +155,11 @@ void Scripting::load_from_path(path_like base_path) {
             load(*iter->second);
         }
     }
+}
+
+template<typename Api, typename... ApiArgs>
+void Scripting::add_api(ApiArgs&&... api_args) {
+    apis_.emplace_back(new Api(std::forward<ApiArgs>(api_args)...));
 }
 
 #endif

@@ -15,103 +15,90 @@
  */
 class Renderer {
 public:
-    Renderer(Window& window, EventManager& dispatcher);
-    ~Renderer();
+    Renderer() = delete;
 
-    Renderer(const Renderer&) = delete;
-    Renderer(Renderer&&) = delete;
-    Renderer& operator=(Renderer&&) = delete;
-    const Renderer& operator=(const Renderer&) = delete;
-
-    /**
-     * @brief Starts the underlying graphics api
-     */
-    void initialize();
+    static void init();
+    static void shutdown();
 
     /**
      * @brief Renders the game based on the current display state.
      */
-    void render(const Scene& scene);
+    static void render();
 
     /**
      * @brief Sets the viewport.
      *
      * Must be called if the user resized the game window.
      */
-    void set_viewport(Vec2<u32> size);
+    static void set_viewport(Vec2<u32> size);
 
     /**
      * @brief Sets the font texture used to display text.
      */
-    void set_font(Texture* tex);
+    static void set_font(Texture* tex);
 
     /**
      * @brief Sets the font's glyph size
      */
-    void set_glyph_size(Vec2<u32> glyph_size);
+    static void set_glyph_size(Vec2<u32> glyph_size);
 
     /**
      * @brief Sets the render scaling
      */
-    void set_scaling(u32 scaling);
+    static void set_scaling(u32 scaling);
 
     /**
      * @brief Returns the result of dividing the glyph width by its height
      */
-    [[nodiscard]] float glyph_aspect_ratio() const;
+    static [[nodiscard]] float glyph_aspect_ratio();
 
     /**
      * @brief Returns the current gl context
      */
-    [[nodiscard]] SDL_GLContext gl_context() const;
+    static [[nodiscard]] SDL_GLContext gl_context();
 
     /**
      * @brief Returns the current text texture GL id
      */
-    [[nodiscard]] GLuint text_texture() const;
+    static [[nodiscard]] GLuint text_texture();
 
     /**
      * @brief Calculates texture coordinates of a glyph for a custom render
      *
      * The array will contain [u1, v1, u2, v2] in this order.
      */
-    [[nodiscard]] std::array<float, 4> calculate_glyph_uv(u32 glyph) const;
+    static [[nodiscard]] std::array<float, 4> calculate_glyph_uv(u32 glyph);
 
     /**
      * @brief Provides writable access to the Display
      */
-    [[nodiscard]] Display& display();
+    static [[nodiscard]] Display& display();
 private:
-    Window& window_;
+    static inline SDL_GLContext gl_context_ = nullptr;
+    static inline Config cfg_;
+    static inline Texture text_texture_;
+    static inline Display display_;
 
-    EventManager& events_;
-    SDL_GLContext gl_context_ { nullptr };
-    Config cfg_;
-    Texture text_texture_;
-    Display display_;
+    static inline Vec2<u32> view_port_;
+    static inline u32 scaling_ = 1;
+    static inline std::unique_ptr<TextShader> text_shader_ = nullptr;
 
-    Vec2<u32> view_port_;
-    u32 scaling_ { 1 };
-    std::unique_ptr<TextShader> text_shader_ { nullptr };
+    static inline GLuint vbo = 0;
+    static inline GLuint vao = 0;
 
-    GLuint vbo { 0 };
-    GLuint vao { 0 };
+    static inline size_t last_size_ = 0;
 
-    size_t last_size_ { 0 };
+    static inline void update_display();
 
-    void update_display(const Scene& scene);
+    static inline bool on_resize(ResizeEvent&);
+    static inline bool on_config_updated(ConfigUpdatedEvent&);
 
-    bool on_resize(ResizeEvent&);
-    bool on_config_updated(ConfigUpdatedEvent&);
+    static inline void load_text_texture(const fs::path&);
 
-    void load_text_texture(const fs::path&) const;
+    static inline void adjust_display();
+    static inline void render_entities();
 
-    void adjust_display();
-    void render_entities();
-
-    void configure(const Config& cfg);
-
-    void reset();
+    static inline void configure(const Config& cfg);
 };
 
 #endif

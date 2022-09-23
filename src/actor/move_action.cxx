@@ -17,7 +17,7 @@ bool MoveAction::perform() {
     if (destination.x < 0 || destination.y < 0) {
         return false;
     }
-    const auto& dest_tile = scene->tiles().at(destination);
+    const auto& dest_tile = Scene::tiles().at(destination);
     if (dest_tile->solid) {
         return false;
     }

@@ -1,18 +1,16 @@
 #ifndef JARALYN_INPUT_EVENT_HXX
 #define JARALYN_INPUT_EVENT_HXX
 
-#include "../input/input_state.hxx"
+#include "mouse_button.hxx"
+#include "key.hxx"
 
 /**
  * @brief Triggered as the user moves the mouse inside the window.
  */
 struct MouseMoveEvent {
     Vec2<i32> position;
-    const InputState* state;
 
-    MouseMoveEvent(Vec2<i32> position, InputState* state) :
-        position { position }, state { state } {
-        assert(state);
+    explicit MouseMoveEvent(Vec2<i32> position) : position(position) {
     }
 };
 
@@ -21,11 +19,8 @@ struct MouseMoveEvent {
  */
 struct MouseDownEvent {
     MouseButton button;
-    const InputState* state;
 
-    MouseDownEvent(MouseButton button, InputState* state) :
-        button { button }, state { state } {
-        assert(state);
+    explicit MouseDownEvent(MouseButton button) : button(button) {
     }
 };
 
@@ -34,11 +29,8 @@ struct MouseDownEvent {
  */
 struct MouseUpEvent {
     MouseButton button;
-    const InputState* state;
 
-    MouseUpEvent(MouseButton button, InputState* state) :
-        button { button }, state { state } {
-        assert(state);
+    explicit MouseUpEvent(MouseButton button) : button(button) {
     }
 };
 
@@ -47,11 +39,8 @@ struct MouseUpEvent {
  */
 struct KeyDownEvent {
     Key key;
-    const InputState* state;
 
-    KeyDownEvent(Key key, InputState* state) :
-        key { key }, state { state } {
-        assert(state);
+    explicit KeyDownEvent(Key key) : key(key) {
     }
 };
 
@@ -60,11 +49,8 @@ struct KeyDownEvent {
  */
 struct KeyUpEvent {
     Key key;
-    const InputState* state;
 
-    KeyUpEvent(Key key, InputState* state) :
-        key { key }, state { state } {
-        assert(state);
+    explicit KeyUpEvent(Key key) : key(key) {
     }
 };
 

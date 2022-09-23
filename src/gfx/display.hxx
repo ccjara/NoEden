@@ -70,8 +70,6 @@ private:
      */
     inline void push_copy();
 public:
-    Display();
-
     /**
      * @brief Render a text to the display
      *

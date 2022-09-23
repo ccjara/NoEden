@@ -3,14 +3,12 @@
 
 #include "ai_node.hxx"
 #include "../actor/actor.hxx"
-#include "../actor/action_queue.hxx"
 #include "../actor/move_action.hxx"
+#include "../scene/scene.hxx"
 
 class AiWalk : public AiNode {
 public:
-    AiWalk(Actor* actor, ActionQueue& action_queue) : 
-        actor_ { actor },
-        action_queue_ { action_queue } {
+    AiWalk(Actor* actor) : actor_(actor) {
         assert(actor_);
     }
 
@@ -35,12 +33,11 @@ public:
         }
         ++dir %= 4;
 
-        action_queue_.push<MoveAction>(actor_, pos);
+        Scene::create_action<MoveAction>(actor_, pos);
         return mod_state(AiNodeState::Succeeded);
     }
 private:
-    Actor* actor_ { nullptr };
-    ActionQueue& action_queue_;
+    Actor* actor_ = nullptr;
 };
 
 #endif

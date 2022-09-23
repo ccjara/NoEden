@@ -1,9 +1,5 @@
 #include "window.hxx"
 
-Window::~Window() {
-    close();
-}
-
 void Window::open(Vec2<u32> size, const char *title) {
     if (handle_) {
         Log::error("Window is already open");
@@ -34,16 +30,12 @@ void Window::close() {
     }
 }
 
-SDL_Window* Window::handle() const {
+SDL_Window* Window::handle() {
     return handle_;
 }
 
-Vec2<u32> Window::size() const {
+Vec2<u32> Window::size() {
     return size_;
-}
-
-Window::operator SDL_Window* () const {
-    return handle_;
 }
 
 void Window::resize(Vec2<u32> size) {

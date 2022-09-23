@@ -46,15 +46,15 @@ public:
 private:
     enum class Quadrant { N, E, S, W };
 
-    inline static void scan(Actor& viewer, Grid<Tile>& tiles, Row& row, Quadrant q);
+    static inline void scan(Actor& viewer, Grid<Tile>& tiles, Row& row, Quadrant q);
 
     inline Vec2<i32> static to_grid_coords(Quadrant q, Vec2<i32> start_pos, i32 depth, i32 col);
 
-    inline static float slope(i32 depth, i32 column);
+    static inline float slope(i32 depth, i32 column);
 
-    inline static bool symmetric(Row& row, i32 col);
+    static inline bool symmetric(Row& row, i32 col);
 
-    inline static bool in_range(i32 row, i32 col, i32 max_range);
+    static inline bool in_range(i32 row, i32 col, i32 max_range);
 };
 
 #endif

@@ -2,10 +2,11 @@
 #define JARALYN_MOVE_ACTION_HXX
 
 #include "action.hxx"
+#include "../scene/scene.hxx"
 
 /**
  * @brief Action representing the movement of an actor.
- * 
+ *
  * Action may fail due to blockages, being movement impaired, etc.
  */
 struct MoveAction : public Action {

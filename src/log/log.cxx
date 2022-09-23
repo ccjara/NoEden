@@ -1,11 +1,6 @@
 #include "log.hxx"
 
-Log::LogPtr Log::log_;
-Log::LogStore Log::logs_;
-LogLevel Log::level_ = LogLevel::Debug;
-u16 Log::max_entries_ { 1000U };
-
-void Log::startup() {
+void Log::init() {
     auto mem_sink = std::make_shared<MemorySink>();
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(
         "logs/core.log",

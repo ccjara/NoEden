@@ -2,14 +2,10 @@
 #define JARALYN_UI_API_HXX
 
 #include "../lua_api.hxx"
-#include "../../../ui/ui_tree.hxx"
-#include "../../../ui/ui_window.hxx"
-#include "../../../ui/ui_text.hxx"
+#include "../../../ui/ui.hxx"
 
 class UiApi final : public LuaApi {
 public:
-    explicit UiApi(UiTree& ui_tree);
-
     void on_register(Script* script) final override;
 private:
     UiWindow* create_window(const char* id);
@@ -20,7 +16,7 @@ private:
         if (!id) {
             return nullptr;
         }
-        auto n { ui_tree_.create_node<Node>(nullptr, id) };
+        Node* n = Ui::tree().create_node<Node>(nullptr, id);
         if (!n) {
             return nullptr;
         }
@@ -28,8 +24,6 @@ private:
     }
 
     void destroy_node(const char* id);
-
-    UiTree& ui_tree_;
 };
 
 #endif

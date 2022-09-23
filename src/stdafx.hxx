@@ -7,6 +7,7 @@
 #include <charconv>
 #include <chrono>
 #include <cmath>
+#include <concepts>
 #include <cstdint>
 #include <cstdlib>
 #include <deque>
@@ -51,8 +52,8 @@ using i64 = int64_t;
 
 namespace fs = std::filesystem;
 
-#include "events/event_manager.hxx"
 #include "log/log.hxx"
+#include "events/event_manager.hxx"
 #include "lang/translator.hxx"
 
 #include "math/vec2.hxx"

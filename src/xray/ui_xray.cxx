@@ -1,10 +1,5 @@
 #include "ui_xray.hxx"
 
-UiXray::UiXray(EventManager& dispatcher, Ui& ui) :
-    ui_ { ui },
-    events_ { dispatcher } {
-}
-
 bool UiXray::render_anchor(UiNode* node) {
     if (!node) {
         return true;
@@ -72,15 +67,15 @@ void UiXray::update() {
     ImGui::Begin("UI");
 
     if (ImGui::CollapsingHeader("Hierarchy")) {
-        render_hierarchy(ui_.ui_tree().root());
+        render_hierarchy(Ui::tree().root());
     }
 
     if (ImGui::CollapsingHeader("Anchors")) {
-        render_anchor(ui_.ui_tree().root());
+        render_anchor(Ui::tree().root());
     }
 
     if (!selected_node_id_.empty()) {
-        UiNode* n = ui_.ui_tree().get_node_by_id(selected_node_id_);
+        UiNode* n = Ui::tree().get_node_by_id(selected_node_id_);
         if (n) {
             ImGui::Text("Id: %s", n->id().c_str());
             i32 size_buf[2] = {

@@ -1,9 +1,5 @@
 #include "ui_api.hxx"
 
-UiApi::UiApi(UiTree& ui_tree) : ui_tree_ { ui_tree } {
-
-}
-
 void UiApi::on_register(Script* script) {
     luabridge::getGlobalNamespace(*script)
         .beginClass<UiApi>("UiApi")
@@ -122,5 +118,5 @@ void UiApi::destroy_node(const char* id) {
     if (!id) {
         return;
     }
-    ui_tree_.remove_node(id);
+    Ui::tree().remove_node(id);
 }

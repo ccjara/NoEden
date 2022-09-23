@@ -1,32 +1,42 @@
 #ifndef JARALYN_INPUT_HXX
 #define JARALYN_INPUT_HXX
 
-#include "input_state.hxx"
-#include "input_event.hxx"
-#include "../xray/xray_event.hxx"
+#include "mouse_state.hxx"
+#include "keyboard_state.hxx"
 
 /**
- * @brief Input core module, accessed by the engine
+ * @brief Readonly input state provider
  */
 class Input {
+    friend class Game;
 public:
-    explicit Input(EventManager& events);
+    /**
+     * @brief Returns the current mouse position as a tuple
+     */
+    static Vec2<u32> mouse_position();
 
     /**
-     * @brief Processes the platform specific message queue for user input.
-     *
-     * Buffers the input state and emits platform events based on
-     * the messages processed.
+     * @brief Returns the current x coordinate of the mouse cursor
      */
-    void poll_platform();
+    static u32 mouse_x();
 
     /**
-     * @brief Provides readonly access to the input state.
+     * @brief Returns the current y coordinate of the mouse cursor
      */
-    [[nodiscard]] const InputState& state() const;
+    static u32 mouse_y();
+
+    /**
+     * @brief Returns true if the given mouse button is currently pressed
+     */
+    static bool is_mouse_pressed(MouseButton button);
+
+    /**
+     * @brief Returns true if the given keyboard key is currently pressed
+     */
+    static bool is_key_pressed(Key key);
 private:
-    InputState state_;
-    EventManager& events_;
+    static inline MouseState mouse_;
+    static inline KeyboardState keyboard_;
 };
 
 #endif

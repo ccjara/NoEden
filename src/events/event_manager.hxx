@@ -1,8 +1,15 @@
 #ifndef JARALYN_EVENT_MANAGER_HXX
 #define JARALYN_EVENT_MANAGER_HXX
 
-namespace {
-    using EventId = u32;
+template<typename T>
+concept MethodInvocable = std::is_member_function_pointer<T>::value;
+
+/**
+ * @brief Global static event manager
+ */
+class Events {
+private:
+    using PartitionIndex = u32;
 
     template<typename E>
     struct EventHandler {
@@ -20,7 +27,7 @@ namespace {
 
     template<typename E>
     struct EventPartition : BaseEventPartition {
-        explicit EventPartition(EventId event_id) : event_id(event_id) {
+        explicit EventPartition(PartitionIndex event_id) : event_id(event_id) {
         }
 
         template<typename Callable>
@@ -36,13 +43,16 @@ namespace {
             );
         }
 
-        EventId event_id;
+        PartitionIndex event_id;
         std::vector<EventHandler<E>> event_handlers;
     };
-}
 
-class EventManager {
 public:
+    Events() = delete;
+
+    static void init();
+    static void shutdown();
+
     /**
      * @brief Registers a free function to be called if the given event is triggered.
      *
@@ -52,7 +62,7 @@ public:
      * The higher the {@param priority} the earlier the handler will be called.
      */
     template<typename E, typename Fn>
-    void on(Fn callable, i32 priority = 0) {
+    static void on(Fn callable, i32 priority = 0) {
         EventPartition<E>& partition = event_partition_of<E>();
         partition.add_callable(callable, priority);
     }
@@ -65,8 +75,8 @@ public:
      *
      * The higher the {@param priority} the earlier the handler will be called.
      */
-    template<typename E, typename Inst, typename Fn>
-    void on(Inst* instance, Fn method, i32 priority = 0) {
+    template<typename E, typename Inst, MethodInvocable Fn>
+    static void on(Inst* instance, Fn method, i32 priority = 0) {
         EventPartition<E>& partition = event_partition_of<E>();
         partition.add_callable(
             [instance, method](E& event) -> bool {
@@ -85,8 +95,8 @@ public:
      * Short-circuits if any handler returned `true`.
      */
     template<typename E, typename... Args>
-    void trigger(Args ...args) {
-        E event { std::forward<Args>(args)... };
+    static void trigger(Args&& ...args) {
+        E event(std::forward<Args>(args)...);
         EventPartition<E>& partition = event_partition_of<E>();
         for (auto& handler : partition.event_handlers) {
             if (handler.callable(event)) {
@@ -96,29 +106,29 @@ public:
     }
 private:
     template<typename E>
-    EventId event_id_of() {
-        static EventId id = create_partition<E>();
-        return id;
+    static PartitionIndex get_or_create_partition_index() {
+        static PartitionIndex index = create_partition<E>(); // invoked once per `E`
+        return index;
     }
 
     template<typename E>
-    EventId create_partition() {
-        const auto id = next_event_type_id_++;
-        partitions_.emplace_back(
-            std::make_unique<EventPartition<E>>(id)
-        );
-        return id;
+    static PartitionIndex create_partition() {
+        const auto index = next_partition_index_++;
+        partitions_.emplace_back(new EventPartition<E>(index));
+        return index;
     }
 
     template<typename E>
-    inline EventPartition<E>& event_partition_of() {
-        return *static_cast<EventPartition<E>*>(
-            partitions_[event_id_of<E>()].get()
-        );
+    static EventPartition<E>& event_partition_of() {
+        const auto partitionIndex = get_or_create_partition_index<E>();
+        // if this fails there is a linkage problem (probably multiple defined partitions_)
+        // due to anonymous namespaces + static linkage or similar
+        assert(partitions_.size() > partitionIndex);
+        return *static_cast<EventPartition<E>*>(partitions_[partitionIndex].get());
     }
 
-    std::vector<std::unique_ptr<BaseEventPartition>> partitions_;
-    EventId next_event_type_id_ = 0U;
+    static inline std::vector<std::unique_ptr<BaseEventPartition>> partitions_;
+    static inline PartitionIndex next_partition_index_ = 0U;
 };
 
 #endif

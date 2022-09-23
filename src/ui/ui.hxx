@@ -3,30 +3,28 @@
 
 #include "../gfx/gfx_event.hxx"
 #include "../scripts/script_event.hxx"
-#include "../gfx/display.hxx"
+#include "../gfx/renderer.hxx"
 #include "ui_tree.hxx"
 #include "ui_window.hxx"
 #include "ui_text.hxx"
 
 class Ui {
 public:
-    explicit Ui(EventManager& dispatcher, Display& display);
+    static void init();
+    static void shutdown();
+    static void update();
 
-    void startup();
-    void shutdown();
-    void update();
+    static void draw_node(UiNode* node);
 
-    void draw_node(UiNode* node);
-
-    UiTree& ui_tree();
+    static UiTree& tree();
 private:
-    EventManager& events_;
-    Display& display_;
-    UiTree ui_tree_;
+    Ui() = delete;
 
-    bool on_display_resized(DisplayResizedEvent& e);
-    bool on_script_reset(ScriptResetEvent& e);
-    bool on_post_world_render(PostWorldRenderEvent& e);
+    static inline UiTree ui_tree_;
+
+    static bool on_display_resized(DisplayResizedEvent& e);
+    static bool on_script_reset(ScriptResetEvent& e);
+    static bool on_post_world_render(PostWorldRenderEvent& e);
 };
 
 #endif

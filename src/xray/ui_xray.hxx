@@ -7,13 +7,8 @@
 
 class UiXray : public IXray {
 public:
-    explicit UiXray(EventManager& dispatcher, Ui& ui);
-
     void update() override;
 private:
-    Ui& ui_;
-    EventManager& events_;
-
     std::string selected_node_id_;
 
     bool render_anchor(UiNode* node);

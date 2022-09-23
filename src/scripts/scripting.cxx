@@ -1,13 +1,7 @@
 #include "scripting.hxx"
 
-Scripting::Scripting(EventManager& events) :
-    events_ { events },
-    api_registrar_ { events } {
-}
-
-void Scripting::startup() {
-    events_.on<KeyDownEvent>(this, &Scripting::on_key_down);
-    load_from_path(Scripting::default_script_path);
+void Scripting::init() {
+    Events::on<KeyDownEvent>(&Scripting::on_key_down);
 }
 
 void Scripting::shutdown() {
@@ -16,7 +10,7 @@ void Scripting::shutdown() {
 }
 
 void Scripting::reset() {
-    events_.trigger<ScriptResetEvent>();
+    Events::trigger<ScriptResetEvent>();
     listeners_.clear();
     scripts_.clear();
 }
@@ -41,7 +35,7 @@ void Scripting::load(Script& script) {
     setup_script_env(script);
 
     // allow other parts of the system to contribute to the scripting env
-    events_.trigger<ScriptLoadedEvent>(&script);
+    Events::trigger<ScriptLoadedEvent>(&script);
     Log::info("Script #{}: {} has been loaded", script.id, script.name());
     script.run();
     // execute the on_load function, passing the script env proxy
@@ -51,11 +45,11 @@ void Scripting::load(Script& script) {
     }
 }
 
-const std::unordered_map<u64, std::unique_ptr<Script>>& Scripting::scripts() const {
+const std::unordered_map<u64, std::unique_ptr<Script>>& Scripting::scripts() {
     return scripts_;
 }
 
-Script* Scripting::get_by_id(u64 id) const {
+Script* Scripting::get_by_id(u64 id) {
     const auto it { scripts_.find(id) };
     return it == scripts_.end() ? nullptr : it->second.get();
 }
@@ -81,12 +75,10 @@ void Scripting::setup_script_env(Script& script) {
 
     luabridge::getGlobalNamespace(script)
         .beginClass<Scripting>("Script")
-            .addFunction("on", &Scripting::register_lua_callback)
+            .addStaticFunction("on", &Scripting::register_lua_callback)
         .endClass();
-    // expose some lua facing methods the system provides
-    luabridge::setGlobal(script, this, "script");
-}
-
-ApiRegistrar& Scripting::registrar() {
-    return api_registrar_;
+    // expose all registered apis
+    for (auto& api : apis_) {
+        api->on_register(&script);
+    }
 }

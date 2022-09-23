@@ -1,8 +1,5 @@
 #include "display.hxx"
 
-Display::Display() : Grid<DisplayCell>(DisplayCell{}) {
-}
-
 void Display::text(const Text& text, Vec2<i32> position) {
     for (const auto& letter : text.letters()) {
         auto pos = position + letter.offset;
