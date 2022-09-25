@@ -19,6 +19,11 @@ public:
      * @brief Returns an Archetype by name or nullptr if the Archetype does not exist.
      */
     static const Archetype* archetype(std::string_view name);
+
+    /**
+     * @brief Removes all archetypes from the catalog
+     */
+    static void clear_archetypes();
 protected:
     static inline std::unordered_map<std::string, std::unique_ptr<Archetype>> archetypes_;
 };

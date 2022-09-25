@@ -26,5 +26,5 @@ function on_load()
 end
 
 function on_unload()
-
+    catalog:clear_archetypes();
 end

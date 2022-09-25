@@ -21,3 +21,8 @@ const Archetype* Catalog::archetype(std::string_view name) {
     }
     return iter->second.get();
 }
+
+void Catalog::clear_archetypes() {
+    archetypes_.clear();
+    Log::info("Archetypes cleared");
+}

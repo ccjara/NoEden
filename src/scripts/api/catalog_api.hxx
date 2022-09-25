@@ -10,6 +10,8 @@ public:
     void on_register(Script* script) final override;
 
     void create_archetype(luabridge::LuaRef ref);
+
+    void clear_archetypes();
 private:
 };
 

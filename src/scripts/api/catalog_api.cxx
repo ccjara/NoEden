@@ -4,9 +4,14 @@ void CatalogApi::on_register(Script* script) {
     luabridge::getGlobalNamespace(*script)
         .beginClass<CatalogApi>("Catalog")
             .addFunction("create_archetype", &CatalogApi::create_archetype)
+            .addFunction("clear_archetypes", &CatalogApi::clear_archetypes)
         .endClass();
 
     expose(script, this, "catalog");
+}
+
+void CatalogApi::clear_archetypes() {
+    Catalog::clear_archetypes();
 }
 
 void CatalogApi::create_archetype(luabridge::LuaRef ref) {
