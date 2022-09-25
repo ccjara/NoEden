@@ -1,16 +1,10 @@
 #ifndef JARALYN_BEHAVIOR_HXX
 #define JARALYN_BEHAVIOR_HXX
 
-#include "component.hxx"
+#include "generic_component.hxx"
 
-class Behavior : public Component {
+class Behavior : public GenericComponent<Behavior, ComponentType::Behavior> {
 public:
-    Behavior();
-
-    static constinit const ComponentType static_type = ComponentType::Behavior;
-
-    virtual std::unique_ptr<Component> clone() const override;
-protected:
 };
 
 #endif

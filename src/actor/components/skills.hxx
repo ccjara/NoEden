@@ -1,7 +1,7 @@
 #ifndef JARALYN_SKILLS_COMPONENT_HXX
 #define JARALYN_SKILLS_COMPONENT_HXX
 
-#include "component.hxx"
+#include "generic_component.hxx"
 
 enum class SkillId {
     Swim,
@@ -26,13 +26,9 @@ struct Skill {
 };
 
 
-class Skills : public Component {
+class Skills : public GenericComponent<Skills, ComponentType::Skills> {
     using SkillContainer = std::unordered_map<SkillId, Skill>;
 public:
-    Skills();
-
-    static constinit const ComponentType static_type = ComponentType::Skills;
-
     /**
      * @brief Sets the progress of a skill.
      */
@@ -46,8 +42,6 @@ public:
     void increase_progress(SkillId id, i32 amount);
 
     const SkillContainer& skills() const;
-
-    virtual std::unique_ptr<Component> clone() const override;
 protected:
     SkillContainer skills_;
 };

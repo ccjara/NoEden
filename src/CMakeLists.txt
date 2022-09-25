@@ -14,6 +14,7 @@ add_executable(
     "actor/catalog.cxx"
     "actor/components/behavior.cxx"
     "actor/components/component.cxx"
+    "actor/components/generic_component.cxx"
     "actor/components/render.cxx"
     "actor/components/skills.cxx"
     "actor/display_info.hxx"

@@ -8,25 +8,47 @@ enum class ComponentType {
     Render = 3,
 };
 
+/**
+ * @brief Component interface.
+ *
+ * Derive from GenericComponent instead when creating new Component classes.
+ */
 class Component {
     friend class Actor;
 public:
-    explicit Component(ComponentType type);
-
     virtual ~Component() = default;
 
+    /**
+     * @brief Returns the type of this component
+     */
     [[nodiscard]] ComponentType type() const;
 
-    static constinit const ComponentType static_type = ComponentType::Unknown;
+    /**
+     * @brief Returns the entity id this component belongs to
+     */
+    [[nodiscard]] Id entity_id() const;
 
-    Id entity_id() const;
-
-    virtual std::unique_ptr<Component> clone() const = 0;
+    /**
+     * @brief Heap-allocates a new component instance and returns it as a unique_ptr.
+     *
+     * You are required to manage ownership past the return.
+     */
+    [[nodiscard]] virtual std::unique_ptr<Component> clone() const = 0;
 protected:
+    /**
+     * @brief Derive components from GenericComponent instead.
+     */
+    explicit Component(ComponentType type);
+
+    /**
+     * @brief Runtime type of this component used to downcast Component pointers
+     */
     ComponentType type_ = ComponentType::Unknown;
 
+    /**
+     * @brief Entity id this component belongs to
+     */
     Id entity_id_ = null_id;
-
 };
 
 template<typename T>

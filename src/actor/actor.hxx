@@ -28,8 +28,8 @@ struct Actor {
      */
     template<ComponentDerived Comp>
     Comp* component() const {
-        static_assert(Comp::static_type != ComponentType::Unknown);
-        auto iter = components_by_type_.find(Comp::static_type);
+        static_assert(Comp::static_type() != ComponentType::Unknown);
+        auto iter = components_by_type_.find(Comp::static_type());
         if (iter == components_by_type_.end()) {
             return nullptr;
         }
