@@ -1,45 +1,45 @@
 #ifndef JARALYN_SCENE_HXX
 #define JARALYN_SCENE_HXX
 
-#include "../actor/actor.hxx"
-#include "../actor/move_action.hxx"
-#include "../actor/entity_factory.hxx"
+#include "../entity/entity.hxx"
+#include "../entity/move_action.hxx"
+#include "../entity/entity_factory.hxx"
 #include "../grid.hxx"
 #include "tile_builder.hxx"
 #include "../input/input_event.hxx"
 #include "fov.hxx"
 
 /**
- * @brief Contains and manages actors.
+ * @brief Contains and manages entities.
  */
 class Scene {
     using ActionContainer = std::vector<std::unique_ptr<Action>>;
-    using ActorContainer = std::vector<std::unique_ptr<Actor>>;
+    using EntityContainer = std::vector<std::unique_ptr<Entity>>;
 public:
     static void init();
     static void shutdown();
 
     /**
-     * @brief Returns a pointer to an actor for the given id or nullptr if not found.
+     * @brief Returns a pointer to an Entity for the given id or nullptr if not found.
      */
-    static Actor* get_actor_by_id(Id id);
+    static Entity* get_entity_by_id(Id id);
 
     /**
-     * @brief Constructs an actor of the given archetype and returns it.
+     * @brief Constructs an Entity of the given archetype and returns it.
      *
-     * The actor can be further configured after creation.
+     * The Entity can be further configured after creation.
      */
-    static Actor& create_actor(const Archetype& archetype);
+    static Entity& create_entity(const Archetype& archetype);
 
     /**
-     * @brief Provides write access to the actor container.
+     * @brief Provides write access to the Entity container.
      */
-    static ActorContainer& actors();
+    static EntityContainer& entities();
 
     /**
-     * @brief Provides readonly access to the actor container.
+     * @brief Provides readonly access to the Entity container.
      */
-    static const ActorContainer& read_actors();
+    static const EntityContainer& read_entities();
 
     /**
      * @brief Provides write access to the tile container.
@@ -54,7 +54,7 @@ public:
     /**
      * @brief Writes the field of view to the display
      */
-    static void update_fov(u64 actor);
+    static void update_fov(u64 entity);
 
     /**
      * @brief Executes each action in order of the Actions' calculated speed.
@@ -69,45 +69,45 @@ public:
      * @brief Constructs an action in place inside the action queue.
      *
      * The action's cost is calculated here and depends on the speed of the
-     * actor. Later changes to the actor's speed will will not affect this
+     * entity. Later changes to the Entity's speed will will not affect this
      * cost.
      *
      * Returns a reference to the created action.
      */
-    template<typename A, typename... ActorArgs>
-    static Action& create_action(Actor* actor, ActorArgs&&... args) {
-        assert(actor);
+    template<typename A, typename... EntityArgs>
+    static Action& create_action(Entity* entity, EntityArgs&&... args) {
+        assert(entity);
 
         auto& action = *actions_.emplace_back(
-            new A(std::forward<ActorArgs>(args)...)
+            new A(std::forward<EntityArgs>(args)...)
         ).get();
 
-        action.actor = actor;
+        action.entity = entity;
         action.cost = action.speed * action.base_cost();
         return action;
     }
 
     /**
-     * @brief Assigns the given actor id as the new player to control.
+     * @brief Assigns the given Entity id as the new player to control.
      *
      * May be and is initially unset to signify no player currently exists.
      */
     static void set_player(Id id);
 
     /**
-     * @brief Returns the current Actor regarded as a player if any.
+     * @brief Returns the current Entity regarded as a player if any.
      */
-    static Actor* player();
+    static Entity* player();
 
     static Id player_id();
 private:
     static bool on_key_down(KeyDownEvent& e);
 
-    static inline ActorContainer actors_;
+    static inline EntityContainer entities_;
     static inline ActionContainer actions_;
     static inline Id player_id_ = null_id;
     static inline Action* player_action_ = nullptr;
-    static inline std::unordered_map<Id, size_t> actor_id_to_index_;
+    static inline std::unordered_map<Id, size_t> entity_id_to_index_;
 
     static inline Grid<Tile> tiles_;
 };

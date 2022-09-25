@@ -14,7 +14,7 @@ enum class ComponentType {
  * Derive from GenericComponent instead when creating new Component classes.
  */
 class Component {
-    friend class Actor;
+    friend class Entity;
 public:
     virtual ~Component() = default;
 

@@ -8,10 +8,10 @@ public:
     Catalog() = delete;
 
     /**
-     * @brief Creates takes ownership of an empty archetype with the given name.
+     * @brief Creates and takes ownership of an empty Archetype with the given name.
      *
-     * You may modify the returned archetype further using the returned pointer.
-     * Returns nullptr if an archetype with the given name already exists.
+     * You may modify the returned Archetype further using the returned pointer.
+     * Returns nullptr if an Archetype with the given name already exists.
      */
     static Archetype* create_archetype(std::string_view name);
 

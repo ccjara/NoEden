@@ -4,10 +4,10 @@
 #include "../ai/ai_node.hxx"
 #include "components/component.hxx"
 
-struct Actor {
+struct Entity {
     friend class EntityFactory;
 
-    Actor();
+    Entity();
 
     Id id;
     static inline Id next_id_ = 1U;

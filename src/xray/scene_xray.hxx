@@ -6,7 +6,7 @@
 #include "../input/input_event.hxx"
 #include "../scene/scene.hxx"
 #include "../gfx/renderer.hxx"
-#include "../actor/components/skills.hxx"
+#include "../entity/components/skills.hxx"
 
 class SceneXray : public IXray {
 public:
@@ -14,8 +14,8 @@ public:
 
     void update() override;
 private:
-    void actor_panel(std::optional<u64> actor_id);
-    void actor_glyph(Actor* actor);
+    void entity_panel(std::optional<u64> entity_id);
+    void entity_glyph(Entity* entity);
 
     struct TileWindowData {
         bool is_editing = false;

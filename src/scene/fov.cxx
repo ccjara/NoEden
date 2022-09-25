@@ -1,6 +1,6 @@
 #include "fov.hxx"
 
-void Fov::update(Actor& viewer, Grid<Tile>& tiles) {
+void Fov::update(Entity& viewer, Grid<Tile>& tiles) {
     for (auto& t : tiles.cells()) {
         t.visited = false;
     }
@@ -12,14 +12,14 @@ void Fov::update(Actor& viewer, Grid<Tile>& tiles) {
 }
 
 void Fov::scan(
-    Actor& viewer,
+    Entity& viewer,
     Grid<Tile>& tiles,
     Row& row,
     Quadrant q
 ) {
     Tile *prev_tile { nullptr };
 
-    const i32 max_range = 9; // actor->view_range; TODO
+    const i32 max_range = 9; // entity->view_range; TODO
     auto viewer_tile = tiles.at(viewer.position);
     if (viewer_tile) {
         viewer_tile->revealed = true;

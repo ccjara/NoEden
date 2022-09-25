@@ -2,8 +2,8 @@
 #define JARALYN_CATALOG_API_HXX
 
 #include "lua_api.hxx"
-#include "../../actor/catalog.hxx"
-#include "../../actor/components/render.hxx"
+#include "../../entity/catalog.hxx"
+#include "../../entity/components/render.hxx"
 
 class CatalogApi final : public LuaApi {
 public:

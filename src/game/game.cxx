@@ -48,7 +48,7 @@ void Game::init() {
         auto arch_troll = Catalog::archetype("TROLL");
         auto arch_dwarf = Catalog::archetype("DWARF");
         if (arch_troll) {
-            auto& troll = Scene::create_actor(*arch_troll);
+            auto& troll = Scene::create_entity(*arch_troll);
             troll.name = "Troll";
             troll.position = { 3, 3 };
             //troll.ai.add<AiWalk>(0, &troll);
@@ -57,7 +57,7 @@ void Game::init() {
             Log::warn("TROLL archetype not yet present");
         }
         if (arch_dwarf) {
-            auto& dwarf = Scene::create_actor(*arch_dwarf);
+            auto& dwarf = Scene::create_entity(*arch_dwarf);
             dwarf.position = { 0, 1 };
             dwarf.name = "Dwarf";
             Scene::set_player(dwarf.id);

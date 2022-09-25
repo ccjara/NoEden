@@ -38,23 +38,23 @@ void SceneXray::update() {
 }
 
 void SceneXray::entity_window() {
-    static std::optional<u64> actor_id = std::nullopt;
-    static std::string combo_label = "Select actor";
+    static std::optional<u64> entity_id = std::nullopt;
+    static std::string combo_label = "Select entity";
 
     ImGui::Begin("Entities");
 
     if (ImGui::BeginCombo("Entity", combo_label.c_str())) {
-        for (auto& actor : Scene::actors()) {
-            const auto& actor_name_str = actor->name.c_str();
-            const bool is_selected = actor_id.has_value() && actor_id.value() == actor->id;
-            if (ImGui::Selectable(actor_name_str, is_selected)) {
-                actor_id = actor->id;
-                combo_label = actor_name_str;
+        for (auto& entity : Scene::read_entities()) {
+            const auto& entity_name_str = entity->name.c_str();
+            const bool is_selected = entity_id.has_value() && entity_id.value() == entity->id;
+            if (ImGui::Selectable(entity_name_str, is_selected)) {
+                entity_id = entity->id;
+                combo_label = entity_name_str;
             }
         }
         ImGui::EndCombo();
     }
-    actor_panel(actor_id);
+    entity_panel(entity_id);
 
     ImGui::End();
 }
@@ -95,40 +95,40 @@ void SceneXray::tile_window() {
     ImGui::End();
 }
 
-void SceneXray::actor_panel(std::optional<u64> actor_id) {
-    if (!actor_id.has_value()) {
+void SceneXray::entity_panel(std::optional<u64> entity_id) {
+    if (!entity_id.has_value()) {
         return;
     }
-    Actor* actor = Scene::get_actor_by_id(actor_id.value());
-    if (actor == nullptr) {
+    Entity* entity = Scene::get_entity_by_id(entity_id.value());
+    if (entity == nullptr) {
         return;
     }
-    actor_glyph(actor);
+    entity_glyph(entity);
 
-    i32 position_raw[2] = { actor->position.x, actor->position.y };
-    bool is_player = Scene::player() == actor;
+    i32 position_raw[2] = { entity->position.x, entity->position.y };
+    bool is_player = Scene::player() == entity;
 
-    ImGui::Text("Id: %llx", actor->id);
+    ImGui::Text("Id: %llx", entity->id);
     if (ImGui::Checkbox("Player", &is_player)) {
-        Scene::set_player(is_player ? actor->id : null_id);
+        Scene::set_player(is_player ? entity->id : null_id);
     }
     ImGui::PushItemWidth(ImGui::GetWindowWidth() / 4);
     if (ImGui::InputInt2("Position", position_raw, ImGuiInputTextFlags_None)) {
         position_raw[0] = std::min(std::max(position_raw[0], 0), 100);
         position_raw[1] = std::min(std::max(position_raw[1], 0), 100);
-        actor->position.x = position_raw[0];
-        actor->position.y = position_raw[1];
+        entity->position.x = position_raw[0];
+        entity->position.y = position_raw[1];
         if (is_player) {
-            Scene::update_fov(actor->id);
+            Scene::update_fov(entity->id);
         }
     }
-    if (ImGui::InputInt("Speed", &actor->speed, ImGuiInputTextFlags_None)) {
-        actor->speed = std::max(actor->speed, 0);
+    if (ImGui::InputInt("Speed", &entity->speed, ImGuiInputTextFlags_None)) {
+        entity->speed = std::max(entity->speed, 0);
     }
-    if (ImGui::InputInt("Energy", &actor->energy, ImGuiInputTextFlags_None)) {
-        actor->energy = std::max(actor->energy, 0);
+    if (ImGui::InputInt("Energy", &entity->energy, ImGuiInputTextFlags_None)) {
+        entity->energy = std::max(entity->energy, 0);
     }
-    Skills* skills_component = actor->component<Skills>();
+    Skills* skills_component = entity->component<Skills>();
     if (skills_component != nullptr) {
         for (auto& [id, skill] : skills_component->skills()) {
             const auto label = Translator::translate(skill.label());
@@ -142,11 +142,11 @@ void SceneXray::actor_panel(std::optional<u64> actor_id) {
     ImGui::PopItemWidth();
 }
 
-void SceneXray::actor_glyph(Actor* actor) {
-    if (actor == nullptr) {
+void SceneXray::entity_glyph(Entity* entity) {
+    if (entity == nullptr) {
         return;
     }
-    auto rc = actor->component<Render>();
+    auto rc = entity->component<Render>();
     if (!rc) {
         return;
     }

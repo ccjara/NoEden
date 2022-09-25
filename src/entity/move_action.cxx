@@ -9,10 +9,10 @@ u32 MoveAction::base_cost() const {
 }
 
 bool MoveAction::perform() {
-    if (!actor) {
+    if (!entity) {
         return false;
     }
-    actor->energy -= base_cost();
+    entity->energy -= base_cost();
 
     if (destination.x < 0 || destination.y < 0) {
         return false;
@@ -23,13 +23,13 @@ bool MoveAction::perform() {
     }
 
     if (dest_tile->type == TileType::Water) {
-        Skills* skills = actor->component<Skills>();
+        Skills* skills = entity->component<Skills>();
         if (skills) {
             skills->increase_progress(SkillId::Swim, 1);
         }
     }
 
-    actor->position = destination;
+    entity->position = destination;
 
     return true;
 }

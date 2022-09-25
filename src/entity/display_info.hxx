@@ -6,7 +6,7 @@
  */
 struct DisplayInfo {
     /**
-     * @brief The glyph to render for all Actors of this Archetype.
+     * @brief The glyph to render
      */
     u32 glyph = 0U;
 

@@ -35,7 +35,7 @@ function on_load()
         if owner then
             inventory_window:set_title(string.format(
                 "Inventory of %s",
-                scene:actor_name(owner)
+                scene:entity_name(owner)
             ));
         else
             inventory_window:set_title("Inventory");

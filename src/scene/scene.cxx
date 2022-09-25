@@ -12,30 +12,30 @@ void Scene::init() {
 void Scene::shutdown() {
 }
 
-Actor* Scene::get_actor_by_id(u64 id) {
-    auto it = actor_id_to_index_.find(id);
-    if (it == actor_id_to_index_.end()) {
+Entity* Scene::get_entity_by_id(u64 id) {
+    auto it = entity_id_to_index_.find(id);
+    if (it == entity_id_to_index_.end()) {
         return nullptr;
     }
-    if (it->second >= actors_.size()) {
+    if (it->second >= entities_.size()) {
         return nullptr;
     }
-    return actors_[it->second].get();
+    return entities_[it->second].get();
 }
 
-Actor& Scene::create_actor(const Archetype& archetype) {
-    actors_.push_back(EntityFactory::create(archetype));
-    auto& actor = actors_.back();
-    actor_id_to_index_[actor->id] = actors_.size() - 1;
-    return *actor.get();
+Entity& Scene::create_entity(const Archetype& archetype) {
+    entities_.push_back(EntityFactory::create(archetype));
+    auto& entity = entities_.back();
+    entity_id_to_index_[entity->id] = entities_.size() - 1;
+    return *entity.get();
 }
 
-Scene::ActorContainer& Scene::actors() {
-    return actors_;
+Scene::EntityContainer& Scene::entities() {
+    return entities_;
 }
 
-const Scene::ActorContainer& Scene::read_actors() {
-    return actors_;
+const Scene::EntityContainer& Scene::read_entities() {
+    return entities_;
 }
 
 Grid<Tile>& Scene::tiles() {
@@ -47,23 +47,23 @@ const Grid<Tile>& Scene::read_tiles() {
 }
 
 void Scene::update_fov(u64 id) {
-    Actor* actor = get_actor_by_id(id);
-    if (!actor) {
+    Entity* entity = get_entity_by_id(id);
+    if (!entity) {
         return;
     }
-    Fov::update(*actor, tiles_);
+    Fov::update(*entity, tiles_);
 }
 
 void Scene::perform_actions() {
     if (!player_id_ || !player_action_) {
         return;
     }
-    for (auto& actor : actors_) {
-        actor->energy += player_action_->cost;
+    for (auto& entity : entities_) {
+        entity->energy += player_action_->cost;
         // TODO: ai must calculate number of possible actions, then push them
         //       the cost are deducted when performing the action so that
-        //       if an actor gets impaired / slowed the action may fail in that cycle
-        actor->ai.visit();
+        //       if an Entity gets impaired / slowed the action may fail in that cycle
+        entity->ai.visit();
     }
     std::sort(
         actions_.begin(),
@@ -85,8 +85,8 @@ void Scene::set_player(u64 id) {
     player_id_ = id;
 }
 
-Actor* Scene::player() {
-    return get_actor_by_id(player_id_);
+Entity* Scene::player() {
+    return get_entity_by_id(player_id_);
 }
 
 u64 Scene::player_id() {
@@ -94,7 +94,7 @@ u64 Scene::player_id() {
 }
 
 bool Scene::on_key_down(KeyDownEvent& e) {
-    Actor* player = Scene::player();
+    Entity* player = Scene::player();
     if (!player) {
         return false;
     }

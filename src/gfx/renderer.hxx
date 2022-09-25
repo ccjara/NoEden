@@ -4,7 +4,7 @@
 #include "display.hxx"
 #include "texture.hxx"
 #include "text_shader.hxx"
-#include "../actor/components/render.hxx"
+#include "../entity/components/render.hxx"
 #include "../game/platform_event.hxx"
 #include "../game/window.hxx"
 #include "../game/config.hxx"

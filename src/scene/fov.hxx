@@ -3,7 +3,7 @@
 
 #include "../grid.hxx"
 #include "../scene/tile.hxx"
-#include "../actor/actor.hxx"
+#include "../entity/entity.hxx"
 
 namespace {
     struct Row {
@@ -42,11 +42,11 @@ namespace {
  */
 class Fov {
 public:
-    static void update(Actor& viewer, Grid<Tile>& tiles);
+    static void update(Entity& viewer, Grid<Tile>& tiles);
 private:
     enum class Quadrant { N, E, S, W };
 
-    static inline void scan(Actor& viewer, Grid<Tile>& tiles, Row& row, Quadrant q);
+    static inline void scan(Entity& viewer, Grid<Tile>& tiles, Row& row, Quadrant q);
 
     inline Vec2<i32> static to_grid_coords(Quadrant q, Vec2<i32> start_pos, i32 depth, i32 col);
 

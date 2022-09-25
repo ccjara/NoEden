@@ -1,10 +1,10 @@
 #ifndef JARALYN_ACTION_HXX
 #define JARALYN_ACTION_HXX
 
-#include "actor.hxx"
+#include "entity.hxx"
 
 /**
- * @brief Base class for an action any controller may produce for an actor.
+ * @brief Base class for an action any controller may produce for an Entity.
  *
  * TODO: Rename to Command?
  */
@@ -24,16 +24,16 @@ struct Action {
     virtual u32 base_cost() const = 0;
 
     /**
-     * @brief Points to the actor performing this action.
+     * @brief Points to the Entity performing this action.
      *
      * Injected by the ActionQueue
      */
-    Actor* actor { nullptr };
+    Entity* entity { nullptr };
 
     /**
      * @brief Speed at which this action performs.
      *
-     * This speed is unaffected by changes to the actor's speed being made
+     * This speed is unaffected by changes to the entity's speed being made
      * after this action was created.
      */
     u32 speed { 0U };
