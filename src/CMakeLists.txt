@@ -11,9 +11,14 @@ add_executable(
     "actor/action.hxx"
     "actor/actor.cxx"
     "actor/archetype.hxx"
+    "actor/catalog.cxx"
+    "actor/components/behavior.cxx"
+    "actor/components/component.cxx"
+    "actor/components/render.cxx"
+    "actor/components/skills.cxx"
+    "actor/display_info.hxx"
+    "actor/entity_factory.cxx"
     "actor/move_action.cxx"
-
-    "actor/skill.hxx"
 
     "ai/ai_node.hxx"
     "ai/ai_walk.hxx"
@@ -61,6 +66,7 @@ add_executable(
     "scene/tile.cxx"
     "scene/tile_builder.cxx"
 
+    "scripts/api/catalog_api.cxx"
     "scripts/api/log_api.cxx"
     "scripts/api/lua_api.hxx"
     "scripts/api/scene_api.cxx"

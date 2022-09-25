@@ -3,7 +3,10 @@
 
 #include "config.hxx"
 #include "window.hxx"
+#include "../actor/components/skills.hxx"
+#include "../actor/catalog.hxx"
 #include "../ai/ai_walk.hxx"
+#include "../scripts/api/catalog_api.hxx"
 #include "../scripts/api/scene_api.hxx"
 #include "../scripts/api/ui/ui_api.hxx"
 #include "../scripts/api/log_api.hxx"

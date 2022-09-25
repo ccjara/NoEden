@@ -25,7 +25,10 @@ bool SceneXray::on_mouse_down(MouseDownEvent& e) {
     auto w = TileBuilder::for_type(type_to_place);
     w.revealed = true;
     Scene::tiles().put(w, tpos);
-    Scene::update_fov();
+    const auto player_id = Scene::player_id();
+    if (player_id != null_id) {
+        Scene::update_fov(player_id);
+    }
     return true;
 }
 
@@ -42,7 +45,7 @@ void SceneXray::entity_window() {
 
     if (ImGui::BeginCombo("Entity", combo_label.c_str())) {
         for (auto& actor : Scene::actors()) {
-            const auto& actor_name_str = actor->archetype->name.c_str();
+            const auto& actor_name_str = actor->name.c_str();
             const bool is_selected = actor_id.has_value() && actor_id.value() == actor->id;
             if (ImGui::Selectable(actor_name_str, is_selected)) {
                 actor_id = actor->id;
@@ -107,7 +110,7 @@ void SceneXray::actor_panel(std::optional<u64> actor_id) {
 
     ImGui::Text("Id: %llx", actor->id);
     if (ImGui::Checkbox("Player", &is_player)) {
-        Scene::set_player(is_player ? actor : nullptr);
+        Scene::set_player(is_player ? actor->id : null_id);
     }
     ImGui::PushItemWidth(ImGui::GetWindowWidth() / 4);
     if (ImGui::InputInt2("Position", position_raw, ImGuiInputTextFlags_None)) {
@@ -115,7 +118,9 @@ void SceneXray::actor_panel(std::optional<u64> actor_id) {
         position_raw[1] = std::min(std::max(position_raw[1], 0), 100);
         actor->position.x = position_raw[0];
         actor->position.y = position_raw[1];
-        Scene::update_fov();
+        if (is_player) {
+            Scene::update_fov(actor->id);
+        }
     }
     if (ImGui::InputInt("Speed", &actor->speed, ImGuiInputTextFlags_None)) {
         actor->speed = std::max(actor->speed, 0);
@@ -123,12 +128,17 @@ void SceneXray::actor_panel(std::optional<u64> actor_id) {
     if (ImGui::InputInt("Energy", &actor->energy, ImGuiInputTextFlags_None)) {
         actor->energy = std::max(actor->energy, 0);
     }
-    for (auto& [id, skill] : actor->skills) {
-        const auto label = Translator::translate(skill.label());
-        if (ImGui::InputInt(label.c_str(), &skill.progress)) {
-            skill.progress = std::max(skill.progress, 0);
+    Skills* skills_component = actor->component<Skills>();
+    if (skills_component != nullptr) {
+        for (auto& [id, skill] : skills_component->skills()) {
+            const auto label = Translator::translate(skill.label());
+            i32 progress = skill.progress;
+            if (ImGui::InputInt(label.c_str(), &progress)) {
+                skills_component->set_progress(id, std::max(skill.progress, 0));
+            }
         }
     }
+
     ImGui::PopItemWidth();
 }
 
@@ -136,7 +146,11 @@ void SceneXray::actor_glyph(Actor* actor) {
     if (actor == nullptr) {
         return;
     }
-    const auto& display_info = actor->archetype->display_info;
+    auto rc = actor->component<Render>();
+    if (!rc) {
+        return;
+    }
+    const auto& display_info = rc->display_info();
     const auto uvuv = Renderer::calculate_glyph_uv(display_info.glyph);
     const auto texture = Renderer::text_texture();
     const auto& color = display_info.color;

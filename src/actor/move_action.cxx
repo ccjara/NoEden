@@ -23,11 +23,13 @@ bool MoveAction::perform() {
     }
 
     if (dest_tile->type == TileType::Water) {
-        auto& swim_skill = actor->skills[SkillId::Swim];
-        ++swim_skill.progress;
+        Skills* skills = actor->component<Skills>();
+        if (skills) {
+            skills->increase_progress(SkillId::Swim, 1);
+        }
     }
 
     actor->position = destination;
 
     return true;
-};
+}

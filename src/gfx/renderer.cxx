@@ -108,19 +108,20 @@ void Renderer::update_display() {
         }
     }
 
-    for (const auto& actor : Scene::read_actors()) {
-        if (!display_.in_bounds(actor->position)) {
+    for (const auto& actor : Scene::actors()) {
+        Render* render_component = actor->component<Render>();
+        if (!render_component) {
+            continue;
+        }
+        const auto& info = render_component->display_info();
+        if (!info.visible || !display_.in_bounds(actor->position)) {
             continue; // do not render entities outside of view
         }
         const auto tile { tiles.at(actor->position) };
         if (!tile || !tile->visited) {
             continue;
         }
-        const auto& display_info { actor->archetype->display_info };
-        display_.put(
-            DisplayCell(display_info.glyph, display_info.color),
-            actor->position
-        );
+        display_.put(DisplayCell(info.glyph, info.color), actor->position);
     }
 
     Events::trigger<PostWorldRenderEvent>();

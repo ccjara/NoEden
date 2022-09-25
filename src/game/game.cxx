@@ -37,22 +37,34 @@ void Game::init() {
     Scripting::add_api<LogApi>();
     Scripting::add_api<SceneApi>();
     Scripting::add_api<UiApi>();
+    Scripting::add_api<CatalogApi>();
 
     Scripting::load_from_path(Scripting::default_script_path);
 
     is_running_ = true;
 
     // post initialization experimentation
-    auto& player = Scene::create_actor(&Archetypes::Dwarf);
-    auto& troll = Scene::create_actor(&Archetypes::Troll);
-
-    // TODO: move as factory to archetype
-    troll.ai.add<AiWalk>(0, &troll);
-
-    player.position = { 0, 1 };
-    troll.position = { 3, 3 };
-
-    Scene::set_player(&player);
+    {
+        auto arch_troll = Catalog::archetype("TROLL");
+        auto arch_dwarf = Catalog::archetype("DWARF");
+        if (arch_troll) {
+            auto& troll = Scene::create_actor(*arch_troll);
+            troll.name = "Troll";
+            troll.position = { 3, 3 };
+            //troll.ai.add<AiWalk>(0, &troll);
+            // player.add_component<Skills>();
+        } else {
+            Log::warn("TROLL archetype not yet present");
+        }
+        if (arch_dwarf) {
+            auto& dwarf = Scene::create_actor(*arch_dwarf);
+            dwarf.position = { 0, 1 };
+            dwarf.name = "Dwarf";
+            Scene::set_player(dwarf.id);
+        } else {
+            Log::warn("DWARF archetype not yet present");
+        }
+    }
 }
 
 void Game::shutdown() {

@@ -47,7 +47,7 @@ function on_load()
         return;
     end
 
-    inventory_window:set_title("Inventory");
+    inventory_window:set_title(string.format("Inventory of %s", scene:player_name() or "?"));
     -- inventory_window:set_handler(on_update_inventory_window);
     inventory_window:move(0, 0);
     inventory_window:resize(40, 20);

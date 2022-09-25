@@ -20,6 +20,7 @@
 #include <random>
 #include <string>
 #include <unordered_map>
+#include <type_traits>
 
 #define FMT_HEADER_ONLY
 #define SPDLOG_FMT_EXTERNAL
@@ -49,6 +50,10 @@ using u64 = uint64_t;
 using i16 = int16_t;
 using i32 = int32_t;
 using i64 = int64_t;
+
+using Id = u64;
+
+constinit static const Id null_id = 0U;
 
 namespace fs = std::filesystem;
 

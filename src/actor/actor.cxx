@@ -1,9 +1,11 @@
 #include "actor.hxx"
 
-Actor::Actor(const Archetype* arch) : id { next_id_++ } {
-    assert(arch);
-    archetype = arch;
-    speed = arch->speed;
+Actor::Actor() : id(next_id_++) {
 }
 
-u64 Actor::next_id_ { 0 };
+void Actor::reindex_components() {
+    components_by_type_.clear();
+    for (auto& component : components_) {
+        components_by_type_[component->type()] = component.get();
+    }
+}

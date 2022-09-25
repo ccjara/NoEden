@@ -6,6 +6,7 @@
 #include "../input/input_event.hxx"
 #include "../scene/scene.hxx"
 #include "../gfx/renderer.hxx"
+#include "../actor/components/skills.hxx"
 
 class SceneXray : public IXray {
 public:

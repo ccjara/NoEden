@@ -3,6 +3,7 @@
 
 #include "../actor/actor.hxx"
 #include "../actor/move_action.hxx"
+#include "../actor/entity_factory.hxx"
 #include "../grid.hxx"
 #include "tile_builder.hxx"
 #include "../input/input_event.hxx"
@@ -21,14 +22,14 @@ public:
     /**
      * @brief Returns a pointer to an actor for the given id or nullptr if not found.
      */
-    static Actor* get_actor_by_id(u64 id);
+    static Actor* get_actor_by_id(Id id);
 
     /**
      * @brief Constructs an actor of the given archetype and returns it.
      *
      * The actor can be further configured after creation.
      */
-    static Actor& create_actor(const Archetype* archetype);
+    static Actor& create_actor(const Archetype& archetype);
 
     /**
      * @brief Provides write access to the actor container.
@@ -53,7 +54,7 @@ public:
     /**
      * @brief Writes the field of view to the display
      */
-    static void update_fov();
+    static void update_fov(u64 actor);
 
     /**
      * @brief Executes each action in order of the Actions' calculated speed.
@@ -87,26 +88,26 @@ public:
     }
 
     /**
-     * @brief Declares the given actor as the new player to control.
+     * @brief Assigns the given actor id as the new player to control.
      *
-     * May be and is initially null to signify no player currently exists.
-     *
-     * The player controller can only control one player at a time.
+     * May be and is initially unset to signify no player currently exists.
      */
-    static void set_player(Actor* actor);
+    static void set_player(Id id);
 
     /**
-     * @brief Returns the current actor regarded as a player if any.
+     * @brief Returns the current Actor regarded as a player if any.
      */
     static Actor* player();
+
+    static Id player_id();
 private:
     static bool on_key_down(KeyDownEvent& e);
 
     static inline ActorContainer actors_;
     static inline ActionContainer actions_;
-    static inline Actor* player_ = nullptr;
+    static inline Id player_id_ = null_id;
     static inline Action* player_action_ = nullptr;
-    static inline std::unordered_map<u64, Actor*> actors_by_id_;
+    static inline std::unordered_map<Id, size_t> actor_id_to_index_;
 
     static inline Grid<Tile> tiles_;
 };

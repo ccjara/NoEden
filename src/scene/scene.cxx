@@ -13,14 +13,21 @@ void Scene::shutdown() {
 }
 
 Actor* Scene::get_actor_by_id(u64 id) {
-    auto it { actors_by_id_.find(id) };
-    return it == actors_by_id_.end() ? nullptr : it->second;
+    auto it = actor_id_to_index_.find(id);
+    if (it == actor_id_to_index_.end()) {
+        return nullptr;
+    }
+    if (it->second >= actors_.size()) {
+        return nullptr;
+    }
+    return actors_[it->second].get();
 }
 
-Actor& Scene::create_actor(const Archetype* archetype) {
-    auto& actor { actors_.emplace_back(new Actor(archetype)) };
-    actors_by_id_[actor->id] = actor.get();
-    return *actor;
+Actor& Scene::create_actor(const Archetype& archetype) {
+    actors_.push_back(EntityFactory::create(archetype));
+    auto& actor = actors_.back();
+    actor_id_to_index_[actor->id] = actors_.size() - 1;
+    return *actor.get();
 }
 
 Scene::ActorContainer& Scene::actors() {
@@ -39,14 +46,16 @@ const Grid<Tile>& Scene::read_tiles() {
     return tiles_;
 }
 
-void Scene::update_fov() {
-    if (player_) {
-        Fov::update(*player_, tiles_);
+void Scene::update_fov(u64 id) {
+    Actor* actor = get_actor_by_id(id);
+    if (!actor) {
+        return;
     }
+    Fov::update(*actor, tiles_);
 }
 
 void Scene::perform_actions() {
-    if (!player_action_) {
+    if (!player_id_ || !player_action_) {
         return;
     }
     for (auto& actor : actors_) {
@@ -68,24 +77,29 @@ void Scene::perform_actions() {
     }
     actions_.clear();
 
-    update_fov();
+    update_fov(player_id_);
     player_action_ = nullptr;
 }
 
-void Scene::set_player(Actor* actor) {
-    player_ = actor;
+void Scene::set_player(u64 id) {
+    player_id_ = id;
 }
 
 Actor* Scene::player() {
-    return player_;
+    return get_actor_by_id(player_id_);
+}
+
+u64 Scene::player_id() {
+    return player_id_;
 }
 
 bool Scene::on_key_down(KeyDownEvent& e) {
-    if (!player_) {
+    Actor* player = Scene::player();
+    if (!player) {
         return false;
     }
-    auto move_relative = [](Vec2<i32> direction) {
-        player_action_ = &create_action<MoveAction>(player_, player_->position + direction);
+    auto move_relative = [=](Vec2<i32> direction) {
+        player_action_ = &create_action<MoveAction>(player, player->position + direction);
     };
     switch (e.key) {
         case Key::W:
