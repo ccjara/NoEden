@@ -4,6 +4,7 @@
 #include "../game/platform_event.hxx"
 #include "../input/input_event.hxx"
 #include "api/lua_api.hxx"
+#include "callback_store.hxx"
 #include "script_event.hxx"
 #include "script_util.hxx"
 #include "script.hxx"
@@ -72,6 +73,8 @@ private:
         luabridge::LuaRef ref;
     };
     static inline std::unordered_map<lua_event_type, std::vector<ScriptRef>> listeners_;
+
+    static inline CallbackStore callback_store_;
 
     /**
      * @brief Tracks a lua function that should be invoked on a specific event.

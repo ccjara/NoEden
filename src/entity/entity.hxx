@@ -1,7 +1,6 @@
 #ifndef JARALYN_ACTOR_HXX
 #define JARALYN_ACTOR_HXX
 
-#include "../ai/ai_node.hxx"
 #include "components/component.hxx"
 
 struct Entity {
@@ -18,8 +17,6 @@ struct Entity {
 
     i32 speed { 0 };
     i32 energy { 0 };
-
-    AiPrioritySelector ai;
 
     /**
      * @brief Locates a component by the given template argument.
@@ -54,6 +51,8 @@ struct Entity {
         reindex_components();
         return component;
     }
+
+    void update(u64 dt);
 private:
     std::vector<std::unique_ptr<Component>> components_;
     std::unordered_map<ComponentType, Component*> components_by_type_;

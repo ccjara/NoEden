@@ -9,3 +9,9 @@ void Entity::reindex_components() {
         components_by_type_[component->type()] = component.get();
     }
 }
+
+void Entity::update(u64 dt) {
+    for (auto& component : components_) {
+        component->update(dt);
+    }
+}

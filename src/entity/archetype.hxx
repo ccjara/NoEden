@@ -19,6 +19,8 @@ struct Archetype {
 
     /**
      * @brief Components which will be created for each Entity of this archetype
+     *
+     * TODO: needs unique existence checking on *some* component types
      */
     std::vector<std::unique_ptr<Component>> components;
 };

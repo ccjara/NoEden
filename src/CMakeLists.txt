@@ -8,6 +8,13 @@ add_executable(
     "../deps/imgui/imgui_tables.cpp"
     "../deps/imgui/imgui_widgets.cpp"
 
+    "ai/ai_context.cxx"
+    "ai/generic_ai_node.hxx"
+    "ai/ai_node.cxx"
+    "ai/ai_priority_selector.cxx"
+    "ai/ai_script.cxx"
+    "ai/ai_walk.cxx"
+
     "entity/action.hxx"
     "entity/entity.cxx"
     "entity/archetype.hxx"
@@ -20,9 +27,6 @@ add_executable(
     "entity/display_info.hxx"
     "entity/entity_factory.cxx"
     "entity/move_action.cxx"
-
-    "ai/ai_node.hxx"
-    "ai/ai_walk.hxx"
 
     "events/event_manager.cxx"
 
@@ -73,6 +77,7 @@ add_executable(
     "scripts/api/scene_api.cxx"
     "scripts/api/ui/ui_api.cxx"
 
+    "scripts/callback_store.cxx"
     "scripts/script.cxx"
     "scripts/script_event.hxx"
     "scripts/script_util.hxx"

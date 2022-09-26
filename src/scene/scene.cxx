@@ -59,11 +59,7 @@ void Scene::perform_actions() {
         return;
     }
     for (auto& entity : entities_) {
-        entity->energy += player_action_->cost;
-        // TODO: ai must calculate number of possible actions, then push them
-        //       the cost are deducted when performing the action so that
-        //       if an Entity gets impaired / slowed the action may fail in that cycle
-        entity->ai.visit();
+        entity->update(player_action_->cost);
     }
     std::sort(
         actions_.begin(),

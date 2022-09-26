@@ -15,6 +15,7 @@ enum class ComponentType {
  */
 class Component {
     friend class Entity;
+    friend class EntityFactory;
 public:
     virtual ~Component() = default;
 
@@ -34,6 +35,13 @@ public:
      * You are required to manage ownership past the return.
      */
     [[nodiscard]] virtual std::unique_ptr<Component> clone() const = 0;
+
+    /**
+     * @brief Implementation defined update cycle for this component.
+     *
+     * @param dt Advanced time steps due to player action
+     */
+    virtual void update(u64 dt);
 protected:
     /**
      * @brief Derive components from GenericComponent instead.

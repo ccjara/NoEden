@@ -10,3 +10,6 @@ ComponentType Component::type() const {
 u64 Component::entity_id() const {
     return entity_id_;
 }
+
+void Component::update(u64 dt) {
+}

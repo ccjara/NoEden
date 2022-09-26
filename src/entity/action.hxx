@@ -25,8 +25,6 @@ struct Action {
 
     /**
      * @brief Points to the Entity performing this action.
-     *
-     * Injected by the ActionQueue
      */
     Entity* entity { nullptr };
 
