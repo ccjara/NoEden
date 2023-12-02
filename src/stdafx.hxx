@@ -4,6 +4,7 @@
 #define NOMINMAX
 
 #include <algorithm>
+#include <array>
 #include <charconv>
 #include <chrono>
 #include <cmath>
@@ -23,9 +24,7 @@
 #include <type_traits>
 
 #define FMT_HEADER_ONLY
-#define SPDLOG_FMT_EXTERNAL
-#include <spdlog/spdlog.h>
-// #include <fmt/format.h> -- included by spdlog
+#include <fmt/format.h>
 #include <fmt/chrono.h>
 
 #include <GL/glew.h>

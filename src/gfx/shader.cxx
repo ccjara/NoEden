@@ -32,7 +32,7 @@ bool Shader::compile(Shader_type type, std::string_view src) {
         } else {
             info = "No opengl error info is available";
         }
-        Log::error("Could not compile shader stage {}: {}", type, info);
+        Log::error("Could not compile shader stage {}: {}", (int) type, info);
         return false;
     }
     glAttachShader(program_, shader);

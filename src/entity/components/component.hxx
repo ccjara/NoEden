@@ -14,7 +14,7 @@ enum class ComponentType {
  * Derive from GenericComponent instead when creating new Component classes.
  */
 class Component {
-    friend class Entity;
+    friend struct Entity;
     friend class EntityFactory;
 public:
     virtual ~Component() = default;
@@ -41,7 +41,7 @@ public:
      *
      * @param dt Advanced time steps due to player action
      */
-    virtual void update(u64 dt);
+    virtual void update([[maybe_unused]] u64 dt);
 protected:
     /**
      * @brief Derive components from GenericComponent instead.

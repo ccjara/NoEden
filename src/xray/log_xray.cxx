@@ -147,7 +147,7 @@ void LogXray::log_table() {
 
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::TextUnformatted(entry.time_point_formatted.c_str());
+                ImGui::TextUnformatted(fmt::format("{:%H:%M:%S}", fmt::localtime(entry.time_point)).c_str());
                 ImGui::TableNextColumn();
                 switch (entry.level) {
                     case LogLevel::Info:

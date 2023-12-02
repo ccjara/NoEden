@@ -1,21 +1,16 @@
 #ifndef JARALYN_LOG_HXX
 #define JARALYN_LOG_HXX
 
-#include <spdlog/sinks/base_sink.h>
-#include <spdlog/sinks/basic_file_sink.h>
-#include "memory_sink.hxx"
-
 enum class LogLevel {
-    Debug = spdlog::level::debug,
-    Info = spdlog::level::info,
-    Warn = spdlog::level::warn,
-    Error = spdlog::level::err,
+    Debug,
+    Info,
+    Warn,
+    Error,
 };
 
 struct LogEntry {
     LogLevel level;
-    spdlog::log_clock::time_point time_point;
-    std::string time_point_formatted;
+    std::time_t time_point;
     std::string message;
 };
 
@@ -23,26 +18,40 @@ class Log {
     friend class LogXray;
     friend class MemorySink;
     friend class Game;
-    using LogPtr = std::unique_ptr<spdlog::logger>;
     using LogStore = std::deque<LogEntry>;
 public:
     template<typename... Args>
-    static inline void debug(Args&&... args) {
-        log_->debug(std::forward<Args>(args)...);
+    static inline void debug(std::string_view fmt, Args&&... args) {
+        log(LogLevel::Debug, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    static inline void info(Args&&... args) {
-        log_->info(std::forward<Args>(args)...);
+    static inline void info(std::string_view fmt, Args&&... args) {
+        log(LogLevel::Info, fmt, std::forward<Args>(args)...);
     }
     template<typename... Args>
-    static inline void warn(Args&&... args) {
-        log_->warn(std::forward<Args>(args)...);
+    static inline void warn(std::string_view fmt, Args&&... args) {
+        log(LogLevel::Warn, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    static inline void error(Args&&... args) {
-        log_->error(std::forward<Args>(args)...);
+    static inline void error(std::string_view fmt, Args&&... args) {
+        log(LogLevel::Error, fmt, std::forward<Args>(args)...);
+    }
+
+    /**
+     * @brief Logs a message on the given level
+     */
+    template<typename... Args>
+    static inline log(LogLevel level, std::string_view fmt, Args&&... args) {
+        if (logs_.size() == Log::max_entries_) {
+            logs_.pop_front();
+        }
+        logs_.emplace_back(LogEntry {
+            level,
+            std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
+            fmt::vformat(fmt, fmt::make_format_args(args...))
+        });
     }
 
     /**
@@ -51,11 +60,6 @@ public:
     static void set_level(LogLevel level);
 private:
     static void init();
-
-    /**
-     * @brief Library logger this class wraps.
-     */
-    static inline LogPtr log_;
 
     /**
      * @brief Stores logs in a FIFO-like container with random access.

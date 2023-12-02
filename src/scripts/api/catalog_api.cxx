@@ -129,7 +129,7 @@ std::unique_ptr<AiNode> create_behavior_node(const luabridge::LuaRef& ref) {
             base_node_ptr = std::make_unique<AiWalk>();
             break;
         default:
-            Log::error("Unknown node type id {}", type);
+            Log::error("Unknown node type id {}", (int) type);
     }
     return base_node_ptr;
 }

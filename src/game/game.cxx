@@ -165,7 +165,7 @@ void Game::configure_from_lua(luabridge::LuaRef cfg) {
     Config cfg_prev = config_;
 
     constexpr const auto report = [](std::string_view reason) -> void {
-        Log::error("Error in root config: {}.", reason);
+        Log::error("Error in root config: {}", reason);
     };
 
     if (!cfg.isTable()) {

@@ -11,7 +11,7 @@ public:
         if (it == db_.end()) {
             return std::string(s);
         }
-        return fmt::format(it->second, std::forward<args>(args)...);
+        return fmt::format(fmt::runtime(it->second), std::forward<args_type>(args)...);
     }
 
     static void load(std::string_view lang_file);

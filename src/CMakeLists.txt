@@ -49,7 +49,6 @@ add_executable(
     "grid.hxx"
 
     "log/log.cxx"
-    "log/memory_sink.cxx"
 
     "main.cxx"
 
