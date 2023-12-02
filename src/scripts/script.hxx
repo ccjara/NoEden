@@ -87,6 +87,38 @@ public:
         (types::declare(luabridge::getGlobalNamespace(state_)), ...);
     }
 
+    /**
+     * @brief Defines an enum as a globally accessible table in this script
+     * 
+     * If the enum already exists, the operation will be ignored.
+     *
+     * Requires the script to be loaded.
+     */
+    template<typename... kvp>
+    void define_enum(const char *enum_name, kvp... key_value_pair) {
+        lua_getglobal(state_, enum_name);
+        const bool already_exists = !lua_isnil(state_, -1);
+        lua_pop(state_, 1);
+
+        if (already_exists) {
+            Log::error("Could not re-define enum {} in script {}", enum_name, name_);
+            return;
+        }
+
+        lua_newtable(state_);
+
+        (
+            ...,
+            (
+                lua_pushstring(state_, std::get<0>(key_value_pair)), // enum key
+                lua_pushinteger(state_, static_cast<i32> (std::get<1>(key_value_pair))), // enum value
+                lua_settable(state_, -3)
+            )
+        );
+
+        lua_setglobal(state_, enum_name);
+    }
+
     ScriptStatus status() const;
     const std::string& name() const;
     lua_State* lua_state() const;

@@ -1,28 +1,3 @@
--- TODO: Move into library
-AnchorOrigin = {
-    Top = 0,
-    TopRight = 1,
-    Right = 2,
-    BottomRight = 3,
-    Bottom = 4,
-    BottomLeft = 5,
-    Left = 6,
-    TopLeft = 7,
-    Center = 8,
-}
-
-AlignX = {
-    Left = 0,
-    Center = 1,
-    Right = 2,
-}
-
-AlignY = {
-    Top = 0,
-    Center = 1,
-    Bottom = 2,
-}
-
 function on_update_inventory_window(window)
 end
 
@@ -68,8 +43,6 @@ function on_load()
     do
         inventory_lines = inventory_lines..string.format("$c00ff00%3i$! %s$n", i, "Some Item");
     end
-
-    print(inventory_lines);
 
     text:set_parent(inventory_window);
     text:move(2, 2);

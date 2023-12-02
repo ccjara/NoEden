@@ -1,6 +1,33 @@
 #include "ui_api.hxx"
 
 void UiApi::on_register(Script* script) {
+    script->define_enum(
+        "AlignX", 
+        std::make_tuple("Left", AlignX::Left), 
+        std::make_tuple("Center", AlignX::Center), 
+        std::make_tuple("Right", AlignX::Right)
+    );
+
+    script->define_enum(
+        "AlignY", 
+        std::make_tuple("Top", AlignY::Top), 
+        std::make_tuple("Center", AlignY::Center), 
+        std::make_tuple("Bottom", AlignY::Bottom)
+    );
+
+    script->define_enum(
+        "AnchorOrigin", 
+        std::make_tuple("Top", AnchorOrigin::Top),
+        std::make_tuple("TopRight", AnchorOrigin::TopRight),
+        std::make_tuple("Right", AnchorOrigin::Right),
+        std::make_tuple("BottomRight", AnchorOrigin::BottomRight),
+        std::make_tuple("Bottom", AnchorOrigin::Bottom),
+        std::make_tuple("BottomLeft", AnchorOrigin::BottomLeft),
+        std::make_tuple("Left", AnchorOrigin::Left),
+        std::make_tuple("TopLeft", AnchorOrigin::TopLeft),
+        std::make_tuple("Center", AnchorOrigin::Center)
+    );
+
     luabridge::getGlobalNamespace(*script)
         .beginClass<UiApi>("UiApi")
             .addFunction("create_window", &UiApi::create_window)

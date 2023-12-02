@@ -1,6 +1,19 @@
 #include "catalog_api.hxx"
 
 void CatalogApi::on_register(Script* script) {
+    script->define_enum(
+        "ComponentType",
+        std::make_tuple("Behavior", ComponentType::Behavior),
+        std::make_tuple("Render", ComponentType::Render),
+        std::make_tuple("Skills", ComponentType::Skills)
+    );
+
+    script->define_enum(
+        "AiNodeType",
+        std::make_tuple("PrioritySelector", AiNodeType::PrioritySelector),
+        std::make_tuple("Walk", AiNodeType::Walk)
+    );
+
     luabridge::getGlobalNamespace(*script)
         .beginClass<CatalogApi>("Catalog")
             .addFunction("create_archetype", &CatalogApi::create_archetype)

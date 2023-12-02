@@ -1,14 +1,3 @@
-ComponentType = {
-    Skills = 1,
-    Behavior = 2,
-    Render = 3,
-}
-
-BehaviorNodeType = {
-    PrioritySelector = 1,
-    Walk = 1000,
-}
-
 function on_load()
     catalog:create_archetype({
         name = "TROLL",
@@ -22,11 +11,11 @@ function on_load()
             {
                 type = ComponentType.Behavior,
                 root = {
-                    type = BehaviorNodeType.PrioritySelector,
+                    type = AiNodeType.PrioritySelector,
                     priority = 0,
                     children = {
                         {
-                            type = BehaviorNodeType.Walk,
+                            type = AiNodeType.Walk,
                         },
                     },
                 },
