@@ -15,6 +15,9 @@ AiPrioritySelector::AiPrioritySelector(AiPrioritySelector&& other) : AiPriorityS
 }
 
 AiNodeState AiPrioritySelector::visit(AiContext& context) {
+    mod_state(AiNodeState::Running);
+    continuation_iterator = nodes_.begin();
+
     while (continuation_iterator != nodes_.end()) {
         assert(continuation_iterator->ptr);
         const auto child_state = continuation_iterator->ptr->visit(context);

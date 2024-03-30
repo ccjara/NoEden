@@ -50,6 +50,7 @@ void Game::init() {
         if (arch_troll) {
             auto& troll = Scene::create_entity(*arch_troll);
             troll.name = "Troll";
+            troll.speed = 5;
             troll.position = { 3, 3 };
             //troll.ai.add<AiWalk>(0, &troll);
             // player.add_component<Skills>();
@@ -59,6 +60,7 @@ void Game::init() {
         if (arch_dwarf) {
             auto& dwarf = Scene::create_entity(*arch_dwarf);
             dwarf.position = { 0, 1 };
+            dwarf.speed = 10;
             dwarf.name = "Dwarf";
             Scene::set_player(dwarf.id);
         } else {

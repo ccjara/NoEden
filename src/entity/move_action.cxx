@@ -5,15 +5,13 @@ MoveAction::MoveAction(Vec2<i32> destination) :
 }
 
 u32 MoveAction::base_cost() const {
-    return 100;
+    return BASE_COST;
 }
 
 bool MoveAction::perform() {
     if (!entity) {
         return false;
     }
-    entity->energy -= base_cost();
-
     const Tile* dest_tile = Scene::tiles().at(destination);
 
     if (dest_tile == nullptr) {

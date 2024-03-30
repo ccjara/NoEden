@@ -9,6 +9,11 @@ AiNodeState AiWalk::visit(AiContext& context) {
     if (!entity) {
         return mod_state(AiNodeState::Failed);
     }
+
+    if (entity->energy < MoveAction::BASE_COST / entity->speed) {
+        return mod_state(AiNodeState::Failed);
+    }
+
     auto pos = entity->position;
 
     if (dir == 0) {

@@ -11,6 +11,8 @@ void Entity::reindex_components() {
 }
 
 void Entity::update(u64 dt) {
+    energy += dt;
+
     for (auto& component : components_) {
         component->update(dt);
     }

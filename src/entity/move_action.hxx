@@ -21,6 +21,9 @@ struct MoveAction : public Action {
      * @brief Destination this entity will arrive at if the action succeeds.
      */
     Vec2<i32> destination;
+
+    // TODO: scriptable / configurable
+    const static inline u32 BASE_COST = 100;
 };
 
 #endif

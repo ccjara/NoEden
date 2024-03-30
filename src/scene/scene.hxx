@@ -83,7 +83,16 @@ public:
         ).get();
 
         action.entity = entity;
-        action.cost = action.speed * action.base_cost();
+        action.speed = entity->speed;
+
+        if (action.speed < 1) {
+            action.speed = 1;
+        }
+
+        action.cost = action.base_cost() / entity->speed;
+
+        entity->energy -= action.cost;
+
         return action;
     }
 

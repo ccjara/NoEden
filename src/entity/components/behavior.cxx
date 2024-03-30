@@ -20,7 +20,9 @@ void Behavior::update(u64 dt) {
         return;
     }
     AiContext context(entity_id_);
-    root_->visit(context);
+    do {
+        root_->visit(context);
+    } while (root_->state() != AiNodeState::Failed);
 }
 
 void Behavior::set_root(std::unique_ptr<AiNode>&& root) {
