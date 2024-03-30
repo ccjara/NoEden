@@ -27,6 +27,9 @@ private:
     void tile_window();
 
     bool on_mouse_down(MouseDownEvent& e);
+    bool on_config_updated(ConfigUpdatedEvent& e);
+
+    Config _config;
 };
 
 #endif

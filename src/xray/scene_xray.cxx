@@ -2,6 +2,12 @@
 
 SceneXray::SceneXray() {
     Events::on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
+    Events::on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
+}
+
+bool SceneXray::on_config_updated(ConfigUpdatedEvent& e) {
+    _config = e.next;
+    return false;
 }
 
 bool SceneXray::on_mouse_down(MouseDownEvent& e) {
@@ -18,7 +24,10 @@ bool SceneXray::on_mouse_down(MouseDownEvent& e) {
         return false;
     }
     const auto mp = Input::mouse_position();
-    const Vec2<u32> tpos = { mp.x / 16, mp.y / 28 }; // TODO
+    const Vec2<u32> tpos = {
+        mp.x / (_config.glyph_size.x * _config.scaling),
+        mp.y / (_config.glyph_size.y * _config.scaling)
+    };
     if (!Scene::tiles().at(tpos)) {
         return false;
     }
