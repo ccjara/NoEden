@@ -14,10 +14,12 @@ bool MoveAction::perform() {
     }
     entity->energy -= base_cost();
 
-    if (destination.x < 0 || destination.y < 0) {
+    const Tile* dest_tile = Scene::tiles().at(destination);
+
+    if (dest_tile == nullptr) {
         return false;
     }
-    const auto& dest_tile = Scene::tiles().at(destination);
+
     if (dest_tile->solid) {
         return false;
     }
