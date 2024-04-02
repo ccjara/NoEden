@@ -29,7 +29,7 @@
 
 #include <GL/glew.h>
 
-#include "lua.hpp"
+#include <lua5.3/lua.hpp>
 #include <LuaBridge/LuaBridge.h>
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW

@@ -51,29 +51,29 @@ public:
     /**
      * @brief Returns the result of dividing the glyph width by its height
      */
-    static [[nodiscard]] float glyph_aspect_ratio();
+    [[nodiscard]] static float glyph_aspect_ratio();
 
     /**
      * @brief Returns the current gl context
      */
-    static [[nodiscard]] SDL_GLContext gl_context();
+    [[nodiscard]] static SDL_GLContext gl_context();
 
     /**
      * @brief Returns the current text texture GL id
      */
-    static [[nodiscard]] GLuint text_texture();
+    [[nodiscard]] static GLuint text_texture();
 
     /**
      * @brief Calculates texture coordinates of a glyph for a custom render
      *
      * The array will contain [u1, v1, u2, v2] in this order.
      */
-    static [[nodiscard]] std::array<float, 4> calculate_glyph_uv(u32 glyph);
+    [[nodiscard]] static std::array<float, 4> calculate_glyph_uv(u32 glyph);
 
     /**
      * @brief Provides writable access to the Display
      */
-    static [[nodiscard]] Display& display();
+    [[nodiscard]] static Display& display();
 private:
     static inline SDL_GLContext gl_context_ = nullptr;
     static inline Config cfg_;

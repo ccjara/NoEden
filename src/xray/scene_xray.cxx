@@ -117,7 +117,7 @@ void SceneXray::entity_panel(std::optional<u64> entity_id) {
     i32 position_raw[2] = { entity->position.x, entity->position.y };
     bool is_player = Scene::player() == entity;
 
-    ImGui::Text("Id: %llx", entity->id);
+    ImGui::Text("Id: %lx", entity->id);
     if (ImGui::Checkbox("Player", &is_player)) {
         Scene::set_player(is_player ? entity->id : null_id);
     }

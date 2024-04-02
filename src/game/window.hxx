@@ -29,8 +29,8 @@ public:
      */
     static void close();
 
-    static [[nodiscard]] SDL_Window* handle();
-    static [[nodiscard]] Vec2<u32> size();
+    [[nodiscard]] static SDL_Window* handle();
+    [[nodiscard]] static Vec2<u32> size();
 private:
     static inline Vec2<u32> size_;
     static inline std::string title_;

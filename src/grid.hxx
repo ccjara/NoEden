@@ -1,6 +1,16 @@
 #ifndef JARALYN_GRID_HXX
 #define JARALYN_GRID_HXX
 
+template<typename T>
+concept Integral = std::is_integral_v<T>;
+
+template<typename T>
+concept Indexable = requires(T a) {
+    { a.x } -> std::convertible_to<std::size_t>;
+    { a.y } -> std::convertible_to<std::size_t>;
+};
+
+
 /**
  * @brief Generic implementation of a two-dimensional grid
  *
@@ -148,27 +158,20 @@ public:
      * You may either pass a Vec2<u32> to indicate a cartesian coordinate
      * or an index, in which case `location_type` must be integral.
      */
-    template<typename location_type>
-    [[nodiscard]] constexpr bool in_bounds(location_type location) const {
-        if constexpr (std::is_integral_v<location_type>) {
-            return location < cells_.size();
-        }
-        if constexpr (std::is_signed_v<typename location_type::type>) {
+    [[nodiscard]] constexpr bool in_bounds(Indexable auto location) const {
+        if constexpr (std::is_signed_v<decltype(location.x)>) {
             if (location.x < 0 || location.y < 0) {
                 return false;
             }
         }
-        return static_cast<u32>(location.x) + 1 <= dimensions_.x &&
-        static_cast<u32>(location.y) + 1 <= dimensions_.y;
+        return static_cast<std::size_t>(location.x) + 1 <= dimensions_.x &&
+               static_cast<std::size_t>(location.y) + 1 <= dimensions_.y;
     }
 
     /**
      * @brief Returns whether the given location is contained by the grid
-     *
-     * FIXME: Figure out why the non-specialized version does not work in display.cxx
      */
-    template<>
-    [[nodiscard]] constexpr bool in_bounds(size_t location) const {
+    [[nodiscard]] constexpr bool in_bounds(Integral auto location) const {
         return location < cells_.size();
     }
 

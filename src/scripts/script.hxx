@@ -138,7 +138,7 @@ void Script::define_global(std::string_view key, t value) {
         Log::error("Could not set global {} in script {}: script is not loaded", key, name_);
         return;
     }
-    const auto& stored_name { globals_.emplace_back(name) };
+    const auto& stored_name { globals_.emplace_back(name_) };
     // TODO: this does not cover const char*!
     // concepts / SFINAE....
     if constexpr (!std::is_fundamental<t>::value) { // TODO: "requires script_declarable"

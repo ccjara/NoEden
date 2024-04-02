@@ -10,23 +10,12 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/$<$<CONFIG:Debug>:/bin>$
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/$<$<CONFIG:Debug>:/bin>$<$<CONFIG:Release>:/rel>")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/$<$<CONFIG:Debug>:/bin>$<$<CONFIG:Release>:/rel>")
 
-set(GLEW_ROOT $ENV{GLEW_ROOT})
-set(LUA_LIBRARIES $ENV{LUA_LIBRARY})
-set(LUA_INCLUDE_DIR $ENV{LUA_INCLUDE_DIR})
-
 find_package(Lua REQUIRED)
 find_package(SDL2 2.0.12 REQUIRED COMPONENTS SDL2::SDL2)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 
-include_directories(
-	jaralyn
-	deps
-	$ENV{LUA_INCLUDE_DIR}
-	$ENV{SDL2_INCLUDE_DIRS}
-	$ENV{OPENGL_INCLUDE_DIRS}
-	$ENV{GLEW_INCLUDE_DIRS}
-)
+include_directories("${CMAKE_SOURCE_DIR}/deps")
 
 add_subdirectory(src)
 
@@ -59,6 +48,10 @@ else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   if(NOT CMAKE_CXX_FLAGS MATCHES "-Werror")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
   endif(NOT CMAKE_CXX_FLAGS MATCHES "-Werror")
+  # -Wpedantic for clang and gcc.
+  if(NOT CMAKE_CXX_FLAGS MATCHES "-Wpedantic")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic")
+  endif(NOT CMAKE_CXX_FLAGS MATCHES "-Wpedantic")
   # no exceptions
   string(REGEX REPLACE "-fexceptions" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions")

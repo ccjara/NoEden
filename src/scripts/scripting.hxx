@@ -44,9 +44,9 @@ public:
     template<typename path_like>
     static void load_from_path(path_like base_path);
 
-    static [[nodiscard]] const std::unordered_map<u64, std::unique_ptr<Script>>& scripts();
+    [[nodiscard]] static const std::unordered_map<u64, std::unique_ptr<Script>>& scripts();
 
-    static [[nodiscard]] Script* get_by_id(u64 id);
+    [[nodiscard]] static Script* get_by_id(u64 id);
 
     /**
      * @brief Constructs and registers a lua api fragment in place

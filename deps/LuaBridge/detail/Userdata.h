@@ -389,7 +389,8 @@ private:
         }
     }
 
-    UserdataValue<T>(const UserdataValue<T>&);
+    // FIX (jara): non-standard copy constructor syntax
+    UserdataValue(const UserdataValue<T>&);
     UserdataValue<T> operator=(const UserdataValue<T>&);
 
     std::aligned_storage_t<sizeof(T), alignof(T)> m_storage;
