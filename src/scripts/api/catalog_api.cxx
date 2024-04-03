@@ -11,6 +11,7 @@ void CatalogApi::on_register(Script* script) {
     script->define_enum(
         "AiNodeType",
         std::make_tuple("PrioritySelector", AiNodeType::PrioritySelector),
+        std::make_tuple("ClosestEntity", AiNodeType::ClosestEntity),
         std::make_tuple("Walk", AiNodeType::Walk)
     );
 
@@ -43,6 +44,10 @@ void CatalogApi::create_archetype(luabridge::LuaRef ref) {
     const auto speed_ref = ref["speed"];
     if (speed_ref.isNumber()) {
         archetype->speed = speed_ref.cast<i32>();
+    }
+    const auto vision_radius_ref = ref["vision_radius"];
+    if (vision_radius_ref.isNumber()) {
+        archetype->vision_radius = vision_radius_ref.cast<i32>();
     }
     const auto components_ref = ref["components"];
     if (components_ref.isTable()) {
@@ -99,6 +104,7 @@ AiNodeType parse_node_type(const luabridge::LuaRef& ref) {
     switch (unsafe_value) {
         case AiNodeType::None:
         case AiNodeType::PrioritySelector:
+        case AiNodeType::ClosestEntity:
         case AiNodeType::Walk:
             return unsafe_value;
         default:
@@ -138,9 +144,26 @@ std::unique_ptr<AiNode> create_behavior_node(const luabridge::LuaRef& ref) {
 
             break;
         }
-        case AiNodeType::Walk:
-            base_node_ptr = std::make_unique<AiWalk>();
+        case AiNodeType::ClosestEntity: {
+            base_node_ptr = std::make_unique<AiClosestEntity>();
+            auto node_ptr = static_cast<AiClosestEntity*>(base_node_ptr.get());
+            const auto found_target_key_ref = ref["found_target_key"];
+            if (found_target_key_ref.isString()) {
+                node_ptr->set_found_target_key(found_target_key_ref.cast<std::string>());
+            }
             break;
+        }
+        case AiNodeType::Walk: {
+            base_node_ptr = std::make_unique<AiWalk>();
+            auto node_ptr = static_cast<AiWalk*>(base_node_ptr.get());
+            const auto walk_target_key = ref["walk_target_key"];
+            if (walk_target_key.isString()) {
+                node_ptr->target_entity(walk_target_key.cast<std::string>());
+            } else {
+                node_ptr->walk_around();
+            }
+            break;
+        }
         default:
             Log::error("Unknown node type id {}", (int) type);
     }

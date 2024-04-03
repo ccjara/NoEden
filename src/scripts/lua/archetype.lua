@@ -2,6 +2,7 @@ function on_load()
     catalog:create_archetype({
         name = "TROLL",
         speed = 75,
+        vision_radius = 15,
         components = {
             {
                 type = ComponentType.Render,
@@ -15,7 +16,12 @@ function on_load()
                     priority = 0,
                     children = {
                         {
+                            type = AiNodeType.ClosestEntity,
+                            found_target_key = "walk_target",
+                        },
+                        {
                             type = AiNodeType.Walk,
+                            walk_target_key = "walk_target",
                         },
                     },
                 },
@@ -25,6 +31,7 @@ function on_load()
     catalog:create_archetype({
         name = "DWARF",
         speed = 100,
+        vision_radius = 10,
         components = {
             {
                 type = ComponentType.Render,

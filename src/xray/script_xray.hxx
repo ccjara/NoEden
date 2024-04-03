@@ -16,8 +16,17 @@ private:
     bool on_script_loaded(ScriptLoadedEvent& e);
     bool on_script_reset(ScriptResetEvent& e);
 
+    struct GlobalsState {
+        bool visible = false;
+        int ticks = 0;
+        std::vector<std::tuple<std::string, std::string, std::string>> rows;
+    } globals_;
+
     // ui vars
     std::optional<u64> selected_script_id_;
+    Script* current_script_;
+
+    void update_script_globals_table();
 };
 
 #endif

@@ -2,6 +2,7 @@
 
 void AiScript::clear() {
     // TODO: script invocation
+    mod_state(AiNodeState::Ready);
 }
 
 AiNodeState AiScript::visit(AiContext& context) {

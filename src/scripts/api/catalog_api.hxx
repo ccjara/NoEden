@@ -2,6 +2,7 @@
 #define JARALYN_CATALOG_API_HXX
 
 #include "lua_api.hxx"
+#include "../../ai/ai_closest_entity.hxx"
 #include "../../ai/ai_priority_selector.hxx"
 #include "../../ai/ai_walk.hxx"
 #include "../../entity/catalog.hxx"

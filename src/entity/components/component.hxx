@@ -8,6 +8,8 @@ enum class ComponentType {
     Render = 3,
 };
 
+struct Entity;
+
 /**
  * @brief Component interface.
  *
@@ -15,7 +17,6 @@ enum class ComponentType {
  */
 class Component {
     friend struct Entity;
-    friend class EntityFactory;
 public:
     virtual ~Component() = default;
 
@@ -42,6 +43,11 @@ public:
      * @param dt Advanced time steps due to player action
      */
     virtual void update([[maybe_unused]] u64 dt);
+
+    /**
+     * @brief Sets the entity this component belongs to
+     */
+    virtual void set_owner(Entity* entity);
 protected:
     /**
      * @brief Derive components from GenericComponent instead.

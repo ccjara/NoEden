@@ -2,7 +2,7 @@
 
 void Fov::update(Entity& viewer, Grid<Tile>& tiles) {
     for (auto& t : tiles.cells()) {
-        t.visited = false;
+        t.fov = false;
     }
 
     for (i32 q = 0; q < 4; ++q) {
@@ -19,11 +19,11 @@ void Fov::scan(
 ) {
     Tile *prev_tile { nullptr };
 
-    const i32 max_range = 9; // entity->view_range; TODO
+    const i32 max_range = viewer.vision_radius;
     auto viewer_tile = tiles.at(viewer.position);
     if (viewer_tile) {
         viewer_tile->revealed = true;
-        viewer_tile->visited = true;
+        viewer_tile->fov = true;
     }
 
     for (i32 col = row.min_col; col <= row.max_col; ++col) {
@@ -40,7 +40,7 @@ void Fov::scan(
         }
         if (tile->solid || symmetric(row, col)) {
             tile->revealed = true;
-            tile->visited = true;
+            tile->fov = true;
         }
         if (prev_tile) {
             if (prev_tile->solid && !tile->solid) {

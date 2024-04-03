@@ -22,6 +22,8 @@ private:
 
     static inline UiTree ui_tree_;
 
+    static void update_node(UiNode* node);
+
     static bool on_display_resized(DisplayResizedEvent& e);
     static bool on_script_reset(ScriptResetEvent& e);
     static bool on_post_world_render(PostWorldRenderEvent& e);

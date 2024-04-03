@@ -12,9 +12,19 @@ enum class TileType {
 
 struct Tile {
     TileType type { TileType::Wall };
+    
     bool solid { true };
-    bool visited { false };
+
+    /**
+     * @brief Whether the tile is currently within the FoV of the player
+     */
+    bool fov { false };
+
+    /**
+     * @brief Whether this tile has been within FoV by the player before
+     */
     bool revealed { false };
+
     DisplayCell display_info;
 };
 

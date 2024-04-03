@@ -4,6 +4,7 @@
 #define NOMINMAX
 
 #include <algorithm>
+#include <any>
 #include <array>
 #include <charconv>
 #include <chrono>

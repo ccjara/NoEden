@@ -26,6 +26,7 @@ Entity* Scene::get_entity_by_id(u64 id) {
 Entity& Scene::create_entity(const Archetype& archetype) {
     entities_.push_back(EntityFactory::create(archetype));
     auto& entity = entities_.back();
+
     entity_id_to_index_[entity->id] = entities_.size() - 1;
     return *entity.get();
 }
@@ -78,7 +79,13 @@ void Scene::perform_actions() {
 }
 
 void Scene::set_player(u64 id) {
+    auto player = get_entity_by_id(id);
+    if (!player) {
+        Log::error("Cannot set entity {} as player: not found", id);
+        return;
+    }
     player_id_ = id;
+    player->energy = 0;
 }
 
 Entity* Scene::player() {

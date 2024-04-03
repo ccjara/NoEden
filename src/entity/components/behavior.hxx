@@ -4,6 +4,8 @@
 #include "generic_component.hxx"
 #include "../../ai/ai_node.hxx"
 
+struct Entity;
+
 class Behavior : public GenericComponent<Behavior, ComponentType::Behavior> {
 public:
     Behavior() = default;
@@ -15,6 +17,7 @@ public:
     friend void swap(Behavior& lhs, Behavior& rhs) {
         using std::swap;
         swap(lhs.root_, rhs.root_);
+        swap(lhs.ai_context_, rhs.ai_context_);
     }
 
     /**
@@ -23,9 +26,19 @@ public:
     void update(u64 dt) override;
 
     /**
+     * @brief Sets the entity this behavior component belongs to, updating the context
+     */
+    void set_owner(Entity* entity) override;
+
+    /**
      * @brief Takes ownership of the given AiNode unique_ptr and overwrites the current root
      */
     void set_root(std::unique_ptr<AiNode>&& root);
+
+    /**
+     * @briefs Assumes control of the given entity, resetting the current behavior state
+     */
+    void control(Entity* entity);
 
     /**
      * @brief Sets the behavior tree root.
@@ -45,6 +58,7 @@ public:
     AiNode* root() const;
 private:
     std::unique_ptr<AiNode> root_;
+    AiContext ai_context_;
 };
 
 #endif

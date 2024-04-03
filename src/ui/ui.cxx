@@ -13,8 +13,17 @@ void Ui::shutdown() {
 }
 
 void Ui::update() {
-    for (auto& node : ui_tree_.nodes()) {
-        node->call_handler();
+    update_node(ui_tree_.root());
+}
+
+void Ui::update_node(UiNode* node) {
+    if (node == nullptr) {
+        return;
+    }
+    node->call_handler();
+
+    for (UiNode* node : node->children()) {
+        update_node(node);
     }
 }
 

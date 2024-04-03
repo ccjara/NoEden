@@ -137,6 +137,9 @@ void SceneXray::entity_panel(std::optional<u64> entity_id) {
     if (ImGui::InputInt("Energy", &entity->energy, ImGuiInputTextFlags_None)) {
         entity->energy = std::max(entity->energy, 0);
     }
+    if (ImGui::InputInt("Vision Radius", &entity->vision_radius, ImGuiInputTextFlags_None)) {
+        entity->vision_radius = std::max(entity->vision_radius, 1);
+    }
     Skills* skills_component = entity->component<Skills>();
     if (skills_component != nullptr) {
         for (auto& [id, skill] : skills_component->skills()) {

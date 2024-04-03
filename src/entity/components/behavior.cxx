@@ -19,10 +19,18 @@ void Behavior::update(u64 dt) {
     if (!root_) {
         return;
     }
-    AiContext context(entity_id_);
-    do {
-        root_->visit(context);
-    } while (root_->state() != AiNodeState::Failed);
+    //do {
+        root_->visit(ai_context_);
+    // } while (root_->state() != AiNodeState::Failed);
+}
+
+void Behavior::set_owner(Entity* entity) {
+    if (!entity) {
+        return;
+    }
+    ai_context_.entity = entity;
+    ai_context_.entity_id = entity->id;
+    ai_context_.blackboard.clear();
 }
 
 void Behavior::set_root(std::unique_ptr<AiNode>&& root) {

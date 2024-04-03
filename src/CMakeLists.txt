@@ -9,11 +9,14 @@ add_executable(
     "../deps/imgui/imgui_widgets.cpp"
 
     "ai/ai_context.cxx"
-    "ai/generic_ai_node.hxx"
+    "ai/ai_condition.cxx"
+    "ai/ai_closest_entity.cxx"
     "ai/ai_node.cxx"
     "ai/ai_priority_selector.cxx"
     "ai/ai_script.cxx"
     "ai/ai_walk.cxx"
+    "ai/blackboard.cxx"
+    "ai/generic_ai_node.hxx"
 
     "entity/action.hxx"
     "entity/entity.cxx"

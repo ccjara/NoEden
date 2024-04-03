@@ -13,6 +13,8 @@ enum class AiNodeState {
 enum class AiNodeType { // TODO integrate in C++ classes
     None = 0,
     PrioritySelector = 1,
+    ClosestEntity = 2,
+
     Walk = 1000,
 };
 

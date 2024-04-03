@@ -15,6 +15,7 @@ struct Entity {
 
     Vec2<i32> position;
 
+    i32 vision_radius { 0 };
     i32 speed { 0 };
     i32 energy { 0 };
 

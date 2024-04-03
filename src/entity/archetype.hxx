@@ -18,6 +18,11 @@ struct Archetype {
     i32 speed;
 
     /**
+     * @brief Vision radius every Entity of this kind inherits.
+     */
+    i32 vision_radius;
+
+    /**
      * @brief Components which will be created for each Entity of this archetype
      *
      * TODO: needs unique existence checking on *some* component types

@@ -23,16 +23,12 @@ AiNodeState AiPrioritySelector::visit(AiContext& context) {
         const auto child_state = continuation_iterator->ptr->visit(context);
 
         if (child_state == AiNodeState::Failed) {
-            // continue iteration, trying the next node available
-            ++continuation_iterator;
-            continue;
-        } else {
-            // preserve the continuation iterator and return the child node's result
-            return mod_state(child_state);
+            break;
         }
+        // continue iteration, trying the next node available
+        ++continuation_iterator;
     }
-    // fail as no child node resulted in a non-failure state
-    return mod_state(AiNodeState::Failed);
+    return mod_state(AiNodeState::Ready);
 }
 
 void AiPrioritySelector::clear() {
@@ -40,13 +36,12 @@ void AiPrioritySelector::clear() {
         n.ptr->clear();
     }
     continuation_iterator = nodes_.begin();
+    mod_state(AiNodeState::Ready);
 }
 
 void AiPrioritySelector::post_create_node() {
     // inefficient, but shouldn't get us into trouble unless we construct
     // massive behavior trees
-    // reset state of all child nodes
-    clear();
     // enter poor man's priority queue
     std::sort(
         nodes_.begin(),

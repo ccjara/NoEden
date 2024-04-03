@@ -85,6 +85,13 @@ struct Vec2 {
         this->x /= scalar;
         this->y /= scalar;
     }
+
+    /**
+     * @brief Computes the manhattan distance between two vectors (sum of absolute differences of their coordinates)
+     */
+    [[nodiscard]] constexpr t manhattan_distance(const Vec2<t>& v) const {
+        return std::abs(v.x - x) + std::abs(v.y - y);
+    }
 };
 
 /**

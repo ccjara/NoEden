@@ -87,6 +87,7 @@ void Renderer::render() {
 }
 
 void Renderer::update_display() {
+    display_.reset();
     const auto& tiles { Scene::read_tiles() };
     const auto& last_tile_index { display_.cell_count() };
     const auto scene_dim { tiles.dimensions() };
@@ -100,11 +101,23 @@ void Renderer::update_display() {
         for (u32 x = 0; x < tile_render_dim.x; ++x) {
             const Vec2<u32> tile_pos { x, y };
             const Tile* tile { tiles.at(tile_pos) };
-            if (tile->visited) {
-                display_.put(tile->display_info, tile_pos);
-            } else {
-                display_.at(tile_pos)->color = Color::mono(128);
+            
+            // TODO
+            // need some kind of double buffer so moving entities
+            // will still get "memorized" if they barely move out of fov
+            // currently memorization only works on static tiles
+
+            if (!tile->revealed) {
+                continue;
             }
+
+            auto cell = tile->display_info;        
+
+            if (!tile->fov) {
+                cell.color = Color::mono(128);    
+            }
+
+            display_.put(std::move(cell), tile_pos);
         }
     }
 
@@ -118,7 +131,7 @@ void Renderer::update_display() {
             continue; // do not render entities outside of view
         }
         const auto tile { tiles.at(entity->position) };
-        if (!tile || !tile->visited) {
+        if (!tile || !tile->fov) {
             continue;
         }
         display_.put(DisplayCell(info.glyph, info.color), entity->position);
