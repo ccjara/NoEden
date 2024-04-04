@@ -3,7 +3,7 @@
 
 #include "lua_api.hxx"
 #include "../../ai/ai_closest_entity.hxx"
-#include "../../ai/ai_priority_selector.hxx"
+#include "../../ai/ai_selector.hxx"
 #include "../../ai/ai_walk.hxx"
 #include "../../entity/catalog.hxx"
 #include "../../entity/components/render.hxx"
@@ -18,7 +18,6 @@ public:
     void clear_archetypes();
 private:
     void add_behavior_component(Archetype& archetype, const luabridge::LuaRef& ref);
-    AiNodeType parse_node_type(const luabridge::LuaRef& ref) const;
 };
 
 #endif

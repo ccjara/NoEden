@@ -29,7 +29,7 @@ function on_load()
     inventory_window:set_align_x(AlignX.Center);
     inventory_window:set_align_y(AlignY.Center);
     inventory_window:set_anchor_origin(AnchorOrigin.Center);
-    inventory_window:show();
+    -- inventory_window:show();
 
     local text = ui:create_text("dummy_text");
 

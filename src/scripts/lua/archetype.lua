@@ -12,8 +12,7 @@ function on_load()
             {
                 type = ComponentType.Behavior,
                 root = {
-                    type = AiNodeType.PrioritySelector,
-                    priority = 0,
+                    type = AiNodeType.Sequence,
                     children = {
                         {
                             type = AiNodeType.ClosestEntity,

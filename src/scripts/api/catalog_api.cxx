@@ -10,7 +10,8 @@ void CatalogApi::on_register(Script* script) {
 
     script->define_enum(
         "AiNodeType",
-        std::make_tuple("PrioritySelector", AiNodeType::PrioritySelector),
+        std::make_tuple("Sequence", AiNodeType::Sequence),
+        std::make_tuple("Selector", AiNodeType::Selector),
         std::make_tuple("ClosestEntity", AiNodeType::ClosestEntity),
         std::make_tuple("Walk", AiNodeType::Walk)
     );
@@ -103,7 +104,8 @@ AiNodeType parse_node_type(const luabridge::LuaRef& ref) {
 
     switch (unsafe_value) {
         case AiNodeType::None:
-        case AiNodeType::PrioritySelector:
+        case AiNodeType::Selector:
+        case AiNodeType::Sequence:
         case AiNodeType::ClosestEntity:
         case AiNodeType::Walk:
             return unsafe_value;
@@ -119,9 +121,9 @@ std::unique_ptr<AiNode> create_behavior_node(const luabridge::LuaRef& ref) {
     std::unique_ptr<AiNode> base_node_ptr;
 
     switch (type) {
-        case AiNodeType::PrioritySelector: {
-            base_node_ptr = std::make_unique<AiPrioritySelector>();
-            auto node_ptr = static_cast<AiPrioritySelector*>(base_node_ptr.get());
+        case AiNodeType::Selector: {
+            base_node_ptr = std::make_unique<AiSelector>();
+            auto node_ptr = static_cast<AiSelector*>(base_node_ptr.get());
 
             const auto children_ref = ref["children"];
             if (!children_ref.isTable()) {
@@ -131,14 +133,43 @@ std::unique_ptr<AiNode> create_behavior_node(const luabridge::LuaRef& ref) {
             const auto children_length = children_ref.length();
 
             // for_each please!
+            i32 last_priority = 0;
             for (i32 i = 1; i <= children_length; ++i) {
                 const auto priority_ref= ref["priority"];
-                i32 priority = 0;
+                i32 priority;
                 if (priority_ref.isNumber()) {
                     priority = priority_ref.cast<i32>();
                 } else {
-                    Log::warn("Prioritized node must have a priority. Falling back to 0");
+                    priority = last_priority + 1;
                 }
+                last_priority = priority;
+                node_ptr->add(priority, create_behavior_node(children_ref[i]));
+            }
+
+            break;
+        }
+        case AiNodeType::Sequence: {
+            base_node_ptr = std::make_unique<AiSelector>();
+            auto node_ptr = static_cast<AiSelector*>(base_node_ptr.get());
+
+            const auto children_ref = ref["children"];
+            if (!children_ref.isTable()) {
+                break;
+            }
+
+            const auto children_length = children_ref.length();
+
+            // for_each please!
+            i32 last_priority = 0;
+            for (i32 i = 1; i <= children_length; ++i) {
+                const auto priority_ref= ref["priority"];
+                i32 priority;
+                if (priority_ref.isNumber()) {
+                    priority = priority_ref.cast<i32>();
+                } else {
+                    priority = last_priority + 1;
+                }
+                last_priority = priority;
                 node_ptr->add(priority, create_behavior_node(children_ref[i]));
             }
 
@@ -182,21 +213,5 @@ void CatalogApi::add_behavior_component(Archetype& archetype, const luabridge::L
     behavior->set_root(create_behavior_node(root_ref));
     if (!behavior->root()) {
         Log::warn("Behavior tree constructed without any nodes in archetype {}", archetype.name);
-    }
-}
-
-AiNodeType CatalogApi::parse_node_type(const luabridge::LuaRef& ref) const {
-    if (!ref.isNumber()) {
-        return AiNodeType::None;
-    }
-    const auto unsafe_value = static_cast<AiNodeType>(ref.cast<i32>());
-
-    switch (unsafe_value) {
-        case AiNodeType::None:
-        case AiNodeType::PrioritySelector:
-        case AiNodeType::Walk:
-            return unsafe_value;
-        default:
-            return AiNodeType::None;
     }
 }

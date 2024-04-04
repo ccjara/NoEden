@@ -1,36 +1,30 @@
-#ifndef JARALYN_AI_PRIORITY_SELECTOR_HXX
-#define JARALYN_AI_PRIORITY_SELECTOR_HXX
+#ifndef JARALYN_AI_SELECTOR_HXX
+#define JARALYN_AI_SELECTOR_HXX
 
 #include "generic_ai_node.hxx"
 
 /**
- * @brief AI Selector implementation using prioritized nodes
- *
- * This node fails if no child node produced a state other than `failed`.
+ * @brief Composite selector node implementation using prioritized nodes
+ * 
+ * Purpose: Runs child nodes in order of priority.
+ * Behavior: Stops executing child nodes when one of them returns `succeeded`.
+ * Communication: Returns success if any child node succeeded.
  */
-class AiPrioritySelector : public GenericAiNode<AiPrioritySelector> {
+class AiSelector : public GenericAiNode<AiSelector> {
 public:
-    AiPrioritySelector() = default;
-    AiPrioritySelector(const AiPrioritySelector& other);
-    AiPrioritySelector(AiPrioritySelector&& other);
-    AiPrioritySelector& operator=(AiPrioritySelector other);
+    AiSelector() = default;
+    AiSelector(const AiSelector& other);
+    AiSelector(AiSelector&& other);
+    AiSelector& operator=(AiSelector other);
 
-    friend void swap(AiPrioritySelector& lhs, AiPrioritySelector& rhs) {
+    friend void swap(AiSelector& lhs, AiSelector& rhs) {
         using std::swap;
         swap(lhs.nodes_, rhs.nodes_);
         lhs.nodes_.swap(rhs.nodes_);
-        lhs.continuation_iterator = lhs.nodes_.begin();
-        rhs.continuation_iterator = rhs.nodes_.begin();
+        lhs.iter = lhs.nodes_.begin();
+        rhs.iter = rhs.nodes_.begin();
     }
 
-    /**
-     * @brief Traverses the prioritized list, visiting child nodes in order.
-     *
-     * The nodes are visited based on their priority, higher prioritized nodes
-     * coming first. If a previous visit caused a node to switch from the
-     * `ready` to `running` state, the `continuation_iterator` is updated so
-     * execution can continue immediately on the next visit.
-     */
     AiNodeState visit(AiContext& context) override;
 
     /**
@@ -62,9 +56,6 @@ public:
         return *node_ptr;
     }
 
-    /**
-     * @brief Clears all child nodes and resets the continuation iterator
-     */
     void clear() override;
 private:
     struct PrioritizedNode {
@@ -86,7 +77,7 @@ private:
     };
 
     std::vector<PrioritizedNode> nodes_;
-    std::vector<PrioritizedNode>::iterator continuation_iterator = nodes_.begin();
+    std::vector<PrioritizedNode>::iterator iter = nodes_.begin();
 
     /**
      * @brief Sets the up node and manages priority list after creation of a node
