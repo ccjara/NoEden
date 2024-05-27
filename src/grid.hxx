@@ -134,6 +134,13 @@ public:
         return &cells_[ensure_index(location)];
     }
 
+    template<typename fn>
+    void each(fn callback) {
+        for (auto& cell : cells_) {
+            callback(cell);
+        }
+    }
+
 
     /**
      * @brief Assigns the given cell to the given location

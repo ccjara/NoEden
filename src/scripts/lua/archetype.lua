@@ -2,12 +2,15 @@ function on_load()
     catalog:create_archetype({
         name = "TROLL",
         speed = 75,
-        vision_radius = 15,
         components = {
             {
                 type = ComponentType.Render,
                 glyph = 84, -- 'T',
                 color = 0xFF0000,
+            },
+            {
+                type = ComponentType.Vision,
+                radius = 10,
             },
             {
                 type = ComponentType.Behavior,
@@ -20,7 +23,7 @@ function on_load()
                         },
                         {
                             type = AiNodeType.Walk,
-                            walk_target_key = "walk_target",
+                            --walk_target_key = "walk_target",
                         },
                     },
                 },
@@ -30,12 +33,16 @@ function on_load()
     catalog:create_archetype({
         name = "DWARF",
         speed = 100,
-        vision_radius = 10,
+        vision_radius = 4,
         components = {
             {
                 type = ComponentType.Render,
                 glyph = 64, -- '@'
                 color = 0xFFFFFF,
+            },
+            {
+                type = ComponentType.Vision,
+                radius = 4,
             },
         },
     });

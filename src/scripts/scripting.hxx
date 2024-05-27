@@ -1,6 +1,7 @@
 #ifndef JARALYN_SCRIPT_SYSTEM_HXX
 #define JARALYN_SCRIPT_SYSTEM_HXX
 
+#include "../game/engine_events.hxx"
 #include "../game/platform_event.hxx"
 #include "../input/input_event.hxx"
 #include "api/lua_api.hxx"

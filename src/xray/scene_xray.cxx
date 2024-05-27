@@ -1,8 +1,13 @@
 #include "scene_xray.hxx"
+#include "../entity/entity.hxx"
+#include "../entity/components/vision.hxx"
+#include "../entity/components/skills.hxx"
+#include "../entity/components/render.hxx"
+#include "../scene/tile_builder.hxx"
 
 SceneXray::SceneXray() {
-    Events::on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
-    Events::on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
+    EngineEvents::on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
+    EngineEvents::on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
 }
 
 bool SceneXray::on_config_updated(ConfigUpdatedEvent& e) {
@@ -35,9 +40,6 @@ bool SceneXray::on_mouse_down(MouseDownEvent& e) {
     w.revealed = true;
     Scene::tiles().put(w, tpos);
     const auto player_id = Scene::player_id();
-    if (player_id != null_id) {
-        Scene::update_fov(player_id);
-    }
     return true;
 }
 
@@ -127,9 +129,6 @@ void SceneXray::entity_panel(std::optional<u64> entity_id) {
         position_raw[1] = std::min(std::max(position_raw[1], 0), 100);
         entity->position.x = position_raw[0];
         entity->position.y = position_raw[1];
-        if (is_player) {
-            Scene::update_fov(entity->id);
-        }
     }
     if (ImGui::InputInt("Speed", &entity->speed, ImGuiInputTextFlags_None)) {
         entity->speed = std::max(entity->speed, 0);
@@ -137,9 +136,20 @@ void SceneXray::entity_panel(std::optional<u64> entity_id) {
     if (ImGui::InputInt("Energy", &entity->energy, ImGuiInputTextFlags_None)) {
         entity->energy = std::max(entity->energy, 0);
     }
-    if (ImGui::InputInt("Vision Radius", &entity->vision_radius, ImGuiInputTextFlags_None)) {
-        entity->vision_radius = std::max(entity->vision_radius, 1);
+
+    // TODO: method on component? like component->draw_xray();
+    Vision* vision_component = entity->component<Vision>();
+    if (vision_component != nullptr) {
+        auto radius = vision_component->vision_radius();
+        if (ImGui::InputInt("Vision Radius", &radius, ImGuiInputTextFlags_None)) {
+            vision_component->set_vision_radius(radius);
+        }
+        bool apply = vision_component->applied();
+        if (ImGui::Checkbox("Vision Applied", &apply)) {
+            vision_component->set_apply(apply);
+        }
     }
+
     Skills* skills_component = entity->component<Skills>();
     if (skills_component != nullptr) {
         for (auto& [id, skill] : skills_component->skills()) {

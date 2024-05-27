@@ -3,6 +3,7 @@
 
 #include "config.hxx"
 #include "window.hxx"
+#include "../events/event_manager.hxx"
 #include "../entity/components/skills.hxx"
 #include "../entity/catalog.hxx"
 #include "../ai/ai_walk.hxx"

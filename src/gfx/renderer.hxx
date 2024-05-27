@@ -2,13 +2,10 @@
 #define JARALYN_RENDERER_HXX
 
 #include "display.hxx"
-#include "texture.hxx"
 #include "text_shader.hxx"
-#include "../entity/components/render.hxx"
+#include "../game/engine_events.hxx"
 #include "../game/platform_event.hxx"
 #include "../game/window.hxx"
-#include "../game/config.hxx"
-#include "../scene/scene.hxx"
 #include "gfx_event.hxx"
 
 /**
@@ -51,34 +48,35 @@ public:
     /**
      * @brief Returns the result of dividing the glyph width by its height
      */
-    [[nodiscard]] static float glyph_aspect_ratio();
+    static float glyph_aspect_ratio();
 
     /**
      * @brief Returns the current gl context
      */
-    [[nodiscard]] static SDL_GLContext gl_context();
+    static SDL_GLContext gl_context();
 
     /**
      * @brief Returns the current text texture GL id
      */
-    [[nodiscard]] static GLuint text_texture();
+    static GLuint text_texture();
 
     /**
      * @brief Calculates texture coordinates of a glyph for a custom render
      *
      * The array will contain [u1, v1, u2, v2] in this order.
      */
-    [[nodiscard]] static std::array<float, 4> calculate_glyph_uv(u32 glyph);
+    static std::array<float, 4> calculate_glyph_uv(u32 glyph);
 
     /**
      * @brief Provides writable access to the Display
      */
-    [[nodiscard]] static Display& display();
+    static Display& display();
+
+    static Display& ui_layer();
 private:
     static inline SDL_GLContext gl_context_ = nullptr;
     static inline Config cfg_;
     static inline Texture text_texture_;
-    static inline Display display_;
 
     static inline Vec2<u32> view_port_;
     static inline u32 scaling_ = 1;
@@ -89,17 +87,14 @@ private:
 
     static inline size_t last_size_ = 0;
 
-    static inline void update_display();
-
     static inline bool on_resize(ResizeEvent&);
     static inline bool on_config_updated(ConfigUpdatedEvent&);
 
-    static inline void load_text_texture(const fs::path&);
-
     static inline void adjust_display();
-    static inline void render_entities();
 
     static inline void configure(const Config& cfg);
+
+    static inline std::array<Display, 2> layers_;
 };
 
 #endif

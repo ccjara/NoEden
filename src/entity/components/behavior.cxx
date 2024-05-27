@@ -1,4 +1,5 @@
 #include "behavior.hxx"
+#include "../entity.hxx"
 
 Behavior& Behavior::operator=(Behavior other) {
     swap(*this, other);
@@ -24,12 +25,12 @@ void Behavior::update(u64 dt) {
     // } while (root_->state() != AiNodeState::Failed);
 }
 
-void Behavior::set_owner(Entity* entity) {
-    if (!entity) {
+void Behavior::on_owner_updated() {
+    if (!entity_) {
         return;
     }
-    ai_context_.entity = entity;
-    ai_context_.entity_id = entity->id;
+    ai_context_.entity = entity_;
+    ai_context_.entity_id = entity_->id;
     ai_context_.blackboard.clear();
 }
 

@@ -46,6 +46,11 @@ void main() {
     // runs once for each vertex given since we pass in points
     vec3 color = vertex[0].color;
     int glyph = vertex[0].glyph;
+
+    if (glyph == 0) {
+        return;
+    }
+
     int points_processed = gl_PrimitiveIDIn;
     int chars_per_line = int(u_resolution.x / u_glyph_size.x);
     int chars_per_row_in_texture = int(u_tex_size.x / u_glyph_size.x);

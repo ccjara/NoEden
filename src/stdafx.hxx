@@ -58,7 +58,6 @@ constinit static const Id null_id = 0U;
 namespace fs = std::filesystem;
 
 #include "log/log.hxx"
-#include "events/event_manager.hxx"
 #include "lang/translator.hxx"
 
 #include "math/vec2.hxx"

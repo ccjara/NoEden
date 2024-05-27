@@ -1,14 +1,17 @@
 #ifndef JARALYN_COMPONENT_HXX
 #define JARALYN_COMPONENT_HXX
 
+#include "../../events/event_manager.hxx"
+
 enum class ComponentType {
     Unknown = 0,
     Skills = 1,
     Behavior = 2,
     Render = 3,
+    Vision = 4,
 };
 
-struct Entity;
+class Entity;
 
 /**
  * @brief Component interface.
@@ -16,19 +19,13 @@ struct Entity;
  * Derive from GenericComponent instead when creating new Component classes.
  */
 class Component {
-    friend struct Entity;
 public:
     virtual ~Component() = default;
 
     /**
      * @brief Returns the type of this component
      */
-    [[nodiscard]] ComponentType type() const;
-
-    /**
-     * @brief Returns the entity id this component belongs to
-     */
-    [[nodiscard]] Id entity_id() const;
+    ComponentType type() const;
 
     /**
      * @brief Heap-allocates a new component instance and returns it as a unique_ptr.
@@ -47,7 +44,22 @@ public:
     /**
      * @brief Sets the entity this component belongs to
      */
-    virtual void set_owner(Entity* entity);
+    void set_owner(Entity* entity);
+
+    /**
+     * @brief Called after all actions have been performed in the current turn
+     */
+    virtual void on_after_actions();
+
+    /**
+     * @brief Called when the player assumes control of the owning entity
+     */
+    virtual void on_player_attached();
+
+    /**
+     * @brief Called when the player relinquishes control of the owning entity
+     */
+    virtual void on_player_detached();
 protected:
     /**
      * @brief Derive components from GenericComponent instead.
@@ -60,9 +72,14 @@ protected:
     ComponentType type_ = ComponentType::Unknown;
 
     /**
-     * @brief Entity id this component belongs to
+     * @brief Entity this component belongs to
      */
-    Id entity_id_ = null_id;
+    Entity* entity_ = nullptr;
+
+    /**
+     * @brief Called when the owning entity of this component is updated
+     */
+    virtual void on_owner_updated();
 };
 
 template<typename T>

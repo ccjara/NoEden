@@ -3,7 +3,8 @@
 
 #include "components/component.hxx"
 
-struct Entity {
+class Entity {
+public:
     friend class EntityFactory;
 
     Entity();
@@ -15,14 +16,13 @@ struct Entity {
 
     Vec2<i32> position;
 
-    i32 vision_radius { 0 };
     i32 speed { 0 };
     i32 energy { 0 };
 
     /**
      * @brief Locates a component by the given template argument.
      *
-     * Returns nullptr if the no component of that type currently exists.
+     * Returns nullptr if no component of that type currently exists.
      */
     template<ComponentDerived Comp>
     Comp* component() const {
@@ -35,36 +35,41 @@ struct Entity {
     }
 
     /**
-     * @brief Constructs a component of the given type.
-     *
-     * If a component of that type already exists, this method will return nullptr and
-     * will not create or insert the requested component.
+     * @brief Returns true if the entity has a component of the given type
      */
-    template<ComponentDerived Comp, typename... ComponentArgs>
-    Comp* add_component(ComponentArgs&&... args) {
-        static_assert(Comp::static_type != ComponentType::Unknown);
-        if (components_by_type_.find(Comp::static_type) != components_by_type_.end()) {
-            return nullptr;
-        }
-        auto component = new Comp(std::forward<ComponentArgs>(args)...);
-        component->entity_id_ = id;
-        components_.emplace_back(component);
-        reindex_components();
-        return component;
-    }
+    inline bool has_component(ComponentType type) const;
+
+    /**
+     * @brief Takes ownership of the given component pointer and inserts it into the component store.
+     *
+     * If a component of that type already exists, the given component will be deleted and not inserted.
+     * 
+     * Returns true if the component was successfully added.
+     */
+    bool add_component(std::unique_ptr<Component>&& component);
 
     void update(u64 dt);
+
+    /**
+     * @brief Called after all actions have been processed in the current turn.
+     * 
+     * @todo: This will likely become a performance problem later and will likely require
+     *        usage of the event manager, but it still lacks support to unsubscribe from events.
+     */
+    void on_after_actions();
+
+    /**
+     * @brief Called after the player assumed control of this entity.
+     */
+    void on_player_attached();
+
+    /**
+     * @brief Called after the player relinquishes control of this entity.
+     */
+    void on_player_detached();
 private:
     std::vector<std::unique_ptr<Component>> components_;
     std::unordered_map<ComponentType, Component*> components_by_type_;
-
-    /**
-     * @brief Rebuilds dictionaries and caches of the component store.
-     *
-     * Should be called every time the component store changes in structure which
-     * might cause pointers in the dictionaries to become invalidated.
-     */
-    void reindex_components();
 };
 
 #endif

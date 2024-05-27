@@ -1,13 +1,15 @@
 #ifndef JARALYN_SCENE_HXX
 #define JARALYN_SCENE_HXX
 
+#include "../entity/action.hxx"
+#include "../game/engine_events.hxx"
 #include "../entity/entity.hxx"
-#include "../entity/move_action.hxx"
-#include "../entity/entity_factory.hxx"
 #include "../grid.hxx"
-#include "tile_builder.hxx"
 #include "../input/input_event.hxx"
-#include "fov.hxx"
+#include "../entity/fov.hxx"
+
+struct Action;
+struct Archetype;
 
 /**
  * @brief Contains and manages entities.
@@ -52,18 +54,18 @@ public:
     static const Grid<Tile>& read_tiles();
 
     /**
-     * @brief Writes the field of view to the display
-     */
-    static void update_fov(u64 entity);
+     * @brief Updates the scene, performing all actions in the action queue.
 
-    /**
-     * @brief Executes each action in order of the Actions' calculated speed.
-     *
      * The queue is sorted before it is processed, faster actions will get
      * processed first. Speed is calculated upon pushing an action onto the
      * queue and is unaffected by speed changes of other actions.
      */
-    static void perform_actions();
+    static void update();
+
+    /**
+     * @brief Draws the scene
+     */
+    static void draw();
 
     /**
      * @brief Constructs an action in place inside the action queue.
@@ -108,6 +110,11 @@ public:
      */
     static Entity* player();
 
+    /**
+     * @brief Applies the FoV of an Entity to the tile grid.
+     */
+    static void apply_fov(Vec2<i32> entity_pos, const Fov& fov);
+
     static Id player_id();
 private:
     static bool on_key_down(KeyDownEvent& e);
@@ -117,6 +124,7 @@ private:
     static inline Id player_id_ = null_id;
     static inline Action* player_action_ = nullptr;
     static inline std::unordered_map<Id, size_t> entity_id_to_index_;
+    static inline std::unordered_map<ComponentType, std::vector<Entity*>> entities_by_components_;
 
     static inline Grid<Tile> tiles_;
 };

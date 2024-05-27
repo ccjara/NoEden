@@ -2,7 +2,8 @@
 #define JARALYN_AI_CONTEXT_HXX
 
 #include "blackboard.hxx"
-#include "../entity/entity.hxx"
+
+class Entity;
 
 struct AiContext {
     /**

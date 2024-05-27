@@ -8,6 +8,7 @@
 #include "../../entity/catalog.hxx"
 #include "../../entity/components/render.hxx"
 #include "../../entity/components/behavior.hxx"
+#include "../../entity/components/vision.hxx"
 
 class CatalogApi final : public LuaApi {
 public:

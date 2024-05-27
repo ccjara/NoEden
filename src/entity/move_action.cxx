@@ -1,4 +1,6 @@
 #include "move_action.hxx"
+#include "../scene/scene.hxx"
+#include "components/skills.hxx"
 
 MoveAction::MoveAction(Vec2<i32> destination) :
     destination { destination } {

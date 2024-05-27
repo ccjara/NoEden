@@ -26,11 +26,6 @@ public:
     void update(u64 dt) override;
 
     /**
-     * @brief Sets the entity this behavior component belongs to, updating the context
-     */
-    void set_owner(Entity* entity) override;
-
-    /**
      * @brief Takes ownership of the given AiNode unique_ptr and overwrites the current root
      */
     void set_root(std::unique_ptr<AiNode>&& root);
@@ -56,6 +51,8 @@ public:
     }
 
     AiNode* root() const;
+protected:
+    void on_owner_updated() override;
 private:
     std::unique_ptr<AiNode> root_;
     AiContext ai_context_;

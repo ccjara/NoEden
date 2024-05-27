@@ -5,7 +5,8 @@ void CatalogApi::on_register(Script* script) {
         "ComponentType",
         std::make_tuple("Behavior", ComponentType::Behavior),
         std::make_tuple("Render", ComponentType::Render),
-        std::make_tuple("Skills", ComponentType::Skills)
+        std::make_tuple("Skills", ComponentType::Skills),
+        std::make_tuple("Vision", ComponentType::Vision)
     );
 
     script->define_enum(
@@ -84,6 +85,26 @@ void CatalogApi::create_archetype(luabridge::LuaRef ref) {
                 }
                 case ComponentType::Behavior: {
                     return add_behavior_component(*archetype, component_ref);
+                }
+                case ComponentType::Vision: {
+                    auto component_ptr = new Vision();
+
+                    const auto vision_radius_ref = component_ref["radius"];
+                    i32 radius = 1;
+                    if (vision_radius_ref.isNumber()) {
+                        radius = vision_radius_ref.cast<i32>();
+
+                        if (radius <= 0) {
+                            Log::warn("Invalid vision config in {}: vision radius must be greater than 0", archetype->name);
+                            radius = 1;
+                        }
+                    } else {
+                        Log::warn("Invalid vision config in {}: vision radius not set. Defaulting to 1", archetype->name);
+                    }
+
+                    component_ptr->set_vision_radius(radius);
+                    archetype->components.emplace_back(component_ptr);
+                    return;
                 }
                 default:
                     Log::warn("Invalid {} component: unknown type id {}", archetype->name, component_type_unsafe);

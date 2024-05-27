@@ -1,4 +1,6 @@
 #include "ai_walk.hxx"
+#include "../entity/move_action.hxx"
+#include "../scene/scene.hxx"
 
 void AiWalk::clear() {
     mod_state(AiNodeState::Ready);

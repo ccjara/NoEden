@@ -1,19 +1,26 @@
 #include "ui.hxx"
 
-void Ui::init() {
+void Ui::init(Display* display) {
+    assert(display);
+
+    display_ = display;
     ui_tree_.create_root_node();
 
-    Events::on<DisplayResizedEvent>(&Ui::on_display_resized);
-    Events::on<ScriptResetEvent>(&Ui::on_script_reset);
-    Events::on<PostWorldRenderEvent>(&Ui::on_post_world_render);
+    EngineEvents::on<DisplayResizedEvent>(&Ui::on_display_resized);
+    EngineEvents::on<ScriptResetEvent>(&Ui::on_script_reset);
 }
 
 void Ui::shutdown() {
+    display_ = nullptr;
     ui_tree_.clear();
 }
 
 void Ui::update() {
     update_node(ui_tree_.root());
+}
+
+void Ui::draw() {
+    draw_node(ui_tree_.root());
 }
 
 void Ui::update_node(UiNode* node) {
@@ -39,11 +46,6 @@ bool Ui::on_script_reset(ScriptResetEvent& e) {
     return false;
 }
 
-bool Ui::on_post_world_render(PostWorldRenderEvent& e) {
-    draw_node(ui_tree_.root());
-    return false;
-}
-
 UiTree& Ui::tree() {
     return ui_tree_;
 }
@@ -53,22 +55,21 @@ void Ui::draw_node(UiNode* node) {
     if (!node->visible()) {
         return;
     }
-    auto& display = Renderer::display();
 
     if (node->type() == UiNodeType::window) {
         auto n = static_cast<UiWindow*>(node);
         const auto pos = n->absolute_position();
         // border
-        display.rectangle({
+        display_->rectangle({
             Rect<i32> { pos, n->size() },
             Color::mono(128),
             Color::black(),
         });
         // title
-        display.text(n->title(), pos);
+        display_->text(n->title(), pos);
     } else if (node->type() == UiNodeType::text) {
         auto n = static_cast<UiText*>(node);
-        display.text(n->text(), n->absolute_position());
+        display_->text(n->text(), n->absolute_position());
     }
     for (UiNode* child_node : node->children()) {
         draw_node(child_node);

@@ -2,15 +2,9 @@
 #define JARALYN_GFX_EVENT_HXX
 
 /**
- * @brief Triggered after rendering the game and before swapping buffers
+ * @brief Triggered after rendering the frame but before swapping buffers
  */
 struct PostRenderEvent {
-};
-
-/**
- * @brief Triggered after rendering the world
- */
-struct PostWorldRenderEvent {
 };
 
 /**

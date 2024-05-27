@@ -14,8 +14,8 @@ void Renderer::shutdown() {
 }
 
 void Renderer::init() {
-    Events::on<ResizeEvent>(&Renderer::on_resize);
-    Events::on<ConfigUpdatedEvent>(&Renderer::on_config_updated);
+    EngineEvents::on<ResizeEvent>(&Renderer::on_resize);
+    EngineEvents::on<ConfigUpdatedEvent>(&Renderer::on_config_updated);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -55,8 +55,6 @@ void Renderer::init() {
 }
 
 void Renderer::render() {
-    update_display();
-
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, view_port_.x, view_port_.y);
@@ -65,79 +63,27 @@ void Renderer::render() {
 
     glBindVertexArray(vao);
 
-    const auto byte_size { display_.byte_size() };
+    for (auto& layer : layers_) {
+        const auto byte_size { layer.byte_size() };
+        
+        if (last_size_ == layer.byte_size()) {
+            auto data = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 
-    if (last_size_ == byte_size) {
-        auto data = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+            std::memcpy(data, layer.data(), byte_size);
 
-        std::memcpy(data, display_.data(), byte_size);
+            glUnmapBuffer(GL_ARRAY_BUFFER);
+        } else {
+            // glBindBuffer(GL_ARRAY_BUFFER, vbo); // not necessary - autobound by vao
+            glBufferData(GL_ARRAY_BUFFER, byte_size, layer.data(), GL_DYNAMIC_DRAW);
 
-        glUnmapBuffer(GL_ARRAY_BUFFER);
-    } else {
-        // glBindBuffer(GL_ARRAY_BUFFER, vbo); // not necessary - autobound by vao
-        glBufferData(GL_ARRAY_BUFFER, byte_size, display_.data(), GL_DYNAMIC_DRAW);
-
-        last_size_ = byte_size;
+            last_size_ = byte_size;
+        }
+        glDrawArrays(GL_POINTS, 0, layer.cell_count());
     }
-    glDrawArrays(GL_POINTS, 0, display_.cell_count());
 
-    Events::trigger<PostRenderEvent>();
+    EngineEvents::trigger<PostRenderEvent>();
 
     SDL_GL_SwapWindow(Window::handle());
-}
-
-void Renderer::update_display() {
-    display_.reset();
-    const auto& tiles { Scene::read_tiles() };
-    const auto& last_tile_index { display_.cell_count() };
-    const auto scene_dim { tiles.dimensions() };
-    const auto display_dim { display_.dimensions() };
-    const Vec2<u32> tile_render_dim (
-        std::min<u32>(scene_dim.x, display_dim.x),
-        std::min<u32>(scene_dim.y, display_dim.y)
-    );
-
-    for (u32 y = 0; y < tile_render_dim.y; ++y) {
-        for (u32 x = 0; x < tile_render_dim.x; ++x) {
-            const Vec2<u32> tile_pos { x, y };
-            const Tile* tile { tiles.at(tile_pos) };
-            
-            // TODO
-            // need some kind of double buffer so moving entities
-            // will still get "memorized" if they barely move out of fov
-            // currently memorization only works on static tiles
-
-            if (!tile->revealed) {
-                continue;
-            }
-
-            auto cell = tile->display_info;        
-
-            if (!tile->fov) {
-                cell.color = Color::mono(128);    
-            }
-
-            display_.put(std::move(cell), tile_pos);
-        }
-    }
-
-    for (const auto& entity : Scene::read_entities()) {
-        Render* render_component = entity->component<Render>();
-        if (!render_component) {
-            continue;
-        }
-        const auto& info = render_component->display_info();
-        if (!info.visible || !display_.in_bounds(entity->position)) {
-            continue; // do not render entities outside of view
-        }
-        const auto tile { tiles.at(entity->position) };
-        if (!tile || !tile->fov) {
-            continue;
-        }
-        display_.put(DisplayCell(info.glyph, info.color), entity->position);
-    }
-
-    Events::trigger<PostWorldRenderEvent>();
 }
 
 void Renderer::set_viewport(Vec2<u32> size) {
@@ -194,8 +140,11 @@ void Renderer::adjust_display() {
         scaled_size.y / cfg_.glyph_size.y
     };
     // resize and notify
-    display_.resize(display_size);
-    Events::trigger<DisplayResizedEvent>(display_size);
+    for (auto& layer : layers_) {
+        layer.resize(display_size);
+    }
+
+    EngineEvents::trigger<DisplayResizedEvent>(display_size);
     Log::debug("Display resized to {}x{} cells", display_size.x, display_size.y);
 }
 
@@ -238,5 +187,9 @@ float Renderer::glyph_aspect_ratio() {
 }
 
 Display& Renderer::display() {
-    return display_;
+    return layers_[0];
+}
+
+Display& Renderer::ui_layer() {
+    return layers_[1];
 }

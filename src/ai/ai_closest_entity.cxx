@@ -1,10 +1,22 @@
 #include "ai_closest_entity.hxx"
+#include "../entity/entity.hxx"
+#include "../entity/action.hxx"
+#include "../scene/scene.hxx"
+#include "../entity/components/vision.hxx"
 
 AiNodeState AiClosestEntity::visit(AiContext& context) {
     if (!context.entity) {
         return mod_state(AiNodeState::Failed);
     }
-    const int radius = context.entity->vision_radius;
+
+    // OPTIMIZE: could subscribe to a `VisionRadiusUpdated` event to then
+    //           cache the radius in the blackboard
+
+    Vision* vision = context.entity->component<Vision>();
+    if (vision == nullptr) {
+        return mod_state(AiNodeState::Failed);
+    }
+    const auto radius = vision->vision_radius();
 
     // OPTIMIZE: quadtree
     for (const auto& entity : Scene::entities()) {

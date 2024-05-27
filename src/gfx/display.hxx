@@ -2,7 +2,6 @@
 #define JARALYN_DISPLAY_HXX
 
 #include "../grid.hxx"
-#include "display_cell.hxx"
 #include "text.hxx"
 
 struct TextState {

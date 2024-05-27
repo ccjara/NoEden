@@ -2,9 +2,6 @@
 #define JARALYN_AI_WALK_HXX
 
 #include "generic_ai_node.hxx"
-#include "../entity/entity.hxx"
-#include "../entity/move_action.hxx"
-#include "../scene/scene.hxx"
 
 enum class WalkTargetType {
     Random,

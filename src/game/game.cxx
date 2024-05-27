@@ -2,8 +2,8 @@
 
 void Game::init() {
     Log::init();
-    Events::init();
-    Events::on<ScriptLoadedEvent>(this, &Game::on_script_loaded);
+    EngineEvents::init();
+    EngineEvents::on<ScriptLoadedEvent>(this, &Game::on_script_loaded);
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         Log::error("SDL could not initialize: {}", SDL_GetError());
@@ -20,7 +20,7 @@ void Game::init() {
 
 
     Renderer::init();
-    Ui::init();
+    Ui::init(&Renderer::ui_layer());
     Scene::init();
     Scripting::init();
 
@@ -72,7 +72,7 @@ void Game::shutdown() {
     Renderer::shutdown();
     Window::close();
     SDL_Quit();
-    Events::shutdown();
+    EngineEvents::shutdown();
 }
 
 void Game::process_os_messages() {
@@ -92,38 +92,38 @@ void Game::process_os_messages() {
                         static_cast<u32> (e.window.data1),
                         static_cast<u32> (e.window.data2)
                     });
-                    Events::trigger<ResizeEvent>(Window::size());
+                    EngineEvents::trigger<ResizeEvent>(Window::size());
                 }
                 break;
             }
             case SDL_EventType::SDL_KEYDOWN: {
                 const Key key { static_cast<Key>(e.key.keysym.sym) };
                 Input::keyboard_.key_down(key);
-                Events::trigger<KeyDownEvent>(key);
+                EngineEvents::trigger<KeyDownEvent>(key);
                 break;
             }
             case SDL_EventType::SDL_KEYUP: {
                 const auto key { static_cast<Key>(e.key.keysym.sym) };
                 Input::keyboard_.key_up(key);
-                Events::trigger<KeyUpEvent>(key);
+                EngineEvents::trigger<KeyUpEvent>(key);
                 break;
             }
             case SDL_EventType::SDL_MOUSEBUTTONDOWN: {
                 const auto button { static_cast<MouseButton>(e.button.button) };
                 Input::mouse_.mouse_down(button);
-                Events::trigger<MouseDownEvent>(button);
+                EngineEvents::trigger<MouseDownEvent>(button);
                 break;
             }
             case SDL_EventType::SDL_MOUSEBUTTONUP: {
                 const auto button { static_cast<MouseButton>(e.button.button) };
                 Input::mouse_.mouse_up(button);
-                Events::trigger<MouseUpEvent>(button);
+                EngineEvents::trigger<MouseUpEvent>(button);
                 break;
             }
             case SDL_EventType::SDL_MOUSEMOTION: {
                 const Vec2<i32> pos { e.motion.x, e.motion.y };
                 Input::mouse_.move(pos);
-                Events::trigger<MouseMoveEvent>(pos);
+                EngineEvents::trigger<MouseMoveEvent>(pos);
                 break;
             }
         }
@@ -138,11 +138,12 @@ void Game::run() {
         if (!is_running_) {
             break;
         }
-        // world clock advances upon player commands
-        Scene::perform_actions();
-        // update engine submodules
+        Scene::update();
         Ui::update();
-        // render
+
+        Scene::draw();
+        Ui::draw();
+
         Renderer::render();
     }
 
@@ -198,5 +199,5 @@ void Game::configure_from_lua(luabridge::LuaRef cfg) {
     } else {
         report("Expected gfx:glyph_size to be a table");
     }
-    Events::trigger<ConfigUpdatedEvent>(cfg_prev, config_);
+    EngineEvents::trigger<ConfigUpdatedEvent>(cfg_prev, config_);
 }

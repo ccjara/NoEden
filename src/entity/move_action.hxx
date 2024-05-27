@@ -2,8 +2,6 @@
 #define JARALYN_MOVE_ACTION_HXX
 
 #include "action.hxx"
-#include "../scene/scene.hxx"
-#include "components/skills.hxx"
 
 /**
  * @brief Action representing the movement of an entity.

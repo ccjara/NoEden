@@ -1,8 +1,5 @@
 #include "event_manager.hxx"
 
-void Events::init() {
-}
-
-void Events::shutdown() {
+void EventManager::clear() {
     partitions_.clear();
 }

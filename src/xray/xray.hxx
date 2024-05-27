@@ -1,6 +1,7 @@
 #ifndef JARALYN_XRAY_HXX
 #define JARALYN_XRAY_HXX
 
+#include "../game/engine_events.hxx"
 #include "../gfx/gfx_event.hxx"
 #include "../game/window.hxx"
 #include "../input/input_event.hxx"

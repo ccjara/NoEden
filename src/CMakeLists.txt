@@ -20,7 +20,6 @@ add_executable(
     "ai/generic_ai_node.hxx"
 
     "entity/action.hxx"
-    "entity/entity.cxx"
     "entity/archetype.hxx"
     "entity/catalog.cxx"
     "entity/components/behavior.cxx"
@@ -28,13 +27,18 @@ add_executable(
     "entity/components/generic_component.cxx"
     "entity/components/render.cxx"
     "entity/components/skills.cxx"
+    "entity/components/vision.cxx"
     "entity/display_info.hxx"
+    "entity/entity.cxx"
     "entity/entity_factory.cxx"
+    "entity/entity_event.hxx"
+    "entity/fov.cxx"
     "entity/move_action.cxx"
 
     "events/event_manager.cxx"
 
     "game/config.hxx"
+    "game/engine_events.hxx"
     "game/game.cxx"
     "game/platform_event.hxx"
     "game/window.cxx"
@@ -69,7 +73,6 @@ add_executable(
 
     "lang/translator.cxx"
 
-    "scene/fov.cxx"
     "scene/scene.cxx"
     "scene/tile.cxx"
     "scene/tile_builder.cxx"

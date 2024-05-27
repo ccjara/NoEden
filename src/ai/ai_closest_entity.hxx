@@ -1,8 +1,6 @@
 #ifndef __JARALYN_AI_CLOSEST_ENTITY_HXX__
 #define __JARALYN_AI_CLOSEST_ENTITY_HXX__
 
-#include "../entity/entity.hxx"
-#include "../scene/scene.hxx"
 #include "generic_ai_node.hxx"
 
 /**

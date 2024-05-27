@@ -10,11 +10,18 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/$<$<CONFIG:Debug>:/bin>$
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/$<$<CONFIG:Debug>:/bin>$<$<CONFIG:Release>:/rel>")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/$<$<CONFIG:Debug>:/bin>$<$<CONFIG:Release>:/rel>")
 
+set(LUA_INCLUDE_DIR "D:\\dev\\lua\\include")
+set(LUA_LIBRARIES "D:\\dev\\lua\\lib\\debug\\lua.lib")
+set(SDL2_DIR "D:\\dev\\SDL2")
+set(CMAKE_PREFIX_PATH "D:\\dev\\SDL2")
+set(GLEW_ROOT "D:\\dev\\GLEW")
+
 find_package(Lua REQUIRED)
 find_package(SDL2 2.0.12 REQUIRED COMPONENTS SDL2::SDL2)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 
+include_directories(${LUA_INCLUDE_DIR})
 include_directories("${CMAKE_SOURCE_DIR}/deps")
 
 add_subdirectory(src)

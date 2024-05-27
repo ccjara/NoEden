@@ -6,11 +6,11 @@ void Xray::init(SDL_GLContext context) {
         Log::error("Could not create imgui context");
         return;
     }
-    Events::on<PostRenderEvent>(&Xray::on_post_render);
-    Events::on<MouseDownEvent>(&Xray::on_mouse_down, 10000);
-    Events::on<MouseUpEvent>(&Xray::on_mouse_up, 10000);
-    Events::on<KeyDownEvent>(&Xray::on_key_down, 10000);
-    Events::on<KeyUpEvent>(&Xray::on_key_up, 10000);
+    EngineEvents::on<PostRenderEvent>(&Xray::on_post_render);
+    EngineEvents::on<MouseDownEvent>(&Xray::on_mouse_down, 10000);
+    EngineEvents::on<MouseUpEvent>(&Xray::on_mouse_up, 10000);
+    EngineEvents::on<KeyDownEvent>(&Xray::on_key_down, 10000);
+    EngineEvents::on<KeyUpEvent>(&Xray::on_key_up, 10000);
 
     ImGui_ImplSDL2_InitForOpenGL(Window::handle(), context);
     ImGui_ImplOpenGL3_Init();
