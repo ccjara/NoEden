@@ -3,6 +3,7 @@ cmake-debug-coverage
 cmake-release
 cmake-release-coverage
 bin
+rel
 tools
 
 CMakeSettings.json
