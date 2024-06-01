@@ -1,4 +1,4 @@
-#include <catch2/catch_test_macros.hpp>
+#include <catch2/catch.hpp>
 #include "framework/event_manager.hxx"
 #include "input/input.hxx"
 #include "input/input_event.hxx"
