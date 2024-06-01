@@ -1,22 +1,28 @@
 #ifndef JARALYN_TRANSLATOR_HXX
 #define JARALYN_TRANSLATOR_HXX
 
+#include "dictionary.hxx"
+
 class Translator {
 public:
-    using translation_dict = std::unordered_map<std::string, std::string>;
+    explicit Translator(Dictionary&& dict);
 
-    template<typename key, typename... args_type>
-    static std::string translate(const key& s, const args_type&&... args) {
-        auto it = db_.find(s);
-        if (it == db_.end()) {
-            return std::string(s);
-        }
-        return fmt::format(fmt::runtime(it->second), std::forward<args_type>(args)...);
+    template<StringLike Key, typename... Args>
+    std::string operator()(const Key& s, const Args&&... args) {
+        return translate(s, std::forward<Args>(args)...);
     }
 
-    static void load(std::string_view lang_file);
+    template<StringLike Key, typename... Args>
+    std::string translate(const Key& s, const Args&&... args) {
+        std::string key(s);
+        auto result = dict_.get(key);
+        if (!result.has_value()) {
+            return key;
+        }
+        return fmt::format(fmt::runtime(result.value().get()), std::forward<Args>(args)...);
+    }
 private:
-    static translation_dict db_;
+    Dictionary dict_;
 };
 
 #endif

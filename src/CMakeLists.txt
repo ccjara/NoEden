@@ -54,6 +54,7 @@ set(COMMON_SOURCES
     "entity/entity_reader.hxx"
     "entity/entity_writer.hxx"
 
+    "framework/concepts.hxx"
     "framework/event_type.hxx"
     "framework/event_manager.cxx"
     "framework/service_locator.hxx"
@@ -86,7 +87,9 @@ set(COMMON_SOURCES
     "math/rect.hxx"
     "math/vec2.hxx"
 
+    "lang/dictionary.cxx"
     "lang/translator.cxx"
+    "lang/translation_loader.cxx"
 
     "platform/platform_event.hxx"
     "platform/platform.cxx"
@@ -146,6 +149,7 @@ target_link_libraries(jarastatic ${LIBRARIES})
 
 add_executable(jaralyn "game/game.cxx" "main.cxx")
 
+target_compile_options(jaralyn PRIVATE ${CMAKE_CXX_FLAGS})
 target_link_libraries(jaralyn PRIVATE jarastatic)
 
 target_precompile_headers(jaralyn PRIVATE stdafx.hxx)

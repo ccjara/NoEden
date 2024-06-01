@@ -34,6 +34,10 @@
 #include <lua5.3/lua.hpp>
 #include <LuaBridge/LuaBridge.h>
 
+#define TOML_COMPILER_HAS_EXCEPTIONS 0
+#define TOML_COMPILER_HAS_RTTI 0
+#include "tomlplusplus/toml.hpp"
+
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 
 #include "imgui/imgui.h"
@@ -46,6 +50,7 @@
 #include <SDL2/SDL_opengl.h>
 
 #include "framework/usings.hxx"
+#include "framework/concepts.hxx"
 
 #include "log/log.hxx"
 #include "lang/translator.hxx"

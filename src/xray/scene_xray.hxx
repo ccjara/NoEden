@@ -20,7 +20,8 @@ public:
         EntityManager* entity_manager,
         TileManager* tile_manager,
         EventManager* events,
-        IInputReader* input
+        IInputReader* input,
+        Translator* translator
     );
     
     void update() override;
@@ -46,6 +47,7 @@ private:
     TileManager* tile_manager_ = nullptr;
     EventManager* events_ = nullptr;
     IInputReader* input_ = nullptr;
+    Translator* translator_ = nullptr;
 };
 
 #endif

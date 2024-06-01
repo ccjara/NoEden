@@ -1,9 +1,9 @@
 Include(FetchContent)
 
 FetchContent_Declare(
-  Catch2
-  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-  GIT_TAG        v3.6.0
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG v3.6.0
 )
 
 FetchContent_MakeAvailable(Catch2)
@@ -14,9 +14,11 @@ include(Catch)
 
 enable_testing()
 
-add_executable(jaratest 
-  "input/input.cxx" 
-  "math/vec2.cxx"
+add_executable(jaratest
+    "input/input.cxx"
+    "lang/translator.cxx"
+    "lang/translation_loader.cxx"
+    "math/vec2.cxx"
 )
 
 target_include_directories(jaratest PRIVATE ${catch2_SOURCE_DIR}/include)

@@ -15,15 +15,18 @@ SceneXray::SceneXray(
     EntityManager* entity_manager,
     TileManager* tile_manager,
     EventManager* events,
-    IInputReader* input
+    IInputReader* input,
+    Translator* translator
 ) : entity_manager_(entity_manager), 
     tile_manager_(tile_manager),
     events_(events),
-    input_(input) {
+    input_(input),
+    translator_(translator) {
     assert(entity_manager_);
     assert(tile_manager_);
     assert(input_);
-    assert(events);
+    assert(translator_);
+    assert(events_);
 
     events_->on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
     events_->on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
@@ -171,7 +174,7 @@ void SceneXray::entity_panel(std::optional<u64> entity_id) {
     Skills* skills_component = entity->component<Skills>();
     if (skills_component != nullptr) {
         for (auto& [id, skill] : skills_component->skills()) {
-            const auto label = Translator::translate(skill.label());
+            const auto label = translator_->translate(skill.label());
             i32 progress = skill.progress;
             if (ImGui::InputInt(label.c_str(), &progress)) {
                 skills_component->set_progress(id, std::max(skill.progress, 0));

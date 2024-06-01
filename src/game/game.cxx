@@ -10,6 +10,17 @@ void Game::init() {
     platform_ = std::make_unique<Platform>(events_.get(), input_.get());
     platform_->initialize();
 
+    {
+        auto path = fs::absolute(fmt::format("dictionaries/en.toml")).string();
+        auto result = TranslationLoader().load(path);
+        if (result.error != LoadTranslationError::None) {
+            Log::error("Failed to load translation file: err #{}", (int) result.error);
+        }
+        t_ = std::make_unique<Translator>(std::move(result.dictionary));
+    }
+    services_->provide<Translator>(t_.get());
+
+
     world_ = std::make_unique<World>();
     entity_manager_ = std::make_unique<EntityManager>();
     tile_manager_ = std::make_unique<TileManager>();
@@ -37,12 +48,10 @@ void Game::init() {
     Ui::init(events_.get(), &Renderer::ui_layer());
     Scripting::init(events_.get());
 
-    Translator::load("en");
-
     // xray / engine ui
     Xray::init(events_.get());
     Xray::add<LogXray>();
-    Xray::add<SceneXray>(entity_manager_.get(), tile_manager_.get(), events_.get(), input_.get());
+    Xray::add<SceneXray>(entity_manager_.get(), tile_manager_.get(), events_.get(), input_.get(), t_.get());
     Xray::add<ScriptXray>(events_.get());
     Xray::add<UiXray>();
 

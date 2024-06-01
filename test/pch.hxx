@@ -41,6 +41,7 @@
 #include <SDL2/SDL_opengl.h>
 
 #include "framework/usings.hxx"
+#include "framework/concepts.hxx"
 #include "math/vec2.hxx"
 #include "math/bresenham.hxx"
 #include "math/rect.hxx"
@@ -48,6 +49,5 @@
 #include "framework/event_manager.hxx"
 #include "framework/service_locator.hxx"
 #include "framework/grid.hxx"
-
 
 #endif

@@ -1,6 +1,8 @@
 #ifndef JARALYN_GAME_HXX
 #define JARALYN_GAME_HXX
 
+#include "lang/translator.hxx"
+#include "lang/translation_loader.hxx"
 #include "action/action.hxx"
 #include "config/config_manager.hxx"
 #include "component/skills.hxx"
@@ -59,6 +61,7 @@ private:
     std::unique_ptr<Catalog> catalog_ = nullptr;
     std::unique_ptr<Platform> platform_ = nullptr;
     std::unique_ptr<Input> input_ = nullptr;
+    std::unique_ptr<Translator> t_ = nullptr;
 };
 
 #endif
