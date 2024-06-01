@@ -19,12 +19,10 @@ void Game::init() {
         t_ = std::make_unique<Translator>(std::move(result.dictionary));
     }
     services_->provide<Translator>(t_.get());
-
-
-    world_ = std::make_unique<World>();
     entity_manager_ = std::make_unique<EntityManager>();
     tile_manager_ = std::make_unique<TileManager>();
     action_queue_ = std::make_unique<ActionQueue>(events_.get(), services_.get());
+    world_ = std::make_unique<World>(entity_manager_.get(), tile_manager_.get(), action_queue_.get(), events_.get());
     catalog_ = std::make_unique<Catalog>();
 
     services_->provide<ConfigManager>(config_manager_.get());
@@ -41,6 +39,13 @@ void Game::init() {
     services_->provide<IActionCreator>(action_queue_.get());
     services_->provide<IActionProcessor>(action_queue_.get());
     services_->provide<IInputReader>(input_.get());
+
+    player_controller_ = std::make_unique<GamePlayerController>(
+        entity_manager_.get(),
+        action_queue_.get(),
+        events_.get()
+    );
+    world_->bind_player_controller(player_controller_.get());
 
     Renderer::init(events_.get());
     Renderer::set_viewport(platform_->window_size());

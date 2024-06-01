@@ -148,7 +148,6 @@ target_precompile_headers(jarastatic PRIVATE stdafx.hxx)
 target_link_libraries(jarastatic ${LIBRARIES})
 
 add_executable(jaralyn "game/game.cxx" "main.cxx")
-
 target_compile_options(jaralyn PRIVATE ${CMAKE_CXX_FLAGS})
 target_link_libraries(jaralyn PRIVATE jarastatic)
 

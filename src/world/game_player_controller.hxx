@@ -17,6 +17,13 @@ public:
 private:
     bool on_key_down(KeyDownEvent& e);
 
+    /**
+     * Attempts to schedule a move action for the player
+     * @param direction Direction to move in
+     * @return true if the action was successfully scheduled
+     */
+    bool move_relative(const Vec2<i32>& direction);
+
     EventManager* events_ = nullptr;
     IEntityReader* entity_reader_ = nullptr;
     IActionCreator* action_creator_ = nullptr;

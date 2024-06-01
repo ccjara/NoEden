@@ -38,21 +38,7 @@ CreateActionResult ActionQueue::create_action(ActionType type, Entity& actor, bo
     }
 
     Action* action_raw_ptr = actions_.emplace_back(std::move(action)).get();
-
-    if (player_action) {
-        // TODO: temporary code
-        services_->get<ITileReader>()->tiles().each([](Tile& tile) { tile.fov = false; });
-        auto entity_manager_ = services_->get<IEntityReader>();
-
-        for (auto& entity : entity_manager_->entities()) {
-            entity->update(action_raw_ptr->cost());
-        }
-
-        for (auto& entity : entity_manager_->entities()) {
-            entity->on_after_actions();
-        }
-    }
-
+    
     return { CreateActionError::None, action_raw_ptr };
 }
 
@@ -63,7 +49,7 @@ std::unique_ptr<Action> ActionQueue::instantiate_action(ActionType type) {
         case ActionType::Move:
             return std::make_unique<MoveAction>(services_->get<IEntityReader>(), services_->get<ITileReader>());
         default:
-            return std::unique_ptr<Action>();
+            return {};
     }
 }
 

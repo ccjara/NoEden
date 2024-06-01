@@ -10,10 +10,11 @@ enum class EventType {
     KeyDown,
     KeyUp,
     Resize,
+    DisplayResized,
     ScriptReset,
     ScriptLoaded,
     ActionQueueProcessed,
-    DisplayResized,
+    PlayerActionCommitted,
 };
 
 #endif

@@ -1,6 +1,7 @@
 #ifndef JARALYN_GAME_HXX
 #define JARALYN_GAME_HXX
 
+#include "world/game_player_controller.hxx"
 #include "lang/translator.hxx"
 #include "lang/translation_loader.hxx"
 #include "action/action.hxx"
@@ -62,6 +63,7 @@ private:
     std::unique_ptr<Platform> platform_ = nullptr;
     std::unique_ptr<Input> input_ = nullptr;
     std::unique_ptr<Translator> t_ = nullptr;
+    std::unique_ptr<GamePlayerController> player_controller_ = nullptr;
 };
 
 #endif
