@@ -1,7 +1,10 @@
 #ifndef JARALYN_AI_WALK_HXX
 #define JARALYN_AI_WALK_HXX
 
-#include "generic_ai_node.hxx"
+#include "ai/generic_ai_node.hxx"
+
+class IActionCreator;
+class IEntityReader;
 
 enum class WalkTargetType {
     Random,
@@ -10,20 +13,25 @@ enum class WalkTargetType {
 
 class AiWalk : public GenericAiNode<AiWalk> {
 public:
+    explicit AiWalk(IActionCreator* action_creator, IEntityReader* entity_reader);
+
     void clear() override;
 
     AiNodeState visit(AiContext& context) override;
 
     /**
-     * @brief Perform walk actions which target an entity located by the id stored at the given key in the blackbox
+     * @brief Performs walk actions which target an entity located by the id stored at the given key in the blackbox
      */
     void target_entity(const std::string& entity_target_key);
 
     /**
-     * @brief Perform a walk action in a random direction
+     * @brief Performs a walk action in a random direction
      */
     void walk_around();
 private:
+    IActionCreator* action_creator_ = nullptr;
+    IEntityReader* entity_reader_ = nullptr;
+
     static constexpr const char* default_target_key = "walk_target";
 
     inline AiNodeState perform_walk_to_entity(AiContext& context);

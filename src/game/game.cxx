@@ -2,63 +2,74 @@
 
 void Game::init() {
     Log::init();
-    EngineEvents::init();
-    EngineEvents::on<ScriptLoadedEvent>(this, &Game::on_script_loaded);
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        Log::error("SDL could not initialize: {}", SDL_GetError());
-        std::abort();
-    }
+    events_ = std::make_unique<EventManager>();
+    config_manager_ = std::make_unique<ConfigManager>(events_.get());
+    services_ = std::make_unique<ServiceLocator>();
+    input_ = std::make_unique<Input>(events_.get());
+    platform_ = std::make_unique<Platform>(events_.get(), input_.get());
+    platform_->initialize();
 
-    SDL_Rect display_bounds;
-    SDL_GetDisplayBounds(0, &display_bounds);
+    world_ = std::make_unique<World>();
+    entity_manager_ = std::make_unique<EntityManager>();
+    tile_manager_ = std::make_unique<TileManager>();
+    action_queue_ = std::make_unique<ActionQueue>(events_.get(), services_.get());
+    catalog_ = std::make_unique<Catalog>();
 
-    Window::open(Vec2<u32>{
-        static_cast<u32>(static_cast<float>(display_bounds.w) / 1.25f),
-        static_cast<u32>(static_cast<float>(display_bounds.h) / 1.25f)
-    }, "Jaralyn");
+    services_->provide<ConfigManager>(config_manager_.get());
+    services_->provide<EventManager>(events_.get());
+    services_->provide<World>(world_.get());
+    services_->provide<IEntityReader>(entity_manager_.get());
+    services_->provide<IEntityWriter>(entity_manager_.get());
+    services_->provide<EntityManager>(entity_manager_.get());
+    services_->provide<TileManager>(tile_manager_.get());
+    services_->provide<ITileReader>(tile_manager_.get());
+    services_->provide<ITileWriter>(tile_manager_.get());
+    services_->provide<Catalog>(catalog_.get());
+    services_->provide<ActionQueue>(action_queue_.get());
+    services_->provide<IActionCreator>(action_queue_.get());
+    services_->provide<IActionProcessor>(action_queue_.get());
+    services_->provide<IInputReader>(input_.get());
 
+    Renderer::init(events_.get());
+    Renderer::set_viewport(platform_->window_size());
 
-    Renderer::init();
-    Ui::init(&Renderer::ui_layer());
-    Scene::init();
-    Scripting::init();
+    Ui::init(events_.get(), &Renderer::ui_layer());
+    Scripting::init(events_.get());
 
     Translator::load("en");
 
     // xray / engine ui
-    Xray::init(Renderer::gl_context());
+    Xray::init(events_.get());
     Xray::add<LogXray>();
-    Xray::add<SceneXray>();
-    Xray::add<ScriptXray>();
+    Xray::add<SceneXray>(entity_manager_.get(), tile_manager_.get(), events_.get(), input_.get());
+    Xray::add<ScriptXray>(events_.get());
     Xray::add<UiXray>();
 
     // scripting
     Scripting::add_api<LogApi>();
-    Scripting::add_api<SceneApi>();
+    Scripting::add_api<ConfigApi>(config_manager_.get(), events_.get());
+    Scripting::add_api<SceneApi>(entity_manager_.get());
     Scripting::add_api<UiApi>();
-    Scripting::add_api<CatalogApi>();
+    Scripting::add_api<CatalogApi>(catalog_.get(), services_.get());
 
     Scripting::load_from_path(Scripting::default_script_path);
 
-    is_running_ = true;
-
     // post initialization experimentation
     {
-        auto arch_troll = Catalog::archetype("TROLL");
-        auto arch_dwarf = Catalog::archetype("DWARF");
+        auto arch_troll = catalog_->archetype("TROLL");
+        auto arch_dwarf = catalog_->archetype("DWARF");
         if (arch_troll) {
-            auto& troll = Scene::create_entity(*arch_troll);
+            auto& troll = entity_manager_->create_entity(*arch_troll);
             troll.position = { 3, 3 };
-            //troll.ai.add<AiWalk>(0, &troll);
-            // player.add_component<Skills>();
         } else {
             Log::warn("TROLL archetype not yet present");
         }
         if (arch_dwarf) {
-            auto& dwarf = Scene::create_entity(*arch_dwarf);
+            auto& dwarf = entity_manager_->create_entity(*arch_dwarf);
             dwarf.position = { 0, 1 };
-            Scene::set_player(dwarf.id);
+
+            entity_manager_->set_controlled_entity(&dwarf);
         } else {
             Log::warn("DWARF archetype not yet present");
         }
@@ -70,134 +81,80 @@ void Game::shutdown() {
     Scripting::shutdown();
     Ui::shutdown();
     Renderer::shutdown();
-    Window::close();
-    SDL_Quit();
-    EngineEvents::shutdown();
-}
-
-void Game::process_os_messages() {
-    SDL_PumpEvents();
-
-    SDL_Event e;
-    while (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_EventType::SDL_FIRSTEVENT, SDL_EventType::SDL_MOUSEWHEEL) != 0) {
-        ImGui_ImplSDL2_ProcessEvent(&e);
-
-        switch (e.type) {
-            case SDL_EventType::SDL_QUIT:
-                is_running_ = false;
-                return;
-            case SDL_EventType::SDL_WINDOWEVENT: {
-                if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
-                    Window::resize(Vec2<u32> {
-                        static_cast<u32> (e.window.data1),
-                        static_cast<u32> (e.window.data2)
-                    });
-                    EngineEvents::trigger<ResizeEvent>(Window::size());
-                }
-                break;
-            }
-            case SDL_EventType::SDL_KEYDOWN: {
-                const Key key { static_cast<Key>(e.key.keysym.sym) };
-                Input::keyboard_.key_down(key);
-                EngineEvents::trigger<KeyDownEvent>(key);
-                break;
-            }
-            case SDL_EventType::SDL_KEYUP: {
-                const auto key { static_cast<Key>(e.key.keysym.sym) };
-                Input::keyboard_.key_up(key);
-                EngineEvents::trigger<KeyUpEvent>(key);
-                break;
-            }
-            case SDL_EventType::SDL_MOUSEBUTTONDOWN: {
-                const auto button { static_cast<MouseButton>(e.button.button) };
-                Input::mouse_.mouse_down(button);
-                EngineEvents::trigger<MouseDownEvent>(button);
-                break;
-            }
-            case SDL_EventType::SDL_MOUSEBUTTONUP: {
-                const auto button { static_cast<MouseButton>(e.button.button) };
-                Input::mouse_.mouse_up(button);
-                EngineEvents::trigger<MouseUpEvent>(button);
-                break;
-            }
-            case SDL_EventType::SDL_MOUSEMOTION: {
-                const Vec2<i32> pos { e.motion.x, e.motion.y };
-                Input::mouse_.move(pos);
-                EngineEvents::trigger<MouseMoveEvent>(pos);
-                break;
-            }
-        }
-    }
+    platform_->shutdown();
 }
 
 void Game::run() {
     init();
 
     while (true) {
-        process_os_messages();
-        if (!is_running_) {
+        if (!platform_->prepare()) {
             break;
         }
-        Scene::update();
+
         Ui::update();
 
-        Scene::draw();
-        Ui::draw();
+        // TODO: temporary code
+        auto& world_layer = Renderer::display();
+        const auto& last_tile_index { world_layer.cell_count() };
+        Grid<Tile>& tiles { tile_manager_->tiles() };
+        const auto scene_dim { tiles.dimensions() };
+        const auto display_dim { world_layer.dimensions() };
+        const Vec2<u32> tile_render_dim (
+            std::min<u32>(scene_dim.x, display_dim.x),
+            std::min<u32>(scene_dim.y, display_dim.y)
+        );
 
+        for (u32 y = 0; y < tile_render_dim.y; ++y) {
+            for (u32 x = 0; x < tile_render_dim.x; ++x) {
+                const Vec2<u32> tile_pos { x, y };
+                const Tile* tile { tiles.at(tile_pos) };
+                
+                if (!tile->revealed) {
+                    continue;
+                }
+
+                auto cell = tile->display_info;
+
+                // logic does not work with mutliple layers (game + ui)
+                // the ui will be "burned in"
+                // TODO: draw world and ui into separate buffers and then merge them
+
+                if (!tile->fov) {
+                    world_layer.at(tile_pos)->color = Color::mono(128);
+                } else {
+                    world_layer.put(std::move(cell), tile_pos);
+                }
+            }
+        }
+
+        for (const auto& entity : entity_manager_->entities()) {
+            if (!world_layer.in_bounds(entity->position)) {
+                continue;
+            }
+
+            Render* render_component = entity->component<Render>();
+            if (!render_component) {
+                continue;
+            }
+            const auto& info = render_component->display_info();
+            if (!info.visible) {
+                continue;
+            }
+
+            const auto tile { tiles.at(entity->position) };
+            if (!tile || !tile->fov) {
+                continue;
+            }
+            world_layer.put(DisplayCell(info.glyph, info.color), entity->position);
+        }
+
+        Ui::draw();
         Renderer::render();
+        Xray::draw();
+
+        platform_->present();
     }
 
     shutdown();
-}
-
-bool Game::on_script_loaded(ScriptLoadedEvent& e) {
-    luabridge::getGlobalNamespace(e.script->lua_state())
-        .beginClass<Game>("Env")
-            .addFunction("configure", &Game::configure_from_lua)
-        .endClass();
-
-    luabridge::setGlobal(e.script->lua_state(), this, "env");
-    return false;
-}
-
-void Game::configure_from_lua(luabridge::LuaRef cfg) {
-    Config cfg_prev = config_;
-
-    constexpr const auto report = [](std::string_view reason) -> void {
-        Log::error("Error in root config: {}", reason);
-    };
-
-    if (!cfg.isTable()) {
-        report("Expected payload to be a table");
-        return;
-    }
-
-    // TODO: abstract runtime type checking and default value handling
-    if (cfg["scaling"].isNumber()) {
-        config_.scaling = cfg["scaling"].cast<float_t>();
-    } else {
-        report("Expected gfx:scaling to be a number");
-    }
-    if (cfg["font_texture_path"].isString()) {
-        config_.font_texture_path = cfg["font_texture_path"].cast<std::string>();
-    } else {
-        report("Expected gfx:font_texture_path to be a string");
-    }
-
-    const auto& glyph_size { cfg["glyph_size"] };
-    if (glyph_size.isTable()) {
-        if (glyph_size["width"].isNumber()) {
-            config_.glyph_size.x = glyph_size["width"];
-        } else {
-            report("Expected gfx:glyph_size:width to be a number");
-        }
-        if (glyph_size["height"].isNumber()) {
-            config_.glyph_size.y = glyph_size["height"];
-        } else {
-            report("Expected gfx:glyph_size:height to be a number");
-        }
-    } else {
-        report("Expected gfx:glyph_size to be a table");
-    }
-    EngineEvents::trigger<ConfigUpdatedEvent>(cfg_prev, config_);
 }

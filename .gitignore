@@ -1,4 +1,7 @@
-cmake-build-debug*
+cmake-debug
+cmake-debug-coverage
+cmake-release
+cmake-release-coverage
 bin
 tools
 

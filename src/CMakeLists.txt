@@ -1,5 +1,6 @@
-add_executable(
-    jaralyn
+include_directories(${PROJECT_SOURCE_DIR}/src)
+
+set(DEPS 
     "../deps/imgui/imgui.cpp"
     "../deps/imgui/imgui_demo.cpp"
     "../deps/imgui/imgui_draw.cpp"
@@ -7,6 +8,18 @@ add_executable(
     "../deps/imgui/imgui_impl_opengl3.cpp"
     "../deps/imgui/imgui_tables.cpp"
     "../deps/imgui/imgui_widgets.cpp"
+)
+
+set(COMMON_SOURCES
+    "action/action.cxx"
+    "action/action_creator.hxx"
+    "action/action_event.hxx"
+    "action/action_processor.hxx"
+    "action/action_queue.cxx"
+    "action/action_result.hxx"
+    "action/action_type.hxx"
+    "action/move_action.cxx"
+    "action/null_action.hxx"
 
     "ai/ai_context.cxx"
     "ai/ai_condition.cxx"
@@ -19,32 +32,37 @@ add_executable(
     "ai/blackboard.cxx"
     "ai/generic_ai_node.hxx"
 
-    "entity/action.hxx"
+    "catalog/catalog.cxx"
+
+    "component/behavior.cxx"
+    "component/component.cxx"
+    "component/generic_component.cxx"
+    "component/render.cxx"
+    "component/skills.cxx"
+    "component/vision/vision.cxx"
+    "component/vision/fov.cxx"
+
+    "config/config.hxx"
+    "config/config_event.hxx"
+    "config/config_manager.cxx"
+
     "entity/archetype.hxx"
-    "entity/catalog.cxx"
-    "entity/components/behavior.cxx"
-    "entity/components/component.cxx"
-    "entity/components/generic_component.cxx"
-    "entity/components/render.cxx"
-    "entity/components/skills.cxx"
-    "entity/components/vision.cxx"
-    "entity/display_info.hxx"
     "entity/entity.cxx"
-    "entity/entity_factory.cxx"
     "entity/entity_event.hxx"
-    "entity/fov.cxx"
-    "entity/move_action.cxx"
+    "entity/entity_factory.cxx"
+    "entity/entity_manager.cxx"
+    "entity/entity_reader.hxx"
+    "entity/entity_writer.hxx"
 
-    "events/event_manager.cxx"
+    "framework/event_type.hxx"
+    "framework/event_manager.cxx"
+    "framework/service_locator.hxx"
+    "framework/grid.hxx"
+    "framework/usings.hxx"
 
-    "game/config.hxx"
-    "game/engine_events.hxx"
-    "game/game.cxx"
-    "game/platform_event.hxx"
-    "game/window.cxx"
-
-    "gfx/display_cell.hxx"
     "gfx/color.hxx"
+    "gfx/display_cell.hxx"
+    "gfx/display_info.hxx"
     "gfx/display.cxx"
     "gfx/gfx_event.hxx"
     "gfx/renderer.cxx"
@@ -54,30 +72,27 @@ add_executable(
     "gfx/text_shader.cxx"
     "gfx/texture.cxx"
 
-    "grid.hxx"
-
-    "log/log.cxx"
-
-    "main.cxx"
-
-    "math/bresenham.hxx"
-    "math/rect.hxx"
-    "math/vec2.hxx"
-
     "input/input.cxx"
     "input/input_event.hxx"
+    "input/input_reader.hxx"
     "input/key.hxx"
     "input/keyboard_state.cxx"
     "input/mouse_button.hxx"
     "input/mouse_state.cxx"
 
+    "log/log.cxx"
+
+    "math/bresenham.hxx"
+    "math/rect.hxx"
+    "math/vec2.hxx"
+
     "lang/translator.cxx"
 
-    "scene/scene.cxx"
-    "scene/tile.cxx"
-    "scene/tile_builder.cxx"
+    "platform/platform_event.hxx"
+    "platform/platform.cxx"
 
     "scripts/api/catalog_api.cxx"
+    "scripts/api/config_api.cxx"
     "scripts/api/log_api.cxx"
     "scripts/api/lua_api.hxx"
     "scripts/api/scene_api.cxx"
@@ -89,11 +104,21 @@ add_executable(
     "scripts/script_util.hxx"
     "scripts/scripting.cxx"
 
+    "tile/tile.cxx"
+    "tile/tile_factory.cxx"
+    "tile/tile_manager.cxx"
+    "tile/tile_reader.hxx"
+    "tile/tile_writer.hxx"
+
     "ui/ui.cxx"
     "ui/ui_node.cxx"
     "ui/ui_text.cxx"
     "ui/ui_tree.cxx"
     "ui/ui_window.cxx"
+
+    "world/player_controller.hxx"
+    "world/world.cxx"
+    "world/game_player_controller.cxx"
 
     "xray/log_xray.cxx"
     "xray/scene_xray.cxx"
@@ -105,10 +130,23 @@ add_executable(
     "xray/xray_style.hxx"
 )
 
-target_link_libraries(jaralyn ${LUA_LIBRARIES})
-target_link_libraries(jaralyn SDL2::SDL2)
-target_link_libraries(jaralyn ${OPENGL_LIBRARIES})
-target_link_libraries(jaralyn GLEW::GLEW)
+set(SOURCES ${DEPS} ${COMMON_SOURCES})
+
+set(LIBRARIES
+    SDL2::SDL2
+    ${OPENGL_LIBRARIES}
+    ${LUA_LIBRARIES}
+    GLEW::GLEW
+)
+
+add_library(jarastatic STATIC ${SOURCES})
+target_precompile_headers(jarastatic PRIVATE stdafx.hxx)
+
+target_link_libraries(jarastatic ${LIBRARIES})
+
+add_executable(jaralyn "game/game.cxx" "main.cxx")
+
+target_link_libraries(jaralyn PRIVATE jarastatic)
 
 target_precompile_headers(jaralyn PRIVATE stdafx.hxx)
 

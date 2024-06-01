@@ -1,4 +1,22 @@
-#include "catalog_api.hxx"
+#include "scripts/api/catalog_api.hxx"
+#include "ai/ai_closest_entity.hxx"
+#include "ai/ai_selector.hxx"
+#include "ai/ai_walk.hxx"
+#include "catalog/catalog.hxx"
+#include "component/render.hxx"
+#include "component/behavior.hxx"
+#include "component/vision/vision.hxx"
+#include "entity/archetype.hxx"
+
+class IActionCreator;
+class IEntityReader;
+
+CatalogApi::CatalogApi(Catalog* catalog, ServiceLocator* services) : 
+    catalog_(catalog),
+    services_(services) {
+    assert(catalog_);
+    assert(services_);
+}
 
 void CatalogApi::on_register(Script* script) {
     script->define_enum(
@@ -27,7 +45,7 @@ void CatalogApi::on_register(Script* script) {
 }
 
 void CatalogApi::clear_archetypes() {
-    Catalog::clear_archetypes();
+    catalog_->clear_archetypes();
 }
 
 void CatalogApi::create_archetype(luabridge::LuaRef ref) {
@@ -39,7 +57,7 @@ void CatalogApi::create_archetype(luabridge::LuaRef ref) {
         Log::error("Archetype specification has no name");
         return;
     }
-    auto archetype = Catalog::create_archetype(ref["name"].cast<const char*>());
+    auto archetype = catalog_->create_archetype(ref["name"].cast<const char*>());
     if (!archetype) {
         return;
     }
@@ -87,7 +105,7 @@ void CatalogApi::create_archetype(luabridge::LuaRef ref) {
                     return add_behavior_component(*archetype, component_ref);
                 }
                 case ComponentType::Vision: {
-                    auto component_ptr = new Vision();
+                    auto component_ptr = new Vision(services_->get<ITileReader>());
 
                     const auto vision_radius_ref = component_ref["radius"];
                     i32 radius = 1;
@@ -135,7 +153,7 @@ AiNodeType parse_node_type(const luabridge::LuaRef& ref) {
     }
 }
 
-std::unique_ptr<AiNode> create_behavior_node(const luabridge::LuaRef& ref) {
+std::unique_ptr<AiNode> CatalogApi::create_behavior_node(const luabridge::LuaRef& ref) {
     const auto type_ref = ref["type"];
     const auto type = parse_node_type(type_ref);
 
@@ -197,7 +215,7 @@ std::unique_ptr<AiNode> create_behavior_node(const luabridge::LuaRef& ref) {
             break;
         }
         case AiNodeType::ClosestEntity: {
-            base_node_ptr = std::make_unique<AiClosestEntity>();
+            base_node_ptr = std::make_unique<AiClosestEntity>(services_->get<IEntityReader>());
             auto node_ptr = static_cast<AiClosestEntity*>(base_node_ptr.get());
             const auto found_target_key_ref = ref["found_target_key"];
             if (found_target_key_ref.isString()) {
@@ -206,7 +224,7 @@ std::unique_ptr<AiNode> create_behavior_node(const luabridge::LuaRef& ref) {
             break;
         }
         case AiNodeType::Walk: {
-            base_node_ptr = std::make_unique<AiWalk>();
+            base_node_ptr = std::make_unique<AiWalk>(services_->get<IActionCreator>(), services_->get<IEntityReader>());
             auto node_ptr = static_cast<AiWalk*>(base_node_ptr.get());
             const auto walk_target_key = ref["walk_target_key"];
             if (walk_target_key.isString()) {

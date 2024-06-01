@@ -3,18 +3,11 @@ project(jaralyn)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_GENERATOR_PLATFORM x64)
 set(OpenGL_GL_PREFERENCE GLVND)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/$<$<CONFIG:Debug>:/bin>$<$<CONFIG:Release>:/rel>")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/$<$<CONFIG:Debug>:/bin>$<$<CONFIG:Release>:/rel>")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/$<$<CONFIG:Debug>:/bin>$<$<CONFIG:Release>:/rel>")
-
-set(LUA_INCLUDE_DIR "D:\\dev\\lua\\include")
-set(LUA_LIBRARIES "D:\\dev\\lua\\lib\\debug\\lua.lib")
-set(SDL2_DIR "D:\\dev\\SDL2")
-set(CMAKE_PREFIX_PATH "D:\\dev\\SDL2")
-set(GLEW_ROOT "D:\\dev\\GLEW")
 
 find_package(Lua REQUIRED)
 find_package(SDL2 2.0.12 REQUIRED COMPONENTS SDL2::SDL2)
@@ -25,6 +18,7 @@ include_directories(${LUA_INCLUDE_DIR})
 include_directories("${CMAKE_SOURCE_DIR}/deps")
 
 add_subdirectory(src)
+add_subdirectory(test)
 
 # https://chromium.googlesource.com/external/github.com/google/crc32c/+/refs/tags/1.0.5/CMakeLists.txt
 

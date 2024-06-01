@@ -22,6 +22,7 @@
 #include <random>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <type_traits>
 
 #define FMT_HEADER_ONLY
@@ -44,18 +45,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
-using u16 = uint16_t;
-using u32 = uint32_t;
-using u64 = uint64_t;
-using i16 = int16_t;
-using i32 = int32_t;
-using i64 = int64_t;
-
-using Id = u64;
-
-constinit static const Id null_id = 0U;
-
-namespace fs = std::filesystem;
+#include "framework/usings.hxx"
 
 #include "log/log.hxx"
 #include "lang/translator.hxx"
@@ -65,5 +55,9 @@ namespace fs = std::filesystem;
 #include "math/rect.hxx"
 
 #include "gfx/color.hxx"
+
+#include "framework/event_manager.hxx"
+#include "framework/service_locator.hxx"
+#include "framework/grid.hxx"
 
 #endif

@@ -1,21 +1,31 @@
 #ifndef JARALYN_SCENE_XRAY_HXX
 #define JARALYN_SCENE_XRAY_HXX
 
-#include "../game/engine_events.hxx"
 #include "xray_interface.hxx"
-#include "../input/input.hxx"
-#include "../input/input_event.hxx"
-#include "../scene/scene.hxx"
-#include "../gfx/renderer.hxx"
-#include "../entity/components/skills.hxx"
+
+#include "config/config.hxx"
+#include "tile/tile.hxx"
+
+class Entity;
+class EntityManager;
+class TileManager;
+class IInputReader;
+
+class ConfigUpdatedEvent;
+class MouseDownEvent;
 
 class SceneXray : public IXray {
 public:
-    SceneXray();
-
+    explicit SceneXray(
+        EntityManager* entity_manager,
+        TileManager* tile_manager,
+        EventManager* events,
+        IInputReader* input
+    );
+    
     void update() override;
 private:
-    void entity_panel(std::optional<u64> entity_id);
+    void entity_panel(std::optional<Id> entity_id);
     void entity_glyph(Entity* entity);
 
     struct TileWindowData {
@@ -30,7 +40,12 @@ private:
     bool on_mouse_down(MouseDownEvent& e);
     bool on_config_updated(ConfigUpdatedEvent& e);
 
-    Config _config;
+    Config config_;
+
+    EntityManager* entity_manager_ = nullptr;
+    TileManager* tile_manager_ = nullptr;
+    EventManager* events_ = nullptr;
+    IInputReader* input_ = nullptr;
 };
 
 #endif

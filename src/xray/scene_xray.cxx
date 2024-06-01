@@ -1,17 +1,36 @@
 #include "scene_xray.hxx"
-#include "../entity/entity.hxx"
-#include "../entity/components/vision.hxx"
-#include "../entity/components/skills.hxx"
-#include "../entity/components/render.hxx"
-#include "../scene/tile_builder.hxx"
+#include "entity/entity.hxx"
+#include "component/vision/vision.hxx"
+#include "component/skills.hxx"
+#include "component/render.hxx"
+#include "input/input.hxx"
+#include "input/input_event.hxx"
+#include "gfx/renderer.hxx"
+#include "component/skills.hxx"
+#include "entity/entity_manager.hxx"
+#include "tile/tile_manager.hxx"
+#include "config/config_event.hxx"
 
-SceneXray::SceneXray() {
-    EngineEvents::on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
-    EngineEvents::on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
+SceneXray::SceneXray(
+    EntityManager* entity_manager,
+    TileManager* tile_manager,
+    EventManager* events,
+    IInputReader* input
+) : entity_manager_(entity_manager), 
+    tile_manager_(tile_manager),
+    events_(events),
+    input_(input) {
+    assert(entity_manager_);
+    assert(tile_manager_);
+    assert(input_);
+    assert(events);
+
+    events_->on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
+    events_->on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
 }
 
 bool SceneXray::on_config_updated(ConfigUpdatedEvent& e) {
-    _config = e.next;
+    config_ = e.next;
     return false;
 }
 
@@ -21,25 +40,24 @@ bool SceneXray::on_mouse_down(MouseDownEvent& e) {
     }
 
     TileType type_to_place;
-    if (Input::is_mouse_pressed(MouseButton::Left)) {
+    if (input_->is_mouse_pressed(MouseButton::Left)) {
         type_to_place = tile_window_data_.lmb_type;
-    } else if (Input::is_mouse_pressed(MouseButton::Right)) {
+    } else if (input_->is_mouse_pressed(MouseButton::Right)) {
         type_to_place = tile_window_data_.rmb_type;
     } else {
         return false;
     }
-    const auto mp = Input::mouse_position();
+    const auto mp = input_->mouse_position();
     const Vec2<u32> tpos = {
-        mp.x / (_config.glyph_size.x * _config.scaling),
-        mp.y / (_config.glyph_size.y * _config.scaling)
+        mp.x / (config_.glyph_size.x * config_.scaling),
+        mp.y / (config_.glyph_size.y * config_.scaling)
     };
-    if (!Scene::tiles().at(tpos)) {
+    if (!tile_manager_->tiles().at(tpos)) {
         return false;
     }
-    auto w = TileBuilder::for_type(type_to_place);
-    w.revealed = true;
-    Scene::tiles().put(w, tpos);
-    const auto player_id = Scene::player_id();
+    auto tile = tile_manager_->create_tile(type_to_place, tpos);
+    tile.revealed = true;
+    tile_manager_->tiles().put(std::move(tile), tpos);
     return true;
 }
 
@@ -55,7 +73,7 @@ void SceneXray::entity_window() {
     ImGui::Begin("Entities");
 
     if (ImGui::BeginCombo("Entity", combo_label.c_str())) {
-        for (auto& entity : Scene::read_entities()) {
+        for (auto& entity : entity_manager_->entities()) {
             const auto& entity_name_str = entity->name.c_str();
             const bool is_selected = entity_id.has_value() && entity_id.value() == entity->id;
             if (ImGui::Selectable(entity_name_str, is_selected)) {
@@ -110,18 +128,18 @@ void SceneXray::entity_panel(std::optional<u64> entity_id) {
     if (!entity_id.has_value()) {
         return;
     }
-    Entity* entity = Scene::get_entity_by_id(entity_id.value());
+    Entity* entity = entity_manager_->entity(entity_id.value());
     if (entity == nullptr) {
         return;
     }
     entity_glyph(entity);
 
     i32 position_raw[2] = { entity->position.x, entity->position.y };
-    bool is_player = Scene::player() == entity;
+    bool is_player = entity_manager_->player() == entity;
 
     ImGui::Text("Id: %lx", entity->id);
     if (ImGui::Checkbox("Player", &is_player)) {
-        Scene::set_player(is_player ? entity->id : null_id);
+        entity_manager_->set_controlled_entity(is_player ? entity->id : null_id);
     }
     ImGui::PushItemWidth(ImGui::GetWindowWidth() / 4);
     if (ImGui::InputInt2("Position", position_raw, ImGuiInputTextFlags_None)) {

@@ -1,11 +1,7 @@
 #ifndef JARALYN_GFX_EVENT_HXX
 #define JARALYN_GFX_EVENT_HXX
 
-/**
- * @brief Triggered after rendering the frame but before swapping buffers
- */
-struct PostRenderEvent {
-};
+#include "framework/event_type.hxx"
 
 /**
  * @brief Triggered after the display has been resized
@@ -14,6 +10,8 @@ struct PostRenderEvent {
  * ResizeEvent has been handled there (for example due to a window resize).
  */
 struct DisplayResizedEvent {
+    static constexpr EventType event_type = EventType::DisplayResized;
+
     /**
      * @brief The new display size in cell units
      */

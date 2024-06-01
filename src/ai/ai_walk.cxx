@@ -1,6 +1,15 @@
-#include "ai_walk.hxx"
-#include "../entity/move_action.hxx"
-#include "../scene/scene.hxx"
+#include "ai/ai_walk.hxx"
+#include "action/action_creator.hxx"
+#include "action/move_action.hxx"
+#include "entity/entity.hxx"
+#include "entity/entity_reader.hxx"
+
+AiWalk::AiWalk(IActionCreator* action_creator, IEntityReader* entity_reader) : 
+    action_creator_(action_creator), 
+    entity_reader_(entity_reader) {
+    assert(action_creator_);
+    assert(entity_reader_);
+}
 
 void AiWalk::clear() {
     mod_state(AiNodeState::Ready);
@@ -9,16 +18,6 @@ void AiWalk::clear() {
 }
 
 AiNodeState AiWalk::visit(AiContext& context) {
-    static int dir = 0;
-    auto entity = Scene::get_entity_by_id(context.entity_id);
-    if (!entity) {
-        return mod_state(AiNodeState::Failed);
-    }
-
-    if (entity->energy < MoveAction::BASE_COST / entity->speed) {
-        return mod_state(AiNodeState::Failed);
-    }
-
     if (target_type_ == WalkTargetType::Entity) {
         return perform_walk_to_entity(context);
     } else {
@@ -32,8 +31,14 @@ AiNodeState AiWalk::perform_walk_to_entity(AiContext& context) {
     if (!target_id) {
         return mod_state(AiNodeState::Failed);
     }
-    auto target = Scene::get_entity_by_id(*target_id);
+    auto target = entity_reader_->entity(*target_id);
     if (!target) {
+        return mod_state(AiNodeState::Failed);
+    }
+
+    auto create_action_result = action_creator_->create_action(ActionType::Move, *context.entity);
+
+    if (create_action_result.failed()) {
         return mod_state(AiNodeState::Failed);
     }
 
@@ -51,12 +56,19 @@ AiNodeState AiWalk::perform_walk_to_entity(AiContext& context) {
         --position.y;
     }
 
-    Scene::create_action<MoveAction>(context.entity, position);
+    auto action = static_cast<MoveAction*>(create_action_result.action);
+    action->destination = position;
 
     return mod_state(AiNodeState::Failed); // TODO: this must be changed later when repeatable actions (by conditions) are implemented
 }
 
 AiNodeState AiWalk::perform_walk_around(AiContext& context) {
+    auto create_action_result = action_creator_->create_action(ActionType::Move, *context.entity);
+
+    if (create_action_result.failed()) {
+        return mod_state(AiNodeState::Failed);
+    }
+
     auto pos = context.entity->position;
 
     static int dir = 0;
@@ -71,7 +83,9 @@ AiNodeState AiWalk::perform_walk_around(AiContext& context) {
     }
     ++dir %= 4;
 
-    Scene::create_action<MoveAction>(context.entity, pos);
+    auto action = static_cast<MoveAction*>(create_action_result.action);
+    action->destination = pos;
+
     return mod_state(AiNodeState::Succeeded);
 }
 

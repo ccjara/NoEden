@@ -3,10 +3,11 @@
 
 #include "display.hxx"
 #include "text_shader.hxx"
-#include "../game/engine_events.hxx"
-#include "../game/platform_event.hxx"
-#include "../game/window.hxx"
 #include "gfx_event.hxx"
+#include "config/config.hxx"
+
+class ConfigUpdatedEvent;
+class ResizeEvent;
 
 /**
  * @brief Executes GL rendering operations
@@ -15,7 +16,7 @@ class Renderer {
 public:
     Renderer() = delete;
 
-    static void init();
+    static void init(EventManager* events);
     static void shutdown();
 
     /**
@@ -51,11 +52,6 @@ public:
     static float glyph_aspect_ratio();
 
     /**
-     * @brief Returns the current gl context
-     */
-    static SDL_GLContext gl_context();
-
-    /**
      * @brief Returns the current text texture GL id
      */
     static GLuint text_texture();
@@ -74,7 +70,6 @@ public:
 
     static Display& ui_layer();
 private:
-    static inline SDL_GLContext gl_context_ = nullptr;
     static inline Config cfg_;
     static inline Texture text_texture_;
 
@@ -95,6 +90,8 @@ private:
     static inline void configure(const Config& cfg);
 
     static inline std::array<Display, 2> layers_;
+
+    static inline EventManager* events_ = nullptr;
 };
 
 #endif

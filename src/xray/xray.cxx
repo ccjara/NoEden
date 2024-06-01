@@ -1,19 +1,12 @@
 #include "xray.hxx"
 
-void Xray::init(SDL_GLContext context) {
-    imgui_context_ = ImGui::CreateContext();
-    if (!imgui_context_) {
-        Log::error("Could not create imgui context");
-        return;
-    }
-    EngineEvents::on<PostRenderEvent>(&Xray::on_post_render);
-    EngineEvents::on<MouseDownEvent>(&Xray::on_mouse_down, 10000);
-    EngineEvents::on<MouseUpEvent>(&Xray::on_mouse_up, 10000);
-    EngineEvents::on<KeyDownEvent>(&Xray::on_key_down, 10000);
-    EngineEvents::on<KeyUpEvent>(&Xray::on_key_up, 10000);
+void Xray::init(EventManager* events) {
+    assert(events);
 
-    ImGui_ImplSDL2_InitForOpenGL(Window::handle(), context);
-    ImGui_ImplOpenGL3_Init();
+    events->on<MouseDownEvent>(&Xray::on_mouse_down, 10000);
+    events->on<MouseUpEvent>(&Xray::on_mouse_up, 10000);
+    events->on<KeyDownEvent>(&Xray::on_key_down, 10000);
+    events->on<KeyUpEvent>(&Xray::on_key_up, 10000);
 
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -21,12 +14,6 @@ void Xray::init(SDL_GLContext context) {
 
 void Xray::shutdown() {
     xrays_.clear();
-    if (imgui_context_) {
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplSDL2_Shutdown();
-        ImGui::DestroyContext(imgui_context_);
-        imgui_context_ = nullptr;
-    }
 }
 
 bool Xray::on_mouse_down(MouseDownEvent &e) {
@@ -52,13 +39,11 @@ bool Xray::on_key_up(KeyUpEvent &e) {
     return ImGui::GetIO().WantCaptureKeyboard;
 }
 
-bool Xray::on_post_render(PostRenderEvent&) {
+void Xray::draw() {
     if (!show_xray_) {
-        return false;
+        ImGui::Render();
+        return;
     }
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(Window::handle());
-    ImGui::NewFrame();
 
     ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);
@@ -87,8 +72,5 @@ bool Xray::on_post_render(PostRenderEvent&) {
     }
 
     ImGui::End();
-
     ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    return false;
 }
