@@ -10,6 +10,8 @@
 struct ResizeEvent {
     static constexpr EventType event_type = EventType::Resize;
 
+    constexpr ResizeEvent(Vec2<i32> size) : size(size) {}
+
     Vec2<i32> size;
 };
 

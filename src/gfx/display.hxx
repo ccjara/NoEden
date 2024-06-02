@@ -50,9 +50,9 @@ struct RectOptions {
  */
 class Display: public Grid<DisplayCell> {
 private:
-    constexpr static unsigned char CONTROL_CHAR { '$' };
+    static constexpr unsigned char CONTROL_CHAR { '$' };
 
-    constexpr static size_t MAX_STATES { 128 };
+    static constexpr size_t MAX_STATES { 128 };
     std::array<TextState, MAX_STATES> states_;
     TextState* state_ { states_.data() };
     TextState* const first_state_ { &states_.front() };

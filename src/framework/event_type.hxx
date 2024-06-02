@@ -15,6 +15,9 @@ enum class EventType {
     ScriptLoaded,
     ActionQueueProcessed,
     PlayerActionCommitted,
+    WorldReady,
+    WorldUpdatedPre,
+    WorldUpdatedPost,
 };
 
 #endif

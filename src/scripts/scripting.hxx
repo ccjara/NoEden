@@ -18,7 +18,7 @@ class Scripting {
 public:
     Scripting() = delete;
 
-    constexpr static const char* default_script_path {
+    static constexpr const char* default_script_path {
 #ifdef NDEBUG
         "scripts"
 #else

@@ -49,7 +49,12 @@ public:
      */
     bool add_component(std::unique_ptr<Component>&& component);
 
-    void update(u64 dt);
+    /**
+     * @brief Updates the entity state
+     *
+     * @param energy_received Energy received due to player action
+     */
+    void update(float energy_received);
 
     /**
      * @brief Called after all actions have been processed in the current turn.

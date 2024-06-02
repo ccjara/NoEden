@@ -83,6 +83,8 @@ set(COMMON_SOURCES
 
     "log/log.cxx"
 
+    "map/vision_manager.cxx"
+
     "math/bresenham.hxx"
     "math/rect.hxx"
     "math/vec2.hxx"
@@ -119,9 +121,10 @@ set(COMMON_SOURCES
     "ui/ui_tree.cxx"
     "ui/ui_window.cxx"
 
+    "world/game_player_controller.cxx"
     "world/player_controller.hxx"
     "world/world.cxx"
-    "world/game_player_controller.cxx"
+    "world/world_event.hxx"
 
     "xray/log_xray.cxx"
     "xray/scene_xray.cxx"

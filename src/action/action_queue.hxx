@@ -20,7 +20,7 @@ public:
     */
     void process_actions() override;
 private:
-    constexpr static inline float min_speed = 0.001f;
+    static constexpr inline float min_speed = 0.001f;
 
     std::unique_ptr<Action> instantiate_action(ActionType type);
 
@@ -30,7 +30,7 @@ private:
      * @param action Action to perform
      * @return Energy required to perform the action
      */
-    constexpr static float calculate_cost(ActionType type, float actor_speed);
+    static constexpr float calculate_cost(ActionType type, float actor_speed);
 
     /**
      * Returns the base cost of the given action type
@@ -38,7 +38,7 @@ private:
      * @param type Action type
      * @return Base cost of the action
      */
-    constexpr static float base_cost(ActionType type);
+    static constexpr float base_cost(ActionType type);
 
     std::vector<std::unique_ptr<Action>> actions_;
 

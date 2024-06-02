@@ -20,6 +20,7 @@
 #include "xray/script_xray.hxx"
 #include "xray/ui_xray.hxx"
 #include "input/input.hxx"
+#include "map/vision_manager.hxx"
 #include "ui/ui.hxx"
 #include "scripts/script.hxx"
 #include "scripts/script_event.hxx"
@@ -34,6 +35,7 @@
 #include "entity/archetype.hxx"
 #include "tile/tile_manager.hxx"
 #include "world/world.hxx"
+#include "world/world_event.hxx"
 
 class Game {
 public:
@@ -54,6 +56,7 @@ private:
 
     std::unique_ptr<ConfigManager> config_manager_ = nullptr;
     std::unique_ptr<EventManager> events_ = nullptr;
+    std::unique_ptr<VisionManager> vision_manager_ = nullptr;
     std::unique_ptr<ActionQueue> action_queue_ = nullptr;
     std::unique_ptr<ServiceLocator> services_ = nullptr;
     std::unique_ptr<World> world_ = nullptr;

@@ -23,9 +23,9 @@ void Text::update() {
     }
     Vec2<u32> offset;
     const size_t text_length { raw_.length() };
-    constexpr static char CONTROL_CHAR = '$';
+    static constexpr char CONTROL_CHAR = '$';
 
-    constexpr static size_t MAX_STATES { 8 };
+    static constexpr size_t MAX_STATES { 8 };
     std::array<TextState, MAX_STATES> states;
     TextState* state { states.data() };
     TextState* const first_state { &states.front() };

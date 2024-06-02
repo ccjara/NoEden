@@ -26,11 +26,11 @@ bool Entity::has_component(ComponentType type) const {
     return components_by_type_.find(type) != components_by_type_.end();
 }
 
-void Entity::update(u64 dt) {
-    energy += dt;
+void Entity::update(float energy_received) {
+    this->energy += energy_received;
 
     for (auto& component : components_) {
-        component->update(dt);
+        component->update();
     }
 }
 

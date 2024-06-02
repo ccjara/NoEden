@@ -1,9 +1,6 @@
 #ifndef JARALYN_FOV_HXX
 #define JARALYN_FOV_HXX
 
-#include "tile/tile.hxx"
-#include "entity/entity.hxx"
-
 namespace {
     struct Row {
         i32 depth;
@@ -58,7 +55,12 @@ struct VisionSpot {
  */
 class Fov {
 public:
-    void update(Entity& viewer, Grid<Tile>& tiles);
+    /**
+     * @brief Updates the field of view based on the current vision spot grid.
+     *
+     * This method must be called after the vision spot grid has been updated.
+     */
+    void update();
 
     /**
      * @brief Sets the vision radius, resetting the fov
@@ -76,9 +78,14 @@ public:
     Vec2<i32> center() const;
 
     /**
-     * @brief Provides readonly access to the vision spots grid
+     * @brief Returns an immutable reference to the vision spots grid
      */
     const Grid<VisionSpot>& vision_spots() const;
+
+    /**
+     * @brief Returns a mutable reference to the vision spots grid
+     */
+    Grid<VisionSpot>& vision_spots();
 private:
 
     /**
@@ -104,7 +111,7 @@ private:
 
     enum class Quadrant { N, E, S, W };
 
-    inline void scan(Entity& viewer, Row& row, Quadrant q);
+    inline void scan(Row& row, Quadrant q);
 
     inline Vec2<i32> static to_grid_coords(Quadrant q, Vec2<i32> start_pos, i32 depth, i32 col);
 

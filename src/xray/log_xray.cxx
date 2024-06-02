@@ -79,7 +79,7 @@ void LogXray::level_toggle() {
         const char* label;
     };
 
-    constexpr static const LevelFilter level_filter[] = {
+    static constexpr const LevelFilter level_filter[] = {
         { LogLevel::Debug, COLOR_DEBUG, "D" },
         { LogLevel::Info, COLOR_INFO, "I" },
         { LogLevel::Warn, COLOR_WARN, "W" },

@@ -15,7 +15,7 @@ void Component::set_owner(Entity* entity) {
     on_owner_updated();
 }
 
-void Component::update(u64 dt) {
+void Component::update() {
 }
 
 void Component::on_owner_updated() {

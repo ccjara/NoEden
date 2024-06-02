@@ -25,31 +25,31 @@ struct Color {
         assign_from_int(value);
     }
 
-    constexpr static Color mono(unsigned char value) {
+    static constexpr Color mono(unsigned char value) {
         return Color(value, value, value);
     }
 
-    constexpr static Color white() {
+    static constexpr Color white() {
         return Color::mono(255);
     }
 
-    constexpr static Color green() {
+    static constexpr Color green() {
         return Color(0, 255, 0);
     }
 
-    constexpr static Color red() {
+    static constexpr Color red() {
         return Color(255, 0, 0);
     }
 
-    constexpr static Color yellow() {
+    static constexpr Color yellow() {
         return Color(255, 255, 0);
     }
 
-    constexpr static Color blue() {
+    static constexpr Color blue() {
         return Color(0, 0, 255);
     }
 
-    constexpr static Color black() {
+    static constexpr Color black() {
         return Color(0, 0, 0);
     }
 private:

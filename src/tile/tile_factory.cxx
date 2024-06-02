@@ -1,51 +1,59 @@
 #include "tile_factory.hxx"
 
 Tile TileFactory::none() {
-    Tile none;
-    none.type = TileType::None;
-    none.display_info.glyph = ' ';
-    none.display_info.color = Color::white();
-    none.solid = false;
-    return none;
+    Tile t;
+    t.display_info.glyph = ' ';
+    t.display_info.color = Color::black();
+    return t;
 }
 
 Tile TileFactory::wall() {
-    Tile wall;
-    wall.type = TileType::Wall;
-    wall.display_info.glyph = '#';
-    wall.display_info.color = Color::white();
-    wall.solid = true;
-    return wall;
+    Tile t;
+    t.type = TileType::Wall;
+    t.state = MaterialState::Solid;
+    t.material = MaterialType::Stone;
+    t.flags.set(TileFlags::Blocking);
+
+    t.display_info.glyph = 745;
+    t.display_info.color = Color::mono(64);
+    return t;
 }
 
-Tile TileFactory::floor() {
-    Tile floor;
-    floor.type = TileType::Floor;
-    floor.display_info.glyph = '.';
-    floor.display_info.color = Color::white();
-    floor.solid = false;
-    return floor;
+Tile TileFactory::grass() {
+    Tile t;
+    t.type = TileType::Ground;
+    t.state = MaterialState::Solid;
+    t.material = MaterialType::Vegetation;
+
+    switch (std::rand() % 5) {
+    case 0:
+        t.display_info.glyph = 39; // '
+        break;
+    case 1:
+        t.display_info.glyph = 44; // ,
+        break;
+    case 2:
+        t.display_info.glyph = 46; // .
+        break;
+    case 3:
+        t.display_info.glyph = 96; // `
+        break;
+    case 4:
+        t.display_info.glyph = '"'; // "
+        break;
+    }
+
+    t.display_info.color = Color::green();
+    return t;
 }
 
 Tile TileFactory::water() {
-    Tile floor;
-    floor.type = TileType::Water;
-    floor.display_info.glyph = 691; // ≈
-    floor.display_info.color = Color::blue();
-    floor.solid = false;
-    return floor;
-}
+    Tile t;
+    t.type = TileType::Ground;
+    t.state = MaterialState::Liquid;
+    t.material = MaterialType::Water;
 
-Tile TileFactory::for_type(TileType type) {
-    switch (type) {
-        case TileType::None:
-        default:
-            return none();
-        case TileType::Water:
-            return water();
-        case TileType::Floor:
-            return TileFactory::floor();
-        case TileType::Wall:
-            return wall();
-    }
+    t.display_info.glyph = 691; // ≈
+    t.display_info.color = Color::blue();
+    return t;
 }

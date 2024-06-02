@@ -12,7 +12,7 @@ public:
      * @param archetype Archetype template to create the entity from
      * @return std::unique_ptr<Entity> Created entity
      */
-    static [[nodiscard]] std::unique_ptr<Entity> create(const Archetype& archetype);
+    [[nodiscard]] static std::unique_ptr<Entity> create(const Archetype& archetype);
 };
 
 #endif

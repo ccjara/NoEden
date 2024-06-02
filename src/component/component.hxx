@@ -33,11 +33,9 @@ public:
     [[nodiscard]] virtual std::unique_ptr<Component> clone() const = 0;
 
     /**
-     * @brief Implementation defined update cycle for this component.
-     *
-     * @param dt Advanced time steps due to player action
+     * @brief Implementation defined update routine of this component
      */
-    virtual void update([[maybe_unused]] u64 dt);
+    virtual void update();
 
     /**
      * @brief Sets the entity this component belongs to

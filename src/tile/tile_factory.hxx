@@ -7,10 +7,8 @@ class TileFactory {
 public:
     static Tile none();
     static Tile wall();
-    static Tile floor();
+    static Tile grass();
     static Tile water();
-
-    static Tile for_type(TileType type);
 };
 
 #endif

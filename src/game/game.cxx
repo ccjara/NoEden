@@ -22,9 +22,11 @@ void Game::init() {
     entity_manager_ = std::make_unique<EntityManager>();
     tile_manager_ = std::make_unique<TileManager>();
     action_queue_ = std::make_unique<ActionQueue>(events_.get(), services_.get());
-    world_ = std::make_unique<World>(entity_manager_.get(), tile_manager_.get(), action_queue_.get(), events_.get());
+    world_ = std::make_unique<World>(entity_manager_.get(), action_queue_.get(), events_.get());
+    vision_manager_ = std::make_unique<VisionManager>(entity_manager_.get(), tile_manager_.get(), events_.get());
     catalog_ = std::make_unique<Catalog>();
 
+    services_->provide<VisionManager>(vision_manager_.get());
     services_->provide<ConfigManager>(config_manager_.get());
     services_->provide<EventManager>(events_.get());
     services_->provide<World>(world_.get());
@@ -88,6 +90,8 @@ void Game::init() {
             Log::warn("DWARF archetype not yet present");
         }
     }
+
+    events_->trigger<WorldReadyEvent>();
 }
 
 void Game::shutdown() {
@@ -123,10 +127,6 @@ void Game::run() {
             for (u32 x = 0; x < tile_render_dim.x; ++x) {
                 const Vec2<u32> tile_pos { x, y };
                 const Tile* tile { tiles.at(tile_pos) };
-                
-                if (!tile->revealed) {
-                    continue;
-                }
 
                 auto cell = tile->display_info;
 
@@ -134,10 +134,10 @@ void Game::run() {
                 // the ui will be "burned in"
                 // TODO: draw world and ui into separate buffers and then merge them
 
-                if (!tile->fov) {
-                    world_layer.at(tile_pos)->color = Color::mono(128);
-                } else {
+                if (tile->flags.test(TileFlags::FoV)) {
                     world_layer.put(std::move(cell), tile_pos);
+                } else {
+                    world_layer.at(tile_pos)->color = Color::mono(128);
                 }
             }
         }
@@ -157,7 +157,7 @@ void Game::run() {
             }
 
             const auto tile { tiles.at(entity->position) };
-            if (!tile || !tile->fov) {
+            if (!tile || !tile->flags.test(TileFlags::FoV)) {
                 continue;
             }
             world_layer.put(DisplayCell(info.glyph, info.color), entity->position);

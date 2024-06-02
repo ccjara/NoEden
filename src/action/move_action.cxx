@@ -22,11 +22,11 @@ ActionResult MoveAction::perform() {
         return ActionResult::Failure;
     }
 
-    if (dest_tile->solid) {
+    if (dest_tile->flags.test(TileFlags::Blocking)) {
         return ActionResult::Failure;
     }
 
-    if (dest_tile->type == TileType::Water) {
+    if (dest_tile->material == MaterialType::Water) {
         Skills* skills = entity_->component<Skills>();
         if (skills) {
             skills->increase_progress(SkillId::Swim, 1);

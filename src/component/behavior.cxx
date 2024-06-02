@@ -17,7 +17,7 @@ Behavior::Behavior(Behavior&& other) : Behavior() {
     swap(*this, other);
 }
 
-void Behavior::update(u64 dt) {
+void Behavior::update() {
     if (!root_) {
         return;
     }

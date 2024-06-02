@@ -1,45 +1,14 @@
 #include "component/vision/fov.hxx"
 
-void Fov::update(Entity& viewer, Grid<Tile>& tiles) {
-    // from the viewer position, map solid tiles to the vision spots
-    // then we scan the tiles in the four quadrants and perform the shadowcasting
-    const auto viewer_pos = viewer.position;
-    const auto vision_spots_dimensions = vision_spots_.dimensions();
-    const auto vision_center = center();
-
-    if (vision_spots_.byte_size() == 0) {
-        return;
-    }
-
-    for (i32 y = 0; y < vision_spots_dimensions.y; ++y) {
-        for (i32 x = 0; x < vision_spots_dimensions.x; ++x) {
-            const auto spot_pos = Vec2<i32>{ x, y };
-            VisionSpot* vision_spot = vision_spots_.at(spot_pos);
-            if (!vision_spot) {
-                Log::error("Fov::update: vision spot at {}, {} is null", spot_pos.x, spot_pos.y);
-                continue; // shouldnt happen?
-            }
-            vision_spot->visible = false;
-
-            if (vision_spot->blind) {
-                continue;
-            }
-
-            const auto tile_pos = viewer_pos + spot_pos - vision_center;
-            const auto tile = tiles.at(tile_pos);
-
-            if (tile) {
-                vision_spot->blocker = tile->solid;
-            }
-        }
-    }
-
-    vision_spots_.at(vision_center)->visible = true;
-
+void Fov::update() {
+    // scan all tiles in the four quadrants and perform shadowcasting
     for (i32 q = 0; q < 4; ++q) {
         Row row(1, -1.0f, 1.0f);
-        scan(viewer, row, (Quadrant) q);
+        scan(row, (Quadrant) q);
     }
+
+    // entity is always visible
+    vision_spots_.at(center())->visible = true;
 }
 
 void Fov::set_vision_radius(i32 radius) {
@@ -80,11 +49,11 @@ const Grid<VisionSpot>& Fov::vision_spots() const {
     return vision_spots_;
 }
 
-void Fov::scan(
-    Entity& viewer,
-    Row& row,
-    Quadrant q
-) {
+Grid<VisionSpot>& Fov::vision_spots() {
+    return vision_spots_;
+}
+
+void Fov::scan(Row& row,Quadrant q) {
     VisionSpot *prev_spot { nullptr };
 
     const auto center = this->center();
@@ -106,14 +75,14 @@ void Fov::scan(
             if (!prev_spot->blocker && spot->blocker) {
                 Row next = row.next();
                 next.set_end_slope(slope(row.depth, col));
-                scan(viewer, next, q);
+                scan(next, q);
             }
         }
         prev_spot = spot;
     }
     if (prev_spot && !prev_spot->blocker && row.depth < vision_radius_) {
         auto next = row.next();
-        scan(viewer, next, q);
+        scan(next, q);
     }
 }
 

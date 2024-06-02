@@ -38,10 +38,7 @@ bool SceneXray::on_config_updated(ConfigUpdatedEvent& e) {
 }
 
 bool SceneXray::on_mouse_down(MouseDownEvent& e) {
-    if (!tile_window_data_.is_editing) {
-        return false;
-    }
-
+    /*
     TileType type_to_place;
     if (input_->is_mouse_pressed(MouseButton::Left)) {
         type_to_place = tile_window_data_.lmb_type;
@@ -62,6 +59,8 @@ bool SceneXray::on_mouse_down(MouseDownEvent& e) {
     tile.revealed = true;
     tile_manager_->tiles().put(std::move(tile), tpos);
     return true;
+    */
+    return false;
 }
 
 void SceneXray::update() {
@@ -92,6 +91,7 @@ void SceneXray::entity_window() {
 }
 
 void SceneXray::tile_window() {
+    /*
     const static std::unordered_map<TileType, std::string> type_options = {
         { TileType::None, "None" },
         { TileType::Floor, "Floor" },
@@ -125,6 +125,7 @@ void SceneXray::tile_window() {
     ImGui::PopItemWidth(); // select width
     ImGui::Checkbox("Edit Mode", &tile_window_data_.is_editing);
     ImGui::End();
+    */
 }
 
 void SceneXray::entity_panel(std::optional<u64> entity_id) {

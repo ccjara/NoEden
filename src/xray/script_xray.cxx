@@ -126,7 +126,8 @@ void ScriptXray::render_current_script(Script *current) {
     if (!current) {
         return;
     }
-    if (globals_.visible = ImGui::TreeNode("Globals")) {
+    globals_.visible = ImGui::TreeNode("Globals");
+    if (globals_.visible) {
         if (ImGui::BeginTable("log_table", 3)) {
             ImGui::TableSetupScrollFreeze(0, 1); // keep header in view
             ImGui::TableSetupColumn("Key");

@@ -3,6 +3,7 @@
 
 #include "tile_reader.hxx"
 #include "tile_writer.hxx"
+#include "tile.hxx"
 
 class TileManager : public ITileReader, public ITileWriter {
 public:
@@ -11,7 +12,7 @@ public:
     /**
      * @copydoc ITileWriter::create_tile
      */
-    Tile& create_tile(TileType type, Vec2<i32> position) override;
+    Tile& create_tile(Vec2<i32> position) override;
 
     /**
      * @copydoc ITileReader::tile

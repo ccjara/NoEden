@@ -3,18 +3,13 @@
 
 class IEntityReader;
 class IPlayerController;
-class ITileReader;
 class IActionProcessor;
+class Entity;
 struct PlayerActionCommitted;
 
 class World {
 public:
-    explicit World(
-        IEntityReader* entity_reader,
-        ITileReader* tile_reader,
-        IActionProcessor* action_processor,
-        EventManager* events
-    );
+    explicit World(IEntityReader* entity_reader,IActionProcessor* action_processor,EventManager* events);
 
     /**
      * @brief Sets the player controller for this world
@@ -32,7 +27,6 @@ private:
 
     EventManager* events_ = nullptr;
     IEntityReader* entity_reader_ = nullptr;
-    ITileReader* tile_reader_ = nullptr;
     IActionProcessor* action_processor_ = nullptr;
 };
 

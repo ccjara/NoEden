@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <any>
 #include <array>
+#include <bitset>
 #include <charconv>
 #include <chrono>
 #include <cmath>

@@ -14,9 +14,14 @@ public:
     explicit Vision(ITileReader* tile_reader);
 
     /**
-     * @brief Provides readonly access to the field of view
+     * @brief Provides a const reference to the contained FoV
      */
     const Fov& fov() const;
+
+    /**
+     * @brief Returns a mutable reference to the contained FoV
+     */
+    Fov& fov();
 
     /**
      * @brief Sets the vision radius of the entity
@@ -38,25 +43,15 @@ public:
      */
     void set_apply(bool apply_vision);
 
-    void on_after_actions() override;
     void on_player_attached() override;
     void on_player_detached() override;
-
-    void update(u64 dt) override;
 private:
     Fov fov_;
-
-    /**
-     * @brief Radius used to calculate the field of view
-     */
-    i32 vision_radius_ = 0;
 
     /**
      * @brief Whether the FoV should be applied to the map
      */
     bool apply_ = false;
-
-    void update_fov();
 
     ITileReader* tile_reader_ = nullptr;
 };

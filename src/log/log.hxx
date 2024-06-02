@@ -43,7 +43,7 @@ public:
      * @brief Logs a message on the given level
      */
     template<typename... Args>
-    static inline log(LogLevel level, std::string_view fmt, Args&&... args) {
+    static inline void log(LogLevel level, std::string_view fmt, Args&&... args) {
         if (logs_.size() == Log::max_entries_) {
             logs_.pop_front();
         }

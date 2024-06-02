@@ -23,7 +23,7 @@ public:
     /**
      * @brief Runs the next behavior cycle
      */
-    void update(u64 dt) override;
+    void update() override;
 
     /**
      * @brief Takes ownership of the given AiNode unique_ptr and overwrites the current root
