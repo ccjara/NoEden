@@ -7,9 +7,7 @@
 class Entity;
 
 /**
- * @brief Base class for an action any controller may produce for an Entity.
- *
- * TODO: Rename to Command?
+ * @brief Base class for an action performed by entities.
  */
 class Action {
 public:
@@ -33,12 +31,12 @@ public:
     /**
      * @brief Returns the cost of this action.
      */
-    u32 cost() const;
+    float cost() const;
 
     /**
      * @brief Returns the speed of the entity performing this action.
      */
-    u32 speed() const;
+    float speed() const;
 
     virtual ~Action() = default;
 protected:
@@ -57,12 +55,12 @@ protected:
      * This speed is unaffected by changes to the entity's speed being made
      * after this action was created.
      */
-    u32 speed_ = 0;
+    float speed_ = 0;
 
     /**
      * @brief Calculated cost during action creation
      */
-    u32 cost_ = 0;
+    float cost_ = 0;
 };
 
 #endif

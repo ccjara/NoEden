@@ -15,7 +15,7 @@ struct Archetype {
     /**
      * @brief Base speed every Entity of this kind inherits.
      */
-    i32 speed;
+    float speed;
 
     /**
      * @brief Vision radius every Entity of this kind inherits.

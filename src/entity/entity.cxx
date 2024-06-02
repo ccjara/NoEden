@@ -35,6 +35,8 @@ void Entity::update(u64 dt) {
 }
 
 void Entity::on_after_actions() {
+    energy_reserved = 0;
+
     for (auto& component : components_) {
         component->on_after_actions();
     }

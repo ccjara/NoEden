@@ -12,12 +12,13 @@ public:
     Id id;
     static inline Id next_id_ = 1U;
 
-    std::string name = "NYI"; // TODO
+    std::string name = "";
 
     Vec2<i32> position;
 
-    i32 speed { 0 };
-    i32 energy { 0 };
+    float speed = 0;
+    float energy = 0;
+    float energy_reserved = 0;
 
     /**
      * @brief Locates a component by the given template argument.

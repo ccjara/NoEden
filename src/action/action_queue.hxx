@@ -13,18 +13,32 @@ public:
     /**
      * @copydoc IActionCreator::create_action
     */
-    CreateActionResult create_action(ActionType type, Entity& actor, bool player_action = false) override;
+    [[nodiscard]] CreateActionResult create_action(ActionType type, Entity& actor) override;
 
     /**
      * @copydoc IActionProcessor::process_actions
     */
     void process_actions() override;
 private:
+    constexpr static inline float min_speed = 0.001f;
+
     std::unique_ptr<Action> instantiate_action(ActionType type);
 
-    bool sufficient_energy(ActionType type, Entity& actor) const;
+    /**
+     * Calculates the energy required to perform the given action
+     *
+     * @param action Action to perform
+     * @return Energy required to perform the action
+     */
+    constexpr static float calculate_cost(ActionType type, float actor_speed);
 
-    u32 base_cost(ActionType type) const;
+    /**
+     * Returns the base cost of the given action type
+     *
+     * @param type Action type
+     * @return Base cost of the action
+     */
+    constexpr static float base_cost(ActionType type);
 
     std::vector<std::unique_ptr<Action>> actions_;
 

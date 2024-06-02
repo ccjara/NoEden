@@ -21,6 +21,9 @@ void Behavior::update(u64 dt) {
     if (!root_) {
         return;
     }
+    if (entity_->energy_reserved >= entity_->energy) {
+        return;
+    }
     root_->visit(ai_context_);
 }
 

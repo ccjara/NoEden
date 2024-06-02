@@ -25,11 +25,10 @@ public:
      * 
      * @param type Type of the action to create.
      * @param actor Entity that will perform the action.
-     * @param player_action Whether the action is performed by the player (TODO: refactor this out later)
      * 
      * @return CreateActionResult Result of the creation.
      */
-    virtual CreateActionResult create_action(ActionType type, Entity& actor, bool player_action = false) = 0;
+    [[nodiscard]] virtual CreateActionResult create_action(ActionType type, Entity& actor) = 0;
 
     virtual ~IActionCreator() = default;
 };
@@ -41,14 +40,14 @@ enum class CreateActionError {
     None,
 
     /**
-     * @brief The action type is invalid.
+     * @brief Actor speed is too low
      */
-    InvalidType,
+    ActorSpeedTooLow,
 
     /**
-     * @brief The entity does not have enough energy to perform the action.
+     * @brief Action type does not have to any implementation
      */
-    NoEnergy,
+    InvalidType,
 };
 
 struct CreateActionResult {

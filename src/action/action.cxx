@@ -1,14 +1,14 @@
 #include "action/action.hxx"
 
-Entity *Action::entity() const {
+Entity* Action::entity() const {
     return entity_;
 }
 
-u32 Action::cost() const {
+float Action::cost() const {
     return cost_;
 }
 
-u32 Action::speed() const {
+float Action::speed() const {
     return speed_;
 }
 

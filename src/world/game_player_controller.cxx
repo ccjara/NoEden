@@ -38,13 +38,14 @@ bool GamePlayerController::move_relative(const Vec2<i32>& direction) {
     if (!player) {
         return false;
     }
-    auto result = action_creator_->create_action(ActionType::Move, *player, true);
-    if (result.action == nullptr) {
+    auto result = action_creator_->create_action(ActionType::Move, *player);
+    if (result.failed()) {
         return false;
     }
     auto move_action = static_cast<MoveAction*>(result.action);
     move_action->destination = player->position + direction;
 
+    // start the next world tick
     events_->trigger<PlayerActionCommitted>(move_action);
 
     return true;

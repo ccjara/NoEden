@@ -3,42 +3,35 @@
 #include "action/action_event.hxx"
 #include "action/move_action.hxx"
 #include "action/null_action.hxx"
-#include "entity/entity_event.hxx"
 #include "entity/entity.hxx"
 #include "entity/entity_reader.hxx"
 #include "tile/tile_reader.hxx"
 #include "tile/tile.hxx"
 
-ActionQueue::ActionQueue(EventManager* event_manager, ServiceLocator* services) : 
+ActionQueue::ActionQueue(EventManager* event_manager, ServiceLocator* services) :
     events_(event_manager),
     services_(services) {
     assert(events_);
     assert(services_);
 }
 
-CreateActionResult ActionQueue::create_action(ActionType type, Entity& actor, bool player_action) {
-    if (!player_action && !sufficient_energy(type, actor)) {
-        return { CreateActionError::NoEnergy, nullptr };
+CreateActionResult ActionQueue::create_action(ActionType type, Entity& actor) {
+    if (type == ActionType::None) {
+        return { CreateActionError::InvalidType, nullptr };
     }
+    if (actor.speed <= 0) {
+        return { CreateActionError::ActorSpeedTooLow, nullptr };
+    }
+    const float cost = calculate_cost(type, actor.speed);
 
     std::unique_ptr<Action> action = instantiate_action(type);
     action->entity_ = &actor;
     action->speed_ = actor.speed;
-
-    if (action->speed_ < 1) {
-        action->speed_ = 1;
-    }
-
-    action->cost_ = base_cost(type) / actor.speed;
- 
-    if (player_action) {
-        actor.energy = 0;
-    } else {
-        actor.energy -= action->cost_;
-    }
+    action->cost_ = cost;
+    actor.energy_reserved += cost;
 
     Action* action_raw_ptr = actions_.emplace_back(std::move(action)).get();
-    
+
     return { CreateActionError::None, action_raw_ptr };
 }
 
@@ -61,19 +54,37 @@ void ActionQueue::process_actions() {
             return a->speed_ > b->speed_;
         }
     );
-    for (auto&& action : actions_) {
+    for (auto& action: actions_) {
+        assert(action);
+        Entity* entity = action->entity_;
+        if (!entity) {
+            continue;
+        }
+        const auto speed = action->entity_->speed;
+        if (speed <= 0) {
+            continue;
+        }
+        // recalculate cost in case the actor speed changed after the action was created
+        const float energy_needed = calculate_cost(action->type_, speed);
+        if (energy_needed > entity->energy) {
+            continue;
+        }
         action->perform();
+        entity->energy -= energy_needed;
     }
     actions_.clear();
 
     events_->trigger<ActionQueueProcessed>();
 }
 
-bool ActionQueue::sufficient_energy(ActionType type, Entity& actor) const {
-    return base_cost(type) / actor.speed <= actor.energy;
+constexpr float ActionQueue::calculate_cost(ActionType type, float actor_speed) {
+    if (actor_speed <= 0) [[unlikely]] {
+        actor_speed = min_speed;
+    }
+    return base_cost(type) / actor_speed;
 }
 
-u32 ActionQueue::base_cost(ActionType type) const {
+constexpr float ActionQueue::base_cost(ActionType type) {
     // TODO: scriptable / configurable later
     switch (type) {
         case ActionType::None:

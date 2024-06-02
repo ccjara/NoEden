@@ -1,7 +1,7 @@
 function on_load()
     catalog:create_archetype({
         name = "TROLL",
-        speed = 75,
+        speed = 0.75,
         components = {
             {
                 type = ComponentType.Render,
@@ -23,7 +23,7 @@ function on_load()
                         },
                         {
                             type = AiNodeType.Walk,
-                            --walk_target_key = "walk_target",
+                            walk_target_key = "walk_target",
                         },
                     },
                 },
@@ -32,7 +32,7 @@ function on_load()
     });
     catalog:create_archetype({
         name = "DWARF",
-        speed = 100,
+        speed = 1,
         vision_radius = 4,
         components = {
             {

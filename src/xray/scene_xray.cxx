@@ -151,11 +151,14 @@ void SceneXray::entity_panel(std::optional<u64> entity_id) {
         entity->position.x = position_raw[0];
         entity->position.y = position_raw[1];
     }
-    if (ImGui::InputInt("Speed", &entity->speed, ImGuiInputTextFlags_None)) {
-        entity->speed = std::max(entity->speed, 0);
+    if (ImGui::InputFloat("Speed", &entity->speed, ImGuiInputTextFlags_None)) {
+        entity->speed = std::fmax(entity->speed, 0);
     }
-    if (ImGui::InputInt("Energy", &entity->energy, ImGuiInputTextFlags_None)) {
-        entity->energy = std::max(entity->energy, 0);
+    if (ImGui::InputFloat("Energy", &entity->energy, ImGuiInputTextFlags_None)) {
+        entity->energy = std::fmax(entity->energy, 0);
+    }
+    if (ImGui::InputFloat("Energy Reserved", &entity->energy_reserved, ImGuiInputTextFlags_None)) {
+        entity->energy_reserved = std::fmax(entity->energy_reserved, 0);
     }
 
     // TODO: method on component? like component->draw_xray();
