@@ -1,5 +1,5 @@
-#ifndef JARALYN_RENDER_COMPONENT_HXX
-#define JARALYN_RENDER_COMPONENT_HXX
+#ifndef NOEDEN_RENDER_COMPONENT_HXX
+#define NOEDEN_RENDER_COMPONENT_HXX
 
 #include "component/generic_component.hxx"
 #include "gfx/display_info.hxx"

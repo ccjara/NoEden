@@ -1,5 +1,5 @@
-#ifndef JARALYN_ARCHETYPE_HXX
-#define JARALYN_ARCHETYPE_HXX
+#ifndef NOEDEN_ARCHETYPE_HXX
+#define NOEDEN_ARCHETYPE_HXX
 
 #include "component/component.hxx"
 

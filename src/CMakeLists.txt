@@ -147,20 +147,20 @@ set(LIBRARIES
     GLEW::GLEW
 )
 
-add_library(jarastatic STATIC ${SOURCES})
-target_precompile_headers(jarastatic PRIVATE stdafx.hxx)
+add_library(NoEdenStatic STATIC ${SOURCES})
+target_precompile_headers(NoEdenStatic PRIVATE stdafx.hxx)
 
-target_link_libraries(jarastatic ${LIBRARIES})
+target_link_libraries(NoEdenStatic ${LIBRARIES})
 
-add_executable(jaralyn "game/game.cxx" "main.cxx")
-target_compile_options(jaralyn PRIVATE ${CMAKE_CXX_FLAGS})
-target_link_libraries(jaralyn PRIVATE jarastatic)
+add_executable(NoEden "game/game.cxx" "main.cxx")
+target_compile_options(NoEden PRIVATE ${CMAKE_CXX_FLAGS})
+target_link_libraries(NoEden PRIVATE NoEdenStatic)
 
-target_precompile_headers(jaralyn PRIVATE stdafx.hxx)
+target_precompile_headers(NoEden PRIVATE stdafx.hxx)
 
 # copy script sources to runtime dir
 add_custom_command(
-    TARGET jaralyn POST_BUILD
+    TARGET NoEden POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/src/scripts/lua
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/scripts
@@ -168,7 +168,7 @@ add_custom_command(
 
 # also assets
 add_custom_command(
-    TARGET jaralyn POST_BUILD
+    TARGET NoEden POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/assets
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
@@ -176,7 +176,7 @@ add_custom_command(
 
 # language dictionaries
 add_custom_command(
-    TARGET jaralyn POST_BUILD
+    TARGET NoEden POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/src/lang/dictionaries
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dictionaries

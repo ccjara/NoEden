@@ -1,5 +1,5 @@
-#ifndef JARALYN_CALLBACK_STORE_HXX
-#define JARALYN_CALLBACK_STORE_HXX
+#ifndef NOEDEN_CALLBACK_STORE_HXX
+#define NOEDEN_CALLBACK_STORE_HXX
 
 struct CallbackInfo {
     /**

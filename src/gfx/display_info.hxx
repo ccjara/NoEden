@@ -1,5 +1,5 @@
-#ifndef JARALYN_DISPLAY_INFO_HXX
-#define JARALYN_DISPLAY_INFO_HXX
+#ifndef NOEDEN_DISPLAY_INFO_HXX
+#define NOEDEN_DISPLAY_INFO_HXX
 
 /**
  * @brief Display drawing instructions

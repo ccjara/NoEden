@@ -1,5 +1,5 @@
-#ifndef JARALYN_TILE_HXX
-#define JARALYN_TILE_HXX
+#ifndef NOEDEN_TILE_HXX
+#define NOEDEN_TILE_HXX
 
 #include "../gfx/display_cell.hxx"
 

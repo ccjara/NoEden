@@ -1,5 +1,5 @@
-#ifndef JARALYN_CONFIG_HXX
-#define JARALYN_CONFIG_HXX
+#ifndef NOEDEN_CONFIG_HXX
+#define NOEDEN_CONFIG_HXX
 
 /**
  * @brief Contains platform / system options for the game

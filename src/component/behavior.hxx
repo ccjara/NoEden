@@ -1,5 +1,5 @@
-#ifndef JARALYN_BEHAVIOR_HXX
-#define JARALYN_BEHAVIOR_HXX
+#ifndef NOEDEN_BEHAVIOR_HXX
+#define NOEDEN_BEHAVIOR_HXX
 
 #include "component/generic_component.hxx"
 #include "ai/ai_context.hxx"

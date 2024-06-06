@@ -1,5 +1,5 @@
-#ifndef JARALYN_AI_NODE_HXX
-#define JARALYN_AI_NODE_HXX
+#ifndef NOEDEN_AI_NODE_HXX
+#define NOEDEN_AI_NODE_HXX
 
 #include "ai/ai_context.hxx"
 

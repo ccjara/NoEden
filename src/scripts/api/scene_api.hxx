@@ -1,5 +1,5 @@
-#ifndef JARALYN_SCENE_API_HXX
-#define JARALYN_SCENE_API_HXX
+#ifndef NOEDEN_SCENE_API_HXX
+#define NOEDEN_SCENE_API_HXX
 
 #include "lua_api.hxx"
 

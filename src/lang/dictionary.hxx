@@ -1,5 +1,5 @@
-#ifndef JARALYN_DICTIONARY_HXX
-#define JARALYN_DICTIONARY_HXX
+#ifndef NOEDEN_DICTIONARY_HXX
+#define NOEDEN_DICTIONARY_HXX
 
 class Dictionary {
 public:

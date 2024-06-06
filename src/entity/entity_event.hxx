@@ -1,5 +1,5 @@
-#ifndef JARALYN_ENTITY_EVENT_HXX
-#define JARALYN_ENTITY_EVENT_HXX
+#ifndef NOEDEN_ENTITY_EVENT_HXX
+#define NOEDEN_ENTITY_EVENT_HXX
 
 struct EntitiesUpdated {
 };

@@ -1,5 +1,5 @@
-#ifndef JARALYN_TEXT_SHADER_HXX
-#define JARALYN_TEXT_SHADER_HXX
+#ifndef NOEDEN_TEXT_SHADER_HXX
+#define NOEDEN_TEXT_SHADER_HXX
 
 #include "shader.hxx"
 #include "texture.hxx"

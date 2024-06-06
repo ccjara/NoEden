@@ -1,5 +1,5 @@
-#ifndef JARALYN_AI_CLOSEST_ENTITY_HXX
-#define JARALYN_AI_CLOSEST_ENTITY_HXX
+#ifndef NOEDEN_AI_CLOSEST_ENTITY_HXX
+#define NOEDEN_AI_CLOSEST_ENTITY_HXX
 
 #include "ai/generic_ai_node.hxx"
 

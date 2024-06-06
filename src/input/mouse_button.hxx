@@ -1,5 +1,5 @@
-#ifndef JARALYN_MOUSE_BUTTON_HXX
-#define JARALYN_MOUSE_BUTTON_HXX
+#ifndef NOEDEN_MOUSE_BUTTON_HXX
+#define NOEDEN_MOUSE_BUTTON_HXX
 
 enum class MouseButton {
     Left = SDL_BUTTON_LEFT,

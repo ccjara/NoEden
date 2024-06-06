@@ -1,5 +1,5 @@
-#ifndef JARALYN_ACTOR_HXX
-#define JARALYN_ACTOR_HXX
+#ifndef NOEDEN_ACTOR_HXX
+#define NOEDEN_ACTOR_HXX
 
 #include "component/component.hxx"
 

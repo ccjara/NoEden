@@ -1,5 +1,5 @@
-#ifndef JARALYN_INPUT_READER_HXX
-#define JARALYN_INPUT_READER_HXX
+#ifndef NOEDEN_INPUT_READER_HXX
+#define NOEDEN_INPUT_READER_HXX
 
 enum class MouseButton;
 enum class Key;

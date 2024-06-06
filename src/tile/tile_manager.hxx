@@ -1,5 +1,5 @@
-#ifndef JARALYN_TILE_MANAGER_HXX
-#define JARALYN_TILE_MANAGER_HXX
+#ifndef NOEDEN_TILE_MANAGER_HXX
+#define NOEDEN_TILE_MANAGER_HXX
 
 #include "tile_reader.hxx"
 #include "tile_writer.hxx"

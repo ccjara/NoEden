@@ -1,5 +1,5 @@
-#ifndef JARALYN_PLATFORM_HXX
-#define JARALYN_PLATFORM_HXX
+#ifndef NOEDEN_PLATFORM_HXX
+#define NOEDEN_PLATFORM_HXX
 
 class Input;
 

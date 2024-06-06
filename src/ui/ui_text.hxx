@@ -1,5 +1,5 @@
-#ifndef JARALYN_UI_TEXT_HXX
-#define JARALYN_UI_TEXT_HXX
+#ifndef NOEDEN_UI_TEXT_HXX
+#define NOEDEN_UI_TEXT_HXX
 
 #include "ui_node.hxx"
 #include "../gfx/text.hxx"

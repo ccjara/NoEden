@@ -31,7 +31,7 @@ function on_load()
         },
     });
     catalog:create_archetype({
-        name = "DWARF",
+        name = "HUMAN",
         speed = 1,
         vision_radius = 4,
         components = {

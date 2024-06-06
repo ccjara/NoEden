@@ -1,5 +1,5 @@
-#ifndef JARALYN_FOV_HXX
-#define JARALYN_FOV_HXX
+#ifndef NOEDEN_FOV_HXX
+#define NOEDEN_FOV_HXX
 
 namespace {
     struct Row {

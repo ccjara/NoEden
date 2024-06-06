@@ -1,5 +1,5 @@
-#ifndef JARALYN_MOUSE_STATE_HXX
-#define JARALYN_MOUSE_STATE_HXX
+#ifndef NOEDEN_MOUSE_STATE_HXX
+#define NOEDEN_MOUSE_STATE_HXX
 
 #include "input/mouse_button.hxx"
 

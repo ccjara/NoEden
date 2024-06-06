@@ -1,5 +1,5 @@
-#ifndef JARALYN_AI_SELECTOR_HXX
-#define JARALYN_AI_SELECTOR_HXX
+#ifndef NOEDEN_AI_SELECTOR_HXX
+#define NOEDEN_AI_SELECTOR_HXX
 
 #include "ai/generic_ai_node.hxx"
 

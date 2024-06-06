@@ -1,5 +1,5 @@
-#ifndef JARALYN_UI_API_HXX
-#define JARALYN_UI_API_HXX
+#ifndef NOEDEN_UI_API_HXX
+#define NOEDEN_UI_API_HXX
 
 #include "../lua_api.hxx"
 #include "../../../ui/ui.hxx"

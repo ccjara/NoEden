@@ -1,5 +1,5 @@
-#ifndef JARALYN_VISION_MANAGER_HXX
-#define JARALYN_VISION_MANAGER_HXX
+#ifndef NOEDEN_VISION_MANAGER_HXX
+#define NOEDEN_VISION_MANAGER_HXX
 
 class EventManager;
 class IEntityReader;

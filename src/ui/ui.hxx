@@ -1,5 +1,5 @@
-#ifndef JARALYN_UI_HXX
-#define JARALYN_UI_HXX
+#ifndef NOEDEN_UI_HXX
+#define NOEDEN_UI_HXX
 
 #include "../gfx/gfx_event.hxx"
 #include "../scripts/script_event.hxx"

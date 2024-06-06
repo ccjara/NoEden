@@ -1,5 +1,5 @@
-#ifndef JARALYN_COLOR_HXX
-#define JARALYN_COLOR_HXX
+#ifndef NOEDEN_COLOR_HXX
+#define NOEDEN_COLOR_HXX
 
 /**
  * @brief Represents a color which can be displayed by the gfx display

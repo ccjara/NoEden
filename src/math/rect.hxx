@@ -1,5 +1,5 @@
-#ifndef JARALYN_RECT_HXX
-#define JARALYN_RECT_HXX
+#ifndef NOEDEN_RECT_HXX
+#define NOEDEN_RECT_HXX
 
 template<typename t>
 struct Rect {

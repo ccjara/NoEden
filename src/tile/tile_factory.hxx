@@ -1,5 +1,5 @@
-#ifndef JARALYN_TILE_FACTORY_HXX
-#define JARALYN_TILE_FACTORY_HXX
+#ifndef NOEDEN_TILE_FACTORY_HXX
+#define NOEDEN_TILE_FACTORY_HXX
 
 #include "tile.hxx"
 

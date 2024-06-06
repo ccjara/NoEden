@@ -1,10 +1,33 @@
-# Jaralyn
+# NoEden
 
-![Image](./jaralyn.png)
+An early work in progress rogue-like survival game inspired by Rogue, Dungeon Crawl and Dwarf Fortress.
 
-An early work in progress rogue-like inspired by Rogue, Dungeon Crawl and Dwarf Fortress.
-This is one of my learning projects where I try out different programming techniques or game design ideas.
+![Image](./noeden.webp)
 
-I'm trying to minimise dependencies and if possible, they are shipping along with the source code.
+# Technical Details
 
-This project requires a C++20 compatible compiler.
+* Language: C++
+* Rendering: OpenGL
+* Scripting: Lua
+* Custom Engine (currently being rewritten)
+* Platform: Multiplatform
+
+# Features
+
+Still working on bootstrapping the engine and framework properly. But the following features are planned:
+
+* 2D tile based rendering in classic ASCII style for a rich, text based experience
+* procedural world generation with many biomes and creatures
+* 3D map with ability to dig and build
+* turn-based simluation 
+* data driven game engine with Lua
+* complex character creation and progression with multiple skills and attributes
+
+# Libraries Used
+
+* [ImGui](https://github.com/ocornut/imgui)
+* [SDL2](https://www.libsdl.org/)
+* [GLEW](https://glew.sourceforge.net/)
+* [LuaBridge3](https://github.com/kunitoki/LuaBridge3)
+* [tomlplusplus](https://github.com/marzer/tomlplusplus)
+

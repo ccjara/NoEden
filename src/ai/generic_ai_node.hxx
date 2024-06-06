@@ -1,5 +1,5 @@
-#ifndef JARALYN_GENERIC_AI_NODE_HXX
-#define JARALYN_GENERIC_AI_NODE_HXX
+#ifndef NOEDEN_GENERIC_AI_NODE_HXX
+#define NOEDEN_GENERIC_AI_NODE_HXX
 
 #include "ai/ai_node.hxx"
 

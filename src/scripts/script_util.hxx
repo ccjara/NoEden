@@ -1,5 +1,5 @@
-#ifndef JARALYN_SCRIPT_UTIL_HXX
-#define JARALYN_SCRIPT_UTIL_HXX
+#ifndef NOEDEN_SCRIPT_UTIL_HXX
+#define NOEDEN_SCRIPT_UTIL_HXX
 
 /**
  * @brief Invokes a protected call on the given lua ref

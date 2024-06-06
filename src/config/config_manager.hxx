@@ -1,5 +1,5 @@
-#ifndef JARALYN_CONFIG_MANAGER_HXX
-#define JARALYN_CONFIG_MANAGER_HXX
+#ifndef NOEDEN_CONFIG_MANAGER_HXX
+#define NOEDEN_CONFIG_MANAGER_HXX
 
 #include "config/config.hxx"
 

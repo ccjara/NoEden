@@ -1,5 +1,5 @@
-#ifndef JARALYN_STDAFX_HXX
-#define JARALYN_STDAFX_HXX
+#ifndef NOEDEN_STDAFX_HXX
+#define NOEDEN_STDAFX_HXX
 
 #define NOMINMAX
 

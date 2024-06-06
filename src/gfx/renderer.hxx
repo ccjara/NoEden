@@ -1,5 +1,5 @@
-#ifndef JARALYN_RENDERER_HXX
-#define JARALYN_RENDERER_HXX
+#ifndef NOEDEN_RENDERER_HXX
+#define NOEDEN_RENDERER_HXX
 
 #include "display.hxx"
 #include "text_shader.hxx"

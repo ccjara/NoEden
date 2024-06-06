@@ -1,5 +1,5 @@
-#ifndef JARALYN_TRANSLATOR_HXX
-#define JARALYN_TRANSLATOR_HXX
+#ifndef NOEDEN_TRANSLATOR_HXX
+#define NOEDEN_TRANSLATOR_HXX
 
 #include "dictionary.hxx"
 

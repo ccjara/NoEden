@@ -1,5 +1,5 @@
-#ifndef JARALYN_UI_NODE_HXX
-#define JARALYN_UI_NODE_HXX
+#ifndef NOEDEN_UI_NODE_HXX
+#define NOEDEN_UI_NODE_HXX
 
 /**
  * @brief Affects position of elements, allowing relative positioning

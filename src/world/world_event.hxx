@@ -1,5 +1,5 @@
-#ifndef JARALYN_WORLD_EVENT_HXX
-#define JARALYN_WORLD_EVENT_HXX
+#ifndef NOEDEN_WORLD_EVENT_HXX
+#define NOEDEN_WORLD_EVENT_HXX
 
 #include "framework/event_type.hxx"
 

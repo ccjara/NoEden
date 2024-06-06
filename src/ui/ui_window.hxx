@@ -1,5 +1,5 @@
-#ifndef JARALYN_UI_WINDOW_HXX
-#define JARALYN_UI_WINDOW_HXX
+#ifndef NOEDEN_UI_WINDOW_HXX
+#define NOEDEN_UI_WINDOW_HXX
 
 #include "ui_node.hxx"
 

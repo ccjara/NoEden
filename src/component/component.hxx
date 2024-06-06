@@ -1,5 +1,5 @@
-#ifndef JARALYN_COMPONENT_HXX
-#define JARALYN_COMPONENT_HXX
+#ifndef NOEDEN_COMPONENT_HXX
+#define NOEDEN_COMPONENT_HXX
 
 enum class ComponentType {
     Unknown = 0,

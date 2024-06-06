@@ -1,5 +1,5 @@
-#ifndef JARALYN_KEYBOARD_STATE_HXX
-#define JARALYN_KEYBOARD_STATE_HXX
+#ifndef NOEDEN_KEYBOARD_STATE_HXX
+#define NOEDEN_KEYBOARD_STATE_HXX
 
 #include "input/key.hxx"
 

@@ -1,5 +1,5 @@
-#ifndef JARALYN_VEC2_HXX
-#define JARALYN_VEC2_HXX
+#ifndef NOEDEN_VEC2_HXX
+#define NOEDEN_VEC2_HXX
 
 template<typename t>
 struct Vec2 {

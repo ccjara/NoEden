@@ -1,5 +1,5 @@
-#ifndef JARALYN_AI_WALK_HXX
-#define JARALYN_AI_WALK_HXX
+#ifndef NOEDEN_AI_WALK_HXX
+#define NOEDEN_AI_WALK_HXX
 
 #include "ai/generic_ai_node.hxx"
 

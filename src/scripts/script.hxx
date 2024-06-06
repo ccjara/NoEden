@@ -1,5 +1,5 @@
-#ifndef JARALYN_SCRIPT_HXX
-#define JARALYN_SCRIPT_HXX
+#ifndef NOEDEN_SCRIPT_HXX
+#define NOEDEN_SCRIPT_HXX
 
 #include "script_util.hxx"
 

@@ -1,5 +1,5 @@
-#ifndef JARALYN_PLATFORM_EVENT_HXX
-#define JARALYN_PLATFORM_EVENT_HXX
+#ifndef NOEDEN_PLATFORM_EVENT_HXX
+#define NOEDEN_PLATFORM_EVENT_HXX
 
 #include "framework/event_type.hxx"
 #include "config/config.hxx"

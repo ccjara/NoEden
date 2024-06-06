@@ -1,5 +1,5 @@
-#ifndef JARALYN_GAME_HXX
-#define JARALYN_GAME_HXX
+#ifndef NOEDEN_GAME_HXX
+#define NOEDEN_GAME_HXX
 
 #include "world/game_player_controller.hxx"
 #include "lang/translator.hxx"

@@ -1,5 +1,5 @@
-#ifndef JARALYN_LOG_API_HXX
-#define JARALYN_LOG_API_HXX
+#ifndef NOEDEN_LOG_API_HXX
+#define NOEDEN_LOG_API_HXX
 
 #include "lua_api.hxx"
 

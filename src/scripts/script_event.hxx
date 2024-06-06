@@ -1,5 +1,5 @@
-#ifndef JARALYN_SCRIPT_EVENT_HXX
-#define JARALYN_SCRIPT_EVENT_HXX
+#ifndef NOEDEN_SCRIPT_EVENT_HXX
+#define NOEDEN_SCRIPT_EVENT_HXX
 
 #include "framework/event_type.hxx"
 

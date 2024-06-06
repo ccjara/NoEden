@@ -1,5 +1,5 @@
-#ifndef JARALYN_VISION_HXX
-#define JARALYN_VISION_HXX
+#ifndef NOEDEN_VISION_HXX
+#define NOEDEN_VISION_HXX
 
 #include "component/generic_component.hxx"
 #include "component/vision/fov.hxx"

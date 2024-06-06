@@ -1,5 +1,5 @@
-#ifndef JARALYN_AI_CONTEXT_HXX
-#define JARALYN_AI_CONTEXT_HXX
+#ifndef NOEDEN_AI_CONTEXT_HXX
+#define NOEDEN_AI_CONTEXT_HXX
 
 #include "ai/blackboard.hxx"
 

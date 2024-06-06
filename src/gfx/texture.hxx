@@ -1,5 +1,5 @@
-#ifndef JARALYN_TEXTURE_HXX
-#define JARALYN_TEXTURE_HXX
+#ifndef NOEDEN_TEXTURE_HXX
+#define NOEDEN_TEXTURE_HXX
 
 #include "surface.hxx"
 

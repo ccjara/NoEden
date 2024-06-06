@@ -20,7 +20,7 @@ void Platform::initialize() {
     sdl_initialized_ = true;
 
     sdl_window_ = SDL_CreateWindow(
-        "Jaralyn",
+        "NoEden",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         1600,

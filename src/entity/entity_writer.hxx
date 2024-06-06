@@ -1,5 +1,5 @@
-#ifndef JARALYN_ENTITY_WRITER_HXX
-#define JARALYN_ENTITY_WRITER_HXX
+#ifndef NOEDEN_ENTITY_WRITER_HXX
+#define NOEDEN_ENTITY_WRITER_HXX
 
 class Entity;
 struct Archetype;

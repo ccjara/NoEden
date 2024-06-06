@@ -1,5 +1,5 @@
-#ifndef JARALYN_GRID_HXX
-#define JARALYN_GRID_HXX
+#ifndef NOEDEN_GRID_HXX
+#define NOEDEN_GRID_HXX
 
 template<typename T>
 concept Integral = std::is_integral_v<T>;

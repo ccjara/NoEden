@@ -1,5 +1,5 @@
-#ifndef JARALYN_LOG_HXX
-#define JARALYN_LOG_HXX
+#ifndef NOEDEN_LOG_HXX
+#define NOEDEN_LOG_HXX
 
 enum class LogLevel {
     Debug,

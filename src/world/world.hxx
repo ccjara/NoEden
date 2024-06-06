@@ -1,5 +1,5 @@
-#ifndef JARALYN_WORLD_HXX
-#define JARALYN_WORLD_HXX
+#ifndef NOEDEN_WORLD_HXX
+#define NOEDEN_WORLD_HXX
 
 class IEntityReader;
 class IPlayerController;

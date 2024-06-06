@@ -1,5 +1,5 @@
-#ifndef JARALYN_DISPLAY_CELL_HXX
-#define JARALYN_DISPLAY_CELL_HXX
+#ifndef NOEDEN_DISPLAY_CELL_HXX
+#define NOEDEN_DISPLAY_CELL_HXX
 
 /**
  * @brief A single element of a display.

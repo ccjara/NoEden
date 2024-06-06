@@ -1,5 +1,5 @@
-#ifndef JARALYN_CATALOG_HXX
-#define JARALYN_CATALOG_HXX
+#ifndef NOEDEN_CATALOG_HXX
+#define NOEDEN_CATALOG_HXX
 
 struct Archetype;
 

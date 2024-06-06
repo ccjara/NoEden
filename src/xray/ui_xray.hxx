@@ -1,5 +1,5 @@
-#ifndef JARALYN_UI_XRAY_HXX
-#define JARALYN_UI_XRAY_HXX
+#ifndef NOEDEN_UI_XRAY_HXX
+#define NOEDEN_UI_XRAY_HXX
 
 #include "xray_interface.hxx"
 #include "xray_style.hxx"

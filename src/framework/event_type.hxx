@@ -1,5 +1,5 @@
-#ifndef JARALYN_EVENT_TYPE_HXX
-#define JARALYN_EVENT_TYPE_HXX
+#ifndef NOEDEN_EVENT_TYPE_HXX
+#define NOEDEN_EVENT_TYPE_HXX
 
 enum class EventType {
     None,

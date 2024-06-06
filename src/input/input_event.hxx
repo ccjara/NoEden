@@ -1,5 +1,5 @@
-#ifndef JARALYN_INPUT_EVENT_HXX
-#define JARALYN_INPUT_EVENT_HXX
+#ifndef NOEDEN_INPUT_EVENT_HXX
+#define NOEDEN_INPUT_EVENT_HXX
 
 #include "framework/event_type.hxx"
 #include "input/mouse_button.hxx"

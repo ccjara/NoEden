@@ -1,5 +1,5 @@
-#ifndef JARALYN_SKILLS_COMPONENT_HXX
-#define JARALYN_SKILLS_COMPONENT_HXX
+#ifndef NOEDEN_SKILLS_COMPONENT_HXX
+#define NOEDEN_SKILLS_COMPONENT_HXX
 
 #include "component/generic_component.hxx"
 

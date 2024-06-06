@@ -1,5 +1,5 @@
-#ifndef JARALYN_KEY_HXX
-#define JARALYN_KEY_HXX
+#ifndef NOEDEN_KEY_HXX
+#define NOEDEN_KEY_HXX
 
 enum class Key {
     Unknown = SDLK_UNKNOWN,

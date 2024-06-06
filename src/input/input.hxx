@@ -1,5 +1,5 @@
-#ifndef JARALYN_INPUT_HXX
-#define JARALYN_INPUT_HXX
+#ifndef NOEDEN_INPUT_HXX
+#define NOEDEN_INPUT_HXX
 
 #include "input/mouse_state.hxx"
 #include "input/keyboard_state.hxx"

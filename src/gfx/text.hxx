@@ -1,5 +1,5 @@
-#ifndef JARALYN_TEXT_HXX
-#define JARALYN_TEXT_HXX
+#ifndef NOEDEN_TEXT_HXX
+#define NOEDEN_TEXT_HXX
 
 #include "display_cell.hxx"
 

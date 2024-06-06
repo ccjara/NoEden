@@ -1,5 +1,5 @@
-#ifndef JARALYN_SHADER_HXX
-#define JARALYN_SHADER_HXX
+#ifndef NOEDEN_SHADER_HXX
+#define NOEDEN_SHADER_HXX
 
 enum class Shader_type : GLenum {
     vertex = GL_VERTEX_SHADER,

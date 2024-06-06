@@ -1,5 +1,5 @@
-#ifndef JARALYN_BRESENHAM_HXX
-#define JARALYN_BRESENHAM_HXX
+#ifndef NOEDEN_BRESENHAM_HXX
+#define NOEDEN_BRESENHAM_HXX
 
 // https://codereview.stackexchange.com/questions/93407/bresenham-line-drawing-implementation
 

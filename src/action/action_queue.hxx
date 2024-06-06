@@ -1,5 +1,5 @@
-#ifndef JARALYN_ACTION_QUEUE_HXX
-#define JARALYN_ACTION_QUEUE_HXX
+#ifndef NOEDEN_ACTION_QUEUE_HXX
+#define NOEDEN_ACTION_QUEUE_HXX
 
 #include "action/action_creator.hxx"
 #include "action/action_processor.hxx"

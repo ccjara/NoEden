@@ -1,5 +1,5 @@
-#ifndef JARALYN_SURFACE_HXX
-#define JARALYN_SURFACE_HXX
+#ifndef NOEDEN_SURFACE_HXX
+#define NOEDEN_SURFACE_HXX
 
 /**
  * @brief Wrapper around an SDL_Surface, used in textures

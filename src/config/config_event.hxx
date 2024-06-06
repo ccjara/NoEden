@@ -1,5 +1,5 @@
-#ifndef JARALYN_CONFIG_EVENT_HXX
-#define JARALYN_CONFIG_EVENT_HXX
+#ifndef NOEDEN_CONFIG_EVENT_HXX
+#define NOEDEN_CONFIG_EVENT_HXX
 
 #include "config/config.hxx"
 #include "framework/event_type.hxx"

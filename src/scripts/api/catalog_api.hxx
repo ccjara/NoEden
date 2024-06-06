@@ -1,5 +1,5 @@
-#ifndef JARALYN_CATALOG_API_HXX
-#define JARALYN_CATALOG_API_HXX
+#ifndef NOEDEN_CATALOG_API_HXX
+#define NOEDEN_CATALOG_API_HXX
 
 #include "scripts/api/lua_api.hxx"
 

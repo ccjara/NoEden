@@ -1,5 +1,5 @@
-#ifndef JARALYN_NULL_ACTION_HXX
-#define JARALYN_NULL_ACTION_HXX
+#ifndef NOEDEN_NULL_ACTION_HXX
+#define NOEDEN_NULL_ACTION_HXX
 
 #include "action/action.hxx"
 

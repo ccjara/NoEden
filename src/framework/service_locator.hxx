@@ -1,5 +1,5 @@
-#ifndef JARALYN_SERVICE_LOCATOR_HXX
-#define JARALYN_SERVICE_LOCATOR_HXX
+#ifndef NOEDEN_SERVICE_LOCATOR_HXX
+#define NOEDEN_SERVICE_LOCATOR_HXX
 
 /**
  * @brief Service locator providing a way to register and retrieve services.

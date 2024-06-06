@@ -1,5 +1,5 @@
-#ifndef JARALYN_UI_TREE_HXX
-#define JARALYN_UI_TREE_HXX
+#ifndef NOEDEN_UI_TREE_HXX
+#define NOEDEN_UI_TREE_HXX
 
 #include "./ui_node.hxx"
 

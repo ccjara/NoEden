@@ -73,20 +73,20 @@ void Game::init() {
     // post initialization experimentation
     {
         auto arch_troll = catalog_->archetype("TROLL");
-        auto arch_dwarf = catalog_->archetype("DWARF");
+        auto arch_human = catalog_->archetype("HUMAN");
         if (arch_troll) {
             auto& troll = entity_manager_->create_entity(*arch_troll);
             troll.position = { 3, 3 };
         } else {
             Log::warn("TROLL archetype not yet present");
         }
-        if (arch_dwarf) {
-            auto& dwarf = entity_manager_->create_entity(*arch_dwarf);
+        if (arch_human) {
+            auto& dwarf = entity_manager_->create_entity(*arch_human);
             dwarf.position = { 0, 1 };
 
             entity_manager_->set_controlled_entity(&dwarf);
         } else {
-            Log::warn("DWARF archetype not yet present");
+            Log::warn("HUMAN archetype not yet present");
         }
     }
 
