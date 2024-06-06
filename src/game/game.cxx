@@ -107,6 +107,12 @@ Game::~Game() {
     shutdown();
 }
 
+int Game::start() {
+    Game game;
+    game.run();
+    return 0;
+}
+
 void Game::run() {
     init();
 

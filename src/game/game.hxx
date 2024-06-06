@@ -39,10 +39,7 @@
 
 class Game {
 public:
-    /**
-     * @brief Runs the game loop until stopped by the player.
-     */
-    void run();
+    static int start();
 
     ~Game();
 private:
@@ -50,6 +47,11 @@ private:
      * @brief Initializes the game and its subsystems
      */
     void init();
+
+    /**
+     * @brief Starts the game
+     */
+    void run();
 
     /**
      * @brief Shuts down the game and its subsystems
