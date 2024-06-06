@@ -15,3 +15,7 @@ void CallbackStore::remove_by_script_id(Id script_id) {
         return iter.second.script_id == script_id;
     });
 }
+
+void CallbackStore::reset() {
+    callbacks_.clear();
+}

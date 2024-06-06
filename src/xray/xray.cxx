@@ -1,4 +1,5 @@
-#include "xray.hxx"
+#include "xray/xray.hxx"
+#include "input/input_event.hxx"
 
 void Xray::init(EventManager* events) {
     assert(events);

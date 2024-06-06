@@ -2,7 +2,10 @@
 
 u64 Script::next_id_ { 0 };
 
-Script::Script(const std::string& name) : id { next_id_++ }, name_(name) {
+Script::Script(std::string&& name, std::string&& source) :
+    id(next_id_++),
+    name_(std::move(name)),
+    source_(std::move(source)) {
 }
 
 Script::~Script() {
@@ -46,7 +49,7 @@ void Script::load() {
 void Script::unload() {
     if (state_) {
         {
-            auto on_unload { luabridge::getGlobal(state_, "on_unload") };
+            auto on_unload = luabridge::getGlobal(state_, "on_unload");
             if (on_unload.isFunction()) {
                 pcall_into(on_unload);
             }
@@ -90,12 +93,6 @@ void Script::fail(ScriptError err) {
         break;
     case ScriptError::RuntimeError:
         Log::error("Runtime error in script {}: {}", name_, lua_tostring(state_, -1));
-        break;
-    case ScriptError::ScriptPathNotFound:
-        Log::error("Cannot load script {}: path {} not found", name_, path_);
-        break;
-    case ScriptError::BadScriptInput:
-        Log::error("Cannot load script {}: bad input", name_);
         break;
     case ScriptError::ScriptCorrupted:
         Log::error("Cannot load script {}: ", name_, lua_tostring(state_, -1));

@@ -82,6 +82,7 @@ private:
     };
 
     struct BaseEventPartition {
+        virtual ~BaseEventPartition() = default;
     };
 
     template<EventLike E>

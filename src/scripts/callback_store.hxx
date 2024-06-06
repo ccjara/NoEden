@@ -3,7 +3,7 @@
 
 struct CallbackInfo {
     /**
-     * @brief Unique id for this callback
+     * @brief Unique id of this callback
      */
     Id id;
 
@@ -20,11 +20,11 @@ public:
     void remove_by_callback_id(Id callback_id);
 
     void remove_by_script_id(Id script_id);
+
+    void reset();
 private:
     /**
      * @brief Maps callback ids to CallbackInfo structs.
-     *
-     * If performance becomes a concern indexing dictionaries can be added.
      */
     std::unordered_map<Id, CallbackInfo> callbacks_;
 };

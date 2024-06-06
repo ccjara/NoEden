@@ -1,10 +1,12 @@
 #ifndef JARALYN_XRAY_HXX
 #define JARALYN_XRAY_HXX
 
-#include "gfx/gfx_event.hxx"
-#include "input/input_event.hxx"
 #include "xray/xray_interface.hxx"
-#include "xray/xray_event.hxx"
+
+struct MouseDownEvent;
+struct MouseUpEvent;
+struct KeyDownEvent;
+struct KeyUpEvent;
 
 class Xray {
 public:

@@ -28,15 +28,16 @@ public:
             return nullptr;
         }
 
-        auto node { new Node() };
-        nodes_.emplace_back(node);
-        nodes_by_id_.emplace(std::string(id), node);
+        auto node = std::make_unique<Node>();
+        auto node_raw_ptr = static_cast<Node*> (node.get());
+        nodes_by_id_.emplace(std::string(id), node_raw_ptr);
         node->root_ = root_;
         node->id_ = id;
         node->parent_ = parent;
         node->anchor_to(root_);
-        parent->children_.push_back(node);
-        return node;
+        parent->children_.push_back(node_raw_ptr);
+        nodes_.emplace_back(std::move(node));
+        return node_raw_ptr;
     }
 
     /**

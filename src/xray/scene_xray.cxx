@@ -5,6 +5,7 @@
 #include "component/render.hxx"
 #include "input/input.hxx"
 #include "input/input_event.hxx"
+#include "input/input_reader.hxx"
 #include "gfx/renderer.hxx"
 #include "component/skills.hxx"
 #include "entity/entity_manager.hxx"

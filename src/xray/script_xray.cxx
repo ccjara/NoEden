@@ -1,7 +1,10 @@
 #include "xray/script_xray.hxx"
+#include "scripts/scripting.hxx"
 
-ScriptXray::ScriptXray(EventManager* events) {
+ScriptXray::ScriptXray(Scripting* scripting, EventManager* events) : scripting_(scripting) {
+    assert(scripting_);
     assert(events);
+
     events->on<ScriptLoadedEvent>(this, &ScriptXray::on_script_loaded);
     events->on<ScriptResetEvent>(this, &ScriptXray::on_script_reset);
 }
@@ -24,19 +27,19 @@ void ScriptXray::update() {
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, COLOR_GREEN_HOVER);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, COLOR_GREEN_ACTIVE);
     if (ImGui::Button("[F5] Reload")) {
-        Scripting::load_from_path(Scripting::default_script_path);
+        scripting_->reload();
     }
     ImGui::PopStyleColor(3);
     ImGui::PopID();
 
-    current_script_ = selected_script_id_ ? Scripting::get_by_id(*selected_script_id_) : nullptr;
+    current_script_ = selected_script_id_ ? scripting_->get_by_id(*selected_script_id_) : nullptr;
 
     const auto combo_label {
          current_script_ ? current_script_->name().c_str() : "Choose script"
     };
 
     if (ImGui::BeginCombo("Script", combo_label)) {
-        for (const auto& [name, script] : Scripting::scripts()) {
+        for (const auto& [name, script] : scripting_->scripts()) {
             const bool is_selected {
                 selected_script_id_ && *selected_script_id_ == script->id
             };

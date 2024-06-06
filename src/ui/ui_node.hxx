@@ -202,6 +202,8 @@ public:
      * @brief Readonly accessor for the align_y_ attribute
      */
     AlignY align_y() const;
+
+    virtual ~UiNode() = default;
 protected:
     /**
      * @brief A list of nodes anchored to this node

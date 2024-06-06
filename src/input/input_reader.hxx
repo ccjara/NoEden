@@ -30,6 +30,8 @@ public:
      * @brief Returns true if the given keyboard key is currently pressed
      */
     virtual bool is_key_pressed(Key key) const = 0;
+
+    virtual ~IInputReader() = default;
 };
 
 #endif

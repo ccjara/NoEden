@@ -13,8 +13,6 @@ enum class ScriptError {
     None,
     RuntimeError,
     StateAllocFailed,
-    ScriptPathNotFound,
-    BadScriptInput,
     ScriptCorrupted,
 };
 
@@ -22,7 +20,7 @@ enum class ScriptError {
  * @brief Wrapper which manages a lua state
  */
 class Script {
-    friend class Scripting;
+    friend class ScriptLoader;
 private:
     static u64 next_id_;
 
@@ -31,7 +29,6 @@ private:
     ScriptStatus status_ { ScriptStatus::Unloaded };
     ScriptError error_ { ScriptError::None };
 
-    std::string path_;
     std::string source_;
 
     std::vector<std::string> globals_;
@@ -45,7 +42,7 @@ public:
     /**
      * @brief Instantiates a script from a source string
      */
-    Script(const std::string& name);
+    explicit Script(std::string&& name, std::string&& source);
 
     /**
      * @brief Frees the currently managed lua state if allocated

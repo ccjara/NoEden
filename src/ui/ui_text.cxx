@@ -5,7 +5,7 @@ UiText::UiText() : text_(std::make_unique<Text>()) {
 }
 
 Text& UiText::text() const {
-    return *text_.get();
+    return *text_;
 }
 
 void UiText::resize(Vec2<u32> size) {

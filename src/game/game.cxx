@@ -7,6 +7,7 @@ void Game::init() {
     config_manager_ = std::make_unique<ConfigManager>(events_.get());
     services_ = std::make_unique<ServiceLocator>();
     input_ = std::make_unique<Input>(events_.get());
+    scripting_ = std::make_unique<Scripting>(events_.get());
     platform_ = std::make_unique<Platform>(events_.get(), input_.get());
     platform_->initialize();
 
@@ -53,23 +54,21 @@ void Game::init() {
     Renderer::set_viewport(platform_->window_size());
 
     Ui::init(events_.get(), &Renderer::ui_layer());
-    Scripting::init(events_.get());
 
     // xray / engine ui
     Xray::init(events_.get());
     Xray::add<LogXray>();
     Xray::add<SceneXray>(entity_manager_.get(), tile_manager_.get(), events_.get(), input_.get(), t_.get());
-    Xray::add<ScriptXray>(events_.get());
+    Xray::add<ScriptXray>(scripting_.get(), events_.get());
     Xray::add<UiXray>();
 
     // scripting
-    Scripting::add_api<LogApi>();
-    Scripting::add_api<ConfigApi>(config_manager_.get(), events_.get());
-    Scripting::add_api<SceneApi>(entity_manager_.get());
-    Scripting::add_api<UiApi>();
-    Scripting::add_api<CatalogApi>(catalog_.get(), services_.get());
-
-    Scripting::load_from_path(Scripting::default_script_path);
+    scripting_->add_api<LogApi>();
+    scripting_->add_api<ConfigApi>(config_manager_.get(), events_.get());
+    scripting_->add_api<SceneApi>(entity_manager_.get());
+    scripting_->add_api<UiApi>();
+    scripting_->add_api<CatalogApi>(catalog_.get(), services_.get());
+    scripting_->reload();
 
     // post initialization experimentation
     {
@@ -96,10 +95,16 @@ void Game::init() {
 
 void Game::shutdown() {
     Xray::shutdown();
-    Scripting::shutdown();
     Ui::shutdown();
     Renderer::shutdown();
+
+    scripting_.reset();
+
     platform_->shutdown();
+}
+
+Game::~Game() {
+    shutdown();
 }
 
 void Game::run() {

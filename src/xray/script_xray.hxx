@@ -1,16 +1,22 @@
 #ifndef JARALYN_SCRIPT_XRAY_HXX
 #define JARALYN_SCRIPT_XRAY_HXX
 
-#include "xray_interface.hxx"
-#include "xray_style.hxx"
-#include "../scripts/scripting.hxx"
+#include "xray/xray_interface.hxx"
+#include "xray/xray_style.hxx"
+
+class Scripting;
+class Script;
+struct ScriptLoadedEvent;
+struct ScriptResetEvent;
 
 class ScriptXray : public IXray {
 public:
-    ScriptXray(EventManager* events);
+    explicit ScriptXray(Scripting* scripting, EventManager* events);
 
     void update() override;
 private:
+    Scripting* scripting_ = nullptr;
+
     void render_current_script(Script *current);
 
     bool on_script_loaded(ScriptLoadedEvent& e);

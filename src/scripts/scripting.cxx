@@ -1,28 +1,44 @@
-#include "scripting.hxx"
+#include "scripts/scripting.hxx"
 
-void Scripting::init(EventManager* events) {
-    assert(events);
-    events_ = events;
-    events_->on<KeyDownEvent>(&Scripting::on_key_down);
+Scripting::Scripting(EventManager* events) : events_(events) {
+    assert(events_);
+    events_->on<KeyDownEvent>(this, &Scripting::on_key_down);
+    script_loader_ = std::make_unique<ScriptLoader>();
+    script_registry_ = std::make_unique<ScriptRegistry>();
 }
 
-void Scripting::shutdown() {
-    listeners_.clear();
-    scripts_.clear();
+Scripting::~Scripting() {
+    script_registry_->reset();
+    apis_.clear();
 }
 
 void Scripting::reset() {
     events_->trigger<ScriptResetEvent>();
-    listeners_.clear();
-    scripts_.clear();
+    script_registry_->reset();
+}
+
+void Scripting::reload() {
+    events_->trigger<ScriptResetEvent>();
+
+    {
+        auto result = script_loader_->load_from_directory(default_script_path);
+        if (result.error != LoadFromDirectoryError::None) {
+            return;
+        }
+        script_registry_->reset();
+        script_registry_->add(std::move(result.scripts));
+    }
+    for (auto& kvp : script_registry_->scripts()) {
+        load(*kvp.second);
+    }
 }
 
 bool Scripting::on_key_down(KeyDownEvent& e) {
-    if (e.key == Key::F5) {
-        load_from_path(default_script_path);
-        return true;
+    if (e.key != Key::F5) {
+        return false;
     }
-    return false;
+    reload();
+    return true;
 }
 
 void Scripting::load(Script& script) {
@@ -47,13 +63,16 @@ void Scripting::load(Script& script) {
     }
 }
 
-const std::unordered_map<u64, std::unique_ptr<Script>>& Scripting::scripts() {
-    return scripts_;
+const std::unordered_map<u64, std::unique_ptr<Script>>& Scripting::scripts() const {
+    return script_registry_->scripts();
+}
+
+std::unordered_map<u64, std::unique_ptr<Script>>& Scripting::scripts() {
+    return script_registry_->scripts();
 }
 
 Script* Scripting::get_by_id(u64 id) {
-    const auto it { scripts_.find(id) };
-    return it == scripts_.end() ? nullptr : it->second.get();
+    return script_registry_->script(id);
 }
 
 bool Scripting::register_lua_callback(lua_event_type event_type, luabridge::LuaRef ref) {
@@ -77,7 +96,7 @@ void Scripting::setup_script_env(Script& script) {
 
     luabridge::getGlobalNamespace(script)
         .beginClass<Scripting>("Script")
-            .addStaticFunction("on", &Scripting::register_lua_callback)
+            .addFunction("on", &Scripting::register_lua_callback)
         .endClass();
     // expose all registered apis
     for (auto& api : apis_) {

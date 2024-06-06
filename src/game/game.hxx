@@ -43,6 +43,8 @@ public:
      * @brief Runs the game loop until stopped by the player.
      */
     void run();
+
+    ~Game();
 private:
     /**
      * @brief Initializes the game and its subsystems
@@ -56,6 +58,7 @@ private:
 
     std::unique_ptr<ConfigManager> config_manager_ = nullptr;
     std::unique_ptr<EventManager> events_ = nullptr;
+    std::unique_ptr<Scripting> scripting_ = nullptr;
     std::unique_ptr<VisionManager> vision_manager_ = nullptr;
     std::unique_ptr<ActionQueue> action_queue_ = nullptr;
     std::unique_ptr<ServiceLocator> services_ = nullptr;
