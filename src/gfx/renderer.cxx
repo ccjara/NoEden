@@ -91,7 +91,7 @@ bool Renderer::on_resize(ResizeEvent& e) {
 void Renderer::configure(const Config& cfg) {
     cfg_ = cfg;
 
-    const auto path_str { cfg_.font_texture_path.string() };
+    const auto path_str = cfg_.font_texture_path.string();
     if (!fs::exists(cfg_.font_texture_path)) {
         Log::error("Could not read text font at path {}", path_str);
         std::abort();

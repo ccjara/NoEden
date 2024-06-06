@@ -1,0 +1,7 @@
+#ifndef NOEDEN_STB_IMAGE_IMPLEMENTATION_CXX
+#define NOEDEN_STB_IMAGE_IMPLEMENTATION_CXX
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+#endif

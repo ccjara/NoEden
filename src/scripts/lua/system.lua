@@ -1,7 +1,7 @@
 function on_load()
     config:configure({
         scaling = 2,
-        font_texture_path = "font.bmp",
+        font_texture_path = "font.png",
         glyph_size = { width = 8, height = 14 },
     });
 end

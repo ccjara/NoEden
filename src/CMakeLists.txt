@@ -8,6 +8,7 @@ set(DEPS
     "../deps/imgui/imgui_impl_opengl3.cpp"
     "../deps/imgui/imgui_tables.cpp"
     "../deps/imgui/imgui_widgets.cpp"
+    "../deps/stb/stb_image_implementation.cxx"
 )
 
 set(COMMON_SOURCES

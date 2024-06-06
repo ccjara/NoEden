@@ -18,7 +18,14 @@ bool Texture::is_loaded() const {
 void Texture::load(std::string_view path) {
     unload();
 
-    Surface surf { path };
+    i32 width, height, channels;
+    unsigned char* data = stbi_load(path.data(), &width, &height, &channels, 1);
+
+    if (channels != 1) {
+        Log::error("Unsupported image format\n");
+        stbi_image_free(data);
+        std::abort();
+    }
 
     glGenTextures(1, &id_);
     glBindTexture(GL_TEXTURE_2D, id_);
@@ -28,13 +35,13 @@ void Texture::load(std::string_view path) {
     glTexImage2D(
         GL_TEXTURE_2D,
         0,
-        GL_RGB,
-        static_cast<GLsizei> (surf.width()),
-        static_cast<GLsizei> (surf.height()),
+        GL_RED,
+        static_cast<GLsizei> (width),
+        static_cast<GLsizei> (height),
         0,
-        GL_BGR,
+        GL_RED,
         GL_UNSIGNED_BYTE,
-        surf.data()
+        data
     );
 
     const auto glError = glGetError();
@@ -43,7 +50,7 @@ void Texture::load(std::string_view path) {
         std::abort();
     }
 
-    size_ = surf.size();
+    size_ = { static_cast<u32> (width), static_cast<u32> (height) };
 }
 
 GLuint Texture::id() const {

@@ -50,6 +50,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
+#include "stb/stb_image.h"
+
 #include "framework/usings.hxx"
 #include "framework/concepts.hxx"
 
