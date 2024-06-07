@@ -9,7 +9,7 @@ struct PlayerActionCommitted;
 
 class World {
 public:
-    explicit World(IEntityReader* entity_reader,IActionProcessor* action_processor,EventManager* events);
+    explicit World(IEntityReader* entity_reader, IActionProcessor* action_processor, Events* events);
 
     /**
      * @brief Sets the player controller for this world
@@ -17,6 +17,7 @@ public:
      * @param controller Player controller to bind
      */
     void bind_player_controller(IPlayerController* controller);
+
 private:
     bool on_player_action_committed(const PlayerActionCommitted& e);
 
@@ -25,7 +26,7 @@ private:
      */
     IPlayerController* player_controller = nullptr;
 
-    EventManager* events_ = nullptr;
+    Events* events_ = nullptr;
     IEntityReader* entity_reader_ = nullptr;
     IActionProcessor* action_processor_ = nullptr;
 };

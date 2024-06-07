@@ -9,15 +9,15 @@
 VisionManager::VisionManager(
     IEntityReader* entity_reader,
     ITileReader* tile_reader,
-    EventManager* events
+    Events* events
 ) : entity_reader_(entity_reader), tile_reader_(tile_reader), events_(events) {
     assert(entity_reader_);
     assert(tile_reader_);
     assert(events_);
 
-    events->on<WorldReadyEvent>(this, &VisionManager::on_world_ready);
-    events->on<WorldUpdatedPreEvent>(this, &VisionManager::on_world_updated_pre);
-    events->on<WorldUpdatedPostEvent>(this, &VisionManager::on_world_updated_post);
+    events->engine->on<WorldReadyEvent>(this, &VisionManager::on_world_ready);
+    events->engine->on<WorldUpdatedPreEvent>(this, &VisionManager::on_world_updated_pre);
+    events->engine->on<WorldUpdatedPostEvent>(this, &VisionManager::on_world_updated_post);
 }
 
 bool VisionManager::on_world_ready(const WorldReadyEvent&) {

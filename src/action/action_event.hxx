@@ -1,16 +1,16 @@
 #ifndef NOEDEN_ACTION_EVENT_HXX
 #define NOEDEN_ACTION_EVENT_HXX
 
-#include "framework/event_type.hxx"
+#include "framework/engine_event_type.hxx"
 
 class Action;
 
 struct ActionQueueProcessed {
-    static constexpr EventType event_type = EventType::ActionQueueProcessed;
+    static constexpr EngineEventType event_type = EngineEventType::ActionQueueProcessed;
 };
 
 struct PlayerActionCommitted {
-    static constexpr EventType event_type = EventType::PlayerActionCommitted;
+    static constexpr EngineEventType event_type = EngineEventType::PlayerActionCommitted;
 
     explicit constexpr PlayerActionCommitted(Action* action) : action(action) {
         assert(this->action);

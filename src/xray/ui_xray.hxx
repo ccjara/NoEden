@@ -3,7 +3,7 @@
 
 #include "xray_interface.hxx"
 #include "xray_style.hxx"
-#include "../ui/ui.hxx"
+#include "ui/ui.hxx"
 
 class UiXray : public IXray {
 public:

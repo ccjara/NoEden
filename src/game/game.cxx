@@ -3,7 +3,9 @@
 void Game::init() {
     Log::init();
 
-    events_ = std::make_unique<EventManager>();
+    game_events_ = std::make_unique<EventManager<GameEventType>>();
+    engine_events_ = std::make_unique<EventManager<EngineEventType>>();
+    events_ = std::make_unique<Events>(game_events_.get(), engine_events_.get());
     config_manager_ = std::make_unique<ConfigManager>(events_.get());
     services_ = std::make_unique<ServiceLocator>();
     input_ = std::make_unique<Input>(events_.get());
@@ -29,7 +31,10 @@ void Game::init() {
 
     services_->provide<VisionManager>(vision_manager_.get());
     services_->provide<ConfigManager>(config_manager_.get());
-    services_->provide<EventManager>(events_.get());
+    services_->provide<Events>(events_.get());
+    services_->provide<EventManager<GameEventType>>(events_->game);
+    services_->provide<EventManager<EngineEventType>>(events_->engine);
+    services_->provide<Events>(events_.get());
     services_->provide<World>(world_.get());
     services_->provide<IEntityReader>(entity_manager_.get());
     services_->provide<IEntityWriter>(entity_manager_.get());
@@ -90,7 +95,7 @@ void Game::init() {
         }
     }
 
-    events_->trigger<WorldReadyEvent>();
+    events_->engine->trigger<WorldReadyEvent>();
 }
 
 void Game::shutdown() {

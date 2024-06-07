@@ -58,8 +58,11 @@ private:
      */
     void shutdown();
 
+
     std::unique_ptr<ConfigManager> config_manager_ = nullptr;
-    std::unique_ptr<EventManager> events_ = nullptr;
+    std::unique_ptr<EventManager<GameEventType>> game_events_ = nullptr;
+    std::unique_ptr<EventManager<EngineEventType>> engine_events_ = nullptr;
+    std::unique_ptr<Events> events_ = nullptr;
     std::unique_ptr<Scripting> scripting_ = nullptr;
     std::unique_ptr<VisionManager> vision_manager_ = nullptr;
     std::unique_ptr<ActionQueue> action_queue_ = nullptr;

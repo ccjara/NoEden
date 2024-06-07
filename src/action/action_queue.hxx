@@ -4,11 +4,9 @@
 #include "action/action_creator.hxx"
 #include "action/action_processor.hxx"
 
-class EntitiesUpdated;
-
 class ActionQueue : public IActionCreator, public IActionProcessor {
 public:
-    explicit ActionQueue(EventManager* event_manager, ServiceLocator* services);
+    explicit ActionQueue(Events* events, ServiceLocator* services);
 
     /**
      * @copydoc IActionCreator::create_action
@@ -42,7 +40,7 @@ private:
 
     std::vector<std::unique_ptr<Action>> actions_;
 
-    EventManager* events_ = nullptr;
+    Events* events_ = nullptr;
     ServiceLocator* services_ = nullptr;
 };
 

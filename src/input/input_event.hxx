@@ -1,7 +1,7 @@
 #ifndef NOEDEN_INPUT_EVENT_HXX
 #define NOEDEN_INPUT_EVENT_HXX
 
-#include "framework/event_type.hxx"
+#include "framework/engine_event_type.hxx"
 #include "input/mouse_button.hxx"
 #include "input/key.hxx"
 
@@ -9,7 +9,7 @@
  * @brief Triggered as the user moves the mouse inside the window.
  */
 struct MouseMoveEvent {
-    static constexpr EventType event_type = EventType::MouseMove;
+    static constexpr EngineEventType event_type = EngineEventType::MouseMove;
 
     Vec2<i32> position;
 
@@ -21,7 +21,7 @@ struct MouseMoveEvent {
  * @brief Triggered clicking a mouse button (only when inside the window).
  */
 struct MouseDownEvent {
-    static constexpr EventType event_type = EventType::MouseDown;
+    static constexpr EngineEventType event_type = EngineEventType::MouseDown;
 
     MouseButton button;
 
@@ -33,7 +33,7 @@ struct MouseDownEvent {
  * @brief Triggered when releasing a mouse button (only when inside the window).
  */
 struct MouseUpEvent {
-    static constexpr EventType event_type = EventType::MouseUp;
+    static constexpr EngineEventType event_type = EngineEventType::MouseUp;
     
     MouseButton button;
 
@@ -45,7 +45,7 @@ struct MouseUpEvent {
  * @brief Triggered when pressing a key (only if the window is focused).
  */
 struct KeyDownEvent {
-    static constexpr EventType event_type = EventType::KeyDown;
+    static constexpr EngineEventType event_type = EngineEventType::KeyDown;
 
     Key key;
 
@@ -57,7 +57,7 @@ struct KeyDownEvent {
  * @brief Triggered when releasing a key (only if the window is focused).
  */
 struct KeyUpEvent {
-    static constexpr EventType event_type = EventType::KeyUp;
+    static constexpr EngineEventType event_type = EngineEventType::KeyUp;
 
     Key key;
 

@@ -10,7 +10,7 @@
  */
 class Input : public IInputReader {
 public:
-    explicit Input(EventManager* events);
+    explicit Input(Events* events);
 
     /**
      * @brief Returns the current mouse position as a tuple
@@ -52,7 +52,7 @@ public:
      */
     void set_key_pressed(Key key, bool pressed);
 private:
-    EventManager* events_ = nullptr;
+    Events* events_ = nullptr;
     MouseState mouse_;
     KeyboardState keyboard_;
 };

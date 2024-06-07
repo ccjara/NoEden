@@ -11,7 +11,7 @@ struct ScriptResetEvent;
 
 class ScriptXray : public IXray {
 public:
-    explicit ScriptXray(Scripting* scripting, EventManager* events);
+    explicit ScriptXray(Scripting* scripting, Events* events);
 
     void update() override;
 private:

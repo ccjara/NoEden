@@ -1,16 +1,15 @@
 #ifndef NOEDEN_EVENT_MANAGER_HXX
 #define NOEDEN_EVENT_MANAGER_HXX
 
-enum class EventType;
-
 template<typename T>
 concept MethodInvocable = std::is_member_function_pointer<T>::value;
 
-template<typename T>
+template<typename Event, typename EventType>
 concept EventLike = requires {
-    { T::event_type } -> std::convertible_to<EventType>;
+    { Event::event_type } -> std::convertible_to<EventType>;
 };
 
+template<typename EventType>
 class EventManager {
 public:
     /**
@@ -21,9 +20,9 @@ public:
      *
      * The higher the priority the earlier the handler will be called.
      */
-    template<EventLike E, typename Fn>
+    template<EventLike<EventType> Event, typename Fn>
     void on(Fn callable, i32 priority = 0) {
-        EventPartition<E>& partition = get_or_create_partition<E>();
+        EventPartition<Event>& partition = get_or_create_partition<Event>();
         partition.add_callable(callable, priority);
     }
 
@@ -35,11 +34,11 @@ public:
      *
      * The higher the priority the earlier the handler will be called.
      */
-    template<EventLike E, typename Inst, MethodInvocable Fn>
+    template<EventLike<EventType> Event, typename Inst, MethodInvocable Fn>
     void on(Inst* instance, Fn method, i32 priority = 0) {
-        EventPartition<E>& partition = get_or_create_partition<E>();
+        EventPartition<Event>& partition = get_or_create_partition<Event>();
         partition.add_callable(
-            [instance, method](E& event) -> bool {
+            [instance, method](Event& event) -> bool {
                 return (instance->*method)(event);
             },
             priority
@@ -54,10 +53,10 @@ public:
      *
      * Short-circuits if any handler returned `true`.
      */
-    template<EventLike E, typename... Args>
+    template<EventLike<EventType> Event, typename... Args>
     void trigger(Args&& ...args) {
-        E event(std::forward<Args>(args)...);
-        EventPartition<E>& partition = get_or_create_partition<E>();
+        Event event(std::forward<Args>(args)...);
+        EventPartition<Event>& partition = get_or_create_partition<Event>();
         for (auto& handler : partition.event_handlers) {
             if (handler.callable(event)) {
                 break;
@@ -68,14 +67,16 @@ public:
     /**
      * @brief Clears all event partitions
      */
-    void clear();
+    void clear() {
+        partitions_.clear();
+    }
 private:
-    template<EventLike E>
+    template<EventLike<EventType> Event>
     struct EventHandler {
-        std::function<bool(E&)> callable;
+        std::function<bool(Event&)> callable;
         i32 priority = 0;
 
-        explicit EventHandler(std::function<bool(E&)>&& callable, i32 priority) :
+        explicit EventHandler(std::function<bool(Event&)>&& callable, i32 priority) :
             callable(std::move(callable)),
             priority(priority) {
         }
@@ -85,7 +86,7 @@ private:
         virtual ~BaseEventPartition() = default;
     };
 
-    template<EventLike E>
+    template<EventLike<EventType> Event>
     struct EventPartition : BaseEventPartition {
         explicit EventPartition(EventType event_type) : event_type(event_type) {
         }
@@ -97,23 +98,23 @@ private:
             std::sort(
                 event_handlers.begin(),
                 event_handlers.end(),
-                [](const EventHandler<E>& a, const EventHandler<E>& b) {
+                [](const EventHandler<Event>& a, const EventHandler<Event>& b) {
                     return a.priority > b.priority;
                 }
             );
         }
 
         EventType event_type;
-        std::vector<EventHandler<E>> event_handlers;
+        std::vector<EventHandler<Event>> event_handlers;
     };
 
-    template<EventLike E>
-    EventPartition<E>& get_or_create_partition() {
-        EventType type = E::event_type;
+    template<EventLike<EventType> Event>
+    EventPartition<Event>& get_or_create_partition() {
+        EventType type = Event::event_type;
         if (partitions_.find(type) == partitions_.end()) {
-            partitions_[type] = std::make_unique<EventPartition<E>>(type);
+            partitions_[type] = std::make_unique<EventPartition<Event>>(type);
         }
-        return *static_cast<EventPartition<E>*>(partitions_[type].get());
+        return *static_cast<EventPartition<Event>*>(partitions_[type].get());
     }
 
     std::unordered_map<EventType, std::unique_ptr<BaseEventPartition>> partitions_;

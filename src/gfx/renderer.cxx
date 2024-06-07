@@ -11,12 +11,12 @@ void Renderer::shutdown() {
     }
 }
 
-void Renderer::init(EventManager* events) {
+void Renderer::init(Events* events) {
     assert(events);
 
     events_ = events;
-    events_->on<ResizeEvent>(&Renderer::on_resize);
-    events_->on<ConfigUpdatedEvent>(&Renderer::on_config_updated);
+    events_->engine->on<ResizeEvent>(&Renderer::on_resize);
+    events_->engine->on<ConfigUpdatedEvent>(&Renderer::on_config_updated);
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
@@ -122,7 +122,7 @@ void Renderer::adjust_display() {
         layer.resize(display_size);
     }
 
-    events_->trigger<DisplayResizedEvent>(display_size);
+    events_->engine->trigger<DisplayResizedEvent>(display_size);
     Log::debug("Display resized to {}x{} cells", display_size.x, display_size.y);
 }
 

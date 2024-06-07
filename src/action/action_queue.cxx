@@ -8,8 +8,8 @@
 #include "tile/tile_reader.hxx"
 #include "tile/tile.hxx"
 
-ActionQueue::ActionQueue(EventManager* event_manager, ServiceLocator* services) :
-    events_(event_manager),
+ActionQueue::ActionQueue(Events* events, ServiceLocator* services) :
+    events_(events),
     services_(services) {
     assert(events_);
     assert(services_);
@@ -74,7 +74,7 @@ void ActionQueue::process_actions() {
     }
     actions_.clear();
 
-    events_->trigger<ActionQueueProcessed>();
+    events_->engine->trigger<ActionQueueProcessed>();
 }
 
 constexpr float ActionQueue::calculate_cost(ActionType type, float actor_speed) {

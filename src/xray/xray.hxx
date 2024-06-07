@@ -20,7 +20,7 @@ public:
         xrays_.emplace_back(new XrayClass(std::forward<XrayArgs>(xray_args)...));
     }
 
-    static void init(EventManager *events);
+    static void init(Events* events);
     static void draw();
     static void shutdown();
 private:

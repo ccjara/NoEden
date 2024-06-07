@@ -1,7 +1,7 @@
 #ifndef NOEDEN_GFX_EVENT_HXX
 #define NOEDEN_GFX_EVENT_HXX
 
-#include "framework/event_type.hxx"
+#include "framework/engine_event_type.hxx"
 
 /**
  * @brief Triggered after the display has been resized
@@ -10,14 +10,14 @@
  * ResizeEvent has been handled there (for example due to a window resize).
  */
 struct DisplayResizedEvent {
-    static constexpr EventType event_type = EventType::DisplayResized;
+    static constexpr EngineEventType event_type = EngineEventType::DisplayResized;
 
     /**
      * @brief The new display size in cell units
      */
     Vec2<u32> size;
 
-    constexpr DisplayResizedEvent(Vec2<u32> size) : size(size) {
+    explicit DisplayResizedEvent(Vec2<u32> size) : size(size) {
     }
 };
 

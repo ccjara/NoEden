@@ -1,8 +1,7 @@
 #ifndef NOEDEN_SCENE_XRAY_HXX
 #define NOEDEN_SCENE_XRAY_HXX
 
-#include "xray_interface.hxx"
-
+#include "xray/xray_interface.hxx"
 #include "config/config.hxx"
 #include "tile/tile.hxx"
 
@@ -19,7 +18,7 @@ public:
     explicit SceneXray(
         EntityManager* entity_manager,
         TileManager* tile_manager,
-        EventManager* events,
+        Events* events,
         IInputReader* input,
         Translator* translator
     );
@@ -39,7 +38,7 @@ private:
 
     EntityManager* entity_manager_ = nullptr;
     TileManager* tile_manager_ = nullptr;
-    EventManager* events_ = nullptr;
+    Events* events_ = nullptr;
     IInputReader* input_ = nullptr;
     Translator* translator_ = nullptr;
 };

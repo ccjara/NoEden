@@ -1,7 +1,7 @@
 #include "scripts/api/config_api.hxx"
 #include "config/config_manager.hxx"
 
-ConfigApi::ConfigApi(ConfigManager* config_manager, EventManager* events) : 
+ConfigApi::ConfigApi(ConfigManager* config_manager, Events* events) :
     config_manager_(config_manager),
     events_(events) {
     assert(config_manager_);

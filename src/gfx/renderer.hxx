@@ -16,7 +16,7 @@ class Renderer {
 public:
     Renderer() = delete;
 
-    static void init(EventManager* events);
+    static void init(Events* events);
     static void shutdown();
 
     /**
@@ -91,7 +91,7 @@ private:
 
     static inline std::array<Display, 2> layers_;
 
-    static inline EventManager* events_ = nullptr;
+    static inline Events* events_ = nullptr;
 };
 
 #endif

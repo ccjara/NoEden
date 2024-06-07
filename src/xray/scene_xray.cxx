@@ -15,7 +15,7 @@
 SceneXray::SceneXray(
     EntityManager* entity_manager,
     TileManager* tile_manager,
-    EventManager* events,
+    Events* events,
     IInputReader* input,
     Translator* translator
 ) : entity_manager_(entity_manager), 
@@ -29,8 +29,8 @@ SceneXray::SceneXray(
     assert(translator_);
     assert(events_);
 
-    events_->on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
-    events_->on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
+    events_->engine->on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
+    events_->engine->on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
 }
 
 bool SceneXray::on_config_updated(ConfigUpdatedEvent& e) {

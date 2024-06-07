@@ -5,7 +5,7 @@
 
 class ConfigManager {
 public:
-    explicit ConfigManager(EventManager* events);
+    explicit ConfigManager(Events* events);
 
     /**
      * @brief Consumes the given config and updates the config source
@@ -36,7 +36,7 @@ private:
      */
     Config config_;
 
-    EventManager* events_;
+    Events* events_ = nullptr;
 };
 
 #endif

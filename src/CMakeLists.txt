@@ -56,10 +56,12 @@ set(COMMON_SOURCES
     "entity/entity_writer.hxx"
 
     "framework/concepts.hxx"
-    "framework/event_type.hxx"
+    "framework/engine_event_type.hxx"
+    "framework/events.hxx"
     "framework/event_manager.cxx"
-    "framework/service_locator.hxx"
+    "framework/game_event_type.hxx"
     "framework/grid.hxx"
+    "framework/service_locator.hxx"
     "framework/usings.hxx"
 
     "gfx/color.hxx"

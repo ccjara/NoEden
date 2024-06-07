@@ -1,16 +1,15 @@
-#include "world.hxx"
+#include "world/world.hxx"
 #include "action/action.hxx"
+#include "action/action_event.hxx"
 #include "action/action_processor.hxx"
 #include "entity/entity.hxx"
 #include "entity/entity_reader.hxx"
-#include "action/action_event.hxx"
-
-#include "world_event.hxx"
+#include "world/world_event.hxx"
 
 World::World(
     IEntityReader* entity_reader,
     IActionProcessor* action_processor,
-    EventManager* events
+    Events* events
 ) : entity_reader_(entity_reader),
     events_(events),
     action_processor_(action_processor) {
@@ -18,7 +17,7 @@ World::World(
     assert(events_);
     assert(action_processor_);
 
-    events_->on<PlayerActionCommitted>(this, &World::on_player_action_committed);
+    events_->engine->on<PlayerActionCommitted>(this, &World::on_player_action_committed);
 }
 
 void World::bind_player_controller(IPlayerController* controller) {
@@ -30,7 +29,7 @@ bool World::on_player_action_committed(const PlayerActionCommitted& e) {
         return false;
     }
 
-    events_->trigger<WorldUpdatedPreEvent>();
+    events_->engine->trigger<WorldUpdatedPreEvent>();
 
     // give all entities in the world energy according to the cost of the action
     const auto cost = e.action->cost();
@@ -46,7 +45,7 @@ bool World::on_player_action_committed(const PlayerActionCommitted& e) {
         entity->on_after_actions();
     }
 
-    events_->trigger<WorldUpdatedPostEvent>();
+    events_->engine->trigger<WorldUpdatedPostEvent>();
 
     return false;
 }
