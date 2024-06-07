@@ -102,9 +102,9 @@ set(COMMON_SOURCES
     "scripts/api/log_api.cxx"
     "scripts/api/lua_api.hxx"
     "scripts/api/scene_api.cxx"
+    "scripts/api/script_api.cxx"
     "scripts/api/ui/ui_api.cxx"
 
-    "scripts/callback_store.cxx"
     "scripts/script.cxx"
     "scripts/script_event.hxx"
     "scripts/script_loader.cxx"

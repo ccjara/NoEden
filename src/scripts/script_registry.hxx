@@ -1,8 +1,6 @@
 #ifndef NOEDEN_SCRIPT_REGISTRY_HXX
 #define NOEDEN_SCRIPT_REGISTRY_HXX
 
-#include "scripts/callback_store.hxx"
-
 class Script;
 
 class ScriptRegistry {
@@ -23,7 +21,6 @@ public:
     ScriptRegistry& operator=(ScriptRegistry&&) = delete;
 private:
     std::unordered_map<u64, std::unique_ptr<Script>> scripts_;
-    CallbackStore callback_store_;
 };
 
 #endif

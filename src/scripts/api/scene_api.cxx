@@ -6,8 +6,8 @@ SceneApi::SceneApi(IEntityReader* entity_reader) : entity_reader_(entity_reader)
     assert(entity_reader_);
 }
 
-void SceneApi::on_register(Script* script) {
-    luabridge::getGlobalNamespace(*script)
+void SceneApi::on_register(Script& script) {
+    luabridge::getGlobalNamespace(script)
         .beginClass<SceneApi>("SceneApi")
             .addFunction("entity_name", &SceneApi::entity_name)
             .addFunction("player_id", &SceneApi::player_id)

@@ -6,7 +6,6 @@ ScriptRegistry::~ScriptRegistry() {
 }
 
 void ScriptRegistry::reset() {
-    callback_store_.reset();
     scripts_.clear();
 }
 

@@ -37,7 +37,7 @@ public:
     /**
      * @briefs Binds the texture for the next GL draw operation
      */
-    void bind();
+    void bind() const;
 
     /**
      * @briefs Unbinds the currently active texture for the next GL draw operation
@@ -45,7 +45,7 @@ public:
      * Note that as this calls glBindTexture(0) this will unbind any texture resource,
      * regardless whether it is managed by this wrapper.
      */
-    void unbind();
+    void unbind() const;
 
     bool is_loaded() const;
     Vec2<u32> size() const;

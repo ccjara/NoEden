@@ -18,8 +18,8 @@ CatalogApi::CatalogApi(Catalog* catalog, ServiceLocator* services) :
     assert(services_);
 }
 
-void CatalogApi::on_register(Script* script) {
-    script->define_enum(
+void CatalogApi::on_register(Script& script) {
+    script.define_enum(
         "ComponentType",
         std::make_tuple("Behavior", ComponentType::Behavior),
         std::make_tuple("Render", ComponentType::Render),
@@ -27,7 +27,7 @@ void CatalogApi::on_register(Script* script) {
         std::make_tuple("Vision", ComponentType::Vision)
     );
 
-    script->define_enum(
+    script.define_enum(
         "AiNodeType",
         std::make_tuple("Sequence", AiNodeType::Sequence),
         std::make_tuple("Selector", AiNodeType::Selector),
@@ -35,7 +35,7 @@ void CatalogApi::on_register(Script* script) {
         std::make_tuple("Walk", AiNodeType::Walk)
     );
 
-    luabridge::getGlobalNamespace(*script)
+    luabridge::getGlobalNamespace(script)
         .beginClass<CatalogApi>("Catalog")
             .addFunction("create_archetype", &CatalogApi::create_archetype)
             .addFunction("clear_archetypes", &CatalogApi::clear_archetypes)

@@ -52,11 +52,11 @@ GLuint Texture::id() const {
     return id_;
 }
 
-void Texture::bind() {
+void Texture::bind() const {
     glBindTexture(GL_TEXTURE_2D, id_);
 }
 
-void Texture::unbind() {
+void Texture::unbind() const {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 

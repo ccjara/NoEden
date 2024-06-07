@@ -31,11 +31,6 @@ public:
     void add_api(ApiArgs&& ... api_args);
 
     /**
-     * @brief Setups up globals and namespaces for every script.
-     */
-    void setup_script_env(Script& script);
-
-    /**
      * @brief Reloads all scripts
      */
     void reload();
@@ -56,36 +51,7 @@ private:
 
     EventManager* events_ = nullptr;
 
-    struct ScriptRef {
-        u64 script_id;
-        luabridge::LuaRef ref;
-    };
-    std::unordered_map<lua_event_type, std::vector<ScriptRef>> listeners_;
-
-    /**
-     * @brief Tracks a lua function that should be invoked on a specific event.
-     *
-     * The stored refs must be removed before the scripts are unloaded
-     */
-    bool register_lua_callback(lua_event_type event_type, luabridge::LuaRef ref);
-
     bool on_key_down(KeyDownEvent& e);
-
-    /**
-     * @brief Calls all registered lua callbacks for a specific event type.
-     *
-     * The arguments are forwarded to each callback.
-     */
-    template<typename... args>
-    void invoke_lua_callbacks(lua_event_type event_type, args&& ... arguments) {
-        const auto it{ listeners_.find(event_type) };
-        if (it == listeners_.end()) {
-            return;
-        }
-        for (auto& script_ref: it->second) {
-            pcall_into(script_ref.ref, std::forward<args>(arguments)...);
-        }
-    }
 
     /**
      * @brief Loads a script after collecting all scripts in {@see load_from_path}

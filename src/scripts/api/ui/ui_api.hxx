@@ -1,12 +1,12 @@
 #ifndef NOEDEN_UI_API_HXX
 #define NOEDEN_UI_API_HXX
 
-#include "../lua_api.hxx"
-#include "../../../ui/ui.hxx"
+#include "scripts/api/lua_api.hxx"
+#include "ui/ui.hxx"
 
-class UiApi final : public LuaApi {
+class UiApi : public LuaApi {
 public:
-    void on_register(Script* script) final override;
+    void on_register(Script& script) override;
 private:
     UiWindow* create_window(const char* id);
     UiText* create_text(const char* id);

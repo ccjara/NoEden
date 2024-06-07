@@ -8,11 +8,11 @@ class Archetype;
 class Catalog;
 class ServiceLocator;
 
-class CatalogApi final : public LuaApi {
+class CatalogApi : public LuaApi {
 public:
     explicit CatalogApi(Catalog* catalog, ServiceLocator* services);
 
-    void on_register(Script* script) final override;
+    void on_register(Script& script) override;
 
     void create_archetype(luabridge::LuaRef ref);
 

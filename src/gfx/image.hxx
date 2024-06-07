@@ -6,17 +6,35 @@
  */
 class Image {
 public:
+    /**
+     * @brief Loads an image from the given path
+     *
+     * @param path Path to the image file
+     * @return Loaded image
+     */
     [[nodiscard]] static Image from_file(std::string_view path);
 
-    ~Image();
-
+    /**
+     * @brief Provides access to the raw image data.
+     */
     [[nodiscard]] unsigned char* data() const;
 
+    /**
+     * @brief Width of the image in pixels
+     */
     [[nodiscard]] i32 width() const;
+
+    /**
+     * @brief Height of the image in pixels
+     */
     [[nodiscard]] i32 height() const;
 
+    /**
+     * @brief Number of channels in the loaded image
+     */
     [[nodiscard]] i32 channels() const;
 
+    ~Image();
     Image(const Image&) = delete;
     Image(Image&&) = default;
     Image& operator=(const Image&) = delete;

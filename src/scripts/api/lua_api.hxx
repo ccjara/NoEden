@@ -1,7 +1,7 @@
 #ifndef NOEDEN_LUA_API
 #define NOEDEN_LUA_API
 
-#include "../../scripts/script.hxx"
+#include "scripts/script.hxx"
 
 /**
  * @brief Interface for lua api implementations.
@@ -15,20 +15,20 @@ public:
      *
      * Namespaces and globals for each script should be setup here.
      */
-    virtual void on_register(Script* script) = 0;
+    virtual void on_register(Script& script) = 0;
 
     /**
      * @brief Exposes the given api to lua under the given name.
      */
     template<typename Api>
-    void expose(Script* script, Api* api, const char* name) {
+    void expose(Script& script, Api* api, const char* name) {
         std::error_code ec;
-        luabridge::push<Api*>(*script, api, ec);
+        luabridge::push<Api*>(script, api, ec);
         if (ec) {
             Log::error("Could not expose api {}: {}", name, ec.message());
             return;
         }
-        lua_setglobal(*script, name);
+        lua_setglobal(script, name);
     }
 };
 

@@ -13,14 +13,14 @@ struct ScriptResetEvent {
 };
 
 /**
- * @brief Triggered after a script loaded
+ * @brief Triggered after a script has been loaded but before it is run
  */
 struct ScriptLoadedEvent {
     static constexpr EventType event_type = EventType::ScriptLoaded;
 
-    Script* script { nullptr };
+    Script* script = nullptr;
 
-    explicit constexpr ScriptLoadedEvent(Script* script) : script { script } {
+    explicit ScriptLoadedEvent(Script* script) : script(script) {
         assert(this->script);
     }
 };

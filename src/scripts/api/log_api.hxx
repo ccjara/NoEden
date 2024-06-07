@@ -3,9 +3,9 @@
 
 #include "lua_api.hxx"
 
-class LogApi final : public LuaApi {
+class LogApi : public LuaApi {
 public:
-    void on_register(Script* script) final override;
+    void on_register(Script& script) override;
 
     /**
      * @brief Called from lua to log a message on error level

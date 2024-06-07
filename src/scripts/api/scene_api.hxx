@@ -5,11 +5,11 @@
 
 class IEntityReader;
 
-class SceneApi final : public LuaApi {
+class SceneApi : public LuaApi {
 public:
     explicit SceneApi(IEntityReader* reader);
 
-    void on_register(Script* script) final override;
+    void on_register(Script& script) override;
 
     /**
      * @brief Returns the Entity name for the given entity id.

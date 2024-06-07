@@ -1,7 +1,7 @@
 #include "log_api.hxx"
 
-void LogApi::on_register(Script* script) {
-    luabridge::getGlobalNamespace(*script)
+void LogApi::on_register(Script& script) {
+    luabridge::getGlobalNamespace(script)
         .beginClass<LogApi>("LogApi")
             .addFunction("debug", &LogApi::log_debug)
             .addFunction("info", &LogApi::log_info)

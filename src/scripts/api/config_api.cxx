@@ -8,8 +8,8 @@ ConfigApi::ConfigApi(ConfigManager* config_manager, EventManager* events) :
     assert(events_);
 }
 
-void ConfigApi::on_register(Script* script) {
-    luabridge::getGlobalNamespace(*script)
+void ConfigApi::on_register(Script& script) {
+    luabridge::getGlobalNamespace(script)
         .beginClass<ConfigApi>("ConfigApi")
             .addFunction("configure", &ConfigApi::on_configure)
         .endClass();
