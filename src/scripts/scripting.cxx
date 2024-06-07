@@ -19,6 +19,9 @@ void Scripting::reset() {
 
 void Scripting::reload() {
     events_->engine->trigger<ScriptResetEvent>();
+    for (auto& script: script_registry_->scripts()) {
+        unload(*script.second);
+    }
 
     {
         auto result = script_loader_->load_from_directory(default_script_path);
@@ -28,7 +31,7 @@ void Scripting::reload() {
         script_registry_->reset();
         script_registry_->add(std::move(result.scripts));
     }
-    for (auto& kvp : script_registry_->scripts()) {
+    for (auto& kvp: script_registry_->scripts()) {
         load(*kvp.second);
     }
 }
@@ -41,6 +44,26 @@ bool Scripting::on_key_down(KeyDownEvent& e) {
     return true;
 }
 
+void Scripting::unload(Script& script) {
+    if (script.status() == ScriptStatus::Executed) {
+        return;
+    }
+    auto on_unload = luabridge::getGlobal(script, "on_unload");
+    if (on_unload.isFunction()) {
+        auto unload_result = on_unload();
+        if (!unload_result) {
+            Log::error(
+                "Script #{}: {} error in on_unload function: {} ({})",
+                script.id,
+                script.name(),
+                unload_result.errorMessage(),
+                unload_result.errorCode().value()
+            );
+        }
+    }
+    script.unload();
+}
+
 void Scripting::load(Script& script) {
     if (script.status() != ScriptStatus::Unloaded) {
         Log::error("Could not load script {}: script is already loaded.", script.name());
@@ -50,18 +73,27 @@ void Scripting::load(Script& script) {
     if (script.status() != ScriptStatus::Loaded) {
         return;
     }
+    events_->engine->trigger<ScriptLoadedEvent>(&script);
+    setup_script_env(script);
 
-    for (auto& api : apis_) {
-        api->on_register(script);
+    events_->engine->trigger<ScriptEnvSetupEvent>(&script);
+    Log::info("Script #{}: {} has been loaded", script.id, script.name());
+    if (!script.run()) {
+        return;
     }
 
-    events_->engine->trigger<ScriptLoadedEvent>(&script);
-    Log::info("Script #{}: {} has been loaded", script.id, script.name());
-    script.run();
-    // execute the on_load function, passing the script env proxy
-    auto on_load { luabridge::getGlobal(script, "on_load") };
+    auto on_load = luabridge::getGlobal(script, "on_load");
     if (on_load.isFunction()) {
-        pcall_into(on_load);
+        auto load_result = on_load();
+        if (!load_result) {
+            Log::error(
+                "Script #{}: {} error in on_load function: {} ({})",
+                script.id,
+                script.name(),
+                load_result.errorMessage(),
+                load_result.errorCode().value()
+            );
+        }
     }
 }
 
@@ -75,4 +107,32 @@ std::unordered_map<u64, std::unique_ptr<Script>>& Scripting::scripts() {
 
 Script* Scripting::get_by_id(u64 id) {
     return script_registry_->script(id);
+}
+
+void Scripting::setup_script_env(Script& script) {
+    assert(script.status() == ScriptStatus::Loaded);
+
+    for (auto& api: apis_) {
+        api->on_register(script);
+    }
+
+    lua_newtable(script);
+
+    lua_pushstring(script, script.name().c_str());
+    lua_setfield(script, -2, "name");
+
+    lua_pushinteger(script, script.id);
+    lua_setfield(script, -2, "id");
+
+    // create and set script metatable
+    lua_newtable(script);
+    lua_pushstring(script, "__newindex");
+    lua_pushcfunction(script, [](lua_State* L) -> int {
+        const char* key = lua_tostring(L, 2);
+        luaL_error(L, "attempt to modify read-only variable '%s'", key);
+        return 0;
+    });
+    lua_settable(script, -3);
+    lua_setmetatable(script, -2);
+    lua_setglobal(script, "script");
 }

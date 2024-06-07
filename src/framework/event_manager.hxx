@@ -73,7 +73,7 @@ public:
 private:
     template<EventLike<EventType> Event>
     struct EventHandler {
-        std::function<bool(Event&)> callable;
+        std::function<bool(Event&)> callable {};
         i32 priority = 0;
 
         explicit EventHandler(std::function<bool(Event&)>&& callable, i32 priority) :
@@ -105,7 +105,7 @@ private:
         }
 
         EventType event_type;
-        std::vector<EventHandler<Event>> event_handlers;
+        std::vector<EventHandler<Event>> event_handlers {};
     };
 
     template<EventLike<EventType> Event>

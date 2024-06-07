@@ -2,8 +2,6 @@ function on_update_inventory_window(window)
 end
 
 function on_load()
-    log:debug("on_load() - Creating inventory window");
-
     local inventory_window = ui:create_window("inventory_window");
 
     function on_inventory_view(owner)

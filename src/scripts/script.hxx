@@ -1,8 +1,6 @@
 #ifndef NOEDEN_SCRIPT_HXX
 #define NOEDEN_SCRIPT_HXX
 
-#include "script_util.hxx"
-
 enum class ScriptStatus {
     Unloaded,
     Loaded,
@@ -21,21 +19,6 @@ enum class ScriptError {
  */
 class Script {
     friend class ScriptLoader;
-private:
-    static u64 next_id_;
-
-    std::string name_;
-    lua_State* state_ { nullptr };
-    ScriptStatus status_ { ScriptStatus::Unloaded };
-    ScriptError error_ { ScriptError::None };
-
-    std::string source_;
-
-    std::vector<std::string> globals_;
-
-    std::unordered_map<std::string, luabridge::LuaRef> callbacks_;
-
-    void fail(ScriptError err);
 public:
     const u64 id;
 
@@ -117,6 +100,7 @@ public:
     }
 
     ScriptStatus status() const;
+    ScriptError error() const;
     const std::string& name() const;
     lua_State* lua_state() const;
     const std::vector<std::string>& globals() const;
@@ -127,6 +111,21 @@ public:
     Script& operator=(Script&&) = delete;
     Script(const Script&) = delete;
     Script& operator=(const Script&) = delete;
+private:
+    static u64 next_id_;
+
+    std::string name_;
+    lua_State* state_ = nullptr;
+    ScriptStatus status_ = ScriptStatus::Unloaded;
+    ScriptError error_ = ScriptError::None;
+
+    std::string source_;
+
+    std::vector<std::string> globals_;
+
+    std::unordered_map<std::string, luabridge::LuaRef> callbacks_;
+
+    void fail(ScriptError err);
 };
 
 template<typename t>

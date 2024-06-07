@@ -13,6 +13,7 @@ enum class EngineEventType {
     DisplayResized,
     ScriptReset,
     ScriptLoaded,
+    ScriptEnvSetup,
     ActionQueueProcessed,
     PlayerActionCommitted,
     WorldReady,

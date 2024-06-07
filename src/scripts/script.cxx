@@ -1,6 +1,6 @@
 #include "script.hxx"
 
-u64 Script::next_id_ { 0 };
+u64 Script::next_id_ = 0;
 
 Script::Script(std::string&& name, std::string&& source) :
     id(next_id_++),
@@ -47,23 +47,22 @@ void Script::load() {
 }
 
 void Script::unload() {
+    globals_.clear();
+    callbacks_.clear();
     if (state_) {
-        {
-            auto on_unload = luabridge::getGlobal(state_, "on_unload");
-            if (on_unload.isFunction()) {
-                pcall_into(on_unload);
-            }
-        }
         lua_close(state_);
         state_ = nullptr;
         status_ = ScriptStatus::Unloaded;
     }
-    globals_.clear();
-    callbacks_.clear();
+
 }
 
 ScriptStatus Script::status() const {
     return status_;
+}
+
+ScriptError Script::error() const {
+    return error_;
 }
 
 const std::string& Script::name() const {

@@ -10,7 +10,6 @@ concept Indexable = requires(T a) {
     { a.y } -> std::convertible_to<std::size_t>;
 };
 
-
 /**
  * @brief Generic implementation of a two-dimensional grid
  *

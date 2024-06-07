@@ -45,7 +45,7 @@ private:
     /**
      * @brief Map of service keys to service instances
      */
-    std::unordered_map<u32, void*> service_map_;
+    std::unordered_map<u32, void*> service_map_ = {};
 
     /**
      * @brief Next key to use when registering a service

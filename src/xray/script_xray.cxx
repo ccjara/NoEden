@@ -5,12 +5,7 @@ ScriptXray::ScriptXray(Scripting* scripting, Events* events) : scripting_(script
     assert(scripting_);
     assert(events);
 
-    events->engine->on<ScriptLoadedEvent>(this, &ScriptXray::on_script_loaded);
     events->engine->on<ScriptResetEvent>(this, &ScriptXray::on_script_reset);
-}
-
-bool ScriptXray::on_script_loaded(ScriptLoadedEvent& e) {
-    return false;
 }
 
 bool ScriptXray::on_script_reset(ScriptResetEvent& e) {

@@ -5,7 +5,6 @@
 #include "input/input_event.hxx"
 #include "scripts/api/lua_api.hxx"
 #include "scripts/script_event.hxx"
-#include "scripts/script_util.hxx"
 #include "scripts/script.hxx"
 #include "scripts/script_loader.hxx"
 #include "scripts/script_registry.hxx"
@@ -55,8 +54,24 @@ private:
 
     /**
      * @brief Loads a script after collecting all scripts in {@see load_from_path}
+     *
+     * @param script Script to load
      */
     void load(Script& script);
+
+    /**
+     * @brief Sets up the script environment
+     *
+     * @param script Script to set up
+     */
+    void setup_script_env(Script& script);
+
+    /**
+     * @brief Unloads a script
+     *
+     * @param script Script to unload
+     */
+    void unload(Script& script);
 
     /**
      * @brief Resets the script system to its initial state

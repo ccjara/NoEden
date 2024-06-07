@@ -58,7 +58,7 @@ set(COMMON_SOURCES
     "framework/concepts.hxx"
     "framework/engine_event_type.hxx"
     "framework/events.hxx"
-    "framework/event_manager.cxx"
+    "framework/event_manager.hxx"
     "framework/game_event_type.hxx"
     "framework/grid.hxx"
     "framework/service_locator.hxx"
