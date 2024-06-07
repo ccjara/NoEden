@@ -69,7 +69,7 @@ set(COMMON_SOURCES
     "gfx/gfx_event.hxx"
     "gfx/renderer.cxx"
     "gfx/shader.cxx"
-    "gfx/surface.cxx"
+    "gfx/image.cxx"
     "gfx/text.cxx"
     "gfx/text_shader.cxx"
     "gfx/texture.cxx"

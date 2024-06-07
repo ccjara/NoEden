@@ -1,4 +1,5 @@
-#include "texture.hxx"
+#include "gfx/texture.hxx"
+#include "gfx/image.hxx"
 
 Texture::~Texture() {
     unload();
@@ -18,39 +19,33 @@ bool Texture::is_loaded() const {
 void Texture::load(std::string_view path) {
     unload();
 
-    i32 width, height, channels;
-    unsigned char* data = stbi_load(path.data(), &width, &height, &channels, 1);
-
-    if (channels != 1) {
-        Log::error("Unsupported image format\n");
-        stbi_image_free(data);
-        std::abort();
-    }
+    const auto image = Image::from_file(path);
 
     glGenTextures(1, &id_);
-    glBindTexture(GL_TEXTURE_2D, id_);
+    bind();
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexImage2D(
         GL_TEXTURE_2D,
         0,
-        GL_RED,
-        static_cast<GLsizei> (width),
-        static_cast<GLsizei> (height),
+        GL_RGB,
+        image.width(),
+        image.height(),
         0,
-        GL_RED,
+        GL_RGB,
         GL_UNSIGNED_BYTE,
-        data
+        image.data()
     );
 
     const auto glError = glGetError();
     if (glError) {
-        Log::error("Could not generate texture from surface: {}", glError);
+        Log::error("Could not generate texture: {}", glError);
         std::abort();
     }
+    unbind();
 
-    size_ = { static_cast<u32> (width), static_cast<u32> (height) };
+    size_ = { static_cast<u32> (image.width()), static_cast<u32> (image.height()) };
 }
 
 GLuint Texture::id() const {

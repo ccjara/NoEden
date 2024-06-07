@@ -210,8 +210,8 @@ void SceneXray::entity_glyph(Entity* entity) {
         ImVec2(uvuv[2], uvuv[3]),
         ImVec4(
             static_cast<float>(color.r) / 255.0f,
-            static_cast<float>(color.b) / 255.0f,
             static_cast<float>(color.g) / 255.0f,
+            static_cast<float>(color.b) / 255.0f,
             1.0f
         )
     );

@@ -126,14 +126,7 @@ in f_struct {
 } fragment;
 
 void main() {
-    // sample the texture and read the intensity from the red channel
-    float intensity = texture(tex, fragment.tex_coord).r;
-    // create a grayscale color based on the intensity
-    vec3 grayscaleColor = vec3(intensity);
-    // multiply the grayscale color by the input color
-    vec3 finalColor = grayscaleColor * fragment.color;
-    // set the final color with full opacity
-    gl_FragColor = vec4(finalColor, 1.0);
+    gl_FragColor = texture(tex, fragment.tex_coord) * vec4(fragment.color, 1.0);
 }
 )RAW";
     Log::info("Compiling text shader ...");

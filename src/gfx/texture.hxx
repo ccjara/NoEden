@@ -1,8 +1,6 @@
 #ifndef NOEDEN_TEXTURE_HXX
 #define NOEDEN_TEXTURE_HXX
 
-#include "surface.hxx"
-
 /**
  * @brief Wrapper around a GL texture
  */
