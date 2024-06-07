@@ -31,3 +31,4 @@ Still working on bootstrapping the engine and framework properly. But the follow
 * [LuaBridge3](https://github.com/kunitoki/LuaBridge3)
 * [tomlplusplus](https://github.com/marzer/tomlplusplus)
 * [fmt](https://github.com/fmtlib/fmt)
+* [stb_image](https://github.com/nothings/stb)
