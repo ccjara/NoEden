@@ -12,7 +12,7 @@ struct ActionQueueProcessed {
 struct PlayerActionCommitted {
     static constexpr EngineEventType event_type = EngineEventType::PlayerActionCommitted;
 
-    explicit constexpr PlayerActionCommitted(Action* action) : action(action) {
+    explicit PlayerActionCommitted(Action* action) : action(action) {
         assert(this->action);
     }
 

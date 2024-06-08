@@ -47,6 +47,7 @@
 #include "math/rect.hxx"
 #include "gfx/color.hxx"
 #include "framework/event_manager.hxx"
+#include "framework/events.hxx"
 #include "framework/service_locator.hxx"
 #include "framework/grid.hxx"
 

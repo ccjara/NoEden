@@ -20,25 +20,25 @@ VisionManager::VisionManager(
     events->engine->on<WorldUpdatedPostEvent>(this, &VisionManager::on_world_updated_post);
 }
 
-bool VisionManager::on_world_ready(const WorldReadyEvent&) {
+EventResult VisionManager::on_world_ready(const WorldReadyEvent&) {
     update_fov();
     apply_fov();
-    return false;
+    return EventResult::Continue;
 }
 
-bool VisionManager::on_world_updated_pre(const WorldUpdatedPreEvent&) {
+EventResult VisionManager::on_world_updated_pre(const WorldUpdatedPreEvent&) {
     // reset fov
     tile_reader_->tiles().each([](Tile& tile) {
         tile.flags.set(TileFlags::FoV, false);
     });
 
-    return false;
+    return EventResult::Continue;
 }
 
-bool VisionManager::on_world_updated_post(const WorldUpdatedPostEvent&) {
+EventResult VisionManager::on_world_updated_post(const WorldUpdatedPostEvent&) {
     update_fov();
     apply_fov();
-    return false;
+    return EventResult::Continue;
 }
 
 void VisionManager::apply_fov() {

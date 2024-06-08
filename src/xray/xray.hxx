@@ -29,10 +29,10 @@ private:
      */
     static inline bool show_xray_ = true;
 
-    static bool on_mouse_down(MouseDownEvent& e);
-    static bool on_mouse_up(MouseUpEvent& e);
-    static bool on_key_down(KeyDownEvent& e);
-    static bool on_key_up(KeyUpEvent& e);
+    static EventResult on_mouse_down(MouseDownEvent& e);
+    static EventResult on_mouse_up(MouseUpEvent& e);
+    static EventResult on_key_down(KeyDownEvent& e);
+    static EventResult on_key_up(KeyUpEvent& e);
 
     static inline std::vector<std::unique_ptr<IXray>> xrays_;
 };

@@ -111,7 +111,6 @@ set(COMMON_SOURCES
     "scripts/script_event.hxx"
     "scripts/script_loader.cxx"
     "scripts/script_registry.cxx"
-    "scripts/script_util.hxx"
     "scripts/scripting.cxx"
 
     "tile/tile.cxx"

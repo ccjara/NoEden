@@ -17,27 +17,33 @@ void Xray::shutdown() {
     xrays_.clear();
 }
 
-bool Xray::on_mouse_down(MouseDownEvent &e) {
-    return ImGui::GetIO().WantCaptureMouse;
+EventResult Xray::on_mouse_down(MouseDownEvent &e) {
+    return ImGui::GetIO().WantCaptureMouse
+        ? EventResult::Halt
+        : EventResult::Continue;
 }
 
-bool Xray::on_mouse_up(MouseUpEvent &e) {
-    return ImGui::GetIO().WantCaptureMouse;
+EventResult Xray::on_mouse_up(MouseUpEvent &e) {
+    return ImGui::GetIO().WantCaptureMouse
+        ? EventResult::Halt
+        : EventResult::Continue;
 }
 
-bool Xray::on_key_down(KeyDownEvent &e) {
+EventResult Xray::on_key_down(KeyDownEvent &e) {
     if (ImGui::GetIO().WantCaptureKeyboard) {
-        return true;
+        return EventResult::Halt;
     }
     if (e.key == Key::F1) {
         show_xray_ = !show_xray_;
-        return true;
+        return EventResult::Halt;
     }
-    return false;
+    return EventResult::Continue;
 }
 
-bool Xray::on_key_up(KeyUpEvent &e) {
-    return ImGui::GetIO().WantCaptureKeyboard;
+EventResult Xray::on_key_up(KeyUpEvent &e) {
+    return ImGui::GetIO().WantCaptureKeyboard
+        ? EventResult::Halt
+        : EventResult::Continue;
 }
 
 void Xray::draw() {

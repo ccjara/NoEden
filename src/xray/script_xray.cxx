@@ -8,9 +8,9 @@ ScriptXray::ScriptXray(Scripting* scripting, Events* events) : scripting_(script
     events->engine->on<ScriptResetEvent>(this, &ScriptXray::on_script_reset);
 }
 
-bool ScriptXray::on_script_reset(ScriptResetEvent& e) {
+EventResult ScriptXray::on_script_reset(ScriptResetEvent& e) {
     selected_script_id_ = std::nullopt;
-    return false;
+    return EventResult::Continue;
 }
 
 void ScriptXray::update() {

@@ -22,9 +22,9 @@ public:
      */
     void update_fov();
 private:
-    bool on_world_ready(const WorldReadyEvent& e);
-    bool on_world_updated_pre(const WorldUpdatedPreEvent& e);
-    bool on_world_updated_post(const WorldUpdatedPostEvent& e);
+   EventResult on_world_ready(const WorldReadyEvent& e);
+   EventResult on_world_updated_pre(const WorldUpdatedPreEvent& e);
+   EventResult on_world_updated_post(const WorldUpdatedPostEvent& e);
 
     Events* events_ = nullptr;
     IEntityReader* entity_reader_ = nullptr;

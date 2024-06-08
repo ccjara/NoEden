@@ -24,9 +24,9 @@ void World::bind_player_controller(IPlayerController* controller) {
     player_controller = controller;
 }
 
-bool World::on_player_action_committed(const PlayerActionCommitted& e) {
+EventResult World::on_player_action_committed(const PlayerActionCommitted& e) {
     if (e.action == nullptr) [[unlikely]] {
-        return false;
+        return EventResult::Continue;
     }
 
     events_->engine->trigger<WorldUpdatedPreEvent>();
@@ -47,5 +47,5 @@ bool World::on_player_action_committed(const PlayerActionCommitted& e) {
 
     events_->engine->trigger<WorldUpdatedPostEvent>();
 
-    return false;
+    return EventResult::Continue;
 }

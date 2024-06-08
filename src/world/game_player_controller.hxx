@@ -16,7 +16,7 @@ public:
         Events* events
     );
 private:
-    bool on_key_down(KeyDownEvent& e);
+   EventResult on_key_down(KeyDownEvent& e);
 
     /**
      * Attempts to schedule a move action for the player

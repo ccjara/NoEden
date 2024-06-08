@@ -36,12 +36,12 @@ void Scripting::reload() {
     }
 }
 
-bool Scripting::on_key_down(KeyDownEvent& e) {
+EventResult Scripting::on_key_down(KeyDownEvent& e) {
     if (e.key != Key::F5) {
-        return false;
+        return EventResult::Continue;
     }
     reload();
-    return true;
+    return EventResult::Halt;
 }
 
 void Scripting::unload(Script& script) {

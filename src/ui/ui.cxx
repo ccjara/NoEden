@@ -38,16 +38,16 @@ void Ui::update_node(UiNode* node) {
     }
 }
 
-bool Ui::on_display_resized(DisplayResizedEvent& e) {
+EventResult Ui::on_display_resized(DisplayResizedEvent& e) {
     if (auto root = ui_tree_.root()) {
         root->resize(e.size);
     }
-    return false;
+    return EventResult::Continue;
 }
 
-bool Ui::on_script_reset(ScriptResetEvent& e) {
+EventResult Ui::on_script_reset(ScriptResetEvent& e) {
     ui_tree_.reset();
-    return false;
+    return EventResult::Continue;
 }
 
 UiTree& Ui::tree() {

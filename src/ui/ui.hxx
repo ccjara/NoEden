@@ -28,8 +28,8 @@ private:
 
     static void update_node(UiNode* node);
 
-    static bool on_display_resized(DisplayResizedEvent& e);
-    static bool on_script_reset(ScriptResetEvent& e);
+    static EventResult on_display_resized(DisplayResizedEvent& e);
+    static EventResult on_script_reset(ScriptResetEvent& e);
 };
 
 #endif

@@ -3,11 +3,9 @@
 #include "component/vision/vision.hxx"
 #include "component/skills.hxx"
 #include "component/render.hxx"
-#include "input/input.hxx"
 #include "input/input_event.hxx"
 #include "input/input_reader.hxx"
 #include "gfx/renderer.hxx"
-#include "component/skills.hxx"
 #include "entity/entity_manager.hxx"
 #include "tile/tile_manager.hxx"
 #include "config/config_event.hxx"
@@ -33,12 +31,12 @@ SceneXray::SceneXray(
     events_->engine->on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
 }
 
-bool SceneXray::on_config_updated(ConfigUpdatedEvent& e) {
+EventResult SceneXray::on_config_updated(ConfigUpdatedEvent& e) {
     config_ = e.next;
-    return false;
+    return EventResult::Continue;
 }
 
-bool SceneXray::on_mouse_down(MouseDownEvent& e) {
+EventResult SceneXray::on_mouse_down(MouseDownEvent& e) {
     /*
     TileType type_to_place;
     if (input_->is_mouse_pressed(MouseButton::Left)) {
@@ -61,7 +59,7 @@ bool SceneXray::on_mouse_down(MouseDownEvent& e) {
     tile_manager_->tiles().put(std::move(tile), tpos);
     return true;
     */
-    return false;
+    return EventResult::Continue;
 }
 
 void SceneXray::update() {

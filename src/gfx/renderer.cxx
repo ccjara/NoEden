@@ -82,10 +82,10 @@ void Renderer::set_scaling(u32 scaling) {
     text_shader_->use_resolution(view_port_ / scaling);
 }
 
-bool Renderer::on_resize(ResizeEvent& e) {
+EventResult Renderer::on_resize(ResizeEvent& e) {
     set_viewport(e.size);
     adjust_display();
-    return false;
+    return EventResult::Continue;
 }
 
 void Renderer::configure(const Config& cfg) {
@@ -104,9 +104,9 @@ void Renderer::configure(const Config& cfg) {
     adjust_display();
 }
 
-bool Renderer::on_config_updated(ConfigUpdatedEvent& e) {
+EventResult Renderer::on_config_updated(ConfigUpdatedEvent& e) {
     configure(e.next);
-    return false;
+    return EventResult::Continue;
 }
 
 void Renderer::adjust_display() {

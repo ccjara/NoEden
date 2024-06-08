@@ -1,26 +1,29 @@
 #include <catch2/catch.hpp>
-#include "framework/event_manager.hxx"
 #include "input/input.hxx"
 #include "input/input_event.hxx"
+#include "test_util/test_events.hxx"
 
 TEST_CASE("Input::mouse_position returns current mouse position", "[mouse][unit]") {
-    EventManager events;
+    TestEvents events;
     Input input(&events);
 
     SECTION("Returns (0, 0) by default") {
-        REQUIRE(input.mouse_position() == Vec2<u32> { 0, 0 });
+        REQUIRE(input.mouse_position() == Vec2<u32>{ 0, 0 });
     }
 
     SECTION("Returns the last set mouse position") {
         input.set_mouse_position({ 100, 200 });
-        REQUIRE(input.mouse_position() == Vec2<u32> { 100, 200 });
+        REQUIRE(input.mouse_position() == Vec2<u32>{ 100, 200 });
     }
 }
 
 TEST_CASE("Input::mouse_position triggers MouseMoveEvent", "[mouse][unit][event]") {
-    EventManager events;
+    TestEvents events;
     std::optional<MouseMoveEvent> event = std::nullopt;
-    events.on<MouseMoveEvent>([&event](const MouseMoveEvent& e) -> bool { event = e; return true; });
+    events.engine->on<MouseMoveEvent>([&event](const MouseMoveEvent& e) -> EventResult {
+        event = e;
+        return EventResult::Continue;
+    });
     Input input(&events);
 
     SECTION("Returns the last set mouse position") {
@@ -32,7 +35,7 @@ TEST_CASE("Input::mouse_position triggers MouseMoveEvent", "[mouse][unit][event]
 }
 
 TEST_CASE("Input::mouse_x returns current x coordinate of the mouse cursor", "[mouse][unit]") {
-    EventManager events;
+    TestEvents events;
     Input input(&events);
 
     SECTION("Returns 0 by default") {
@@ -46,7 +49,7 @@ TEST_CASE("Input::mouse_x returns current x coordinate of the mouse cursor", "[m
 }
 
 TEST_CASE("Input::mouse_y returns current y coordinate of the mouse cursor", "[mouse][unit]") {
-    EventManager events;
+    TestEvents events;
     Input input(&events);
 
     SECTION("Returns 0 by default") {
@@ -60,7 +63,7 @@ TEST_CASE("Input::mouse_y returns current y coordinate of the mouse cursor", "[m
 }
 
 TEST_CASE("Input::is_mouse_pressed returns true if the given mouse button is currently pressed", "[mouse][unit]") {
-    EventManager events;
+    TestEvents events;
     Input input(&events);
 
     SECTION("Returns false by default") {
@@ -81,7 +84,7 @@ TEST_CASE("Input::is_mouse_pressed returns true if the given mouse button is cur
 }
 
 TEST_CASE("Input::is_key_pressed returns true if the given keyboard key is currently pressed", "[keyboard][unit]") {
-    EventManager events;
+    TestEvents events;
     Input input(&events);
 
     SECTION("Returns false by default") {
@@ -102,7 +105,7 @@ TEST_CASE("Input::is_key_pressed returns true if the given keyboard key is curre
 }
 
 TEST_CASE("Input::set_mouse_position updates mouse coordinates", "[mouse][unit]") {
-    EventManager events;
+    TestEvents events;
     Input input(&events);
 
     SECTION("Updates mouse_x and mouse_y") {
@@ -113,9 +116,12 @@ TEST_CASE("Input::set_mouse_position updates mouse coordinates", "[mouse][unit]"
 }
 
 TEST_CASE("Input::set_mouse_position triggers MouseMoveEvent", "[mouse][unit][event]") {
-    EventManager events;
+    TestEvents events;
     std::optional<MouseMoveEvent> event = std::nullopt;
-    events.on<MouseMoveEvent>([&event](const MouseMoveEvent& e) -> bool { event = e; return true; });
+    events.engine->on<MouseMoveEvent>([&event](const MouseMoveEvent& e) -> EventResult {
+        event = e;
+        return EventResult::Continue;
+    });
     Input input(&events);
 
 
@@ -128,7 +134,7 @@ TEST_CASE("Input::set_mouse_position triggers MouseMoveEvent", "[mouse][unit][ev
 }
 
 TEST_CASE("Input::set_mouse_button_pressed updates mouse button state", "[mouse][unit]") {
-    EventManager events;
+    TestEvents events;
     Input input(&events);
 
     SECTION("Updates the state of the given button") {
@@ -140,7 +146,7 @@ TEST_CASE("Input::set_mouse_button_pressed updates mouse button state", "[mouse]
 }
 
 TEST_CASE("Input::set_mouse_button_pressed alloed multiple buttons to be pressed", "[mouse][unit]") {
-    EventManager events;
+    TestEvents events;
     Input input(&events);
 
     input.set_mouse_button_pressed(MouseButton::Left, true);
@@ -175,9 +181,12 @@ TEST_CASE("Input::set_mouse_button_pressed alloed multiple buttons to be pressed
 }
 
 TEST_CASE("Input::set_mouse_button_pressed triggers MouseDownEvent", "[mouse][unit][event]") {
-    EventManager events;
+    TestEvents events;
     std::optional<MouseDownEvent> event = std::nullopt;
-    events.on<MouseDownEvent>([&event](const MouseDownEvent& e) -> bool { event = e; return true; });
+    events.engine->on<MouseDownEvent>([&event](const MouseDownEvent& e) -> EventResult {
+        event = e;
+        return EventResult::Continue;
+    });
     Input input(&events);
 
     SECTION("Updates the state of the left button") {
@@ -200,7 +209,7 @@ TEST_CASE("Input::set_mouse_button_pressed triggers MouseDownEvent", "[mouse][un
 }
 
 TEST_CASE("Input::set_key_pressed allows multiple keys to be pressed", "[keyboard][unit]") {
-    EventManager events;
+    TestEvents events;
     Input input(&events);
 
     input.set_key_pressed(Key::A, true);

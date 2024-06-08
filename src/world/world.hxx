@@ -19,7 +19,7 @@ public:
     void bind_player_controller(IPlayerController* controller);
 
 private:
-    bool on_player_action_committed(const PlayerActionCommitted& e);
+   EventResult on_player_action_committed(const PlayerActionCommitted& e);
 
     /**
      * @brief Player controller bound to this world

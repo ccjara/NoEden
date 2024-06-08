@@ -18,19 +18,35 @@ GamePlayerController::GamePlayerController(
     events_->engine->on<KeyDownEvent>(this, &GamePlayerController::on_key_down);
 }
 
-bool GamePlayerController::on_key_down(KeyDownEvent& e) {
-    switch (e.key) {
-        case Key::W:
-            return move_relative(Vec2<i32>{ 0, -1 });
-        case Key::A:
-            return move_relative(Vec2<i32>{ -1, 0 });
-        case Key::S:
-            return move_relative(Vec2<i32>{ 0, 1 });
-        case Key::D:
-            return move_relative(Vec2<i32>{ 1, 0 });
-        default:
-            return false;
+EventResult GamePlayerController::on_key_down(KeyDownEvent& e) {
+    Vec2<i32> position = { 0, 0 };
+
+    if (e.key == Key::W) {
+        position.y = -1;
+    } else if (e.key == Key::A) {
+        position.x = -1;
+    } else if (e.key == Key::S) {
+        position.y = 1;
+    } else if (e.key == Key::D) {
+        position.x = 1;
+    } else if (e.key == Key::Q) {
+        position.x = -1;
+        position.y = -1;
+    } else if (e.key == Key::E) {
+        position.x = 1;
+        position.y = -1;
+    } else if (e.key == Key::Z || e.key == Key::Y) {
+        position.x = -1;
+        position.y = 1;
+    } else if (e.key == Key::C) {
+        position.x = 1;
+        position.y = 1;
+    } else {
+        return EventResult::Continue;
     }
+
+    move_relative(position);
+    return EventResult::Halt;
 }
 
 bool GamePlayerController::move_relative(const Vec2<i32>& direction) {

@@ -9,14 +9,25 @@ concept EventLike = requires {
     { Event::event_type } -> std::convertible_to<EventType>;
 };
 
+enum class EventResult {
+    /**
+     * @brief Continue propagating the event to other handlers
+     */
+    Continue,
+
+    /**
+     * @brief Halt propagation of the event to other handlers
+     */
+    Halt,
+};
+
 template<typename EventType>
 class EventManager {
 public:
     /**
      * @brief Registers a free function to be called if the given event is triggered.
      *
-     * The function must return a boolean, indicating whether the event was `handled`
-     * and should not propagate further to any other event handlers.
+     * The function must return an EventResult, indicating whether the event may propagate further to other handlers.
      *
      * The higher the priority the earlier the handler will be called.
      */
@@ -27,7 +38,7 @@ public:
     }
 
     /**
-     * @brief Registers member function to be called if the given event is triggered.
+     * @brief Registers a member function to be called if the given event is triggered.
      *
      * The function must return a boolean, indicating whether the event was `handled`
      * and should not propagate further to any other event handlers.
@@ -38,7 +49,7 @@ public:
     void on(Inst* instance, Fn method, i32 priority = 0) {
         EventPartition<Event>& partition = get_or_create_partition<Event>();
         partition.add_callable(
-            [instance, method](Event& event) -> bool {
+            [instance, method](Event& event) -> EventResult {
                 return (instance->*method)(event);
             },
             priority
@@ -58,7 +69,7 @@ public:
         Event event(std::forward<Args>(args)...);
         EventPartition<Event>& partition = get_or_create_partition<Event>();
         for (auto& handler : partition.event_handlers) {
-            if (handler.callable(event)) {
+            if (handler.callable(event) == EventResult::Halt) {
                 break;
             }
         }
@@ -73,10 +84,10 @@ public:
 private:
     template<EventLike<EventType> Event>
     struct EventHandler {
-        std::function<bool(Event&)> callable {};
+        std::function<EventResult(Event&)> callable {};
         i32 priority = 0;
 
-        explicit EventHandler(std::function<bool(Event&)>&& callable, i32 priority) :
+        explicit EventHandler(std::function<EventResult(Event&)>&& callable, i32 priority) :
             callable(std::move(callable)),
             priority(priority) {
         }
@@ -111,10 +122,11 @@ private:
     template<EventLike<EventType> Event>
     EventPartition<Event>& get_or_create_partition() {
         EventType type = Event::event_type;
-        if (partitions_.find(type) == partitions_.end()) {
-            partitions_[type] = std::make_unique<EventPartition<Event>>(type);
+        auto [it, inserted] = partitions_.emplace(type, nullptr);
+        if (inserted) {
+            it->second = std::make_unique<EventPartition<Event>>(type);
         }
-        return *static_cast<EventPartition<Event>*>(partitions_[type].get());
+        return *static_cast<EventPartition<Event>*>(it->second.get());
     }
 
     std::unordered_map<EventType, std::unique_ptr<BaseEventPartition>> partitions_;

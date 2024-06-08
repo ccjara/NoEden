@@ -18,7 +18,7 @@ private:
 
     void render_current_script(Script *current);
 
-    bool on_script_reset(ScriptResetEvent& e);
+   EventResult on_script_reset(ScriptResetEvent& e);
 
     struct GlobalsState {
         bool visible = false;

@@ -82,8 +82,8 @@ private:
 
     static inline size_t last_size_ = 0;
 
-    static inline bool on_resize(ResizeEvent&);
-    static inline bool on_config_updated(ConfigUpdatedEvent&);
+    static inline EventResult on_resize(ResizeEvent&);
+    static inline EventResult on_config_updated(ConfigUpdatedEvent&);
 
     static inline void adjust_display();
 
