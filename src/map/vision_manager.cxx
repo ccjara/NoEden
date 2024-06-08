@@ -4,7 +4,6 @@
 #include "component/vision/vision.hxx"
 #include "tile/tile.hxx"
 #include "tile/tile_reader.hxx"
-#include "world/world_event.hxx"
 
 VisionManager::VisionManager(
     IEntityReader* entity_reader,
@@ -15,9 +14,9 @@ VisionManager::VisionManager(
     assert(tile_reader_);
     assert(events_);
 
-    events->engine->on<WorldReadyEvent>(this, &VisionManager::on_world_ready);
-    events->engine->on<WorldUpdatedPreEvent>(this, &VisionManager::on_world_updated_pre);
-    events->engine->on<WorldUpdatedPostEvent>(this, &VisionManager::on_world_updated_post);
+    world_ready_sub_ = events->engine->on<WorldReadyEvent>(this, &VisionManager::on_world_ready);
+    world_updated_pre_sub_ = events->engine->on<WorldUpdatedPreEvent>(this, &VisionManager::on_world_updated_pre);
+    world_updated_post_sub_ = events->engine->on<WorldUpdatedPostEvent>(this, &VisionManager::on_world_updated_post);
 }
 
 EventResult VisionManager::on_world_ready(const WorldReadyEvent&) {

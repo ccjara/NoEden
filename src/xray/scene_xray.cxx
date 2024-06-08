@@ -3,12 +3,10 @@
 #include "component/vision/vision.hxx"
 #include "component/skills.hxx"
 #include "component/render.hxx"
-#include "input/input_event.hxx"
 #include "input/input_reader.hxx"
 #include "gfx/renderer.hxx"
 #include "entity/entity_manager.hxx"
 #include "tile/tile_manager.hxx"
-#include "config/config_event.hxx"
 
 SceneXray::SceneXray(
     EntityManager* entity_manager,
@@ -27,16 +25,16 @@ SceneXray::SceneXray(
     assert(translator_);
     assert(events_);
 
-    events_->engine->on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
-    events_->engine->on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
+    mouse_down_sub_ = events_->engine->on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
+    config_updated_sub_ = events_->engine->on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
 }
 
-EventResult SceneXray::on_config_updated(ConfigUpdatedEvent& e) {
+EventResult SceneXray::on_config_updated(const ConfigUpdatedEvent& e) {
     config_ = e.next;
     return EventResult::Continue;
 }
 
-EventResult SceneXray::on_mouse_down(MouseDownEvent& e) {
+EventResult SceneXray::on_mouse_down(const MouseDownEvent& e) {
     /*
     TileType type_to_place;
     if (input_->is_mouse_pressed(MouseButton::Left)) {

@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <any>
 #include <array>
+#include <atomic>
 #include <bitset>
 #include <charconv>
 #include <chrono>
@@ -54,6 +55,7 @@
 
 #include "framework/usings.hxx"
 #include "framework/concepts.hxx"
+#include "framework/event.hxx"
 
 #include "log/log.hxx"
 #include "lang/translator.hxx"

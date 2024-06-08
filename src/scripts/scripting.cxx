@@ -2,7 +2,7 @@
 
 Scripting::Scripting(Events* events) : events_(events) {
     assert(events_);
-    events_->engine->on<KeyDownEvent>(this, &Scripting::on_key_down);
+    key_down_sub_ = events_->engine->on<KeyDownEvent>(this, &Scripting::on_key_down);
     script_loader_ = std::make_unique<ScriptLoader>();
     script_registry_ = std::make_unique<ScriptRegistry>();
 }
@@ -45,20 +45,23 @@ EventResult Scripting::on_key_down(KeyDownEvent& e) {
 }
 
 void Scripting::unload(Script& script) {
-    if (script.status() == ScriptStatus::Executed) {
+    if (script.status() != ScriptStatus::Executed) {
         return;
     }
-    auto on_unload = luabridge::getGlobal(script, "on_unload");
-    if (on_unload.isFunction()) {
-        auto unload_result = on_unload();
-        if (!unload_result) {
-            Log::error(
-                "Script #{}: {} error in on_unload function: {} ({})",
-                script.id,
-                script.name(),
-                unload_result.errorMessage(),
-                unload_result.errorCode().value()
-            );
+    {
+        // on_unload must go out of scope before script.unload() is called as it frees the lua state
+        auto on_unload = luabridge::getGlobal(script, "on_unload");
+        if (on_unload.isFunction()) {
+            auto unload_result = on_unload();
+            if (!unload_result) {
+                Log::error(
+                    "Script #{}: {} error in on_unload function: {} ({})",
+                    script.id,
+                    script.name(),
+                    unload_result.errorMessage(),
+                    unload_result.errorCode().value()
+                );
+            }
         }
     }
     script.unload();

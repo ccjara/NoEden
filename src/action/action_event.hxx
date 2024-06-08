@@ -5,13 +5,10 @@
 
 class Action;
 
-struct ActionQueueProcessed {
-    static constexpr EngineEventType event_type = EngineEventType::ActionQueueProcessed;
+struct ActionQueueProcessed : public Event<EngineEventType::ActionQueueProcessed> {
 };
 
-struct PlayerActionCommitted {
-    static constexpr EngineEventType event_type = EngineEventType::PlayerActionCommitted;
-
+struct PlayerActionCommitted : public Event<EngineEventType::PlayerActionCommitted> {
     explicit PlayerActionCommitted(Action* action) : action(action) {
         assert(this->action);
     }

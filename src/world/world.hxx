@@ -1,11 +1,12 @@
 #ifndef NOEDEN_WORLD_HXX
 #define NOEDEN_WORLD_HXX
 
+#include "action/action_event.hxx"
+
 class IEntityReader;
 class IPlayerController;
 class IActionProcessor;
 class Entity;
-struct PlayerActionCommitted;
 
 class World {
 public:
@@ -19,7 +20,8 @@ public:
     void bind_player_controller(IPlayerController* controller);
 
 private:
-   EventResult on_player_action_committed(const PlayerActionCommitted& e);
+    EventResult on_player_action_committed(const PlayerActionCommitted& e);
+    Subscription<PlayerActionCommitted> player_action_committed_sub_;
 
     /**
      * @brief Player controller bound to this world

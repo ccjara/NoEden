@@ -7,9 +7,7 @@
 /**
  * @brief Triggered every time the configuration updates (usually from within lua)
  */
-struct ConfigUpdatedEvent {
-    static constexpr EngineEventType event_type = EngineEventType::ConfigUpdated;
-
+struct ConfigUpdatedEvent : public Event<EngineEventType::ConfigUpdated> {
     Config prev;
     Config next;
 

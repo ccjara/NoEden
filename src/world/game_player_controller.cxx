@@ -1,10 +1,8 @@
 #include "world/game_player_controller.hxx"
 #include "action/action_creator.hxx"
-#include "action/action_event.hxx"
 #include "action/move_action.hxx"
 #include "entity/entity.hxx"
 #include "entity/entity_reader.hxx"
-#include "input/input_event.hxx"
 
 GamePlayerController::GamePlayerController(
     IEntityReader* entity_reader,
@@ -15,7 +13,7 @@ GamePlayerController::GamePlayerController(
     events_(events) {
     assert(events_);
 
-    events_->engine->on<KeyDownEvent>(this, &GamePlayerController::on_key_down);
+    key_down_sub_ = events_->engine->on<KeyDownEvent>(this, &GamePlayerController::on_key_down);
 }
 
 EventResult GamePlayerController::on_key_down(KeyDownEvent& e) {

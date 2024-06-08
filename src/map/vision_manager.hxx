@@ -1,12 +1,11 @@
 #ifndef NOEDEN_VISION_MANAGER_HXX
 #define NOEDEN_VISION_MANAGER_HXX
 
+#include "world/world_event.hxx"
+
 struct Events;
 class IEntityReader;
 class ITileReader;
-class WorldReadyEvent;
-class WorldUpdatedPreEvent;
-class WorldUpdatedPostEvent;
 
 class VisionManager {
 public:
@@ -22,9 +21,12 @@ public:
      */
     void update_fov();
 private:
-   EventResult on_world_ready(const WorldReadyEvent& e);
-   EventResult on_world_updated_pre(const WorldUpdatedPreEvent& e);
-   EventResult on_world_updated_post(const WorldUpdatedPostEvent& e);
+    EventResult on_world_ready(const WorldReadyEvent& e);
+    Subscription<WorldReadyEvent> world_ready_sub_;
+    EventResult on_world_updated_pre(const WorldUpdatedPreEvent& e);
+    Subscription<WorldUpdatedPreEvent> world_updated_pre_sub_;
+    EventResult on_world_updated_post(const WorldUpdatedPostEvent& e);
+    Subscription<WorldUpdatedPostEvent> world_updated_post_sub_;
 
     Events* events_ = nullptr;
     IEntityReader* entity_reader_ = nullptr;

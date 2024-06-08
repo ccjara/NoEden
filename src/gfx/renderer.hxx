@@ -5,9 +5,8 @@
 #include "text_shader.hxx"
 #include "gfx_event.hxx"
 #include "config/config.hxx"
-
-class ConfigUpdatedEvent;
-class ResizeEvent;
+#include "config/config_event.hxx"
+#include "platform/platform_event.hxx"
 
 /**
  * @brief Executes GL rendering operations
@@ -83,7 +82,9 @@ private:
     static inline size_t last_size_ = 0;
 
     static inline EventResult on_resize(ResizeEvent&);
+    static inline Subscription<ResizeEvent> resize_sub_;
     static inline EventResult on_config_updated(ConfigUpdatedEvent&);
+    static inline Subscription<ConfigUpdatedEvent> config_updated_sub_;
 
     static inline void adjust_display();
 

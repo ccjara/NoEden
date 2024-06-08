@@ -3,16 +3,13 @@
 
 #include "framework/engine_event_type.hxx"
 
-struct WorldReadyEvent {
-    static constexpr EngineEventType event_type = EngineEventType::WorldReady;
+struct WorldReadyEvent : public Event<EngineEventType::WorldReady> {
 };
 
-struct WorldUpdatedPreEvent {
-    static constexpr EngineEventType event_type = EngineEventType::WorldUpdatedPre;
+struct WorldUpdatedPreEvent : public Event<EngineEventType::WorldUpdatedPre> {
 };
 
-struct WorldUpdatedPostEvent {
-    static constexpr EngineEventType event_type = EngineEventType::WorldUpdatedPost;
+struct WorldUpdatedPostEvent : public Event<EngineEventType::WorldUpdatedPost> {
 };
 
 #endif

@@ -10,8 +10,8 @@ void Ui::init(Events* events, Display* display) {
 
     ui_tree_.create_root_node();
 
-    events_->engine->on<DisplayResizedEvent>(&Ui::on_display_resized);
-    events_->engine->on<ScriptResetEvent>(&Ui::on_script_reset);
+    display_resized_sub_ = events_->engine->on<DisplayResizedEvent>(&Ui::on_display_resized);
+    script_reset_sub_ = events_->engine->on<ScriptResetEvent>(&Ui::on_script_reset);
 }
 
 void Ui::shutdown() {

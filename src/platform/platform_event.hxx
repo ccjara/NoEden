@@ -7,12 +7,10 @@
 /**
  * @brief Triggered as the user resizes the window.
  */
-struct ResizeEvent {
-    static constexpr EngineEventType event_type = EngineEventType::Resize;
-
-    constexpr ResizeEvent(Vec2<i32> size) : size(size) {}
-
+struct ResizeEvent : public Event<EngineEventType::Resize> {
     Vec2<i32> size;
+
+    constexpr ResizeEvent(const Vec2<i32> size) : size(size) {}
 };
 
 #endif

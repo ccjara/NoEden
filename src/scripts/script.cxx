@@ -54,7 +54,6 @@ void Script::unload() {
         state_ = nullptr;
         status_ = ScriptStatus::Unloaded;
     }
-
 }
 
 ScriptStatus Script::status() const {

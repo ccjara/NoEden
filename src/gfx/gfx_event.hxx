@@ -9,15 +9,13 @@
  * The display is resized in the gfx system just after the low level event
  * ResizeEvent has been handled there (for example due to a window resize).
  */
-struct DisplayResizedEvent {
-    static constexpr EngineEventType event_type = EngineEventType::DisplayResized;
-
+struct DisplayResizedEvent : public Event<EngineEventType::DisplayResized> {
     /**
      * @brief The new display size in cell units
      */
     Vec2<u32> size;
 
-    explicit DisplayResizedEvent(Vec2<u32> size) : size(size) {
+    explicit DisplayResizedEvent(const Vec2<u32>& size) : size(size) {
     }
 };
 

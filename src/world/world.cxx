@@ -1,6 +1,5 @@
 #include "world/world.hxx"
 #include "action/action.hxx"
-#include "action/action_event.hxx"
 #include "action/action_processor.hxx"
 #include "entity/entity.hxx"
 #include "entity/entity_reader.hxx"
@@ -17,7 +16,7 @@ World::World(
     assert(events_);
     assert(action_processor_);
 
-    events_->engine->on<PlayerActionCommitted>(this, &World::on_player_action_committed);
+    player_action_committed_sub_ = events_->engine->on<PlayerActionCommitted>(this, &World::on_player_action_committed);
 }
 
 void World::bind_player_controller(IPlayerController* controller) {

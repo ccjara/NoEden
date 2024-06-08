@@ -30,6 +30,9 @@ private:
 
     static EventResult on_display_resized(DisplayResizedEvent& e);
     static EventResult on_script_reset(ScriptResetEvent& e);
+
+    static inline Subscription<DisplayResizedEvent> display_resized_sub_;
+    static inline Subscription<ScriptResetEvent> script_reset_sub_;
 };
 
 #endif

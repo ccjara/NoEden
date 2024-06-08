@@ -1,6 +1,4 @@
 #include "gfx/renderer.hxx"
-#include "config/config_event.hxx"
-#include "platform/platform_event.hxx"
 
 void Renderer::shutdown() {
     if (vao) {
@@ -15,8 +13,8 @@ void Renderer::init(Events* events) {
     assert(events);
 
     events_ = events;
-    events_->engine->on<ResizeEvent>(&Renderer::on_resize);
-    events_->engine->on<ConfigUpdatedEvent>(&Renderer::on_config_updated);
+    resize_sub_ = events_->engine->on<ResizeEvent>(&Renderer::on_resize);
+    config_updated_sub_ = events_->engine->on<ConfigUpdatedEvent>(&Renderer::on_config_updated);
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);

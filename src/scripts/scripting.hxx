@@ -50,7 +50,8 @@ private:
 
     Events* events_ = nullptr;
 
-   EventResult on_key_down(KeyDownEvent& e);
+    EventResult on_key_down(KeyDownEvent& e);
+    Subscription<KeyDownEvent> key_down_sub_;
 
     /**
      * @brief Loads a script after collecting all scripts in {@see load_from_path}

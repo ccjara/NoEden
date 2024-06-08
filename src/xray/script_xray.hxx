@@ -1,12 +1,12 @@
 #ifndef NOEDEN_SCRIPT_XRAY_HXX
 #define NOEDEN_SCRIPT_XRAY_HXX
 
+#include "scripts/script_event.hxx"
 #include "xray/xray_interface.hxx"
 #include "xray/xray_style.hxx"
 
 class Scripting;
 class Script;
-struct ScriptResetEvent;
 
 class ScriptXray : public IXray {
 public:
@@ -18,7 +18,8 @@ private:
 
     void render_current_script(Script *current);
 
-   EventResult on_script_reset(ScriptResetEvent& e);
+    EventResult on_script_reset(ScriptResetEvent& e);
+    Subscription<ScriptResetEvent> script_reset_sub_;
 
     struct GlobalsState {
         bool visible = false;

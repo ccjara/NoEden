@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <any>
 #include <array>
+#include <atomic>
 #include <charconv>
 #include <chrono>
 #include <cmath>
@@ -42,6 +43,8 @@
 
 #include "framework/usings.hxx"
 #include "framework/concepts.hxx"
+#include "framework/event.hxx"
+
 #include "math/vec2.hxx"
 #include "math/bresenham.hxx"
 #include "math/rect.hxx"

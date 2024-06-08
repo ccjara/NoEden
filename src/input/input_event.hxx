@@ -8,21 +8,17 @@
 /**
  * @brief Triggered as the user moves the mouse inside the window.
  */
-struct MouseMoveEvent {
-    static constexpr EngineEventType event_type = EngineEventType::MouseMove;
-
+struct MouseMoveEvent : public Event<EngineEventType::MouseMove> {
     Vec2<i32> position;
 
-    explicit MouseMoveEvent(Vec2<i32> position) : position(position) {
+    explicit MouseMoveEvent(const Vec2<i32>& position) : position(position) {
     }
 };
 
 /**
  * @brief Triggered clicking a mouse button (only when inside the window).
  */
-struct MouseDownEvent {
-    static constexpr EngineEventType event_type = EngineEventType::MouseDown;
-
+struct MouseDownEvent : public Event<EngineEventType::MouseDown> {
     MouseButton button;
 
     explicit MouseDownEvent(MouseButton button) : button(button) {
@@ -32,9 +28,7 @@ struct MouseDownEvent {
 /**
  * @brief Triggered when releasing a mouse button (only when inside the window).
  */
-struct MouseUpEvent {
-    static constexpr EngineEventType event_type = EngineEventType::MouseUp;
-    
+struct MouseUpEvent : public Event<EngineEventType::MouseUp> {
     MouseButton button;
 
     explicit MouseUpEvent(MouseButton button) : button(button) {
@@ -44,9 +38,7 @@ struct MouseUpEvent {
 /**
  * @brief Triggered when pressing a key (only if the window is focused).
  */
-struct KeyDownEvent {
-    static constexpr EngineEventType event_type = EngineEventType::KeyDown;
-
+struct KeyDownEvent : public Event<EngineEventType::KeyDown> {
     Key key;
 
     explicit KeyDownEvent(Key key) : key(key) {
@@ -56,9 +48,7 @@ struct KeyDownEvent {
 /**
  * @brief Triggered when releasing a key (only if the window is focused).
  */
-struct KeyUpEvent {
-    static constexpr EngineEventType event_type = EngineEventType::KeyUp;
-
+struct KeyUpEvent : public Event<EngineEventType::KeyUp> {
     Key key;
 
     explicit KeyUpEvent(Key key) : key(key) {

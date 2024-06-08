@@ -20,7 +20,7 @@ TEST_CASE("Input::mouse_position returns current mouse position", "[mouse][unit]
 TEST_CASE("Input::mouse_position triggers MouseMoveEvent", "[mouse][unit][event]") {
     TestEvents events;
     std::optional<MouseMoveEvent> event = std::nullopt;
-    events.engine->on<MouseMoveEvent>([&event](const MouseMoveEvent& e) -> EventResult {
+    auto sub = events.engine->on<MouseMoveEvent>([&event](const MouseMoveEvent& e) -> EventResult {
         event = e;
         return EventResult::Continue;
     });
@@ -118,7 +118,7 @@ TEST_CASE("Input::set_mouse_position updates mouse coordinates", "[mouse][unit]"
 TEST_CASE("Input::set_mouse_position triggers MouseMoveEvent", "[mouse][unit][event]") {
     TestEvents events;
     std::optional<MouseMoveEvent> event = std::nullopt;
-    events.engine->on<MouseMoveEvent>([&event](const MouseMoveEvent& e) -> EventResult {
+    auto sub = events.engine->on<MouseMoveEvent>([&event](const MouseMoveEvent& e) -> EventResult {
         event = e;
         return EventResult::Continue;
     });
@@ -183,7 +183,7 @@ TEST_CASE("Input::set_mouse_button_pressed alloed multiple buttons to be pressed
 TEST_CASE("Input::set_mouse_button_pressed triggers MouseDownEvent", "[mouse][unit][event]") {
     TestEvents events;
     std::optional<MouseDownEvent> event = std::nullopt;
-    events.engine->on<MouseDownEvent>([&event](const MouseDownEvent& e) -> EventResult {
+    auto sub = events.engine->on<MouseDownEvent>([&event](const MouseDownEvent& e) -> EventResult {
         event = e;
         return EventResult::Continue;
     });

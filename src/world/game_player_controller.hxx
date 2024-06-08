@@ -2,11 +2,12 @@
 #define NOEDEN_GAME_PLAYER_CONTROLLER_HXX
 
 #include "world/player_controller.hxx"
+#include "action/action_event.hxx"
+#include "input/input_event.hxx"
 
 struct Events;
 class IEntityReader;
 class IActionCreator;
-class KeyDownEvent;
 
 class GamePlayerController : public IPlayerController {
 public:
@@ -16,7 +17,8 @@ public:
         Events* events
     );
 private:
-   EventResult on_key_down(KeyDownEvent& e);
+    EventResult on_key_down(KeyDownEvent& e);
+    Subscription<KeyDownEvent> key_down_sub_;
 
     /**
      * Attempts to schedule a move action for the player
@@ -28,6 +30,7 @@ private:
     Events* events_ = nullptr;
     IEntityReader* entity_reader_ = nullptr;
     IActionCreator* action_creator_ = nullptr;
+
 };
 
 #endif
