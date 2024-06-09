@@ -112,6 +112,25 @@ TEST_CASE("EventManager calls handlers in descending order of priority", "[event
     REQUIRE(handlerTwoCalled);
 }
 
+
+TEST_CASE("EventManager::clear() removes all handlers", "[event][unit]") {
+    EventManager<EngineEventType> events;
+
+    auto subOne = events.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
+        return EventResult::Continue;
+    });
+
+    auto subTwo = events.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
+        return EventResult::Continue;
+    });
+
+    REQUIRE(events.handler_count(EngineEventType::Start) == 2);
+
+    events.clear();
+
+    REQUIRE(events.handler_count(EngineEventType::Start) == 0);
+}
+
 TEST_CASE("Subscription, when out of scope, removes listener", "[event][unit]") {
     EventManager<EngineEventType> events;
 
@@ -142,40 +161,35 @@ TEST_CASE("Subscription when moved into other subscription, unsubscribes from ol
 }
 
 TEST_CASE("Subscription move assignment behavior", "[Subscription]") {
-    SECTION("Move assignment with different event managers: moved subscription is preserved") {
-        EventManager<EngineEventType> manager1;
-        EventManager<EngineEventType> manager2;
+    SECTION("Move assignment to inactive subscription: moved subscription is preserved") {
+        EventManager<EngineEventType> manager;
+        Subscription<EngineStartEvent> sub1;
 
-        auto sub1 = manager1.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
+        auto sub2 = manager.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
             return EventResult::Continue;
         });
 
-        auto sub2 = manager2.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
-            return EventResult::Continue;
-        });
-
-        const Id sub1_id = sub1.id();
         const Id sub2_id = sub2.id();
-
-        REQUIRE(sub1_id == sub2_id); // precondition
 
         sub1 = std::move(sub2);
 
         REQUIRE(sub1.id() == sub2_id);
+        REQUIRE(sub1.active() == true);
+        REQUIRE(sub1.event_manager() == &manager);
         REQUIRE(sub2.id() == 0); // NOLINT(*-use-after-move)
-
-        REQUIRE(manager1.handler_count(EngineEventType::Start) == 0);
-        REQUIRE(manager2.handler_count(EngineEventType::Start) == 1);
+        REQUIRE(sub2.event_manager() == nullptr); // NOLINT(*-use-after-move)
+        REQUIRE_FALSE(sub2.active()); // NOLINT(*-use-after-move)
+        REQUIRE(manager.handler_count(EngineEventType::Start) == 1);
     }
 
-    SECTION("Move assignment with different ids: moved subscription is preserved") {
-        EventManager<EngineEventType> manager1;
+    SECTION("Move assignment to active subscription: unsubscribes old subscription") {
+        EventManager<EngineEventType> manager;
 
-        auto sub1 = manager1.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
+        auto sub1 = manager.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
             return EventResult::Continue;
         });
 
-        auto sub2 = manager1.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
+        auto sub2 = manager.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
             return EventResult::Continue;
         });
 
@@ -183,27 +197,65 @@ TEST_CASE("Subscription move assignment behavior", "[Subscription]") {
         const Id sub2_id = sub2.id();
 
         REQUIRE(sub1_id != sub2_id); // precondition
+        REQUIRE(manager.handler_count(EngineEventType::Start) == 2); // precondition
 
         sub1 = std::move(sub2);
 
         REQUIRE(sub1.id() == sub2_id);
+        REQUIRE(sub1.active() == true);
+        REQUIRE(sub1.event_manager() == &manager);
         REQUIRE(sub2.id() == 0); // NOLINT(*-use-after-move)
+        REQUIRE(sub2.event_manager() == nullptr); // NOLINT(*-use-after-move)
+        REQUIRE_FALSE(sub2.active()); // NOLINT(*-use-after-move)
+        REQUIRE(manager.handler_count(EngineEventType::Start) == 1);
+    }
+}
 
-        REQUIRE(manager1.handler_count(EngineEventType::Start) == 1);
+TEST_CASE("Subscription state", "[Subscription]") {
+    SECTION("Default constructed is inactive") {
+        Subscription<EngineStartEvent> subscription;
+        REQUIRE_FALSE(subscription.active());
     }
 
-    SECTION("Move assignment with same event manager and same id, no unsubscribe") {
-        EventManager<EngineEventType> manager1;
+    SECTION("Constructed with null event manager is inactive") {
+        Subscription<EngineStartEvent> subscription(nullptr, 42);
+        REQUIRE_FALSE(subscription.active());
+    }
 
-        auto sub1 = manager1.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
+    SECTION("Constructed with zero subscription id is inactive") {
+        EventManager<EngineEventType> manager;
+        Subscription<EngineStartEvent> subscription(&manager, 0);
+        REQUIRE_FALSE(subscription.active());
+    }
+
+    SECTION("Constructed with valid event manager and id is active") {
+        EventManager<EngineEventType> manager;
+        Subscription<EngineStartEvent> subscription(&manager, 42);
+        REQUIRE(subscription.active());
+    }
+}
+
+TEST_CASE("Subscription::unsubscribe()", "[Subscription]") {
+    SECTION("When inactive, does nothing") {
+        Subscription<EngineStartEvent> subscription;
+        subscription.unsubscribe();
+        REQUIRE_FALSE(subscription.active());
+    }
+
+    SECTION("When active, unsubscribes from the event manager") {
+        EventManager<EngineEventType> manager;
+        auto sub = manager.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
             return EventResult::Continue;
         });
 
-        const Id sub1_id = sub1.id();
+        REQUIRE(sub.active());
+        REQUIRE(sub.event_manager() == &manager);
+        REQUIRE(sub.id() != 0);
 
-        Subscription<EngineStartEvent>&& same_sub = std::move(sub1);
+        sub.unsubscribe();
 
-        REQUIRE(same_sub.id() == sub1_id);
-        REQUIRE(manager1.handler_count(EngineEventType::Start) == 1);
+        REQUIRE_FALSE(sub.active());
+        REQUIRE(sub.event_manager() == nullptr);
+        REQUIRE(sub.id() == 0);
     }
 }

@@ -21,8 +21,6 @@ enum class EventResult {
     Halt,
 };
 
-using ListenerId = uintptr_t;
-
 template<typename Event>
 struct Subscription;
 
@@ -115,11 +113,11 @@ public:
 private:
     template<EventLike<EventType> Event>
     struct EventHandler {
-        ListenerId id = 0;
+        Id id = 0;
         std::function<EventResult(Event&)> callable {};
         i32 priority = 0;
 
-        explicit EventHandler(ListenerId id, std::function<EventResult(Event&)>&& callable, i32 priority) :
+        explicit EventHandler(Id id, std::function<EventResult(Event&)>&& callable, i32 priority) :
             id(id),
             callable(std::move(callable)),
             priority(priority) {
@@ -129,7 +127,7 @@ private:
     struct BaseEventPartition {
         virtual ~BaseEventPartition() = default;
 
-        virtual void remove_listener(ListenerId id) = 0;
+        virtual void remove_listener(Id id) = 0;
 
         virtual size_t handler_count() const = 0;
     };
@@ -152,7 +150,7 @@ private:
             );
         }
 
-        void remove_listener(ListenerId id) override {
+        void remove_listener(Id id) override {
             event_handlers.erase(
                 std::remove_if(
                     event_handlers.begin(),
@@ -199,46 +197,100 @@ private:
     std::atomic<Id> next_id_ = 1;
 };
 
+/**
+ * @brief Subscription to an event manager which automatically unsubscribes when it goes out of scope.
+ *
+ * This class does not validate that the subscription actually exists. It should therefore be always assigned from
+ * the return value of EventManager::on.
+ *
+ * @tparam Event Event type
+ */
 template<typename Event>
 class Subscription {
 public:
     using EventManagerType = EventManager<typename Event::EventType>;
 
-    Subscription(EventManagerType* event_manager, Id id)
-        : event_manager_(event_manager), id_(id) {
-        assert(event_manager);
-        assert(id);
+    /**
+     * @brief Constructs the subscription with the given event manager and id.
+     *
+     * If the event manage is null or the id is zero the subscription is considered inactive.
+     *
+     * @param event_manager Event manager this subscription is associated with
+     * @param id Unique id of the subscription
+     */
+    Subscription(EventManagerType* event_manager, Id id) : event_manager_(event_manager), id_(id) {
     }
 
-    Id id() const {
+    /**
+     * @brief Unsubscribes the handler from the event manager if the subscription is active.
+     */
+    inline void unsubscribe() {
+        if (active()) {
+            event_manager_->off(*this);
+            id_ = 0;
+            event_manager_ = nullptr;
+        }
+    }
+
+    inline bool active() const {
+        return event_manager_ != nullptr && id_ != 0;
+    }
+
+    /**
+     * @brief Returns the unique id of the subscription
+     */
+    inline Id id() const {
         return id_;
     }
 
-    ~Subscription() {
-        if (event_manager_ && id_) {
-            event_manager_->off(*this);
-            id_ = 0;
-        }
+    /**
+     * @brief Returns the associated event manager
+     */
+    inline EventManagerType* event_manager() const {
+        return event_manager_;
     }
 
+    /**
+     * @brief Unsubscribes the handler from the event manager
+     */
+    ~Subscription() {
+        unsubscribe();
+    }
+
+    /**
+     * @brief Constructs the subscription in an inactive state
+     */
     Subscription() = default;
 
+    /**
+     * @brief Move constructor, transfers the subscription to the new instance and potentially unsubscribes the old one.
+     *
+     * @param other Subscription to move from
+     * @return New subscription instance
+     */
     Subscription& operator=(Subscription&& other) noexcept {
-        if (this != &other) {
-            if (event_manager_ && id_ && (event_manager_ != other.event_manager_ || id_ != other.id_)) {
-                event_manager_->off(*this);
-            }
-            event_manager_ = other.event_manager_;
-            id_ = other.id_;
-            other.id_ = 0;
+        if (this == &other) {
+            return *this;
         }
+        if (event_manager_ != other.event_manager_ || id_ != other.id_) {
+            unsubscribe();
+        }
+        event_manager_ = std::exchange(other.event_manager_, nullptr);
+        id_ = std::exchange(other.id_, 0);
         return *this;
     }
 
     Subscription(const Subscription&) = delete;
     Subscription& operator=(const Subscription&) = delete;
 private:
+    /**
+     * @brief Associated event manager
+     */
     EventManagerType* event_manager_ = nullptr;
+
+    /**
+     * @brief Unique id of the subscription
+     */
     Id id_ = 0;
 };
 
