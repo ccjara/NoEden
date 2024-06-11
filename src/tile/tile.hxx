@@ -3,12 +3,13 @@
 
 #include "../gfx/display_cell.hxx"
 
-enum class TileType {
-    Ground,
+enum class TileType : unsigned char {
+    Empty,
+    Floor,
     Wall,
 };
 
-enum class MaterialType {
+enum class MaterialType : unsigned char {
     None,
     Stone,
     Wood,
@@ -16,7 +17,7 @@ enum class MaterialType {
     Water,
 };
 
-enum class MaterialState {
+enum class MaterialState : unsigned char {
     Void,
     Solid,
     Liquid,
@@ -27,6 +28,11 @@ enum TileFlags {
      * @brief No flags set
      */
     None,
+
+    /**
+     * @brief Whether the tile is a ramp
+     */
+    Ramp,
 
     /**
      * @brief Whether the tile is solid and cannot be passed through
@@ -45,7 +51,7 @@ enum TileFlags {
 };
 
 struct Tile {
-    TileType type = TileType::Ground;
+    TileType type = TileType::Empty;
 
     MaterialType material = MaterialType::None;
 
@@ -53,7 +59,7 @@ struct Tile {
 
     std::bitset<8> flags;
     
-    DisplayCell display_info;
+    DisplayCell display_info; // needs to be moved out later and determined based on tile type etc.
 };
 
 #endif

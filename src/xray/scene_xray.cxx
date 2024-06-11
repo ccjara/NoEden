@@ -7,23 +7,39 @@
 #include "gfx/renderer.hxx"
 #include "entity/entity_manager.hxx"
 #include "tile/tile_manager.hxx"
+#include "framework/noise_generator.hxx"
+#include "world/chunk_manager.hxx"
+#include "world/chunk.hxx"
+#include "world/tile_accessor.hxx"
+#include "world/world_spec.hxx"
 
 SceneXray::SceneXray(
+    WorldSpec* world_spec,
+    ChunkManager* chunk_manager,
     EntityManager* entity_manager,
+    TileAccessor* tile_accessor,
     TileManager* tile_manager,
     Events* events,
     IInputReader* input,
     Translator* translator
-) : entity_manager_(entity_manager), 
+) :
+    world_spec_(world_spec),
+    chunk_manager_(chunk_manager),
+    entity_manager_(entity_manager),
+    tile_accessor_(tile_accessor),
     tile_manager_(tile_manager),
     events_(events),
     input_(input),
     translator_(translator) {
+    assert(world_spec_);
+    assert(chunk_manager_);
     assert(entity_manager_);
+    assert(tile_accessor_);
     assert(tile_manager_);
     assert(input_);
     assert(translator_);
     assert(events_);
+
 
     mouse_down_sub_ = events_->engine->on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
     config_updated_sub_ = events_->engine->on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
@@ -63,6 +79,7 @@ EventResult SceneXray::on_mouse_down(const MouseDownEvent& e) {
 void SceneXray::update() {
     entity_window();
     tile_window();
+    mapgen_window();
 }
 
 void SceneXray::entity_window() {
@@ -72,7 +89,7 @@ void SceneXray::entity_window() {
     ImGui::Begin("Entities");
 
     if (ImGui::BeginCombo("Entity", combo_label.c_str())) {
-        for (auto& entity : entity_manager_->entities()) {
+        for (auto& entity: entity_manager_->entities()) {
             const auto& entity_name_str = entity->name.c_str();
             const bool is_selected = entity_id.has_value() && entity_id.value() == entity->id;
             if (ImGui::Selectable(entity_name_str, is_selected)) {
@@ -135,7 +152,7 @@ void SceneXray::entity_panel(std::optional<u64> entity_id) {
     }
     entity_glyph(entity);
 
-    i32 position_raw[2] = { entity->position.x, entity->position.y };
+    i32 position_raw[3] = { entity->position.x, entity->position.y, entity->position.z };
     bool is_player = entity_manager_->player() == entity;
 
     ImGui::Text("Id: %lx", entity->id);
@@ -143,11 +160,10 @@ void SceneXray::entity_panel(std::optional<u64> entity_id) {
         entity_manager_->set_controlled_entity(is_player ? entity->id : null_id);
     }
     ImGui::PushItemWidth(ImGui::GetWindowWidth() / 4);
-    if (ImGui::InputInt2("Position", position_raw, ImGuiInputTextFlags_None)) {
-        position_raw[0] = std::min(std::max(position_raw[0], 0), 100);
-        position_raw[1] = std::min(std::max(position_raw[1], 0), 100);
+    if (ImGui::InputInt3("Position", position_raw, ImGuiInputTextFlags_None)) {
         entity->position.x = position_raw[0];
         entity->position.y = position_raw[1];
+        entity->position.z = position_raw[2];
     }
     if (ImGui::InputFloat("Speed", &entity->speed, ImGuiInputTextFlags_None)) {
         entity->speed = std::fmax(entity->speed, 0);
@@ -174,7 +190,7 @@ void SceneXray::entity_panel(std::optional<u64> entity_id) {
 
     Skills* skills_component = entity->component<Skills>();
     if (skills_component != nullptr) {
-        for (auto& [id, skill] : skills_component->skills()) {
+        for (auto& [id, skill]: skills_component->skills()) {
             const auto label = translator_->translate(skill.label());
             i32 progress = skill.progress;
             if (ImGui::InputInt(label.c_str(), &progress)) {
@@ -211,4 +227,69 @@ void SceneXray::entity_glyph(Entity* entity) {
             1.0f
         )
     );
+}
+
+void SceneXray::mapgen_window() {
+    ImGui::Begin("Mapgen");
+
+    static GenerateNoiseOptions world_mask_options = world_spec_->height_map_options();
+
+    auto generate_map = [&]() {
+        const auto noise = generate_noise(world_mask_options);
+        noise_texture_.set_noise(noise, world_mask_options.width, world_mask_options.height);
+    };
+
+    static bool init = false;
+
+    if (!init) {
+        generate_map();
+        init = true;
+    }
+
+    if (ImGui::SliderFloat("Frequency", &world_mask_options.frequency, 0.1f, 10.0f)) {
+        generate_map();
+    }
+    if (ImGui::SliderFloat("Amplitude", &world_mask_options.amplitude, 0.1f, 2.0f)) {
+        generate_map();
+    }
+    if (ImGui::SliderFloat("Lacunarity", &world_mask_options.lacunarity, 0.0f, 10.0f)) {
+        generate_map();
+    }
+    if (ImGui::SliderFloat("Gain", &world_mask_options.gain, 0.0f, 10.0f)) {
+        generate_map();
+    }
+    if (ImGui::SliderInt("Offset-X", &world_mask_options.offset_x, 0.0f, 64.0f)) {
+        generate_map();
+    }
+    if (ImGui::SliderInt("Offset-Y", &world_mask_options.offset_y, 0.0f, 64.0f)) {
+        generate_map();
+    }
+    if (ImGui::SliderInt("Octaves", &world_mask_options.octaves, 0.0f, 10)) {
+        generate_map();
+    }
+    if (ImGui::Checkbox("Radial Gradient", &world_mask_options.use_gradient)) {
+        generate_map();
+    }
+    if (world_mask_options.use_gradient && ImGui::SliderFloat("Radius", &world_mask_options.radius_mult, 0.0f, 1.0f)) {
+        generate_map();
+    }
+    if (world_mask_options.use_gradient &&
+        ImGui::SliderFloat("Gradient Falloff", &world_mask_options.gradient_falloff, 0.0f, 1.0f)) {
+        generate_map();
+    }
+
+    noise_texture_.draw();
+
+    if (entity_manager_->player() != nullptr) {
+        auto p = entity_manager_->player()->position;
+        auto local_index = tile_accessor_->to_local_index(p);
+        auto text = fmt::format("Player pos: ({}, {}, {}) - index {} - height {}",
+                                p.x, p.y, p.z,
+                                local_index,
+                                chunk_manager_->get_chunk(p)->height_map[p.x % Chunk::CHUNK_SIDE_LENGTH + p.z % Chunk::CHUNK_SIDE_LENGTH * Chunk::CHUNK_SIDE_LENGTH]);
+
+        ImGui::TextUnformatted(text.c_str());
+    }
+
+    ImGui::End();
 }

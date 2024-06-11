@@ -31,7 +31,7 @@
 
 #include <GL/glew.h>
 
-#include <lua5.3/lua.hpp>
+#include <lua.hpp>
 #include <LuaBridge/LuaBridge.h>
 
 #include "imgui/imgui.h"

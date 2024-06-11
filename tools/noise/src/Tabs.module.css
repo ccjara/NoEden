@@ -1,0 +1,22 @@
+.tabs {
+
+}
+
+.tabButtons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 10px;
+}
+
+.tabButton {
+    min-width: 10rem;
+    border-bottom: none !important;
+}
+
+.tabButtonActive {
+    border-color: lime;
+}
+
+.tabContent {
+
+}

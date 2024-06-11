@@ -14,7 +14,9 @@ public:
 
     std::string name = "";
 
-    Vec2<i32> position;
+    WorldPos position;
+
+    bool player_attached_ = false;
 
     float speed = 0;
     float energy = 0;

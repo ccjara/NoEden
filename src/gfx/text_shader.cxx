@@ -174,10 +174,14 @@ Vec2<u32> TextShader::texture_size() const {
 
 
 void TextShader::prepare() {
+    if (!tex_) {
+        return;
+    }
+
     glUniform2ui(u_glyph_size_, glyph_size_.x, glyph_size_.y);
     glUniform2ui(u_resolution_, resolution_.x, resolution_.y);
 
-    const auto tex_size { tex_->size() };
+    const auto tex_size =  tex_->size();
     glUniform2ui(u_tex_size_, tex_size.x, tex_size.y);
 
     tex_->bind();
