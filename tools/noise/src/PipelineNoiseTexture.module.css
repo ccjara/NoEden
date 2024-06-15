@@ -1,0 +1,34 @@
+.root {
+    position: relative;
+}
+
+.hoverCrosshair {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.hoverCrosshair > :first-child {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    height: 100%;
+    background: 1px white;
+    mix-blend-mode: difference;
+}
+
+.hoverCrosshair > :last-child {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: 1px white;
+    mix-blend-mode: difference;
+}

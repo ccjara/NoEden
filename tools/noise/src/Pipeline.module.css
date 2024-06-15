@@ -1,0 +1,24 @@
+.sections {
+    display: flex;
+    padding: 1rem;
+    gap: 1rem;
+}
+
+.sections > fieldset {
+    border: none;
+}
+
+.sections > fieldset > legend {
+    margin: auto;
+}
+
+.sections > fieldset footer {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.separator {
+    font-size: 4rem;
+    margin: auto 0;
+}

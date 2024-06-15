@@ -1,0 +1,98 @@
+:root {
+  font-family: "PxPlus IBM VGA8", sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  color: white;
+
+  --color-panel-background: #050505;
+  --color-panel-border: 2px solid white;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "PxPlus IBM VGA8", sans-serif;
+    font-size: 1rem;
+}
+
+@font-face {
+    font-family: "PxPlus IBM VGA8";
+    font-smooth: never;
+    src: url("/PxPlus_IBM_VGA8.ttf") format("truetype");
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+    background: black;
+    margin: 0;
+    padding: 1rem;
+}
+
+fieldset {
+  padding: 0.5rem 1rem 1rem 1rem;
+  background: var(--color-panel-background);
+  border: 2px solid white;
+}
+
+fieldset legend {
+  padding: 0 0.5rem;
+}
+
+input {
+    appearance: textfield;
+    background: var(--color-panel-background);
+    color: white;
+    border: var(--color-panel-border);
+    padding: 0.5rem;
+}
+
+input:active, input:focus, input:hover {
+    outline: none;
+    border: 2px solid lime;
+}
+
+button {
+    background: var(--color-panel-background);
+    color: white;
+    border: var(--color-panel-border);
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+button:hover, button:focus {
+    border: 2px solid lime;
+}
+
+button:active {
+    outline: none;
+    border: 2px solid green;
+}
+
+button:focus {
+    outline: none;
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    border: 2px solid white;
+    background: red;
+    cursor: pointer;
+    outline: 2px solid black;
+    outline-offset: -4px;
+}
+
+input[type="checkbox"]:checked {
+    background: lime;
+}
+
+label {
+    user-select: none;
+}
+
+hr {
+    border: 1px solid white;
+}

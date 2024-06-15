@@ -1,0 +1,19 @@
+.fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.fieldset label {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.fieldset label span:first-child {
+    width: 8rem;
+}
+
+.fieldset label span:last-child {
+    width: 4rem;
+}
