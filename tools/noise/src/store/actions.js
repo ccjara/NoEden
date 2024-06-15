@@ -3,6 +3,7 @@ import { generateWorld } from '../generateWorld.js';
 import { generateTemperatureMap } from '../generateTemperatureMap.js';
 import { getStateDefault } from './getStateDefault.js';
 import { clamp } from '../lib/clamp.js';
+import { generateMoistureMap } from '../moisture/generateMoistureMap.js';
 
 export const reset = () => {
   useStore.setState(getStateDefault());
@@ -87,6 +88,22 @@ export const setTemperatureOptions = (options, regenerate) => {
   }
 
   generateTemperatureMap();
+};
+
+/**
+ * @param {object} options
+ * @param {boolean} regenerate
+ */
+export const setMoistureOptions = (options, regenerate) => {
+  useStore.setState({
+    moisture: { ...useStore.getState().moisture, options },
+  });
+
+  if (!regenerate) {
+    return;
+  }
+
+  generateMoistureMap();
 };
 
 /**

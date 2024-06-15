@@ -6,6 +6,7 @@ import { HeightPanel } from './height/HeightPanel.jsx';
 import { GeneralPanel } from './GeneralPanel.jsx';
 import { useEffect } from 'react';
 import { generateWorld } from './generateWorld.js';
+import { MoisturePanel } from './moisture/MoisturePanel.jsx';
 
 function App() {
   useEffect(() => {
@@ -19,9 +20,9 @@ function App() {
 
         <HeightPanel />
 
-        <div className={styles.controls}>
-          <TemperaturePanel />
-        </div>
+        <TemperaturePanel />
+
+        <MoisturePanel />
       </div>
 
       <Pipeline />

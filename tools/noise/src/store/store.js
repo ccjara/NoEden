@@ -47,6 +47,13 @@ export const useStore = create(() => {
         ...persistedState?.temperature?.options,
       },
     },
+    moisture: {
+      map: new Float32Array(mapSize.width * mapSize.height),
+      options: {
+        ...stateDefault.moisture.options,
+        ...persistedState?.moisture?.options,
+      },
+    },
   };
 });
 

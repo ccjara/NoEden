@@ -1,6 +1,7 @@
 import { useStore } from './store/store.js';
 import alea from 'alea';
 import { clamp } from './lib/clamp.js';
+import { generateMoistureMap } from './moisture/generateMoistureMap.js';
 
 export function generateTemperatureMap() {
   const state = useStore.getState();
@@ -40,4 +41,6 @@ export function generateTemperatureMap() {
       map,
     },
   });
+
+  generateMoistureMap();
 }
