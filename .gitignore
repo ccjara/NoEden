@@ -4,7 +4,7 @@ cmake-release
 cmake-release-coverage
 bin
 rel
-tools
+tools/font
 
 CMakeSettings.json
 
