@@ -1,6 +1,6 @@
 import { useStore } from './store.js';
 import { generateWorld } from '../generateWorld.js';
-import { generateTemperatureMap } from '../generateTemperatureMap.js';
+import { generateTemperatureMap } from '../temperature/generateTemperatureMap.js';
 import { getStateDefault } from './getStateDefault.js';
 import { clamp } from '../lib/clamp.js';
 import { generateMoistureMap } from '../moisture/generateMoistureMap.js';

@@ -10,7 +10,7 @@ export const useStore = create(() => {
       if (!stateStr) {
         return null;
       }
-      return JSON.parse(localStorage.getItem('state'));
+      return JSON.parse(stateStr);
     } catch (e) {
       console.error(e);
       return null;
@@ -28,30 +28,26 @@ export const useStore = create(() => {
     pipeline: {
       ...stateDefault.pipeline,
       ...persistedState?.pipeline,
-      noiseHover: {
-        ...stateDefault.pipeline.noiseHover,
-        ...persistedState?.pipeline?.noiseHover,
-      },
     },
     height: {
       map: new Float32Array(mapSize.width * mapSize.height),
       options: {
         ...stateDefault.height.options,
-        ...persistedState?.height?.options,
+        ...persistedState?.heightOptions,
       },
     },
     temperature: {
       map: new Float32Array(mapSize.width * mapSize.height),
       options: {
         ...stateDefault.temperature.options,
-        ...persistedState?.temperature?.options,
+        ...persistedState?.temperatureOptions,
       },
     },
     moisture: {
       map: new Float32Array(mapSize.width * mapSize.height),
       options: {
         ...stateDefault.moisture.options,
-        ...persistedState?.moisture?.options,
+        ...persistedState?.moistureOptions,
       },
     },
   };
@@ -67,6 +63,8 @@ const persist = (state) => {
       mapSize: state.mapSize,
       heightOptions: state.height.options,
       temperatureOptions: state.temperature.options,
+      moistureOptions: state.moisture.options,
+      pipeline: state.pipeline,
     };
 
     try {

@@ -12,7 +12,7 @@ export const NoiseTexture = ({
   scale = 1,
   colorize = defaultColorize,
   onMouseMove,
-  onMouseLeave,
+  onMouseOut,
 }) => {
   const canvasRef = useRef(null);
 
@@ -53,7 +53,7 @@ export const NoiseTexture = ({
         transformOrigin: 'top left',
       }}
       onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
+      onMouseOut={onMouseOut}
     />
   );
 };
