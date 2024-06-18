@@ -1,6 +1,5 @@
 import { createNoise2D } from 'simplex-noise';
 import alea from 'alea';
-import { clamp } from './lib/clamp.js';
 
 export const defaultNoiseOptions = {
   octaves: 4,
@@ -28,7 +27,7 @@ export function generateNoise(options) {
   for (let y = 0; y < options.height; ++y) {
     for (let x = 0; x < options.width; ++x) {
       let frequency = options.frequency;
-      let amplitude = 1.0;
+      let amplitude = 1;
       let value = 0;
 
       let globalX = (x + options.offsetX) / options.width;
@@ -59,5 +58,5 @@ export function generateNoise(options) {
     // data[i] *= Math.abs(Math.sin(data[i] * Math.PI * 1.5));
   }
 
-  return { data, minValue, maxValue };
+  return data;
 }

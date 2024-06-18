@@ -1,4 +1,3 @@
-import styles from './App.module.css';
 import { Visualizer } from './Visualizer.jsx';
 import { TemperaturePanel } from './temperature/TemperaturePanel.jsx';
 import { Pipeline } from './Pipeline.jsx';
@@ -6,9 +5,16 @@ import { HeightPanel } from './height/HeightPanel.jsx';
 import { GeneralPanel } from './GeneralPanel.jsx';
 import { useEffect } from 'react';
 import { generateWorld } from './generateWorld.js';
-import { MoisturePanel } from './moisture/MoisturePanel.jsx';
+import { HumidityPanel } from './humidity/HumidityPanel.jsx';
+import { Fieldset } from './lib/Fieldset.jsx';
+import { setVisualizerCollapsed } from './store/actions.js';
+import { useStore } from './store/store.js';
+import { PrecipitationPanel } from './precipitation/PrecipitationPanel.jsx';
+import { Render } from './Render.jsx';
 
 function App() {
+  const visualizerCollapsed = useStore(($) => $.visualizer.collapsed);
+
   useEffect(() => {
     generateWorld();
   }, []);
@@ -22,15 +28,26 @@ function App() {
 
         <TemperaturePanel />
 
-        <MoisturePanel />
+        <PrecipitationPanel />
+
+        <HumidityPanel />
       </div>
 
       <Pipeline />
 
-      <fieldset>
-        <legend>Visualizer</legend>
-        <Visualizer />
-      </fieldset>
+      <div style={{ display: 'flex', gap: '1rem' }}>
+        <Fieldset
+          title="Visualizer"
+          collapsible
+          collapsed={visualizerCollapsed}
+          onCollapse={setVisualizerCollapsed}
+        >
+          <Visualizer />
+        </Fieldset>
+        <Fieldset title="Render">
+          <Render />
+        </Fieldset>
+      </div>
     </>
   );
 }

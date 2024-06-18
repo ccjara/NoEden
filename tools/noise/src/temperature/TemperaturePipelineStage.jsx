@@ -1,13 +1,6 @@
-import { NoiseTexture } from '../NoiseTexture.jsx';
 import { useStore } from '../store/store.js';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { PipelineNoiseTexture } from '../PipelineNoiseTexture.jsx';
-
-// TMAX -50
-// TMIN 60
-
-// TNORM = T - TMIN / TMAX - TMIN
-// T = TNORM * (TMAX - TMIN) + TMIN
 
 const temperatureCategories = [
   {
@@ -21,8 +14,13 @@ const temperatureCategories = [
     color: [0, 255, 255, 255],
   },
   {
-    threshold: 0,
+    threshold: 10,
     label: 'Cold',
+    color: [0, 127, 64, 255],
+  },
+  {
+    threshold: 15,
+    label: 'Cool',
     color: [0, 255, 0, 255],
   },
   {
@@ -52,58 +50,37 @@ const temperatureCategories = [
   },
 ];
 
-const createColorizer = (options) => {
-  const c = temperatureCategories.map(($) => [$.threshold, $.color]);
+const colorize = (value) => {
+  const result = temperatureCategories.find(($) => value <= $.threshold);
 
-  return (value) => {
-    const denormalized =
-      value * (options.maxTemperature - options.minTemperature) +
-      options.minTemperature;
-    const result = c.find(([threshold]) => denormalized <= threshold);
+  if (!result) {
+    return [255, 255, 255, 255];
+  }
 
-    if (!result) {
-      return [255, 255, 255, 255];
-    }
-
-    return result[1];
-  };
+  return result.color;
 };
 
 export const TemperaturePipelineStage = () => {
   const { width, height } = useStore((state) => state.mapSize);
-  const { map, options } = useStore((state) => state.temperature);
+  const map = useStore((state) => state.temperature).map;
   const hover = useStore((state) => state.pipeline.noiseHover);
 
   const tempValue = useMemo(() => {
     if (!hover) {
       return '-';
     }
-    const normalizedValue = map[hover.y * width + hover.x]?.toFixed(2);
-    if (!normalizedValue) {
-      return '-';
-    }
-    const denormalizedValue = (
-      normalizedValue * (options.maxTemperature - options.minTemperature) +
-      options.minTemperature
-    ).toFixed(2);
-
-    const category = temperatureCategories.find(
-      (category) => denormalizedValue <= category.threshold,
-    );
-
+    const value = map[hover.y * width + hover.x]?.toFixed(2);
+    const category = temperatureCategories.find(($) => value <= $.threshold);
     const label = category ? category.label : 'Unknown';
     let color = category ? category.color : [255, 255, 255, 255];
     color = `rgba(${color.join(',')})`;
 
     return (
       <span>
-        {normalizedValue} | {denormalizedValue} °C |{' '}
-        <span style={{ color }}>{label}</span>
+        {value} °C | <span style={{ color }}>{label}</span>
       </span>
     );
   }, [map, hover, width]);
-
-  const colorize = useMemo(() => createColorizer(options), [options]);
 
   return (
     <fieldset>

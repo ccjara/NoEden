@@ -15,12 +15,12 @@ const colorize = (value) => {
   return interpolateColor(value, colorStops);
 };
 
-export const MoisturePipelineStage = () => {
+export const HumidityPipelineStage = () => {
   const { width, height } = useStore(($) => $.mapSize);
-  const map = useStore(($) => $.moisture.map);
+  const map = useStore(($) => $.humidity.map);
   const hover = useStore(($) => $.pipeline.noiseHover);
 
-  const moistureValue = useMemo(() => {
+  const humidityValue = useMemo(() => {
     if (!hover) {
       return '-';
     }
@@ -34,14 +34,14 @@ export const MoisturePipelineStage = () => {
 
   return (
     <fieldset>
-      <legend>Moisture</legend>
+      <legend>Humidity</legend>
       <PipelineNoiseTexture
         data={map}
         width={width}
         height={height}
         colorize={colorize}
       />
-      <footer>{moistureValue}</footer>
+      <footer>{humidityValue}</footer>
     </fieldset>
   );
 };

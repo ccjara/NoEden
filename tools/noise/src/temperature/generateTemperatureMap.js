@@ -1,37 +1,53 @@
 import { useStore } from '../store/store.js';
 import alea from 'alea';
+import { generateHumidityMap } from '../humidity/generateHumidityMap.js';
 import { clamp } from '../lib/clamp.js';
-import { generateMoistureMap } from '../moisture/generateMoistureMap.js';
 
 export function generateTemperatureMap() {
   const state = useStore.getState();
   const prng = alea(state.seed);
   const options = state.temperature.options;
+  const altitudeOptions = state.height.options.altitude;
 
-  const normalizeTemp = (t) =>
-    (t - options.minTemperature) /
-    (options.maxTemperature - options.minTemperature);
-
-  const equatorTemp = normalizeTemp(
+  const equatorTemp =
     prng() * (options.maxEquatorTemperature - options.minEquatorTemperature) +
-      options.minEquatorTemperature,
-  );
+    options.minEquatorTemperature;
 
   const map = new Float32Array(state.mapSize.width * state.mapSize.height);
   const halfMapHeight = state.mapSize.height * 0.5;
 
+  const mountainAltitude = altitudeOptions.hills + 1;
+
   for (let x = 0; x < state.mapSize.width; x++) {
     for (let y = 0; y < state.mapSize.height; y++) {
       const index = y * state.mapSize.width + x;
-      const normalizedLat = options.poles
-        ? 1 - Math.abs(y - halfMapHeight) / halfMapHeight
-        : 1;
-      const height = state.height.map[index];
+      const altitude = state.height.map[index];
 
-      const altitudeEffect = -options.altitudeFactor * height;
-      const finalTemperature = equatorTemp * normalizedLat + altitudeEffect;
+      // calculate latitude drop
+      let latitudeDrop = 0;
+      if (options.latitudeDropoff) {
+        const normalizedLat = Math.abs(y - halfMapHeight) / halfMapHeight;
 
-      map[index] = clamp(finalTemperature, 0.0, 1.0);
+        latitudeDrop = equatorTemp * normalizedLat;
+      }
+
+      // calculate altitude drop which is more extreme in mountains
+      let altitudeDrop;
+      const linearAltitudeDrop = options.altitudeFactor * altitude;
+
+      if (altitude > altitudeOptions.hills) {
+        altitudeDrop =
+          linearAltitudeDrop +
+          (altitude - altitudeOptions.hills) * options.altitudeFactor * 7.77;
+      } else {
+        altitudeDrop = linearAltitudeDrop;
+      }
+
+      map[index] = clamp(
+        equatorTemp - (altitudeDrop + latitudeDrop),
+        options.minTemperature,
+        options.maxTemperature,
+      );
     }
   }
 
@@ -42,5 +58,5 @@ export function generateTemperatureMap() {
     },
   });
 
-  generateMoistureMap();
+  generateHumidityMap();
 }

@@ -1,113 +1,114 @@
 import { useStore } from '../store/store.js';
-import { setHeightOptions } from '../store/actions.js';
-import { ControlFieldset } from '../ControlFieldset.jsx';
+import { setAltitudeOptions, setHeightOptions } from '../store/actions.js';
+import { Fieldset } from '../lib/Fieldset.jsx';
+import { Controls } from '../Controls.jsx';
+import { NoiseControls } from '../NoiseControls.jsx';
 
 export const HeightOptions = () => {
   const options = useStore((state) => state.height.options);
 
   return (
-    <ControlFieldset title="Height Map Options">
-      <label>
-        <span>X</span>
-        <input
-          type="range"
-          min={0}
-          max={5000}
-          step={1}
-          value={options.offsetX}
-          onChange={(e) =>
-            setHeightOptions({ ...options, offsetX: +e.target.value }, true)
-          }
+    <Fieldset title="Height Map Options">
+      <Controls>
+        <label>
+          <input
+            type="checkbox"
+            checked={options.island}
+            onChange={(e) =>
+              setHeightOptions({ island: e.target.checked }, true)
+            }
+          />
+          <span>Island</span>
+        </label>
+      </Controls>
+
+      <Fieldset title="Altitudes">
+        <Controls>
+          <label title="Min altitude to exist in the generated world">
+            <span>Min</span>
+            <input
+              type="number"
+              size={4}
+              value={options.altitude.min}
+              step={1}
+              onChange={(e) =>
+                setAltitudeOptions({ min: +e.target.value }, true)
+              }
+            />
+          </label>
+          <label title="Max altitude to exist in the generated world">
+            <span>Max</span>
+            <input
+              type="number"
+              value={options.altitude.max}
+              step={1}
+              size={4}
+              onChange={(e) =>
+                setAltitudeOptions({ max: +e.target.value }, true)
+              }
+            />
+          </label>
+
+          <label title="Max altitude for Ocean designation">
+            <span>Max Ocean</span>
+            <input
+              type="number"
+              value={options.altitude.ocean}
+              step={1}
+              size={4}
+              onChange={(e) =>
+                setAltitudeOptions({ ocean: +e.target.value }, true)
+              }
+            />
+          </label>
+
+          <label title="Max altitude for Shore designation">
+            <span>Max Shore</span>
+            <input
+              type="number"
+              value={options.altitude.shore}
+              step={1}
+              size={4}
+              onChange={(e) =>
+                setAltitudeOptions({ shore: +e.target.value }, true)
+              }
+            />
+          </label>
+
+          <label title="Max altitude for Plains designation">
+            <span>Max Plains</span>
+            <input
+              type="number"
+              value={options.altitude.plains}
+              step={1}
+              size={4}
+              onChange={(e) =>
+                setAltitudeOptions({ plains: +e.target.value }, true)
+              }
+            />
+          </label>
+
+          <label title="Max altitude for Hills designation. Any value above this threshold will be considered Mountain">
+            <span>Max Hills</span>
+            <input
+              type="number"
+              value={options.altitude.hills}
+              step={1}
+              size={4}
+              onChange={(e) =>
+                setAltitudeOptions({ hills: +e.target.value }, true)
+              }
+            />
+          </label>
+        </Controls>
+      </Fieldset>
+
+      <Fieldset title="Noise options">
+        <NoiseControls
+          options={options}
+          onChange={(o) => setHeightOptions(o, true)}
         />
-        <span>{options.offsetX}</span>
-      </label>
-      <label>
-        <span>Y</span>
-        <input
-          type="range"
-          min={0}
-          max={50}
-          step={1}
-          value={options.offsetY}
-          onChange={(e) =>
-            setHeightOptions({ ...options, offsetY: +e.target.value }, true)
-          }
-        />
-        <span>{options.offsetY}</span>
-      </label>
-      <label>
-        <span>Octaves</span>
-        <input
-          type="range"
-          min={1}
-          max={10}
-          step={1}
-          value={options.octaves}
-          onChange={(e) =>
-            setHeightOptions({ ...options, octaves: +e.target.value }, true)
-          }
-        />
-        <span>{options.octaves}</span>
-      </label>
-      <label>
-        <span>Frequency</span>
-        <input
-          type="range"
-          min={0.01}
-          max={5}
-          step={0.05}
-          value={options.frequency}
-          onChange={(e) =>
-            setHeightOptions({ ...options, frequency: +e.target.value }, true)
-          }
-        />
-        <span>{options.frequency}</span>
-      </label>
-      <label>
-        <span>Amplification</span>
-        <input
-          type="range"
-          min={0.1}
-          max={5}
-          step={0.05}
-          value={options.amplification}
-          onChange={(e) =>
-            setHeightOptions(
-              { ...options, amplification: +e.target.value },
-              true,
-            )
-          }
-        />
-        <span>{options.amplification}</span>
-      </label>
-      <label>
-        <span>Persistence</span>
-        <input
-          type="range"
-          min={0.1}
-          max={5}
-          step={0.1}
-          value={options.persistence}
-          onChange={(e) =>
-            setHeightOptions({ ...options, persistence: +e.target.value }, true)
-          }
-        />
-        <span>{options.persistence}</span>
-      </label>
-      <label>
-        <span>Lacunarity</span>
-        <input
-          type="range"
-          min={0.1}
-          max={10}
-          step={0.1}
-          value={options.lacunarity}
-          onChange={(e) =>
-            setHeightOptions({ ...options, lacunarity: +e.target.value }, true)
-          }
-        />
-        <span>{options.lacunarity}</span>
-      </label>
-    </ControlFieldset>
+      </Fieldset>
+    </Fieldset>
   );
 };

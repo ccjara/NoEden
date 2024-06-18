@@ -1,22 +1,22 @@
 import { useStore } from '../store/store.js';
-import { setMoistureOptions } from '../store/actions.js';
+import { setHumidityOptions } from '../store/actions.js';
 import { ControlFieldset } from '../ControlFieldset.jsx';
 
-export const MoistureOptions = () => {
-  const options = useStore((state) => state.moisture.options);
+export const HumidityOptions = () => {
+  const options = useStore((state) => state.humidity.options);
 
   return (
-    <ControlFieldset title="Moisture Options">
+    <ControlFieldset title="Humidity Options">
       <label>
         <span>Temp. Multiplier</span>
         <input
           type="range"
           min={0}
-          max={5}
-          step={0.05}
+          max={0.1}
+          step={0.001}
           value={options.temperatureMultiplier}
           onChange={(e) =>
-            setMoistureOptions(
+            setHumidityOptions(
               { ...options, temperatureMultiplier: +e.target.value },
               true,
             )
@@ -29,11 +29,11 @@ export const MoistureOptions = () => {
         <input
           type="range"
           min={0}
-          max={5}
-          step={0.05}
+          max={0.1}
+          step={0.001}
           value={options.altitudeMultiplier}
           onChange={(e) =>
-            setMoistureOptions(
+            setHumidityOptions(
               { ...options, altitudeMultiplier: +e.target.value },
               true,
             )

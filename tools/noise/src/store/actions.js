@@ -3,7 +3,9 @@ import { generateWorld } from '../generateWorld.js';
 import { generateTemperatureMap } from '../temperature/generateTemperatureMap.js';
 import { getStateDefault } from './getStateDefault.js';
 import { clamp } from '../lib/clamp.js';
-import { generateMoistureMap } from '../moisture/generateMoistureMap.js';
+import { generateHumidityMap } from '../humidity/generateHumidityMap.js';
+import { MAX_ALTITUDE, MIN_ALTITUDE } from '../lib/technicalLimits.js';
+import { generatePrecipitationMap } from '../precipitation/generatePrecipitationMap.js';
 
 export const reset = () => {
   useStore.setState(getStateDefault());
@@ -32,26 +34,67 @@ export const setSeed = (seed, regenerate) => {
 };
 
 /**
- * @param {Float32Array} map
+ * @param {object} options
+ * @param {boolean} regenerate
  */
-export const setHeightMap = (map) => {
+export const setHeightOptions = (options, regenerate) => {
+  const state = useStore.getState();
+
   useStore.setState({
     height: {
-      ...useStore.getState().height,
-      map,
+      ...state.height,
+      options: {
+        ...state.height.options,
+        ...options,
+      },
     },
   });
 
-  generateWorld();
+  regenerate && generateWorld();
 };
 
 /**
  * @param {object} options
  * @param {boolean} regenerate
  */
-export const setHeightOptions = (options, regenerate) => {
+export const setAltitudeOptions = (options, regenerate) => {
+  const state = useStore.getState();
+
+  const altitude = {
+    ...state.height.options.altitude,
+    ...options,
+  };
+
+  altitude.min = clamp(altitude.min, MIN_ALTITUDE, MAX_ALTITUDE);
+  altitude.max = clamp(altitude.max, MIN_ALTITUDE, MAX_ALTITUDE);
+
+  if (altitude.min > altitude.max) {
+    altitude.min = altitude.max;
+  }
+
+  altitude.ocean = clamp(altitude.ocean, MIN_ALTITUDE, MAX_ALTITUDE);
+  altitude.shore = clamp(altitude.shore, MIN_ALTITUDE, MAX_ALTITUDE);
+  altitude.plains = clamp(altitude.plains, MIN_ALTITUDE, MAX_ALTITUDE);
+  altitude.hills = clamp(altitude.hills, MIN_ALTITUDE, MAX_ALTITUDE);
+
+  if (altitude.ocean > altitude.shore) {
+    altitude.shore = altitude.ocean;
+  }
+  if (altitude.shore > altitude.plains) {
+    altitude.plains = altitude.shore;
+  }
+  if (altitude.plains > altitude.hills) {
+    altitude.hills = altitude.plains;
+  }
+
   useStore.setState({
-    height: { ...useStore.getState().height, options },
+    height: {
+      ...state.height,
+      options: {
+        ...state.height.options,
+        altitude,
+      },
+    },
   });
 
   regenerate && generateWorld();
@@ -94,16 +137,16 @@ export const setTemperatureOptions = (options, regenerate) => {
  * @param {object} options
  * @param {boolean} regenerate
  */
-export const setMoistureOptions = (options, regenerate) => {
+export const setHumidityOptions = (options, regenerate) => {
   useStore.setState({
-    moisture: { ...useStore.getState().moisture, options },
+    humidity: { ...useStore.getState().humidity, options },
   });
 
   if (!regenerate) {
     return;
   }
 
-  generateMoistureMap();
+  generateHumidityMap();
 };
 
 /**
@@ -116,4 +159,51 @@ export const setPipelineNoiseHover = (noiseHover) => {
       noiseHover,
     },
   });
+};
+
+export const setVisualizerCollapsed = (collapsed) => {
+  const state = useStore.getState();
+
+  useStore.setState({
+    ...state,
+    visualizer: {
+      ...state.visualizer,
+      collapsed,
+    },
+  });
+};
+
+export const setPrecipitationOptions = (options, regenerate) => {
+  const state = useStore.getState();
+
+  useStore.setState({
+    precipitation: {
+      ...state.precipitation,
+      options: {
+        ...state.precipitation.options,
+        ...options,
+      },
+    },
+  });
+
+  regenerate && generatePrecipitationMap();
+};
+
+export const setPrecipitationNoiseOptions = (options, regenerate) => {
+  const state = useStore.getState();
+
+  useStore.setState({
+    precipitation: {
+      ...state.precipitation,
+      options: {
+        ...state.precipitation.options,
+        noise: {
+          ...state.precipitation.options.noise,
+          ...options,
+        },
+      },
+    },
+  });
+
+  regenerate && generatePrecipitationMap();
 };

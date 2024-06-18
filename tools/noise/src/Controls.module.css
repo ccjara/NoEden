@@ -1,0 +1,15 @@
+.controls {
+    display: grid;
+    gap: 1rem;
+    align-items: center;
+}
+
+.controls > label {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.controls > label span:first-child {
+    width: 6rem;
+}

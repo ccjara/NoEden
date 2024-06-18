@@ -1,0 +1,10 @@
+.verticalSplit {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.verticalSplit > :not(:last-child) {
+    padding-right: 1rem;
+    border-right: 2px solid white;
+}

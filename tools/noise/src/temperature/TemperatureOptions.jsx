@@ -90,12 +90,15 @@ export const TemperatureOptions = () => {
       <label>
         <input
           type="checkbox"
-          checked={options.poles}
+          checked={options.latitudeDropoff}
           onChange={(e) =>
-            setTemperatureOptions({ ...options, poles: e.target.checked }, true)
+            setTemperatureOptions(
+              { ...options, latitudeDropoff: e.target.checked },
+              true,
+            )
           }
         />
-        Poles
+        Latitude Dropoff
       </label>
     </ControlFieldset>
   );

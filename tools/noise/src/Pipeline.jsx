@@ -2,7 +2,9 @@ import styles from './Pipeline.module.css';
 import { useMemo } from 'react';
 import { TemperaturePipelineStage } from './temperature/TemperaturePipelineStage.jsx';
 import { HeightPipelineStage } from './height/HeightPipelineStage.jsx';
-import { MoisturePipelineStage } from './moisture/MoisturePipelineStage.jsx';
+import { HumidityPipelineStage } from './humidity/HumidityPipelineStage.jsx';
+import { BiomePipelineStage } from './biome/BiomePipelineStage.jsx';
+import { PrecipitationPipelineStage } from './precipitation/PrecipitationPipelineStage.jsx';
 
 export const Separator = () => {
   return <div className={styles.separator}>&gt;</div>;
@@ -12,7 +14,9 @@ export const Pipeline = () => {
   const stages = [
     HeightPipelineStage,
     TemperaturePipelineStage,
-    MoisturePipelineStage,
+    PrecipitationPipelineStage,
+    HumidityPipelineStage,
+    BiomePipelineStage,
   ];
 
   const sections = useMemo(() => {

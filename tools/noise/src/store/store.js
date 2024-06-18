@@ -30,7 +30,7 @@ export const useStore = create(() => {
       ...persistedState?.pipeline,
     },
     height: {
-      map: new Float32Array(mapSize.width * mapSize.height),
+      map: new Uint8Array(mapSize.width * mapSize.height),
       options: {
         ...stateDefault.height.options,
         ...persistedState?.heightOptions,
@@ -43,12 +43,30 @@ export const useStore = create(() => {
         ...persistedState?.temperatureOptions,
       },
     },
-    moisture: {
+    humidity: {
       map: new Float32Array(mapSize.width * mapSize.height),
       options: {
-        ...stateDefault.moisture.options,
-        ...persistedState?.moistureOptions,
+        ...stateDefault.humidity.options,
+        ...persistedState?.humidityOptions,
       },
+    },
+    precipitation: {
+      map: new Float32Array(mapSize.width * mapSize.height),
+      options: {
+        ...stateDefault.precipitation.options,
+        ...persistedState?.precipitationOptions,
+      },
+    },
+    biome: {
+      map: [],
+      options: {
+        ...stateDefault.biome.options,
+        ...persistedState?.biomeOptions,
+      },
+    },
+    visualizer: {
+      ...stateDefault.visualizer,
+      ...persistedState.visualizer,
     },
   };
 });
@@ -63,8 +81,11 @@ const persist = (state) => {
       mapSize: state.mapSize,
       heightOptions: state.height.options,
       temperatureOptions: state.temperature.options,
-      moistureOptions: state.moisture.options,
+      humidityOptions: state.humidity.options,
+      precipitationOptions: state.precipitation.options,
+      biomeOptions: state.biome.options,
       pipeline: state.pipeline,
+      visualizer: state.visualizer,
     };
 
     try {

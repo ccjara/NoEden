@@ -1,34 +1,17 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { addComposer } from './addComposer';
 import { useVisualizerControls } from './useVisualizerControls';
 import { useStore } from './store/store.js';
+import { createHeightColorizer } from './height/createHeightColorizer.js';
 
 const V_WIDTH = 1280;
 const V_HEIGHT = 720;
 
-const colorize = (value) => {
-  if (value < 0.1) {
-    return [0, 0, 1];
-  }
-  if (value < 0.15) {
-    return [1, 1, 0];
-  }
-  if (value < 0.2) {
-    return [0, 1, 0];
-  }
-  if (value < 0.4) {
-    return [0, 0.5, 0];
-  }
-  if (value < 0.7) {
-    return [0.5, 0.5, 0.5];
-  }
-  return [1, 1, 1];
-};
-
 export const Visualizer = () => {
   const { width, height } = useStore(($) => $.mapSize);
   const data = useStore(($) => $.height.map);
+  const altitudeOptions = useStore(($) => $.height.options.altitude);
 
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
@@ -39,6 +22,11 @@ export const Visualizer = () => {
   const blockMaterialRef = useRef(null);
 
   useVisualizerControls(cameraRef);
+
+  const colorize = useMemo(
+    () => createHeightColorizer(altitudeOptions),
+    [altitudeOptions],
+  );
 
   const onMouseMove = (event) => {
     if (!cameraRef.current || event.buttons === 0) {
@@ -109,7 +97,7 @@ export const Visualizer = () => {
     }
 
     const instanceCount = width * height;
-    const colors = new Float32Array(instanceCount * 3);
+    const colors = new Float32Array(instanceCount * 4);
     const geometry = new THREE.BoxGeometry(1, 1, 1);
     const instancedMesh = new THREE.InstancedMesh(
       geometry,
@@ -121,9 +109,12 @@ export const Visualizer = () => {
     for (let z = 0; z < height; ++z) {
       for (let x = 0; x < width; ++x) {
         const index = z * width + x;
-        colors.set(colorize(data[index]), index * 3);
+        colors.set(
+          colorize(data[index]).map(($) => $ / 255),
+          index * 4,
+        );
 
-        const blockHeight = data[index] * 128;
+        const blockHeight = data[index];
 
         matrix.makeScale(1, 1, 1);
         matrix.setPosition(x, blockHeight / 2, z);
@@ -132,7 +123,7 @@ export const Visualizer = () => {
     }
     geometry.setAttribute(
       'instanceColor',
-      new THREE.InstancedBufferAttribute(colors, 3),
+      new THREE.InstancedBufferAttribute(colors, 4),
     );
 
     scene.add(instancedMesh);
@@ -145,8 +136,8 @@ export const Visualizer = () => {
 function createShaderMaterial() {
   return new THREE.ShaderMaterial({
     vertexShader: `
-      attribute vec3 instanceColor;
-      varying vec3 vColor;
+      attribute vec4 instanceColor;
+      varying vec4 vColor;
       void main() {
         vColor = instanceColor;
         vec4 mvPosition = modelViewMatrix * instanceMatrix * vec4(position, 1.0);
@@ -154,9 +145,9 @@ function createShaderMaterial() {
       }
     `,
     fragmentShader: `
-      varying vec3 vColor;
+      varying vec4 vColor;
       void main() {
-        gl_FragColor = vec4(vColor, 1.0);
+        gl_FragColor = vColor;
       }
     `,
     vertexColors: true,
