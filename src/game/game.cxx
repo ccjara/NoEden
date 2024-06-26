@@ -1,5 +1,14 @@
 #include "game.hxx"
 
+#ifdef NOEDEN_XRAY
+#include "xray/log_xray.hxx"
+#include "xray/scene_xray.hxx"
+#include "xray/script_xray.hxx"
+#include "xray/ui_xray.hxx"
+#include "xray/perf_xray.hxx"
+#include "xray/xray_manager.hxx"
+#endif
+
 void Game::init() {
     Log::init();
 
@@ -73,12 +82,14 @@ void Game::init() {
     Ui::init(events_.get(), &Renderer::ui_layer());
 
     // xray / engine ui
+#ifdef NOEDEN_XRAY
     xray_manager_ = std::make_unique<XrayManager>(events_.get());
     xray_manager_->add_xray(std::make_unique<LogXray>());
     xray_manager_->add_xray(std::make_unique<SceneXray>(world_spec_.get(), chunk_manager_.get(), entity_manager_.get(), tile_accessor_.get(), tile_manager_.get(), events_.get(), input_.get(), t_.get()));
     xray_manager_->add_xray(std::make_unique<ScriptXray>(scripting_.get(), events_.get()));
     xray_manager_->add_xray(std::make_unique<UiXray>());
     xray_manager_->add_xray(std::make_unique<PerfXray>());
+#endif
 
     // scripting
     scripting_->add_api<LogApi>();
@@ -111,7 +122,9 @@ void Game::init() {
 }
 
 void Game::shutdown() {
+#ifdef NOEDEN_XRAY
     xray_manager_.reset();
+#endif
 
     Ui::shutdown();
     Renderer::shutdown();
@@ -248,7 +261,9 @@ void Game::run() {
         Renderer::render();
         Profiler::timer("Render").stop();
 
+#ifdef NOEDEN_XRAY
         xray_manager_->render();
+#endif
 
         platform_->present();
         Profiler::stop_frame();

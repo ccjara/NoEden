@@ -15,11 +15,6 @@
 #include "scripts/api/scene_api.hxx"
 #include "scripts/api/ui/ui_api.hxx"
 #include "scripts/api/log_api.hxx"
-#include "xray/log_xray.hxx"
-#include "xray/perf_xray.hxx"
-#include "xray/scene_xray.hxx"
-#include "xray/script_xray.hxx"
-#include "xray/ui_xray.hxx"
 #include "input/input.hxx"
 #include "map/vision_manager.hxx"
 #include "ui/ui.hxx"
@@ -29,7 +24,6 @@
 #include "platform/platform_event.hxx"
 #include "gfx/renderer.hxx"
 #include "scripts/scripting.hxx"
-#include "xray/xray.hxx"
 #include "action/action_queue.hxx"
 #include "entity/entity.hxx"
 #include "entity/entity_manager.hxx"
@@ -44,7 +38,6 @@
 #include "world/world_spec.hxx"
 #include "world/world_spec_creator.hxx"
 #include "world/camera.hxx"
-#include "xray/xray_manager.hxx"
 
 class Game {
 public:
@@ -85,7 +78,11 @@ private:
     std::unique_ptr<ChunkGenerator> chunk_generator_ = nullptr;
     std::unique_ptr<ChunkManager> chunk_manager_ = nullptr;
     std::unique_ptr<WorldSpec> world_spec_ = nullptr;
+
+#ifdef NOEDEN_XRAY
+    class XrayManager;
     std::unique_ptr<XrayManager> xray_manager_ = nullptr;
+#endif
 };
 
 #endif

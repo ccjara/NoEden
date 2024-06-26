@@ -2,6 +2,7 @@
 #define NOEDEN_PCH_HXX
 
 #ifndef NOEDEN_RELEASE
+#define NOEDEN_XRAY
 #define NOEDEN_LOGGING
 #endif
 

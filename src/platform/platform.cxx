@@ -44,37 +44,47 @@ void Platform::initialize() {
         LOG_ERROR("Could not initialize glew");
         std::abort();
     }
+
+#ifdef NOEDEN_XRAY
     imgui_context_ = ImGui::CreateContext();
     if (!imgui_context_) {
         LOG_ERROR("Could not create imgui context");
     }
     ImGui_ImplSDL2_InitForOpenGL(sdl_window_, gl_context_);
     ImGui_ImplOpenGL3_Init();
+#endif
 }
 
 bool Platform::prepare() {
     if (!process_events()) {
         return false;
     }
+
+#ifdef NOEDEN_XRAY
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(sdl_window_);
     ImGui::NewFrame();
+#endif
     return true;
 }
 
 void Platform::present() {
+#ifdef NOEDEN_XRAY
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#endif
 
     SDL_GL_SwapWindow(sdl_window_);
 }
 
 void Platform::shutdown() {
+#ifdef NOEDEN_XRAY
     if (imgui_context_) {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplSDL2_Shutdown();
         ImGui::DestroyContext(imgui_context_);
         imgui_context_ = nullptr;
     }
+#endif
 
     if (gl_context_) {
         SDL_GL_DeleteContext(gl_context_);
@@ -107,7 +117,9 @@ bool Platform::process_events() {
 
     SDL_Event e;
     while (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_EventType::SDL_FIRSTEVENT, SDL_EventType::SDL_MOUSEWHEEL) != 0) {
+#ifdef NOEDEN_XRAY
         ImGui_ImplSDL2_ProcessEvent(&e);
+#endif
 
         switch (e.type) {
             case SDL_EventType::SDL_QUIT:
