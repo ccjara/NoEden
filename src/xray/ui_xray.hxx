@@ -1,13 +1,13 @@
 #ifndef NOEDEN_UI_XRAY_HXX
 #define NOEDEN_UI_XRAY_HXX
 
-#include "xray_interface.hxx"
-#include "xray_style.hxx"
-#include "ui/ui.hxx"
+#include "xray/xray.hxx"
 
-class UiXray : public IXray {
+class UiNode;
+
+class UiXray : public Xray {
 public:
-    void update() override;
+    void render() override;
 private:
     std::string selected_node_id_;
 

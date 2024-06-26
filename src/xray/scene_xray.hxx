@@ -1,7 +1,7 @@
 #ifndef NOEDEN_SCENE_XRAY_HXX
 #define NOEDEN_SCENE_XRAY_HXX
 
-#include "xray/xray_interface.hxx"
+#include "xray/xray.hxx"
 #include "config/config_event.hxx"
 #include "config/config.hxx"
 #include "input/input_event.hxx"
@@ -16,7 +16,7 @@ class ChunkManager;
 class TileAccessor;
 class WorldSpec;
 
-class SceneXray : public IXray {
+class SceneXray : public Xray {
 public:
     explicit SceneXray(
         WorldSpec* world_spec,
@@ -29,7 +29,7 @@ public:
         Translator* translator
     );
     
-    void update() override;
+    void render() override;
 private:
     void entity_panel(std::optional<Id> entity_id);
     void entity_glyph(Entity* entity);

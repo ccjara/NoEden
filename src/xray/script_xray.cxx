@@ -1,4 +1,5 @@
 #include "xray/script_xray.hxx"
+#include "xray/xray_style.hxx"
 #include "scripts/scripting.hxx"
 
 ScriptXray::ScriptXray(Scripting* scripting, EventManager* events) : scripting_(scripting) {
@@ -13,7 +14,7 @@ EventResult ScriptXray::on_script_reset(ScriptResetEvent& e) {
     return EventResult::Continue;
 }
 
-void ScriptXray::update() {
+void ScriptXray::render() {
     update_script_globals_table();
 
     ImGui::Begin("Scripts");

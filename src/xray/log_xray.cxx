@@ -1,6 +1,7 @@
-#include "log_xray.hxx"
+#include "xray/log_xray.hxx"
+#include "xray/xray_style.hxx"
 
-void LogXray::update() {
+void LogXray::render() {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(2.0f, 2.0f));
     ImGui::Begin("Log");
 

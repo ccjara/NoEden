@@ -1,6 +1,6 @@
 #include "xray/perf_xray.hxx"
 
-void PerfXray::update() {
+void PerfXray::render() {
     static bool vsync = true;
 
     if (ImGui::Begin("Performance")) {

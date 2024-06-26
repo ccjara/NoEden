@@ -1,11 +1,11 @@
 #ifndef NOEDEN_PERF_XRAY_HXX
 #define NOEDEN_PERF_XRAY_HXX
 
-#include "xray/xray_interface.hxx"
+#include "xray/xray.hxx"
 
-class PerfXray : public IXray {
+class PerfXray : public Xray {
 public:
-    void update() override;
+    void render() override;
 };
 
 #endif

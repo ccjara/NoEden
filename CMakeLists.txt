@@ -9,6 +9,12 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/$<$<CONFIG:Debug>:/bin>$
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/$<$<CONFIG:Debug>:/bin>$<$<CONFIG:Release>:/rel>")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/$<$<CONFIG:Debug>:/bin>$<$<CONFIG:Release>:/rel>")
 
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_definitions(-DNOEDEN_RELEASE)
+    set(NOEDEN_RELEASE TRUE)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
+
 find_package(Lua REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)

@@ -1,12 +1,11 @@
 #ifndef NOEDEN_LOG_XRAY_HXX
 #define NOEDEN_LOG_XRAY_HXX
 
-#include "xray_interface.hxx"
-#include "xray_style.hxx"
+#include "xray.hxx"
 
-class LogXray : public IXray {
+class LogXray : public Xray {
 public:
-    void update() override;
+    void render() override;
 private:
     // true if the following checkbox is currently checked
     bool follow_logs_ { true };

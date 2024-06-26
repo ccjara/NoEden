@@ -2,17 +2,16 @@
 #define NOEDEN_SCRIPT_XRAY_HXX
 
 #include "scripts/script_event.hxx"
-#include "xray/xray_interface.hxx"
-#include "xray/xray_style.hxx"
+#include "xray/xray.hxx"
 
 class Scripting;
 class Script;
 
-class ScriptXray : public IXray {
+class ScriptXray : public Xray {
 public:
     explicit ScriptXray(Scripting* scripting, EventManager* events);
 
-    void update() override;
+    void render() override;
 private:
     Scripting* scripting_ = nullptr;
 

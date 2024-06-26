@@ -151,9 +151,8 @@ set(CORE_ONLY_SOURCES
     xray/scene_xray.cxx
     xray/script_xray.cxx
     xray/ui_xray.cxx
-    xray/xray.cxx
-    xray/xray_event.hxx
-    xray/xray_interface.hxx
+    xray/xray.hxx
+    xray/xray_manager.cxx
     xray/xray_style.hxx
 )
 

@@ -76,7 +76,7 @@ EventResult SceneXray::on_mouse_down(const MouseDownEvent& e) {
     return EventResult::Continue;
 }
 
-void SceneXray::update() {
+void SceneXray::render() {
     entity_window();
     tile_window();
     mapgen_window();

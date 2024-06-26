@@ -1,6 +1,10 @@
 #ifndef NOEDEN_PCH_HXX
 #define NOEDEN_PCH_HXX
 
+#ifndef NOEDEN_RELEASE
+#define NOEDEN_LOGGING
+#endif
+
 #define NOMINMAX
 
 #include <algorithm>
@@ -76,5 +80,8 @@
 
 #include "world/world_pos.hxx"
 #include "world/chunk_pos.hxx"
+
+#include "input/input.hxx"
+#include "input/input_event.hxx"
 
 #endif

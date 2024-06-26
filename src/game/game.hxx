@@ -44,6 +44,7 @@
 #include "world/world_spec.hxx"
 #include "world/world_spec_creator.hxx"
 #include "world/camera.hxx"
+#include "xray/xray_manager.hxx"
 
 class Game {
 public:
@@ -84,6 +85,7 @@ private:
     std::unique_ptr<ChunkGenerator> chunk_generator_ = nullptr;
     std::unique_ptr<ChunkManager> chunk_manager_ = nullptr;
     std::unique_ptr<WorldSpec> world_spec_ = nullptr;
+    std::unique_ptr<XrayManager> xray_manager_ = nullptr;
 };
 
 #endif

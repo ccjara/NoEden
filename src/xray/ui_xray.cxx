@@ -1,4 +1,5 @@
-#include "ui_xray.hxx"
+#include "xray/ui_xray.hxx"
+#include "ui/ui.hxx"
 
 bool UiXray::render_anchor(UiNode* node) {
     if (!node) {
@@ -63,7 +64,7 @@ bool UiXray::render_hierarchy(UiNode* node) {
     return true;
 }
 
-void UiXray::update() {
+void UiXray::render() {
     ImGui::Begin("UI");
 
     if (ImGui::CollapsingHeader("Hierarchy")) {
