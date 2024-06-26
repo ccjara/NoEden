@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include "math/vec2.hxx"
 
 TEST_CASE("Vec2::Add adds numbers", "[math][unit]") {

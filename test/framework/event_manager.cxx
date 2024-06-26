@@ -1,19 +1,18 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
-
-enum class EngineEventType {
+enum class EventType {
     Start,
     Stop,
 };
 
-struct EngineStartEvent : public Event<EngineEventType::Start> {
+struct EngineStartEvent : public Event<EventType::Start> {
     i32 value;
 
     explicit EngineStartEvent(i32 value) : value(value) {
     }
 };
 
-struct EngineStopEvent : public Event<EngineEventType::Stop> {
+struct EngineStopEvent : public Event<EventType::Stop> {
     bool value;
 
     explicit EngineStopEvent(bool value) : value(value) {
@@ -21,7 +20,7 @@ struct EngineStopEvent : public Event<EngineEventType::Stop> {
 };
 
 TEST_CASE("EventManager calls all subscribed handlers", "[event][unit]") {
-    EventManager<EngineEventType> events;
+    EventManager events;
 
     bool handlerOneCalled = false;
     bool handlerTwoCalled = false;
@@ -45,7 +44,7 @@ TEST_CASE("EventManager calls all subscribed handlers", "[event][unit]") {
 }
 
 TEST_CASE("EventManager calls only matching handlers", "[event][unit]") {
-    EventManager<EngineEventType> events;
+    EventManager events;
 
     bool handlerOneCalled = false;
     bool handlerTwoCalled = false;
@@ -67,7 +66,7 @@ TEST_CASE("EventManager calls only matching handlers", "[event][unit]") {
 }
 
 TEST_CASE("EventManager stops event propagation if event result is halt", "[event][unit]") {
-    EventManager<EngineEventType> events;
+    EventManager events;
 
     bool handlerOneCalled = false;
     bool handlerTwoCalled = false;
@@ -89,7 +88,7 @@ TEST_CASE("EventManager stops event propagation if event result is halt", "[even
 }
 
 TEST_CASE("EventManager calls handlers in descending order of priority", "[event][unit]") {
-    EventManager<EngineEventType> events;
+    EventManager events;
 
     bool handlerOneCalled = false;
     bool handlerTwoCalled = false;
@@ -114,7 +113,7 @@ TEST_CASE("EventManager calls handlers in descending order of priority", "[event
 
 
 TEST_CASE("EventManager::clear() removes all handlers", "[event][unit]") {
-    EventManager<EngineEventType> events;
+    EventManager events;
 
     auto subOne = events.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
         return EventResult::Continue;
@@ -124,45 +123,45 @@ TEST_CASE("EventManager::clear() removes all handlers", "[event][unit]") {
         return EventResult::Continue;
     });
 
-    REQUIRE(events.handler_count(EngineEventType::Start) == 2);
+    REQUIRE(events.handler_count(EventType::Start) == 2);
 
     events.clear();
 
-    REQUIRE(events.handler_count(EngineEventType::Start) == 0);
+    REQUIRE(events.handler_count(EventType::Start) == 0);
 }
 
 TEST_CASE("Subscription, when out of scope, removes listener", "[event][unit]") {
-    EventManager<EngineEventType> events;
+    EventManager events;
 
     {
         auto subscription = events.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
             return EventResult::Continue;
         });
 
-        REQUIRE(events.handler_count(EngineEventType::Start) == 1);
+        REQUIRE(events.handler_count(EventType::Start) == 1);
     }
 
-    REQUIRE(events.handler_count(EngineEventType::Start) == 0);
+    REQUIRE(events.handler_count(EventType::Start) == 0);
 }
 
 TEST_CASE("Subscription when moved into other subscription, unsubscribes from old listener", "[event][unit]") {
-    EventManager<EngineEventType> events;
+    EventManager events;
 
     auto subscription = events.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
         return EventResult::Continue;
     });
 
-    REQUIRE(events.handler_count(EngineEventType::Start) == 1);
+    REQUIRE(events.handler_count(EventType::Start) == 1);
 
     {
         auto&& movedSubscription = std::move(subscription);
-        REQUIRE(events.handler_count(EngineEventType::Start) == 1);
+        REQUIRE(events.handler_count(EventType::Start) == 1);
     }
 }
 
 TEST_CASE("Subscription move assignment behavior", "[Subscription]") {
     SECTION("Move assignment to inactive subscription: moved subscription is preserved") {
-        EventManager<EngineEventType> manager;
+        EventManager manager;
         Subscription<EngineStartEvent> sub1;
 
         auto sub2 = manager.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
@@ -179,11 +178,11 @@ TEST_CASE("Subscription move assignment behavior", "[Subscription]") {
         REQUIRE(sub2.id() == 0); // NOLINT(*-use-after-move)
         REQUIRE(sub2.event_manager() == nullptr); // NOLINT(*-use-after-move)
         REQUIRE_FALSE(sub2.active()); // NOLINT(*-use-after-move)
-        REQUIRE(manager.handler_count(EngineEventType::Start) == 1);
+        REQUIRE(manager.handler_count(EventType::Start) == 1);
     }
 
     SECTION("Move assignment to active subscription: unsubscribes old subscription") {
-        EventManager<EngineEventType> manager;
+        EventManager manager;
 
         auto sub1 = manager.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
             return EventResult::Continue;
@@ -197,7 +196,7 @@ TEST_CASE("Subscription move assignment behavior", "[Subscription]") {
         const Id sub2_id = sub2.id();
 
         REQUIRE(sub1_id != sub2_id); // precondition
-        REQUIRE(manager.handler_count(EngineEventType::Start) == 2); // precondition
+        REQUIRE(manager.handler_count(EventType::Start) == 2); // precondition
 
         sub1 = std::move(sub2);
 
@@ -207,7 +206,7 @@ TEST_CASE("Subscription move assignment behavior", "[Subscription]") {
         REQUIRE(sub2.id() == 0); // NOLINT(*-use-after-move)
         REQUIRE(sub2.event_manager() == nullptr); // NOLINT(*-use-after-move)
         REQUIRE_FALSE(sub2.active()); // NOLINT(*-use-after-move)
-        REQUIRE(manager.handler_count(EngineEventType::Start) == 1);
+        REQUIRE(manager.handler_count(EventType::Start) == 1);
     }
 }
 
@@ -223,13 +222,13 @@ TEST_CASE("Subscription state", "[Subscription]") {
     }
 
     SECTION("Constructed with zero subscription id is inactive") {
-        EventManager<EngineEventType> manager;
+        EventManager manager;
         Subscription<EngineStartEvent> subscription(&manager, 0);
         REQUIRE_FALSE(subscription.active());
     }
 
     SECTION("Constructed with valid event manager and id is active") {
-        EventManager<EngineEventType> manager;
+        EventManager manager;
         Subscription<EngineStartEvent> subscription(&manager, 42);
         REQUIRE(subscription.active());
     }
@@ -243,7 +242,7 @@ TEST_CASE("Subscription::unsubscribe()", "[Subscription]") {
     }
 
     SECTION("When active, unsubscribes from the event manager") {
-        EventManager<EngineEventType> manager;
+        EventManager manager;
         auto sub = manager.on<EngineStartEvent>([](const EngineStartEvent& e) -> EventResult {
             return EventResult::Continue;
         });

@@ -142,7 +142,9 @@ set(COMMON_SOURCES
     world/world_spec_creator.cxx
     world/world_pos.cxx
     world/world_spec.cxx
+)
 
+set(CORE_ONLY_SOURCES
     xray/log_xray.cxx
     xray/noise_texture.cxx
     xray/perf_xray.cxx
@@ -155,7 +157,7 @@ set(COMMON_SOURCES
     xray/xray_style.hxx
 )
 
-set(SOURCES ${DEPS} ${COMMON_SOURCES})
+set(SOURCES ${DEPS} ${COMMON_SOURCES} ${CORE_ONLY_SOURCES})
 
 set(LIBRARIES
     ${SDL2_LIBRARIES}

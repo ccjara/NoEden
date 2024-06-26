@@ -5,22 +5,30 @@ include(Catch)
 
 enable_testing()
 
-add_executable(NoEdenTest
-    "framework/event_manager.cxx"
-    "input/input.cxx"
-    "lang/translator.cxx"
-    "lang/translation_loader.cxx"
-    "math/vec2.cxx"
+set(SRC ${CMAKE_SOURCE_DIR}/src)
 
-    "test_util/test_events.hxx"
+include_directories(NoEdenTest PRIVATE ${CATCH2_SOURCE_DIR}/include)
+include_directories(NoEdenTest PRIVATE ${CMAKE_SOURCE_DIR}/src)
+include_directories(NoEdenTest PRIVATE ${CMAKE_SOURCE_DIR}/test)
+
+add_executable(NoEdenTest
+    framework/event_manager.cxx
+    input/input.cxx
+    lang/translator.cxx
+    lang/translation_loader.cxx
+
+    ${SRC}/framework/event_manager.hxx
+    ${SRC}/input/input.cxx
+    ${SRC}/input/input_event.hxx
+    ${SRC}/input/keyboard_state.cxx
+    ${SRC}/input/mouse_button.hxx
+    ${SRC}/input/mouse_state.cxx
+    ${SRC}/lang/translation_loader.cxx
+    ${SRC}/lang/translator.cxx
+    ${SRC}/lang/dictionary.cxx
 )
 
-target_include_directories(NoEdenTest PRIVATE ${catch2_SOURCE_DIR}/include)
-target_include_directories(NoEdenTest PRIVATE ${CMAKE_SOURCE_DIR}/src)
-target_include_directories(NoEdenTest PRIVATE ${CMAKE_SOURCE_DIR}/test)
-target_link_libraries(NoEdenTest PRIVATE NoEdenStatic Catch2::Catch2WithMain)
-target_precompile_headers(NoEdenTest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/pch.hxx)
+target_link_libraries(NoEdenTest PRIVATE Catch2::Catch2WithMain)
+target_precompile_headers(NoEdenTest PRIVATE pch.hxx)
 
 catch_discover_tests(NoEdenTest)
-
-

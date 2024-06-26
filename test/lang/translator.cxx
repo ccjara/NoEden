@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include "lang/translator.hxx"
 
 TEST_CASE("Translator::translate and operator() look up translation in dictionary", "[lang][unit]") {

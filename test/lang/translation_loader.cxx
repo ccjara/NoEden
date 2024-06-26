@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include "lang/translation_loader.hxx"
 
 TEST_CASE("load(std::string_view) loads the toml file at the given path", "[lang][unit]") {

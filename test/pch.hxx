@@ -1,5 +1,5 @@
-#ifndef NOEDEN_PCH_HXX
-#define NOEDEN_PCH_HXX
+#ifndef NOEDENTEST_PCH_HXX
+#define NOEDENTEST_PCH_HXX
 
 #define NOMINMAX
 
@@ -8,6 +8,7 @@
 #include <array>
 #include <atomic>
 #include <bitset>
+#include <cassert>
 #include <charconv>
 #include <chrono>
 #include <cmath>
@@ -32,34 +33,15 @@
 #include <fmt/format.h>
 #include <fmt/chrono.h>
 
-#include <GL/glew.h>
-
-#include <lua.hpp>
-#include <LuaBridge/LuaBridge.h>
-
 #define TOML_COMPILER_HAS_EXCEPTIONS 0
 #define TOML_COMPILER_HAS_RTTI 0
 #include "tomlplusplus/toml.hpp"
 
-#define IMGUI_IMPL_OPENGL_LOADER_GLEW
-
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_sdl.h"
-#include "imgui/imgui_impl_opengl3.h"
-
-#define SDL_MAIN_HANDLED
-
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-
-#include "stb/stb_image.h"
-#include "stb/stb_perlin.h"
 
 #include "framework/usings.hxx"
 #include "framework/concepts.hxx"
 #include "framework/event.hxx"
-
-#include "instrumentation/profiler.hxx"
 
 #include "log/log.hxx"
 #include "lang/translator.hxx"
