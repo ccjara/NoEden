@@ -25,7 +25,7 @@ public:
         std::error_code ec;
         luabridge::push<Api*>(script, api, ec);
         if (ec) {
-            Log::error("Could not expose api {}: {}", name, ec.message());
+            LOG_ERROR("Could not expose api {}: {}", name, ec.message());
             return;
         }
         lua_setglobal(script, name);

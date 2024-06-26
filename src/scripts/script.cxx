@@ -18,7 +18,7 @@ Script::operator lua_State* () const {
 
 bool Script::run() {
     if (status_ == ScriptStatus::Unloaded) {
-        Log::error("Cannot run script {}: script must be loaded", name_);
+        LOG_ERROR("Cannot run script {}: script must be loaded", name_);
         return false;
     }
     if (lua_pcall(state_, 0, 0, 0) != LUA_OK) {
@@ -87,16 +87,16 @@ void Script::set_source(std::string&& source) {
 void Script::fail(ScriptError err) {
     switch (err) {
     case ScriptError::StateAllocFailed:
-        Log::error("Could not allocate new lua state for script {}", name_);
+        LOG_ERROR("Could not allocate new lua state for script {}", name_);
         break;
     case ScriptError::RuntimeError:
-        Log::error("Runtime error in script {}: {}", name_, lua_tostring(state_, -1));
+        LOG_ERROR("Runtime error in script {}: {}", name_, lua_tostring(state_, -1));
         break;
     case ScriptError::ScriptCorrupted:
-        Log::error("Cannot load script {}: ", name_, lua_tostring(state_, -1));
+        LOG_ERROR("Cannot load script {}: ", name_, lua_tostring(state_, -1));
     case ScriptError::None:
     default:
-        Log::error("Unknown error in script {}", name_);
+        LOG_ERROR("Unknown error in script {}", name_);
     }
     error_ = err;
 }

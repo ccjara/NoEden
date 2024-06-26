@@ -54,7 +54,7 @@ void UiApi::on_register(Script& script) {
                             n->set_anchor_origin(unsafe_origin);
                             return;
                         default:
-                            Log::error(
+                            LOG_ERROR(
                                 "Unknown anchor origin {}, please use one of "
                                 "the following: AnchorOrigin.Top, AnchorOrigin.TopRight, "
                                 "AnchorOrigin.Right, AnchorOrigin.BottomRight, "
@@ -81,7 +81,7 @@ void UiApi::on_register(Script& script) {
                         n->set_align_x(unsafe_align_x);
                         break;
                     default:
-                        Log::error("Unknown align_x {}, please use AlignX.Left, AlignX.Center or AlignX.Right", align_x);
+                        LOG_ERROR("Unknown align_x {}, please use AlignX.Left, AlignX.Center or AlignX.Right", align_x);
                 }
             })
             .addFunction("set_align_y", +[](UiNode* n, u32 align_y) {
@@ -93,7 +93,7 @@ void UiApi::on_register(Script& script) {
                         n->set_align_y(unsafe_align_y);
                         break;
                     default:
-                        Log::error("Unknown align_y {}, please use AlignY.Top, AlignY.Center or AlignY.Bottom", align_y);
+                        LOG_ERROR("Unknown align_y {}, please use AlignY.Top, AlignY.Center or AlignY.Bottom", align_y);
                 }
             })
             .addFunction("set_handler",

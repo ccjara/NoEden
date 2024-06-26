@@ -7,7 +7,7 @@ std::unique_ptr<Chunk> ChunkGenerator::generate_chunk(const GenerateChunkOptions
     std::unique_ptr<Chunk> chunk = std::make_unique<Chunk>();
 
     chunk->base_height = static_cast<i32>(options.world_spec.height_at(options.position) * Chunk::CHUNK_DEPTH);
-    Log::debug("Chunk at ({}, {}) has base height of {}", options.position.x, options.position.z, chunk->base_height);
+    LOG_DEBUG("Chunk at ({}, {}) has base height of {}", options.position.x, options.position.z, chunk->base_height);
 
     GenerateNoiseOptions height_map_options = options.world_spec.height_map_options();
     height_map_options.width = Chunk::CHUNK_SIDE_LENGTH;

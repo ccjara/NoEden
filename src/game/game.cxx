@@ -15,7 +15,7 @@ void Game::init() {
         auto path = fs::absolute(fmt::format("dictionaries/en.toml")).string();
         auto result = TranslationLoader().load(path);
         if (result.error != LoadTranslationError::None) {
-            Log::error("Failed to load translation file: err #{}", (int) result.error);
+            LOG_ERROR("Failed to load translation file: err #{}", (int) result.error);
         }
         t_ = std::make_unique<Translator>(std::move(result.dictionary));
     }
@@ -97,7 +97,7 @@ void Game::init() {
         if (arch_troll) {
             entity_manager_->create_entity(*arch_troll, WorldPos(3, 0, 3));
         } else {
-            Log::warn("TROLL archetype not yet present");
+            LOG_WARN("TROLL archetype not yet present");
         }
         if (arch_human) {
             auto& human = entity_manager_->create_entity(*arch_human, WorldPos(1, 0, 1));
@@ -105,7 +105,7 @@ void Game::init() {
             entity_manager_->set_controlled_entity(&human);
             world_->get_camera_controller().set_target(&human);
         } else {
-            Log::warn("HUMAN archetype not yet present");
+            LOG_WARN("HUMAN archetype not yet present");
         }
     }
 }

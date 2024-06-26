@@ -13,7 +13,7 @@ void UiTree::clear() {
 
 void UiTree::create_root_node() {
     if (root_) {
-        Log::error("Root node already exists");
+        LOG_ERROR("Root node already exists");
         return;
     }
     root_ = new UiNode();

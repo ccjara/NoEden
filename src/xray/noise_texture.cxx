@@ -13,7 +13,7 @@ void NoiseTexture::set_noise(const std::vector<float>& noise, i32 width, i32 hei
     height_ = height;
 
     if (noise.size() != width_ * height_) {
-        Log::warn("NoiseTexture::set_noise: noise buffer size does not match width * height");
+        LOG_WARN("NoiseTexture::set_noise: noise buffer size does not match width * height");
         return;
     }
 
@@ -63,4 +63,3 @@ void NoiseTexture::fill_texture(const std::vector<float>& noise) const {
         buffer.data()
     );
 }
-

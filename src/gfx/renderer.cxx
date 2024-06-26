@@ -94,7 +94,7 @@ void Renderer::configure(const Config& cfg) {
 
     const auto path_str = cfg_.font_texture_path.string();
     if (!fs::exists(cfg_.font_texture_path)) {
-        Log::error("Could not read text font at path {}", path_str);
+        LOG_ERROR("Could not read text font at path {}", path_str);
         std::abort();
     }
     text_texture_.load(path_str);
@@ -124,7 +124,7 @@ void Renderer::adjust_display() {
     }
 
     events_->trigger<DisplayResizedEvent>(display_size);
-    Log::debug("Display resized to {}x{} cells", display_size.x, display_size.y);
+    LOG_DEBUG("Display resized to {}x{} cells", display_size.x, display_size.y);
 }
 
 std::array<float, 4> Renderer::calculate_glyph_uv(u32 glyph) {

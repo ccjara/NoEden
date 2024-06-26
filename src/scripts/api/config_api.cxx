@@ -21,7 +21,7 @@ void ConfigApi::on_configure(luabridge::LuaRef cfg) {
     Config new_config;
 
     constexpr const auto report = [](std::string_view reason) -> void {
-        Log::error("Error in root config: {}", reason);
+        LOG_ERROR("Error in root config: {}", reason);
     };
 
     if (!cfg.isTable()) {

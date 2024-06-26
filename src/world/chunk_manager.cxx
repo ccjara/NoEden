@@ -43,7 +43,7 @@ Chunk* ChunkManager::create_chunk(const ChunkPos& position) {
     Chunk* raw_ptr = chunk.get();
     chunks_[position] = std::move(chunk);
 
-    Log::debug("Chunk created at ({}, {})", position.x, position.z);
+    LOG_DEBUG("Chunk created at ({}, {})", position.x, position.z);
 
     return raw_ptr;
 }
@@ -57,13 +57,13 @@ ChunkPos ChunkManager::to_chunk_pos(const WorldPos& position) const {
 
 EventResult ChunkManager::on_world_ready(const WorldReadyEvent& e) {
     world_spec_ = e.world_spec;
-    Log::debug("World spec updated in ChunkManager");
+    LOG_DEBUG("World spec updated in ChunkManager");
 
     return EventResult::Continue;
 }
 
 EventResult ChunkManager::on_entity_created(const EntityCreatedEvent& e) {
-    Log::debug("Ensuring chunk for entity {} at {}", e.entity->name, e.entity->position.to_string());
+    LOG_DEBUG("Ensuring chunk for entity {} at {}", e.entity->name, e.entity->position.to_string());
     create_chunk(to_chunk_pos(e.entity->position));
     return EventResult::Continue;
 }

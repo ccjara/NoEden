@@ -51,11 +51,11 @@ void CatalogApi::clear_archetypes() {
 
 void CatalogApi::create_archetype(luabridge::LuaRef ref) {
     if (!ref.isTable()) {
-        Log::error("Expected archetype data to be a table");
+        LOG_ERROR("Expected archetype data to be a table");
         return;
     }
     if (!ref["name"].isString()) {
-        Log::error("Archetype specification has no name");
+        LOG_ERROR("Archetype specification has no name");
         return;
     }
     auto archetype = catalog_->create_archetype(ref["name"].cast<const char*>());
@@ -80,7 +80,7 @@ void CatalogApi::create_archetype(luabridge::LuaRef ref) {
             }
             const auto type_ref = component_ref["type"];
             if (!type_ref.isNumber()) {
-                Log::error("Invalid {} component: type must be a string", archetype->name);
+                LOG_ERROR("Invalid {} component: type must be a string", archetype->name);
             }
             const auto component_type_unsafe = type_ref.cast<i32>();
             switch (static_cast<ComponentType>(component_type_unsafe)) {
@@ -90,7 +90,7 @@ void CatalogApi::create_archetype(luabridge::LuaRef ref) {
                     archetype->components.emplace_back(component_ptr);
                     auto& info = component_ptr->display_info();
                     if (!glyph_ref.isNumber()) {
-                        Log::warn("Glyph in render component spec of {} is not a number", archetype->name);
+                        LOG_WARN("Glyph in render component spec of {} is not a number", archetype->name);
                         return;
                     }
                     const auto color_ref = component_ref["color"];
@@ -114,11 +114,11 @@ void CatalogApi::create_archetype(luabridge::LuaRef ref) {
                         radius = vision_radius_ref.cast<i32>();
 
                         if (radius <= 0) {
-                            Log::warn("Invalid vision config in {}: vision radius must be greater than 0", archetype->name);
+                            LOG_WARN("Invalid vision config in {}: vision radius must be greater than 0", archetype->name);
                             radius = 1;
                         }
                     } else {
-                        Log::warn("Invalid vision config in {}: vision radius not set. Defaulting to 1", archetype->name);
+                        LOG_WARN("Invalid vision config in {}: vision radius not set. Defaulting to 1", archetype->name);
                     }
 
                     component_ptr->set_vision_radius(radius);
@@ -126,7 +126,7 @@ void CatalogApi::create_archetype(luabridge::LuaRef ref) {
                     return;
                 }
                 default:
-                    Log::warn("Invalid {} component: unknown type id {}", archetype->name, component_type_unsafe);
+                    LOG_WARN("Invalid {} component: unknown type id {}", archetype->name, component_type_unsafe);
             }
         };
 
@@ -236,7 +236,7 @@ std::unique_ptr<AiNode> CatalogApi::create_behavior_node(const luabridge::LuaRef
             break;
         }
         default:
-            Log::error("Unknown node type id {}", (int) type);
+            LOG_ERROR("Unknown node type id {}", (int) type);
     }
     return base_node_ptr;
 }
@@ -245,13 +245,13 @@ std::unique_ptr<AiNode> CatalogApi::create_behavior_node(const luabridge::LuaRef
 void CatalogApi::add_behavior_component(Archetype& archetype, const luabridge::LuaRef& ref) {
     const auto root_ref = ref["root"];
     if (!root_ref.isTable()) {
-        Log::error("Root in behavior component spec of {} is not a table.", archetype.name);
+        LOG_ERROR("Root in behavior component spec of {} is not a table.", archetype.name);
         return;
     }
     auto behavior = new Behavior();
     archetype.components.emplace_back(behavior);
     behavior->set_root(create_behavior_node(root_ref));
     if (!behavior->root()) {
-        Log::warn("Behavior tree constructed without any nodes in archetype {}", archetype.name);
+        LOG_WARN("Behavior tree constructed without any nodes in archetype {}", archetype.name);
     }
 }

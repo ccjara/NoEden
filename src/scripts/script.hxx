@@ -81,7 +81,7 @@ public:
         lua_pop(state_, 1);
 
         if (already_exists) {
-            Log::error("Could not re-define enum {} in script {}", enum_name, name_);
+            LOG_ERROR("Could not re-define enum {} in script {}", enum_name, name_);
             return;
         }
 
@@ -131,7 +131,7 @@ private:
 template<typename t>
 void Script::define_global(std::string_view key, t value) {
     if (status_ != ScriptStatus::Loaded) {
-        Log::error("Could not set global {} in script {}: script is not loaded", key, name_);
+        LOG_ERROR("Could not set global {} in script {}: script is not loaded", key, name_);
         return;
     }
     const auto& stored_name { globals_.emplace_back(name_) };

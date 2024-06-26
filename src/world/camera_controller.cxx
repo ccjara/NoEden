@@ -39,29 +39,29 @@ EventResult CameraController::on_key_down(const KeyDownEvent& e) {
     if (e.key == Key::Up) {
         target_ = nullptr;
         adjust(camera_->position + WorldPos(0, 0, -10));
-        Log::debug("Camera now at {}", camera_->position.to_string());
+        LOG_DEBUG("Camera now at {}", camera_->position.to_string());
     } else if (e.key == Key::Down) {
         target_ = nullptr;
         adjust(camera_->position + WorldPos(0, 0, 10));
-        Log::debug("Camera now at {}", camera_->position.to_string());
+        LOG_DEBUG("Camera now at {}", camera_->position.to_string());
     } else if (e.key == Key::Left) {
         target_ = nullptr;
         adjust(camera_->position + WorldPos(-10, 0, 0));
-        Log::debug("Camera now at {}", camera_->position.to_string());
+        LOG_DEBUG("Camera now at {}", camera_->position.to_string());
     } else if (e.key == Key::Right) {
         target_ = nullptr;
         adjust(camera_->position + WorldPos(10, 0, 0));
-        Log::debug("Camera now at {}", camera_->position.to_string());
+        LOG_DEBUG("Camera now at {}", camera_->position.to_string());
     } else if (e.key == Key::P) {
         set_target(entity_reader_->player());
     } else if (e.key == Key::Plus) {
         target_ = nullptr;
         adjust(camera_->position + WorldPos(0, 1, 0));
-        Log::debug("Camera now at {}", camera_->position.to_string());
+        LOG_DEBUG("Camera now at {}", camera_->position.to_string());
     } else if (e.key == Key::Minus) {
         target_ = nullptr;
         adjust(camera_->position + WorldPos(0, -1, 0));
-        Log::debug("Camera now at {}", camera_->position.to_string());
+        LOG_DEBUG("Camera now at {}", camera_->position.to_string());
     }
     return EventResult::Continue;
 }

@@ -5,13 +5,13 @@ Entity::Entity() : id(next_id_++) {
 
 bool Entity::add_component(std::unique_ptr<Component>&& component) {
     if (!component) {
-        Log::error("Cannot add null component to entity {}", id);
+        LOG_ERROR("Cannot add null component to entity {}", id);
         return false;
     }
     const auto component_type = component->type();
 
     if (has_component(component_type)) {
-        Log::error("Cannot add component {} to entity {}: already exists", (u32) component_type, id);
+        LOG_ERROR("Cannot add component {} to entity {}: already exists", (u32) component_type, id);
         return false; // as no move of component took place the resource will be freed
     }
 

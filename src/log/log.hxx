@@ -1,6 +1,18 @@
 #ifndef NOEDEN_LOG_HXX
 #define NOEDEN_LOG_HXX
 
+#ifdef NOEDEN_LOGGING
+    #define LOG_DEBUG(message, ...) Log::debug(message, ##__VA_ARGS__)
+    #define LOG_INFO(message, ...) Log::info(message, ##__VA_ARGS__)
+    #define LOG_WARN(message, ...) Log::warn(message, ##__VA_ARGS__)
+    #define LOG_ERROR(message, ...) Log::error(message, ##__VA_ARGS__)
+#else
+    #define LOG_DEBUG(message, ...)
+    #define LOG_INFO(message, ...)
+    #define LOG_WARN(message, ...)
+    #define LOG_ERROR(message, ...)
+#endif
+
 enum class LogLevel {
     Debug,
     Info,
@@ -9,9 +21,9 @@ enum class LogLevel {
 };
 
 struct LogEntry {
-    LogLevel level;
-    std::time_t time_point;
-    std::string message;
+    LogLevel level = LogLevel::Debug;
+    std::time_t time_point = 0;
+    std::string message = "";
 };
 
 class Log {
@@ -21,21 +33,21 @@ class Log {
     using LogStore = std::deque<LogEntry>;
 public:
     template<typename... Args>
-    static inline void debug(std::string_view fmt, Args&&... args) {
+    static void debug(std::string_view fmt, Args&&... args) {
         log(LogLevel::Debug, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    static inline void info(std::string_view fmt, Args&&... args) {
+    static void info(std::string_view fmt, Args&&... args) {
         log(LogLevel::Info, fmt, std::forward<Args>(args)...);
     }
     template<typename... Args>
-    static inline void warn(std::string_view fmt, Args&&... args) {
+    static void warn(std::string_view fmt, Args&&... args) {
         log(LogLevel::Warn, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    static inline void error(std::string_view fmt, Args&&... args) {
+    static void error(std::string_view fmt, Args&&... args) {
         log(LogLevel::Error, fmt, std::forward<Args>(args)...);
     }
 
@@ -43,7 +55,7 @@ public:
      * @brief Logs a message on the given level
      */
     template<typename... Args>
-    static inline void log(LogLevel level, std::string_view fmt, Args&&... args) {
+    static void log(LogLevel level, std::string_view fmt, Args&&... args) {
         if (logs_.size() == Log::max_entries_) {
             logs_.pop_front();
         }

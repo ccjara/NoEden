@@ -54,7 +54,7 @@ void Scripting::unload(Script& script) {
         if (on_unload.isFunction()) {
             auto unload_result = on_unload();
             if (!unload_result) {
-                Log::error(
+                LOG_ERROR(
                     "Script #{}: {} error in on_unload function: {} ({})",
                     script.id,
                     script.name(),
@@ -69,7 +69,7 @@ void Scripting::unload(Script& script) {
 
 void Scripting::load(Script& script) {
     if (script.status() != ScriptStatus::Unloaded) {
-        Log::error("Could not load script {}: script is already loaded.", script.name());
+        LOG_ERROR("Could not load script {}: script is already loaded.", script.name());
         return;
     }
     script.load();
@@ -80,7 +80,7 @@ void Scripting::load(Script& script) {
     setup_script_env(script);
 
     events_->trigger<ScriptEnvSetupEvent>(&script);
-    Log::info("Script #{}: {} has been loaded", script.id, script.name());
+    LOG_INFO("Script #{}: {} has been loaded", script.id, script.name());
     if (!script.run()) {
         return;
     }
@@ -89,7 +89,7 @@ void Scripting::load(Script& script) {
     if (on_load.isFunction()) {
         auto load_result = on_load();
         if (!load_result) {
-            Log::error(
+            LOG_ERROR(
                 "Script #{}: {} error in on_load function: {} ({})",
                 script.id,
                 script.name(),

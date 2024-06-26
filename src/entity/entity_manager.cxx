@@ -75,7 +75,7 @@ ControlEntityResult EntityManager::set_controlled_entity(Entity* entity) {
         entity->on_player_attached();
     }
     controlled_entity_ = entity;
-    Log::debug("Entity {} is now controlled", entity ? entity->id : 0);
+    LOG_DEBUG("Entity {} is now controlled", entity ? entity->id : 0);
 
     return ControlEntityResult::Success;
 }

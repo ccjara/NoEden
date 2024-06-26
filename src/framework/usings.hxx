@@ -14,7 +14,7 @@ using i64 = int64_t;
 
 using Id = u64;
 
-constinit static const Id null_id = 0U;
+constexpr static Id null_id = std::numeric_limits<Id>::max();
 
 namespace fs = std::filesystem;
 

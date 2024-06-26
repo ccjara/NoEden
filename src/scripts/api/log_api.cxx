@@ -13,17 +13,17 @@ void LogApi::on_register(Script& script) {
 }
 
 void LogApi::log_debug(const char* message) const {
-    Log::debug(message);
+    LOG_DEBUG(message);
 }
 
 void LogApi::log_info(const char* message) const {
-    Log::info(message);
+    LOG_INFO(message);
 }
 
 void LogApi::log_warn(const char* message) const {
-    Log::warn(message);
+    LOG_WARN(message);
 }
 
 void LogApi::log_error(const char* message) const {
-    Log::error(message);
+    LOG_ERROR(message);
 }

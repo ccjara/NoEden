@@ -40,7 +40,7 @@ void Texture::load(std::string_view path) {
 
     const auto glError = glGetError();
     if (glError) {
-        Log::error("Could not generate texture: {}", glError);
+        LOG_ERROR("Could not generate texture: {}", glError);
         std::abort();
     }
     unbind();

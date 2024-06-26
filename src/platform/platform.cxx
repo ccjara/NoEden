@@ -14,7 +14,7 @@ void Platform::initialize() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        Log::error("Failed to initialize SDL: %s", SDL_GetError());
+        LOG_ERROR("Failed to initialize SDL: %s", SDL_GetError());
         std::abort();
     }
     sdl_initialized_ = true;
@@ -29,24 +29,24 @@ void Platform::initialize() {
     );
 
     if (!sdl_window_) {
-        Log::error("Failed to create SDL window: %s", SDL_GetError());
+        LOG_ERROR("Failed to create SDL window: %s", SDL_GetError());
         std::abort();
     }
 
     gl_context_ = SDL_GL_CreateContext(sdl_window_);
     if (!gl_context_) {
-        Log::error("Failed to create GL context: %s", SDL_GetError());
+        LOG_ERROR("Failed to create GL context: %s", SDL_GetError());
         std::abort();
     }
     SDL_GL_SetSwapInterval(1);
 
     if (glewInit() != GLEW_OK) {
-        Log::error("Could not initialize glew");
+        LOG_ERROR("Could not initialize glew");
         std::abort();
     }
     imgui_context_ = ImGui::CreateContext();
     if (!imgui_context_) {
-        Log::error("Could not create imgui context");
+        LOG_ERROR("Could not create imgui context");
     }
     ImGui_ImplSDL2_InitForOpenGL(sdl_window_, gl_context_);
     ImGui_ImplOpenGL3_Init();
