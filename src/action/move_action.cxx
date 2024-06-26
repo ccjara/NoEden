@@ -5,7 +5,7 @@
 #include "tile/tile.hxx"
 #include "world/tile_accessor.hxx"
 
-MoveAction::MoveAction(IEntityReader* entity_reader, TileAccessor* tile_accessor, Events* events) :
+MoveAction::MoveAction(IEntityReader* entity_reader, TileAccessor* tile_accessor, EventManager* events) :
     entity_reader_(entity_reader),
     tile_accessor_(tile_accessor),
     events_(events) {
@@ -65,7 +65,7 @@ ActionResult MoveAction::perform() {
     entity_->position = destination;
 
     if (entity_->player_attached_) {
-        events_->engine->trigger<PlayerMovedEvent>(entity_->position);
+        events_->trigger<PlayerMovedEvent>(entity_->position);
     }
 
     return ActionResult::Success;

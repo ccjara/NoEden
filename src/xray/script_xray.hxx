@@ -10,7 +10,7 @@ class Script;
 
 class ScriptXray : public IXray {
 public:
-    explicit ScriptXray(Scripting* scripting, Events* events);
+    explicit ScriptXray(Scripting* scripting, EventManager* events);
 
     void update() override;
 private:

@@ -24,7 +24,7 @@ public:
         EntityManager* entity_manager,
         TileAccessor* tile_accessor,
         TileManager* tile_manager,
-        Events* events,
+        EventManager* events,
         IInputReader* input,
         Translator* translator
     );
@@ -50,7 +50,7 @@ private:
     EntityManager* entity_manager_ = nullptr;
     TileAccessor* tile_accessor_ = nullptr;
     TileManager* tile_manager_ = nullptr;
-    Events* events_ = nullptr;
+    EventManager* events_ = nullptr;
     IInputReader* input_ = nullptr;
     Translator* translator_ = nullptr;
 

@@ -17,8 +17,6 @@ struct Event {
      * @brief Specific event type value used at runtime to identify this event
      */
     static constexpr EventType event_type = EventTypeValue;
-
-    // static_assert(std::is_enum_v<EventType>, "EventTypeValue must be an enum type");
 };
 
 #endif

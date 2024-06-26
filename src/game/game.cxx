@@ -3,9 +3,7 @@
 void Game::init() {
     Log::init();
 
-    game_events_ = std::make_unique<EventManager<GameEventType>>();
-    engine_events_ = std::make_unique<EventManager<EngineEventType>>();
-    events_ = std::make_unique<Events>(game_events_.get(), engine_events_.get());
+    events_ = std::make_unique<EventManager>();
     config_manager_ = std::make_unique<ConfigManager>(events_.get());
     services_ = std::make_unique<ServiceLocator>();
     input_ = std::make_unique<Input>(events_.get());
@@ -36,10 +34,7 @@ void Game::init() {
 
     services_->provide<VisionManager>(vision_manager_.get());
     services_->provide<ConfigManager>(config_manager_.get());
-    services_->provide<Events>(events_.get());
-    services_->provide<EventManager<GameEventType>>(events_->game);
-    services_->provide<EventManager<EngineEventType>>(events_->engine);
-    services_->provide<Events>(events_.get());
+    services_->provide<EventManager>(events_.get());
     services_->provide<World>(world_.get());
     services_->provide<IEntityReader>(entity_manager_.get());
     services_->provide<IEntityWriter>(entity_manager_.get());
@@ -93,7 +88,7 @@ void Game::init() {
     scripting_->add_api<CatalogApi>(catalog_.get(), services_.get());
     scripting_->reload();
 
-    events_->engine->trigger<WorldReadyEvent>(world_spec_.get());
+    events_->trigger<WorldReadyEvent>(world_spec_.get());
 
     // post initialization experimentation
     {
@@ -136,8 +131,7 @@ void Game::shutdown() {
     input_.reset();
     config_manager_.reset();
     events_.reset();
-    game_events_.reset();
-    engine_events_.reset();
+    events_.reset();
 
     platform_->shutdown();
 }

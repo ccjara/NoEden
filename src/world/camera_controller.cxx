@@ -5,16 +5,16 @@
 #include "entity/entity.hxx"
 #include "chunk.hxx"
 
-CameraController::CameraController(IEntityReader* entity_reader, Events* events) :
+CameraController::CameraController(IEntityReader* entity_reader, EventManager* events) :
     entity_reader_(entity_reader),
     events_(events) {
     assert(entity_reader_);
     assert(events_);
 
-    world_updated_post_sub_ = events->engine->on<WorldUpdatedPostEvent>(this, &CameraController::on_world_updated_post);
-    key_down_sub_ = events->engine->on<KeyDownEvent>(this, &CameraController::on_key_down);
-    world_ready_sub_ = events->engine->on<WorldReadyEvent>(this, &CameraController::on_world_ready);
-    display_resized_sub_ = events->engine->on<DisplayResizedEvent>(this, &CameraController::on_display_resized);
+    world_updated_post_sub_ = events_->on<WorldUpdatedPostEvent>(this, &CameraController::on_world_updated_post);
+    key_down_sub_ = events_->on<KeyDownEvent>(this, &CameraController::on_key_down);
+    world_ready_sub_ = events_->on<WorldReadyEvent>(this, &CameraController::on_world_ready);
+    display_resized_sub_ = events_->on<DisplayResizedEvent>(this, &CameraController::on_display_resized);
 }
 
 EventResult CameraController::on_world_updated_post(const WorldUpdatedPostEvent&) {
@@ -114,4 +114,3 @@ void CameraController::set_target(Entity* entity) {
         adjust(target_->position);
     }
 }
-

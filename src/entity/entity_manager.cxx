@@ -4,7 +4,7 @@
 #include "entity/entity_event.hxx"
 #include "entity/archetype.hxx"
 
-EntityManager::EntityManager(Events* events) : events_(events) {
+EntityManager::EntityManager(EventManager* events) : events_(events) {
     assert(events_);
 }
 
@@ -39,7 +39,7 @@ Entity& EntityManager::create_entity(const Archetype& archetype, const WorldPos&
 
     index_by_id_[entity->id] = entities_.size() - 1;
 
-    events_->engine->trigger<EntityCreatedEvent>(entity.get());
+    events_->trigger<EntityCreatedEvent>(entity.get());
 
     return *entity.get();
 }

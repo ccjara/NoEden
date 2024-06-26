@@ -5,7 +5,7 @@ class Input;
 
 class Platform {
 public:
-    explicit Platform(Events* events, Input* input);
+    explicit Platform(EventManager* events, Input* input);
 
     /**
      * @brief Initializes the platform (SDL, OpenGL, ImGui, etc.)
@@ -46,7 +46,7 @@ private:
     bool process_events();
 
     bool sdl_initialized_ = false;
-    Events* events_ = nullptr;
+    EventManager* events_ = nullptr;
     SDL_Window* sdl_window_ = nullptr;
     SDL_GLContext gl_context_ = nullptr;
     ImGuiContext* imgui_context_ = nullptr;

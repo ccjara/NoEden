@@ -7,32 +7,32 @@ struct CreateWorldSpecOptions {
     /**
      * @brief Seed used to generate the world and its contents
      */
-    i32 seed;
+    i32 seed = 0;
 
     /**
      * @brief Width of the map in chunks
      */
-    i32 chunks_x;
+    i32 chunks_x = 0;
 
     /**
      * @brief Height of the map in chunks
      */
-    i32 chunks_z;
+    i32 chunks_z = 0;
 
     /**
      * @brief Max elevation where vegetation is encountered
      */
-    i32 max_vegetation;
+    i32 max_vegetation = 0;
 
     /**
      * @brief Max elevation where shorelines are encountered
      */
-    i32 max_shoreline;
+    i32 max_shoreline = 0;
 
     /**
      * @brief Max elevation where seawater is encountered
      */
-    i32 max_water;
+    i32 max_water = 0;
 };
 
 class WorldSpecCreator {

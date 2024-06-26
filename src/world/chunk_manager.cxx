@@ -4,15 +4,15 @@
 #include "world/chunk.hxx"
 #include "world/world_spec.hxx"
 
-ChunkManager::ChunkManager(ChunkGenerator* chunk_generator, Events* events) :
+ChunkManager::ChunkManager(ChunkGenerator* chunk_generator, EventManager* events) :
     chunk_generator_(chunk_generator),
     events_(events) {
     assert(events_);
     assert(chunk_generator_);
 
-    on_world_ready_sub_ = events_->engine->on<WorldReadyEvent>(this, &ChunkManager::on_world_ready);
-    on_entity_created_sub_ = events_->engine->on<EntityCreatedEvent>(this, &ChunkManager::on_entity_created);
-    on_player_moved_sub_ = events_->engine->on<PlayerMovedEvent>(this, &ChunkManager::on_player_moved);
+    on_world_ready_sub_ = events_->on<WorldReadyEvent>(this, &ChunkManager::on_world_ready);
+    on_entity_created_sub_ = events_->on<EntityCreatedEvent>(this, &ChunkManager::on_entity_created);
+    on_player_moved_sub_ = events_->on<PlayerMovedEvent>(this, &ChunkManager::on_player_moved);
 }
 
 constexpr std::size_t ChunkManager::ChunkPosHasher::operator()(const ChunkPos& pos) const {

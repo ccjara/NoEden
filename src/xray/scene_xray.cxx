@@ -19,7 +19,7 @@ SceneXray::SceneXray(
     EntityManager* entity_manager,
     TileAccessor* tile_accessor,
     TileManager* tile_manager,
-    Events* events,
+    EventManager* events,
     IInputReader* input,
     Translator* translator
 ) :
@@ -41,8 +41,8 @@ SceneXray::SceneXray(
     assert(events_);
 
 
-    mouse_down_sub_ = events_->engine->on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
-    config_updated_sub_ = events_->engine->on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
+    mouse_down_sub_ = events_->on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
+    config_updated_sub_ = events_->on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
 }
 
 EventResult SceneXray::on_config_updated(const ConfigUpdatedEvent& e) {

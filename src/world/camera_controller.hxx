@@ -1,7 +1,7 @@
 #ifndef NOEDEN_CAMERA_CONTROLLER_HXX
 #define NOEDEN_CAMERA_CONTROLLER_HXX
 
-#include "framework/engine_event_type.hxx"
+#include "framework/event_type.hxx"
 #include "world/world_event.hxx"
 #include "input/input_event.hxx"
 #include "gfx/gfx_event.hxx"
@@ -13,7 +13,7 @@ class IEntityReader;
 
 class CameraController {
 public:
-    explicit CameraController(IEntityReader* entity_reader, Events* events);
+    explicit CameraController(IEntityReader* entity_reader, EventManager* events);
 
     /**
      * @brief Assigns camera to be controlled
@@ -45,7 +45,7 @@ private:
 
     IEntityReader* entity_reader_ = nullptr;
     Camera* camera_ = nullptr;
-    Events* events_ = nullptr;
+    EventManager* events_ = nullptr;
 
     i32 world_width_ = 0;
     i32 world_height_ = 0;

@@ -1,17 +1,17 @@
 #ifndef NOEDEN_ENTITY_EVENT_HXX
 #define NOEDEN_ENTITY_EVENT_HXX
 
-#include "framework/engine_event_type.hxx"
+#include "framework/event_type.hxx"
 
 class Entity;
 
-struct PlayerMovedEvent : public Event<EngineEventType::PlayerMoved> {
+struct PlayerMovedEvent : public Event<EventType::PlayerMoved> {
     WorldPos position;
 
     explicit PlayerMovedEvent(const WorldPos& position) : position(position) {}
 };
 
-struct EntityCreatedEvent : public Event<EngineEventType::EntityCreated> {
+struct EntityCreatedEvent : public Event<EventType::EntityCreated> {
     Entity* entity = nullptr;
 
     explicit EntityCreatedEvent(Entity* entity) : entity(entity) {

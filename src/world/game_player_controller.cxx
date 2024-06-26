@@ -7,13 +7,13 @@
 GamePlayerController::GamePlayerController(
     IEntityReader* entity_reader,
     IActionCreator* action_creator,
-    Events* events
+    EventManager* events
 ) : entity_reader_(entity_reader),
     action_creator_(action_creator),
     events_(events) {
     assert(events_);
 
-    key_down_sub_ = events_->engine->on<KeyDownEvent>(this, &GamePlayerController::on_key_down);
+    key_down_sub_ = events_->on<KeyDownEvent>(this, &GamePlayerController::on_key_down);
 }
 
 EventResult GamePlayerController::on_key_down(KeyDownEvent& e) {
@@ -60,6 +60,6 @@ bool GamePlayerController::move_relative(const WorldPos& direction) {
     move_action->destination = player->position + direction;
 
     // start the next world tick
-    events_->engine->trigger<PlayerActionCommitted>(move_action);
+    events_->trigger<PlayerActionCommitted>(move_action);
     return true;
 }

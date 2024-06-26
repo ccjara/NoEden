@@ -7,7 +7,7 @@ class ConfigManager;
 
 class ConfigApi : public LuaApi {
 public:
-    explicit ConfigApi(ConfigManager* config_manager, Events* events);
+    explicit ConfigApi(ConfigManager* config_manager, EventManager* events);
 
     void on_register(Script& script) override;
 private:
@@ -17,7 +17,7 @@ private:
     void on_configure(luabridge::LuaRef cfg);
 
     ConfigManager* config_manager_ = nullptr;
-    Events* events_ = nullptr;
+    EventManager* events_ = nullptr;
 };
 
 #endif

@@ -1,11 +1,11 @@
 #ifndef NOEDEN_WORLD_EVENT_HXX
 #define NOEDEN_WORLD_EVENT_HXX
 
-#include "framework/engine_event_type.hxx"
+#include "framework/event_type.hxx"
 
 class WorldSpec;
 
-struct WorldReadyEvent : public Event<EngineEventType::WorldReady> {
+struct WorldReadyEvent : public Event<EventType::WorldReady> {
     WorldSpec* world_spec = nullptr;
 
     WorldReadyEvent(WorldSpec* world_spec) : world_spec(world_spec) {
@@ -13,10 +13,10 @@ struct WorldReadyEvent : public Event<EngineEventType::WorldReady> {
     }
 };
 
-struct WorldUpdatedPreEvent : public Event<EngineEventType::WorldUpdatedPre> {
+struct WorldUpdatedPreEvent : public Event<EventType::WorldUpdatedPre> {
 };
 
-struct WorldUpdatedPostEvent : public Event<EngineEventType::WorldUpdatedPost> {
+struct WorldUpdatedPostEvent : public Event<EventType::WorldUpdatedPost> {
 };
 
 #endif

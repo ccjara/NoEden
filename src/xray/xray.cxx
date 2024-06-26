@@ -1,12 +1,12 @@
 #include "xray/xray.hxx"
 
-void Xray::init(Events* events) {
+void Xray::init(EventManager* events) {
     assert(events);
 
-    mouse_down_sub_ = events->engine->on<MouseDownEvent>(&Xray::on_mouse_down, 10000);
-    mouse_up_sub_ = events->engine->on<MouseUpEvent>(&Xray::on_mouse_up, 10000);
-    key_down_sub_ = events->engine->on<KeyDownEvent>(&Xray::on_key_down, 10000);
-    key_up_sub_ = events->engine->on<KeyUpEvent>(&Xray::on_key_up, 10000);
+    mouse_down_sub_ = events->on<MouseDownEvent>(&Xray::on_mouse_down, 10000);
+    mouse_up_sub_ = events->on<MouseUpEvent>(&Xray::on_mouse_up, 10000);
+    key_down_sub_ = events->on<KeyDownEvent>(&Xray::on_key_down, 10000);
+    key_up_sub_ = events->on<KeyUpEvent>(&Xray::on_key_up, 10000);
 
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;

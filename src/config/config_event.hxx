@@ -2,12 +2,12 @@
 #define NOEDEN_CONFIG_EVENT_HXX
 
 #include "config/config.hxx"
-#include "framework/engine_event_type.hxx"
+#include "framework/event_type.hxx"
 
 /**
  * @brief Triggered every time the configuration updates (usually from within lua)
  */
-struct ConfigUpdatedEvent : public Event<EngineEventType::ConfigUpdated> {
+struct ConfigUpdatedEvent : public Event<EventType::ConfigUpdated> {
     Config prev;
     Config next;
 

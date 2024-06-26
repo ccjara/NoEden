@@ -1,11 +1,11 @@
 #include "xray/script_xray.hxx"
 #include "scripts/scripting.hxx"
 
-ScriptXray::ScriptXray(Scripting* scripting, Events* events) : scripting_(scripting) {
+ScriptXray::ScriptXray(Scripting* scripting, EventManager* events) : scripting_(scripting) {
     assert(scripting_);
     assert(events);
 
-    script_reset_sub_ = events->engine->on<ScriptResetEvent>(this, &ScriptXray::on_script_reset);
+    script_reset_sub_ = events->on<ScriptResetEvent>(this, &ScriptXray::on_script_reset);
 }
 
 EventResult ScriptXray::on_script_reset(ScriptResetEvent& e) {

@@ -2,12 +2,7 @@
 #define NOEDEN_EVENT_MANAGER_HXX
 
 template<typename T>
-concept MethodInvocable = std::is_member_function_pointer<T>::value;
-
-template<typename Event, typename EventType>
-concept EventLike = requires {
-    { Event::event_type } -> std::convertible_to<EventType>;
-};
+concept MethodInvocable = std::is_member_function_pointer_v<T>;
 
 enum class EventResult {
     /**
@@ -21,10 +16,14 @@ enum class EventResult {
     Halt,
 };
 
-template<typename Event>
-struct Subscription;
+/**
+ * @brief Event type which is supposed to be defined by the game
+ */
+enum class EventType;
 
-template<typename EventType>
+template<typename Event>
+class Subscription;
+
 class EventManager {
 public:
     /**
@@ -34,7 +33,7 @@ public:
      *
      * The higher the priority the earlier the handler will be called.
      */
-    template<EventLike<EventType> Event, typename Fn>
+    template<typename Event, typename Fn>
     [[nodiscard("Returned subscription instance must be stored otherwise the handler will be removed immediately after this call.")]]
     Subscription<Event> on(Fn callable, i32 priority = 0) {
         const Id id = generate_id();
@@ -50,7 +49,7 @@ public:
      *
      * The higher the priority the earlier the handler will be called.
      */
-    template<EventLike<EventType> Event, typename Inst, MethodInvocable Fn>
+    template<typename Event, typename Inst, MethodInvocable Fn>
     [[nodiscard("Returned subscription instance must be stored otherwise the handler will be removed immediately after this call.")]]
     Subscription<Event> on(Inst* instance, Fn method, i32 priority = 0) {
         const Id id = generate_id();
@@ -65,7 +64,7 @@ public:
         return Subscription<Event>(this, id);
     }
 
-    template<EventLike<EventType> Event>
+    template<typename Event>
     void off(Subscription<Event>& subscription) {
         auto partition = get_partition(Event::event_type);
         if (!partition) {
@@ -82,7 +81,7 @@ public:
      *
      * Short-circuits if any handler returned `true`.
      */
-    template<EventLike<EventType> Event, typename... Args>
+    template<typename Event, typename... Args>
     void trigger(Args&& ...args) {
         Event event(std::forward<Args>(args)...);
         EventPartition<Event>& partition = get_or_create_partition<Event>();
@@ -115,7 +114,7 @@ public:
         clear();
     }
 private:
-    template<EventLike<EventType> Event>
+    template<typename Event>
     struct EventHandler {
         Id id = 0;
         std::function<EventResult(Event&)> callable {};
@@ -136,7 +135,7 @@ private:
         virtual size_t handler_count() const = 0;
     };
 
-    template<EventLike<EventType> Event>
+    template<typename Event>
     struct EventPartition : BaseEventPartition {
         explicit EventPartition(EventType event_type) : event_type(event_type) {
         }
@@ -175,7 +174,7 @@ private:
         std::vector<EventHandler<Event>> event_handlers {};
     };
 
-    template<EventLike<EventType> Event>
+    template<typename Event>
     EventPartition<Event>& get_or_create_partition() {
         EventType type = Event::event_type;
         auto [it, inserted] = partitions_.emplace(type, nullptr);
@@ -212,8 +211,6 @@ private:
 template<typename Event>
 class Subscription {
 public:
-    using EventManagerType = EventManager<typename Event::EventType>;
-
     /**
      * @brief Constructs the subscription with the given event manager and id.
      *
@@ -222,13 +219,13 @@ public:
      * @param event_manager Event manager this subscription is associated with
      * @param id Unique id of the subscription
      */
-    Subscription(EventManagerType* event_manager, Id id) : event_manager_(event_manager), id_(id) {
+    Subscription(EventManager* event_manager, Id id) : event_manager_(event_manager), id_(id) {
     }
 
     /**
      * @brief Unsubscribes the handler from the event manager if the subscription is active.
      */
-    inline void unsubscribe() {
+    void unsubscribe() {
         if (active()) {
             event_manager_->off(*this);
         }
@@ -236,21 +233,21 @@ public:
         event_manager_ = nullptr;
     }
 
-    inline bool active() const {
+    bool active() const {
         return event_manager_ != nullptr && id_ != 0;
     }
 
     /**
      * @brief Returns the unique id of the subscription
      */
-    inline Id id() const {
+    Id id() const {
         return id_;
     }
 
     /**
      * @brief Returns the associated event manager
      */
-    inline EventManagerType* event_manager() const {
+    EventManager* event_manager() const {
         return event_manager_;
     }
 
@@ -290,7 +287,7 @@ private:
     /**
      * @brief Associated event manager
      */
-    EventManagerType* event_manager_ = nullptr;
+    EventManager* event_manager_ = nullptr;
 
     /**
      * @brief Unique id of the subscription

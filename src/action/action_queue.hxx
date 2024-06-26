@@ -6,7 +6,7 @@
 
 class ActionQueue : public IActionCreator, public IActionProcessor {
 public:
-    explicit ActionQueue(Events* events, ServiceLocator* services);
+    explicit ActionQueue(EventManager* events, ServiceLocator* services);
 
     /**
      * @copydoc IActionCreator::create_action
@@ -40,7 +40,7 @@ private:
 
     std::vector<std::unique_ptr<Action>> actions_;
 
-    Events* events_ = nullptr;
+    EventManager* events_ = nullptr;
     ServiceLocator* services_ = nullptr;
 };
 

@@ -6,7 +6,7 @@
 
 class EntityManager : public IEntityReader, public IEntityWriter {
 public:
-    explicit EntityManager(Events* events);
+    explicit EntityManager(EventManager* events);
 
     /**
      * @copydoc IEntityReader::entity
@@ -70,7 +70,7 @@ private:
      */
     Entity* controlled_entity_ = nullptr;
 
-    Events* events_ = nullptr;
+    EventManager* events_ = nullptr;
 };
 
 #endif

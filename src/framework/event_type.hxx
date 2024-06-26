@@ -1,7 +1,7 @@
-#ifndef NOEDEN_ENGINE_EVENT_TYPE_HXX
-#define NOEDEN_ENGINE_EVENT_TYPE_HXX
+#ifndef NOEDEN_EVENT_TYPE_HXX
+#define NOEDEN_EVENT_TYPE_HXX
 
-enum class EngineEventType {
+enum class EventType {
     None,
     ConfigUpdated,
     MouseMove,

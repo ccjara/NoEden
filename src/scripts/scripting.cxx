@@ -1,8 +1,8 @@
 #include "scripts/scripting.hxx"
 
-Scripting::Scripting(Events* events) : events_(events) {
+Scripting::Scripting(EventManager* events) : events_(events) {
     assert(events_);
-    key_down_sub_ = events_->engine->on<KeyDownEvent>(this, &Scripting::on_key_down);
+    key_down_sub_ = events_->on<KeyDownEvent>(this, &Scripting::on_key_down);
     script_loader_ = std::make_unique<ScriptLoader>();
     script_registry_ = std::make_unique<ScriptRegistry>();
 }
@@ -13,12 +13,12 @@ Scripting::~Scripting() {
 }
 
 void Scripting::reset() {
-    events_->engine->trigger<ScriptResetEvent>();
+    events_->trigger<ScriptResetEvent>();
     script_registry_->reset();
 }
 
 void Scripting::reload() {
-    events_->engine->trigger<ScriptResetEvent>();
+    events_->trigger<ScriptResetEvent>();
     for (auto& script: script_registry_->scripts()) {
         unload(*script.second);
     }
@@ -76,10 +76,10 @@ void Scripting::load(Script& script) {
     if (script.status() != ScriptStatus::Loaded) {
         return;
     }
-    events_->engine->trigger<ScriptLoadedEvent>(&script);
+    events_->trigger<ScriptLoadedEvent>(&script);
     setup_script_env(script);
 
-    events_->engine->trigger<ScriptEnvSetupEvent>(&script);
+    events_->trigger<ScriptEnvSetupEvent>(&script);
     Log::info("Script #{}: {} has been loaded", script.id, script.name());
     if (!script.run()) {
         return;

@@ -9,7 +9,7 @@
 World::World(
     IEntityReader* entity_reader,
     IActionProcessor* action_processor,
-    Events* events
+    EventManager* events
 ) : entity_reader_(entity_reader),
     events_(events),
     action_processor_(action_processor),
@@ -19,7 +19,7 @@ World::World(
     assert(events_);
     assert(action_processor_);
 
-    player_action_committed_sub_ = events_->engine->on<PlayerActionCommitted>(this, &World::on_player_action_committed);
+    player_action_committed_sub_ = events_->on<PlayerActionCommitted>(this, &World::on_player_action_committed);
     camera_controller_->control(camera_.get());
 }
 
@@ -33,7 +33,7 @@ EventResult World::on_player_action_committed(const PlayerActionCommitted& e) {
     }
     Profiler::timer("Update").start();
 
-    events_->engine->trigger<WorldUpdatedPreEvent>();
+    events_->trigger<WorldUpdatedPreEvent>();
 
     // give all entities in the world energy according to the cost of the action
     const auto cost = e.action->cost();
@@ -49,7 +49,7 @@ EventResult World::on_player_action_committed(const PlayerActionCommitted& e) {
         entity->on_after_actions();
     }
 
-    events_->engine->trigger<WorldUpdatedPostEvent>();
+    events_->trigger<WorldUpdatedPostEvent>();
     Profiler::timer("Update").stop();
 
     return EventResult::Continue;

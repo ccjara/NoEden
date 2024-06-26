@@ -3,13 +3,12 @@
 
 #include "world/world_event.hxx"
 
-struct Events;
 class IEntityReader;
 class ITileReader;
 
 class VisionManager {
 public:
-    explicit VisionManager(IEntityReader *entity_reader, ITileReader* tile_reader, Events* events);
+    explicit VisionManager(IEntityReader *entity_reader, ITileReader* tile_reader, EventManager* events);
 
     /**
      * @brief Applies the field of view of all relevant entities to the map
@@ -28,7 +27,7 @@ private:
     EventResult on_world_updated_post(const WorldUpdatedPostEvent& e);
     Subscription<WorldUpdatedPostEvent> world_updated_post_sub_;
 
-    Events* events_ = nullptr;
+    EventManager* events_ = nullptr;
     IEntityReader* entity_reader_ = nullptr;
     ITileReader* tile_reader_ = nullptr;
 };

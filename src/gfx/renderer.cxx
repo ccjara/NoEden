@@ -12,12 +12,12 @@ void Renderer::shutdown() {
     config_updated_sub_.unsubscribe();
 }
 
-void Renderer::init(Events* events) {
+void Renderer::init(EventManager* events) {
     assert(events);
 
     events_ = events;
-    resize_sub_ = events_->engine->on<ResizeEvent>(&Renderer::on_resize);
-    config_updated_sub_ = events_->engine->on<ConfigUpdatedEvent>(&Renderer::on_config_updated);
+    resize_sub_ = events_->on<ResizeEvent>(&Renderer::on_resize);
+    config_updated_sub_ = events_->on<ConfigUpdatedEvent>(&Renderer::on_config_updated);
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
@@ -123,7 +123,7 @@ void Renderer::adjust_display() {
         layer.resize(display_size);
     }
 
-    events_->engine->trigger<DisplayResizedEvent>(display_size);
+    events_->trigger<DisplayResizedEvent>(display_size);
     Log::debug("Display resized to {}x{} cells", display_size.x, display_size.y);
 }
 

@@ -5,7 +5,6 @@
 #include "action/action_event.hxx"
 #include "input/input_event.hxx"
 
-struct Events;
 class IEntityReader;
 class IActionCreator;
 
@@ -14,7 +13,7 @@ public:
     explicit GamePlayerController(
         IEntityReader* entity_reader,
         IActionCreator* action_creator,
-        Events* events
+        EventManager* events
     );
 private:
     EventResult on_key_down(KeyDownEvent& e);
@@ -27,7 +26,7 @@ private:
      */
     bool move_relative(const WorldPos& direction);
 
-    Events* events_ = nullptr;
+    EventManager* events_ = nullptr;
     IEntityReader* entity_reader_ = nullptr;
     IActionCreator* action_creator_ = nullptr;
 

@@ -12,7 +12,7 @@ struct Camera;
 
 class World {
 public:
-    explicit World(IEntityReader* entity_reader, IActionProcessor* action_processor, Events* events);
+    explicit World(IEntityReader* entity_reader, IActionProcessor* action_processor, EventManager* events);
 
     /**
      * @brief Sets the player controller for this world
@@ -33,7 +33,7 @@ private:
      */
     IPlayerController* player_controller = nullptr;
 
-    Events* events_ = nullptr;
+    EventManager* events_ = nullptr;
     IEntityReader* entity_reader_ = nullptr;
     IActionProcessor* action_processor_ = nullptr;
 

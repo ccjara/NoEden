@@ -11,7 +11,7 @@ class Display;
 
 class Ui {
 public:
-    static void init(Events* events, Display* display);
+    static void init(EventManager* events, Display* display);
     static void shutdown();
     static void update();
     static void draw();
@@ -23,7 +23,7 @@ private:
     Ui() = delete;
 
     static inline UiTree ui_tree_;
-    static inline Events* events_ = nullptr;
+    static inline EventManager* events_ = nullptr;
     static inline Display* display_ = nullptr;
 
     static void update_node(UiNode* node);

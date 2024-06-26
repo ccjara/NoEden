@@ -1,8 +1,18 @@
 #ifndef NOEDEN_CHUNK_POS_HXX
 #define NOEDEN_CHUNK_POS_HXX
 
+/**
+ * @brief Position of a chunk in the world
+ */
 struct ChunkPos {
+    /**
+     * @brief X coordinate of the chunk
+     */
     i32 x;
+
+    /**
+     * @brief Z coordinate of the chunk
+     */
     i32 z;
 
     ChunkPos();

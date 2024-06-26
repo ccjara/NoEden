@@ -7,7 +7,7 @@
 #include "entity/entity_reader.hxx"
 #include "world/tile_accessor.hxx"
 
-ActionQueue::ActionQueue(Events* events, ServiceLocator* services) :
+ActionQueue::ActionQueue(EventManager* events, ServiceLocator* services) :
     events_(events),
     services_(services) {
     assert(events_);
@@ -75,7 +75,7 @@ void ActionQueue::process_actions() {
     actions_.clear();
     Profiler::timer("ActionQueue").stop();
 
-    events_->engine->trigger<ActionQueueProcessed>();
+    events_->trigger<ActionQueueProcessed>();
 }
 
 constexpr float ActionQueue::calculate_cost(ActionType type, float actor_speed) {

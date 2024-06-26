@@ -13,7 +13,7 @@ struct GenerateChunkOptions {
     /**
      * @brief Where this chunk is going to be created. Important for noise generation
      */
-    ChunkPos position;
+    ChunkPos position = {0, 0};
 };
 
 class ChunkGenerator {

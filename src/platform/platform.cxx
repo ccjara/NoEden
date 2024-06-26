@@ -3,7 +3,7 @@
 #include "input/input.hxx"
 #include "input/input_event.hxx"
 
-Platform::Platform(Events* events, Input *input) : events_(events), input_(input) {
+Platform::Platform(EventManager* events, Input *input) : events_(events), input_(input) {
     assert(events_);
     assert(input_);
 }
@@ -114,7 +114,7 @@ bool Platform::process_events() {
                 return false;
             case SDL_EventType::SDL_WINDOWEVENT:
                 if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
-                    events_->engine->trigger<ResizeEvent>(Vec2<i32> {
+                    events_->trigger<ResizeEvent>(Vec2<i32> {
                         static_cast<i32> (e.window.data1),
                         static_cast<i32> (e.window.data2)
                     });

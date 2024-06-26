@@ -1,14 +1,14 @@
 #include "config/config_manager.hxx"
 #include "config/config_event.hxx"
 
-ConfigManager::ConfigManager(Events* events) : events_(events) {
+ConfigManager::ConfigManager(EventManager* events) : events_(events) {
     assert(events_);
 }
 
 void ConfigManager::update(Config&& config) {
     Config old_config = std::move(config_);
     config_ = std::move(config);
-    events_->engine->trigger<ConfigUpdatedEvent>(old_config, config_);
+    events_->trigger<ConfigUpdatedEvent>(old_config, config_);
 }
 
 const Config& ConfigManager::get() const {
@@ -18,5 +18,3 @@ const Config& ConfigManager::get() const {
 Config& ConfigManager::get() {
     return config_;
 }
-
-

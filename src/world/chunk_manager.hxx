@@ -9,7 +9,7 @@ class ChunkGenerator;
 
 class ChunkManager {
 public:
-    explicit ChunkManager(ChunkGenerator* chunk_generator, Events* events);
+    explicit ChunkManager(ChunkGenerator* chunk_generator, EventManager* events);
 
     /**
      * @brief Returns the chunk at the given world position or nullptr if not existing
@@ -34,7 +34,7 @@ private:
      */
     ChunkPos to_chunk_pos(const WorldPos& position) const;
 
-    Events* events_ = nullptr;
+    EventManager* events_ = nullptr;
     ChunkGenerator* chunk_generator_ = nullptr;
     WorldSpec* world_spec_ = nullptr;
 

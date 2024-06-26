@@ -19,7 +19,7 @@ class ScriptRegistry;
 
 class Scripting {
 public:
-    explicit Scripting(Events* events);
+    explicit Scripting(EventManager* events);
 
     /**
      * @brief Constructs and registers a lua api fragment in place
@@ -48,7 +48,7 @@ private:
     std::unique_ptr<ScriptRegistry> script_registry_ = nullptr;
     std::vector<std::unique_ptr<LuaApi>> apis_;
 
-    Events* events_ = nullptr;
+    EventManager* events_ = nullptr;
 
     EventResult on_key_down(KeyDownEvent& e);
     Subscription<KeyDownEvent> key_down_sub_;
