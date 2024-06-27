@@ -1,12 +1,12 @@
 #include "game.hxx"
 
 #ifdef NOEDEN_XRAY
+#include "xray/xray_manager.hxx"
 #include "xray/log_xray.hxx"
 #include "xray/scene_xray.hxx"
 #include "xray/script_xray.hxx"
 #include "xray/ui_xray.hxx"
 #include "xray/perf_xray.hxx"
-#include "xray/xray_manager.hxx"
 #endif
 
 void Game::init() {

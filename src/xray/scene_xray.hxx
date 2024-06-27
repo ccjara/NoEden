@@ -4,7 +4,6 @@
 #include "xray/xray.hxx"
 #include "config/config_event.hxx"
 #include "config/config.hxx"
-#include "input/input_event.hxx"
 #include "tile/tile.hxx"
 #include "xray/noise_texture.hxx"
 

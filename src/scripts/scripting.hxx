@@ -2,7 +2,6 @@
 #define NOEDEN_SCRIPT_SYSTEM_HXX
 
 #include "platform/platform_event.hxx"
-#include "input/input_event.hxx"
 #include "scripts/api/lua_api.hxx"
 #include "scripts/script_event.hxx"
 #include "scripts/script.hxx"

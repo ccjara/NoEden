@@ -1,7 +1,5 @@
 #include "platform/platform.hxx"
 #include "platform/platform_event.hxx"
-#include "input/input.hxx"
-#include "input/input_event.hxx"
 
 Platform::Platform(EventManager* events, Input *input) : events_(events), input_(input) {
     assert(events_);

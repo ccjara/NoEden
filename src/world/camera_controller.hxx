@@ -3,7 +3,6 @@
 
 #include "framework/event_type.hxx"
 #include "world/world_event.hxx"
-#include "input/input_event.hxx"
 #include "gfx/gfx_event.hxx"
 
 struct Camera;

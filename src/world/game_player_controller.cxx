@@ -1,5 +1,6 @@
 #include "world/game_player_controller.hxx"
 #include "action/action_creator.hxx"
+#include "action/action_event.hxx"
 #include "action/move_action.hxx"
 #include "entity/entity.hxx"
 #include "entity/entity_reader.hxx"

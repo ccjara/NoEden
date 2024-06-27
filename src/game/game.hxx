@@ -39,6 +39,10 @@
 #include "world/world_spec_creator.hxx"
 #include "world/camera.hxx"
 
+#ifdef NOEDEN_XRAY
+    class XrayManager;
+#endif
+
 class Game {
 public:
     static int start();
@@ -80,7 +84,6 @@ private:
     std::unique_ptr<WorldSpec> world_spec_ = nullptr;
 
 #ifdef NOEDEN_XRAY
-    class XrayManager;
     std::unique_ptr<XrayManager> xray_manager_ = nullptr;
 #endif
 };

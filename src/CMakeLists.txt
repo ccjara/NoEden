@@ -149,7 +149,7 @@ set(SOURCES
     world/world_spec.cxx
 )
 
-if (NOT SOURCES)
+if (NOT NOEDEN_RELEASE)
     set(SOURCES ${SOURCES}
         xray/log_xray.cxx
         xray/noise_texture.cxx

@@ -2,8 +2,6 @@
 #define NOEDEN_GAME_PLAYER_CONTROLLER_HXX
 
 #include "world/player_controller.hxx"
-#include "action/action_event.hxx"
-#include "input/input_event.hxx"
 
 class IEntityReader;
 class IActionCreator;
