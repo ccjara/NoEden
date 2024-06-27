@@ -131,9 +131,9 @@ void main() {
 )RAW";
     LOG_INFO("Compiling text shader ...");
 
-    if (!(compile(Shader_type::vertex, vss)
-        && compile(Shader_type::geometry, gss)
-        && compile(Shader_type::fragment, fss)
+    if (!(compile(ShaderType::vertex, vss)
+        && compile(ShaderType::geometry, gss)
+        && compile(ShaderType::fragment, fss)
         && link())) {
         LOG_ERROR("Text shader creation failed");
         return;

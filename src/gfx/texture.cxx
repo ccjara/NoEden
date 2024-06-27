@@ -16,12 +16,18 @@ bool Texture::is_loaded() const {
     return !!id_;
 }
 
-void Texture::load(std::string_view path) {
+bool Texture::load(std::string_view path) {
     unload();
 
     const auto image = Image::from_file(path);
 
+    if (!image.loaded()) {
+        LOG_ERROR("Could not load image from path {}", path);
+        return false;
+    }
+
     glGenTextures(1, &id_);
+    GL_CHECK(fmt::format("Could not generate texture {}", path));
     bind();
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -38,14 +44,13 @@ void Texture::load(std::string_view path) {
         image.data()
     );
 
-    const auto glError = glGetError();
-    if (glError) {
-        LOG_ERROR("Could not generate texture: {}", glError);
-        std::abort();
-    }
+    GL_CHECK(fmt::format("Could not map texture {}", path));
+
     unbind();
 
     size_ = { static_cast<u32> (image.width()), static_cast<u32> (image.height()) };
+
+    return true;
 }
 
 GLuint Texture::id() const {

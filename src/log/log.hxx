@@ -71,7 +71,7 @@ public:
      */
     static void set_level(LogLevel level);
 private:
-    static void init();
+    static void initialize();
 
     /**
      * @brief Stores logs in a FIFO-like container with random access.

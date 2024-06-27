@@ -1,6 +1,6 @@
 #include "log.hxx"
 
-void Log::init() {
+void Log::initialize() {
     set_level(LogLevel::Debug);
 }
 

@@ -1,11 +1,10 @@
 #ifndef NOEDEN_RENDERER_HXX
 #define NOEDEN_RENDERER_HXX
 
-#include "display.hxx"
-#include "text_shader.hxx"
-#include "gfx_event.hxx"
 #include "config/config.hxx"
 #include "config/config_event.hxx"
+#include "gfx/display.hxx"
+#include "gfx/text_shader.hxx"
 #include "platform/platform_event.hxx"
 
 /**
@@ -13,86 +12,93 @@
  */
 class Renderer {
 public:
-    Renderer() = delete;
+    explicit Renderer(EventManager* events);
 
-    static void init(EventManager* events);
-    static void shutdown();
+    /**
+     * @brief Initializes renderer resources
+     */
+    bool initialize();
 
     /**
      * @brief Renders the game based on the current display state.
      */
-    static void render();
+    void render();
 
     /**
      * @brief Sets the viewport.
      *
      * Must be called if the user resized the game window.
      */
-    static void set_viewport(Vec2<u32> size);
+    void set_viewport(Vec2<u32> size);
 
     /**
      * @brief Sets the font texture used to display text.
      */
-    static void set_font(Texture* tex);
+    void set_font(Texture* tex);
 
     /**
      * @brief Sets the font's glyph size
      */
-    static void set_glyph_size(Vec2<u32> glyph_size);
+    void set_glyph_size(Vec2<u32> glyph_size);
 
     /**
      * @brief Sets the render scaling
      */
-    static void set_scaling(u32 scaling);
+    void set_scaling(u32 scaling);
 
     /**
      * @brief Returns the result of dividing the glyph width by its height
      */
-    static float glyph_aspect_ratio();
+    float glyph_aspect_ratio() const;
 
     /**
      * @brief Returns the current text texture GL id
      */
-    static GLuint text_texture();
+    GLuint text_texture() const;
 
     /**
      * @brief Calculates texture coordinates of a glyph for a custom render
      *
      * The array will contain [u1, v1, u2, v2] in this order.
      */
-    static std::array<float, 4> calculate_glyph_uv(u32 glyph);
+    std::array<float, 4> calculate_glyph_uv(u32 glyph);
 
     /**
      * @brief Provides writable access to the Display
      */
-    static Display& display();
+    Display& display();
 
-    static Display& ui_layer();
+    Display& ui_layer();
+
+    ~Renderer();
+
 private:
-    static inline Config cfg_;
-    static inline Texture text_texture_;
+    Config cfg_;
+    Texture text_texture_;
 
-    static inline Vec2<u32> view_port_;
-    static inline u32 scaling_ = 1;
-    static inline std::unique_ptr<TextShader> text_shader_ = nullptr;
+    Vec2<u32> view_port_;
+    u32 scaling_ = 1;
+    std::unique_ptr<TextShader> text_shader_ = nullptr;
 
-    static inline GLuint vbo = 0;
-    static inline GLuint vao = 0;
+    GLuint vbo = 0;
+    GLuint vao = 0;
 
-    static inline size_t last_size_ = 0;
+    size_t last_size_ = 0;
 
-    static inline EventResult on_resize(ResizeEvent&);
-    static inline Subscription<ResizeEvent> resize_sub_;
-    static inline EventResult on_config_updated(ConfigUpdatedEvent&);
-    static inline Subscription<ConfigUpdatedEvent> config_updated_sub_;
+    EventResult on_resize(const ResizeEvent&);
+    Subscription<ResizeEvent> resize_sub_;
+    EventResult on_config_updated(const ConfigUpdatedEvent&);
+    Subscription<ConfigUpdatedEvent> config_updated_sub_;
 
-    static inline void adjust_display();
+    void adjust_display();
 
-    static inline void configure(const Config& cfg);
+    bool configure(const Config& cfg);
 
-    static inline std::array<Display, 2> layers_;
+    std::array<Display, 2> layers_;
 
-    static inline EventManager* events_ = nullptr;
+    EventManager* events_ = nullptr;
+
+    bool initialized_ = false;
 };
 
 #endif

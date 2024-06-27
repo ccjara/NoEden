@@ -14,10 +14,12 @@ class IInputReader;
 class ChunkManager;
 class TileAccessor;
 class WorldSpec;
+class Renderer;
 
 class SceneXray : public Xray {
 public:
     explicit SceneXray(
+        Renderer* renderer,
         WorldSpec* world_spec,
         ChunkManager* chunk_manager,
         EntityManager* entity_manager,
@@ -52,6 +54,7 @@ private:
     EventManager* events_ = nullptr;
     IInputReader* input_ = nullptr;
     Translator* translator_ = nullptr;
+    Renderer* renderer_ = nullptr;
 
     NoiseTexture noise_texture_;
 };

@@ -11,7 +11,7 @@ class Display;
 
 class Ui {
 public:
-    static void init(EventManager* events, Display* display);
+    static void initialize(EventManager* events, Display* display);
     static void shutdown();
     static void update();
     static void draw();

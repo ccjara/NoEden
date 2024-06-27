@@ -52,7 +52,7 @@ private:
     /**
      * @brief Initializes the game and its subsystems
      */
-    void init();
+    bool initialize();
 
     /**
      * @brief Starts the game
@@ -82,6 +82,7 @@ private:
     std::unique_ptr<ChunkGenerator> chunk_generator_ = nullptr;
     std::unique_ptr<ChunkManager> chunk_manager_ = nullptr;
     std::unique_ptr<WorldSpec> world_spec_ = nullptr;
+    std::unique_ptr<Renderer> renderer_ = nullptr;
 
 #ifdef NOEDEN_XRAY
     std::unique_ptr<XrayManager> xray_manager_ = nullptr;

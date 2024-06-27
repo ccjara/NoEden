@@ -9,8 +9,8 @@
 #include "xray/perf_xray.hxx"
 #endif
 
-void Game::init() {
-    Log::init();
+bool Game::initialize() {
+    Log::initialize();
 
     events_ = std::make_unique<EventManager>();
     config_manager_ = std::make_unique<ConfigManager>(events_.get());
@@ -18,7 +18,14 @@ void Game::init() {
     input_ = std::make_unique<Input>(events_.get());
     scripting_ = std::make_unique<Scripting>(events_.get());
     platform_ = std::make_unique<Platform>(events_.get(), input_.get());
-    platform_->initialize();
+    renderer_ = std::make_unique<Renderer>(events_.get());
+
+    if (!platform_->initialize()) {
+        return false;
+    }
+    if (!renderer_->initialize()) {
+        return false;
+    }
 
     {
         auto path = fs::absolute(fmt::format("dictionaries/en.toml")).string();
@@ -76,16 +83,15 @@ void Game::init() {
         .max_water = static_cast<i32>(0.4f * Chunk::CHUNK_DEPTH)
     });
 
-    Renderer::init(events_.get());
-    Renderer::set_viewport(platform_->window_size());
+    renderer_->set_viewport(platform_->window_size());
 
-    Ui::init(events_.get(), &Renderer::ui_layer());
+    Ui::initialize(events_.get(), &renderer_->ui_layer());
 
     // xray / engine ui
 #ifdef NOEDEN_XRAY
     xray_manager_ = std::make_unique<XrayManager>(events_.get());
     xray_manager_->add_xray(std::make_unique<LogXray>());
-    xray_manager_->add_xray(std::make_unique<SceneXray>(world_spec_.get(), chunk_manager_.get(), entity_manager_.get(), tile_accessor_.get(), tile_manager_.get(), events_.get(), input_.get(), t_.get()));
+    xray_manager_->add_xray(std::make_unique<SceneXray>(renderer_.get(), world_spec_.get(), chunk_manager_.get(), entity_manager_.get(), tile_accessor_.get(), tile_manager_.get(), events_.get(), input_.get(), t_.get()));
     xray_manager_->add_xray(std::make_unique<ScriptXray>(scripting_.get(), events_.get()));
     xray_manager_->add_xray(std::make_unique<UiXray>());
     xray_manager_->add_xray(std::make_unique<PerfXray>());
@@ -119,6 +125,8 @@ void Game::init() {
             LOG_WARN("HUMAN archetype not yet present");
         }
     }
+
+    return true;
 }
 
 void Game::shutdown() {
@@ -127,7 +135,8 @@ void Game::shutdown() {
 #endif
 
     Ui::shutdown();
-    Renderer::shutdown();
+
+    renderer_.reset();
 
     catalog_.reset();
     vision_manager_.reset();
@@ -141,13 +150,13 @@ void Game::shutdown() {
     player_controller_.reset();
 
     scripting_.reset();
-    services_.reset();
     input_.reset();
     config_manager_.reset();
-    events_.reset();
-    events_.reset();
 
     platform_->shutdown();
+
+    events_.reset();
+    services_.reset();
 }
 
 Game::~Game() {
@@ -161,7 +170,11 @@ int Game::start() {
 }
 
 void Game::run() {
-    init();
+    if (!initialize()) {
+        LOG_ERROR("Failed to initialize, exiting");
+        DEBUG_TRAP();
+        return;
+    }
 
     while (true) {
         Profiler::start_frame();
@@ -173,7 +186,7 @@ void Game::run() {
 
         // TODO: temporary code
         Profiler::timer("Draw").start();
-        auto& world_layer = Renderer::display();
+        auto& world_layer = renderer_->display();
 
         world_layer.reset();
 
@@ -258,7 +271,7 @@ void Game::run() {
         Ui::draw();
         Profiler::timer("Draw").stop();
         Profiler::timer("Render").start();
-        Renderer::render();
+        renderer_->render();
         Profiler::timer("Render").stop();
 
 #ifdef NOEDEN_XRAY

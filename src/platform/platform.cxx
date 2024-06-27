@@ -6,14 +6,14 @@ Platform::Platform(EventManager* events, Input *input) : events_(events), input_
     assert(input_);
 }
 
-void Platform::initialize() {
+bool Platform::initialize() {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        LOG_ERROR("Failed to initialize SDL: %s", SDL_GetError());
-        std::abort();
+        LOG_ERROR("Failed to initialize SDL: {}", SDL_GetError());
+        return false;
     }
     sdl_initialized_ = true;
 
@@ -27,30 +27,32 @@ void Platform::initialize() {
     );
 
     if (!sdl_window_) {
-        LOG_ERROR("Failed to create SDL window: %s", SDL_GetError());
-        std::abort();
+        LOG_ERROR("Failed to create SDL window: {}", SDL_GetError());
+        return false;
     }
 
     gl_context_ = SDL_GL_CreateContext(sdl_window_);
     if (!gl_context_) {
-        LOG_ERROR("Failed to create GL context: %s", SDL_GetError());
-        std::abort();
+        LOG_ERROR("Failed to create GL context: {}", SDL_GetError());
+        return false;
     }
     SDL_GL_SetSwapInterval(1);
 
     if (glewInit() != GLEW_OK) {
-        LOG_ERROR("Could not initialize glew");
-        std::abort();
+        LOG_ERROR("Failed to initialize glew");
+        return false;
     }
 
 #ifdef NOEDEN_XRAY
     imgui_context_ = ImGui::CreateContext();
     if (!imgui_context_) {
         LOG_ERROR("Could not create imgui context");
+        return false;
     }
     ImGui_ImplSDL2_InitForOpenGL(sdl_window_, gl_context_);
     ImGui_ImplOpenGL3_Init();
 #endif
+    return true;
 }
 
 bool Platform::prepare() {
@@ -97,7 +99,7 @@ void Platform::shutdown() {
     if (sdl_initialized_) {
         SDL_Quit();
         sdl_initialized_ = false;
-    }    
+    }
 }
 
 Platform::~Platform() {

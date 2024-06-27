@@ -1,7 +1,7 @@
 #include "ui/ui.hxx"
 #include "gfx/display.hxx"
 
-void Ui::init(EventManager* events, Display* display) {
+void Ui::initialize(EventManager* events, Display* display) {
     assert(events);
     assert(display);
 

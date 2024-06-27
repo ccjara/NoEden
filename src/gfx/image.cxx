@@ -28,3 +28,7 @@ i32 Image::height() const {
 i32 Image::channels() const {
     return channels_;
 }
+
+bool Image::loaded() const {
+    return !!data_;
+}

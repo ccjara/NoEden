@@ -1,26 +1,41 @@
 #include "gfx/renderer.hxx"
+#include "gfx_event.hxx"
 
-void Renderer::shutdown() {
+Renderer::Renderer(EventManager* events) : events_(events) {
+    assert(events_);
+
+    resize_sub_ = events_->on<ResizeEvent>(this, &Renderer::on_resize);
+    config_updated_sub_ = events_->on<ConfigUpdatedEvent>(this, &Renderer::on_config_updated);
+}
+
+Renderer::~Renderer() {
     if (vao) {
         glDeleteBuffers(1, &vao);
     }
     if (vbo) {
         glDeleteBuffers(1, &vbo);
     }
-
-    resize_sub_.unsubscribe();
-    config_updated_sub_.unsubscribe();
 }
 
-void Renderer::init(EventManager* events) {
-    assert(events);
-
-    events_ = events;
-    resize_sub_ = events_->on<ResizeEvent>(&Renderer::on_resize);
-    config_updated_sub_ = events_->on<ConfigUpdatedEvent>(&Renderer::on_config_updated);
-
+bool Renderer::initialize() {
+    if (initialized_) {
+        LOG_ERROR("Renderer already initialized");
+        return false;
+    }
     glGenVertexArrays(1, &vao);
+
+    if (glGetError() != GL_NO_ERROR) {
+        LOG_ERROR("Failed to generate VAO");
+        return false;
+    }
+
     glGenBuffers(1, &vbo);
+
+    if (glGetError() != GL_NO_ERROR) {
+        LOG_ERROR("Failed to generate VBO");
+        return false;
+    }
+
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -32,11 +47,17 @@ void Renderer::init(EventManager* events) {
     glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Display::cell_type), reinterpret_cast<void*> (sizeof(Display::cell_type::glyph)));
     glEnableVertexAttribArray(1);
 
-    glDisable(GL_DEPTH_TEST);
+    if (glGetError() != GL_NO_ERROR) {
+        LOG_ERROR("Failed to initialize vertex attributes");;
+        return false;
+    }
 
     text_shader_ = std::make_unique<TextShader>();
 
     configure(Config());
+
+    initialized_ = true;
+    return true;
 }
 
 void Renderer::render() {
@@ -83,29 +104,31 @@ void Renderer::set_scaling(u32 scaling) {
     text_shader_->use_resolution(view_port_ / scaling);
 }
 
-EventResult Renderer::on_resize(ResizeEvent& e) {
+EventResult Renderer::on_resize(const ResizeEvent& e) {
     set_viewport(e.size);
     adjust_display();
     return EventResult::Continue;
 }
 
-void Renderer::configure(const Config& cfg) {
-    cfg_ = cfg;
-
-    const auto path_str = cfg_.font_texture_path.string();
-    if (!fs::exists(cfg_.font_texture_path)) {
+bool Renderer::configure(const Config& cfg) {
+    const auto path_str = cfg.font_texture_path.string();
+    if (!fs::exists(cfg.font_texture_path)) {
         LOG_ERROR("Could not read text font at path {}", path_str);
-        std::abort();
+        return false;
     }
-    text_texture_.load(path_str);
-
+    if (!text_texture_.load(path_str)) {
+        LOG_ERROR("Could not load text texture at path {}", path_str);
+        return false;
+    }
+    cfg_ = cfg;
     set_font(&text_texture_);
-    set_glyph_size(cfg_.glyph_size);
-    set_scaling(cfg_.scaling);
+    set_glyph_size(cfg.glyph_size);
+    set_scaling(cfg.scaling);
     adjust_display();
+    return true;
 }
 
-EventResult Renderer::on_config_updated(ConfigUpdatedEvent& e) {
+EventResult Renderer::on_config_updated(const ConfigUpdatedEvent& e) {
     configure(e.next);
     return EventResult::Continue;
 }
@@ -148,17 +171,21 @@ std::array<float, 4> Renderer::calculate_glyph_uv(u32 glyph) {
     const float v1 = 1.0f / tex_size.y * tex_origin.y;
     const float v2 = 1.0f / tex_size.y * (tex_origin.y + glyph_size.y);
 
-    return std::array<float, 4> { u1, v1, u2, v2 };
+    return std::array { u1, v1, u2, v2 };
 }
 
-GLuint Renderer::text_texture() {
+GLuint Renderer::text_texture() const {
     return text_texture_.id();
 }
 
-float Renderer::glyph_aspect_ratio() {
-    return static_cast<float>(
-        text_shader_->glyph_size().x
-    ) / text_shader_->glyph_size().y;
+float Renderer::glyph_aspect_ratio() const {
+    const auto gz = text_shader_->glyph_size();
+
+    if (gz.y == 0) {
+      return 0;
+    }
+
+    return static_cast<float>(gz.x) / static_cast<float>(gz.y);
 }
 
 Display& Renderer::display() {

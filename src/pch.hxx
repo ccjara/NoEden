@@ -60,6 +60,7 @@
 #include "stb/stb_image.h"
 #include "stb/stb_perlin.h"
 
+#include "framework/macros.hxx"
 #include "framework/usings.hxx"
 #include "framework/concepts.hxx"
 #include "framework/event.hxx"

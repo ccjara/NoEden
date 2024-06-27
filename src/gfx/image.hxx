@@ -34,6 +34,11 @@ public:
      */
     [[nodiscard]] i32 channels() const;
 
+    /**
+     * @brief Returns whether the image was loaded successfully
+     */
+    [[nodiscard]] bool loaded() const;
+
     ~Image();
     Image(const Image&) = delete;
     Image(Image&&) = default;

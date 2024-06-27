@@ -24,10 +24,8 @@ public:
      * @briefs Load a texture from the given path
      *
      * If a texture is already loaded, it will be unloaded beforehand.
-     *
-     * Note: Supports only BMP as of now.
      */
-    void load(std::string_view path);
+    [[nodiscard]] bool load(std::string_view path);
 
     /**
      * @briefs Frees the managed GL resource.

@@ -14,6 +14,7 @@
 #include "world/world_spec.hxx"
 
 SceneXray::SceneXray(
+    Renderer* renderer,
     WorldSpec* world_spec,
     ChunkManager* chunk_manager,
     EntityManager* entity_manager,
@@ -23,6 +24,7 @@ SceneXray::SceneXray(
     IInputReader* input,
     Translator* translator
 ) :
+    renderer_(renderer),
     world_spec_(world_spec),
     chunk_manager_(chunk_manager),
     entity_manager_(entity_manager),
@@ -31,6 +33,7 @@ SceneXray::SceneXray(
     events_(events),
     input_(input),
     translator_(translator) {
+    assert(renderer_);
     assert(world_spec_);
     assert(chunk_manager_);
     assert(entity_manager_);
@@ -211,13 +214,13 @@ void SceneXray::entity_glyph(Entity* entity) {
         return;
     }
     const auto& display_info = rc->display_info();
-    const auto uvuv = Renderer::calculate_glyph_uv(display_info.glyph);
-    const auto texture = Renderer::text_texture();
+    const auto uvuv = renderer_->calculate_glyph_uv(display_info.glyph);
+    const auto texture = renderer_->text_texture();
     const auto& color = display_info.color;
     const float glyph_width = 32.0f;
     ImGui::Image(
         reinterpret_cast<void*>(static_cast<intptr_t>(texture)),
-        ImVec2(glyph_width, glyph_width / Renderer::glyph_aspect_ratio()),
+        ImVec2(glyph_width, glyph_width / renderer_->glyph_aspect_ratio()),
         ImVec2(uvuv[0], uvuv[1]),
         ImVec2(uvuv[2], uvuv[3]),
         ImVec4(

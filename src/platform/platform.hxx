@@ -9,8 +9,10 @@ public:
 
     /**
      * @brief Initializes the platform (SDL, OpenGL, ImGui, etc.)
+     *
+     * @returns false if initialization failed.
      */
-    void initialize();
+    bool initialize();
 
     /**
      * @brief Prepares a new loop iteration. Must be called at the beginning of the main loop.

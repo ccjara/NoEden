@@ -9,7 +9,7 @@ Shader::~Shader() {
     clear_stages();
 }
 
-bool Shader::compile(Shader_type type, std::string_view src) {
+bool Shader::compile(ShaderType type, std::string_view src) {
     if (stages_.find(type) != stages_.end()) {
         LOG_ERROR("Shader stage {} is already compiled", static_cast<u32>(type));
         return false;

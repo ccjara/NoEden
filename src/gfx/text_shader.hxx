@@ -8,17 +8,6 @@
  * @brief Shader which renders the entire game screen.
  */
 class TextShader : public Shader {
-private:
-    GLint u_resolution_; // render resolution (view port divided by scaling)
-    GLint u_glyph_size_; // size of an individual character
-    GLint u_tex_size_; // size of the bitmap font texture
-
-    Texture *tex_{nullptr};
-    Vec2<u32> glyph_size_;
-    Vec2<u32> resolution_;
-
-    void prepare() override;
-
 public:
     TextShader();
 
@@ -47,6 +36,16 @@ public:
      */
     Vec2<u32> texture_size() const;
 
+private:
+    GLint u_resolution_; // render resolution (view port divided by scaling)
+    GLint u_glyph_size_; // size of an individual character
+    GLint u_tex_size_; // size of the bitmap font texture
+
+    Texture *tex_ = nullptr;
+    Vec2<u32> glyph_size_;
+    Vec2<u32> resolution_;
+
+    void prepare() override;
 };
 
 #endif

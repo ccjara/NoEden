@@ -1,7 +1,7 @@
 #ifndef NOEDEN_SHADER_HXX
 #define NOEDEN_SHADER_HXX
 
-enum class Shader_type : GLenum {
+enum class ShaderType : GLenum {
     vertex = GL_VERTEX_SHADER,
     geometry = GL_GEOMETRY_SHADER,
     fragment = GL_FRAGMENT_SHADER
@@ -16,7 +16,7 @@ enum class Shader_type : GLenum {
  */
 class Shader {
 private:
-    std::unordered_map<Shader_type, GLuint> stages_;
+    std::unordered_map<ShaderType, GLuint> stages_;
 
     void clear_stages();
 protected:
@@ -39,7 +39,7 @@ protected:
      *
      * @returns true if compilation was successful.
      */
-    bool compile(Shader_type type, std::string_view source);
+    bool compile(ShaderType type, std::string_view source);
 
     /**
      * @brief Links all shader stages into a shader program.
