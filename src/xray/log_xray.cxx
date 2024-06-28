@@ -132,9 +132,11 @@ void LogXray::log_table() {
         : Log::logs_;
 
     ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(2.0f, 5.0f));
-    if (ImGui::BeginTable("log_table", 2, table_flags)) {
+    if (ImGui::BeginTable("log_table", 4, table_flags)) {
         ImGui::TableSetupScrollFreeze(0, 1); // keep header in view
         ImGui::TableSetupColumn("Time");
+        ImGui::TableSetupColumn("File");
+        ImGui::TableSetupColumn("Line");
         ImGui::TableSetupColumn("Message");
         ImGui::TableHeadersRow();
 
@@ -149,6 +151,10 @@ void LogXray::log_table() {
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
                 ImGui::TextUnformatted(fmt::format("{:%H:%M:%S}", fmt::localtime(entry.time_point)).c_str());
+                ImGui::TableNextColumn();
+                ImGui::TextUnformatted(entry.location.file_name());
+                ImGui::TableNextColumn();
+                ImGui::Text("%d", entry.location.line());
                 ImGui::TableNextColumn();
                 switch (entry.level) {
                     case LogLevel::Info:

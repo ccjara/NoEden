@@ -1,13 +1,11 @@
 #ifndef NOEDEN_LOG_HXX
 #define NOEDEN_LOG_HXX
 
-// TODO: std::source_location
-
 #ifdef NOEDEN_LOGGING
-    #define LOG_DEBUG(message, ...) Log::debug(message, ##__VA_ARGS__)
-    #define LOG_INFO(message, ...) Log::info(message, ##__VA_ARGS__)
-    #define LOG_WARN(message, ...) Log::warn(message, ##__VA_ARGS__)
-    #define LOG_ERROR(message, ...) Log::error(message, ##__VA_ARGS__)
+    #define LOG_DEBUG(message, ...) Log::debug(message, std::source_location::current(), ##__VA_ARGS__)
+    #define LOG_INFO(message, ...) Log::info(message, std::source_location::current(), ##__VA_ARGS__)
+    #define LOG_WARN(message, ...) Log::warn(message, std::source_location::current(), ##__VA_ARGS__)
+    #define LOG_ERROR(message, ...) Log::error(message, std::source_location::current(), ##__VA_ARGS__)
 #else
     #define LOG_DEBUG(message, ...)
     #define LOG_INFO(message, ...)
@@ -24,6 +22,7 @@ enum class LogLevel {
 
 struct LogEntry {
     LogLevel level = LogLevel::Debug;
+    std::source_location location = std::source_location::current();
     std::time_t time_point = 0;
     std::string message = "";
 };
@@ -35,34 +34,35 @@ class Log {
     using LogStore = std::deque<LogEntry>;
 public:
     template<typename... Args>
-    static void debug(std::string_view fmt, Args&&... args) {
-        log(LogLevel::Debug, fmt, std::forward<Args>(args)...);
+    static void debug(std::string_view fmt, std::source_location location = std::source_location::current(), Args&&... args) {
+        log(LogLevel::Debug, location, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    static void info(std::string_view fmt, Args&&... args) {
-        log(LogLevel::Info, fmt, std::forward<Args>(args)...);
+    static void info(std::string_view fmt, std::source_location location = std::source_location::current(), Args&&... args) {
+        log(LogLevel::Info, location, fmt, std::forward<Args>(args)...);
     }
     template<typename... Args>
-    static void warn(std::string_view fmt, Args&&... args) {
-        log(LogLevel::Warn, fmt, std::forward<Args>(args)...);
+    static void warn(std::string_view fmt, std::source_location location = std::source_location::current(), Args&&... args) {
+        log(LogLevel::Warn, location, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    static void error(std::string_view fmt, Args&&... args) {
-        log(LogLevel::Error, fmt, std::forward<Args>(args)...);
+    static void error(std::string_view fmt, std::source_location location = std::source_location::current(), Args&&... args) {
+        log(LogLevel::Error, location, fmt, std::forward<Args>(args)...);
     }
 
     /**
      * @brief Logs a message on the given level
      */
     template<typename... Args>
-    static void log(LogLevel level, std::string_view fmt, Args&&... args) {
+    static void log(LogLevel level, const std::source_location& location, std::string_view fmt, Args&&... args) {
         if (logs_.size() == Log::max_entries_) {
             logs_.pop_front();
         }
         logs_.emplace_back(LogEntry {
             level,
+            location,
             std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
             fmt::vformat(fmt, fmt::make_format_args(args...))
         });
