@@ -83,6 +83,7 @@ private:
     std::unique_ptr<ChunkManager> chunk_manager_ = nullptr;
     std::unique_ptr<WorldSpec> world_spec_ = nullptr;
     std::unique_ptr<Renderer> renderer_ = nullptr;
+    std::unique_ptr<Ui> ui_ = nullptr;
 
 #ifdef NOEDEN_XRAY
     std::unique_ptr<XrayManager> xray_manager_ = nullptr;

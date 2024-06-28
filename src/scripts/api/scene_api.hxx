@@ -7,8 +7,6 @@ class IEntityReader;
 
 class SceneApi : public LuaApi {
 public:
-    explicit SceneApi(IEntityReader* reader);
-
     void on_register(Script& script) override;
 
     /**
@@ -31,6 +29,8 @@ public:
      * Returns null_id if no player currently exists
      */
     Id player_id() const;
+
+    bool initialize() override;
 private:
     IEntityReader* entity_reader_ = nullptr;
 };

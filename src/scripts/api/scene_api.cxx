@@ -2,8 +2,15 @@
 #include "entity/entity.hxx"
 #include "entity/entity_reader.hxx"
 
-SceneApi::SceneApi(IEntityReader* entity_reader) : entity_reader_(entity_reader) {
-    assert(entity_reader_);
+bool SceneApi::initialize() {
+    entity_reader_ = svc_->get<IEntityReader>();
+
+    if (!entity_reader_) {
+        LOG_ERROR("SceneApi failed to initialize: failed to get IEntityReader");
+        return false;
+    }
+
+    return true;
 }
 
 void SceneApi::on_register(Script& script) {

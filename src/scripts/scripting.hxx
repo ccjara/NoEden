@@ -18,7 +18,7 @@ class ScriptRegistry;
 
 class Scripting {
 public:
-    explicit Scripting(EventManager* events);
+    Scripting(ServiceLocator* services, EventManager* events);
 
     /**
      * @brief Constructs and registers a lua api fragment in place
@@ -48,6 +48,7 @@ private:
     std::vector<std::unique_ptr<LuaApi>> apis_;
 
     EventManager* events_ = nullptr;
+    ServiceLocator* svc_ = nullptr;
 
     EventResult on_key_down(KeyDownEvent& e);
     Subscription<KeyDownEvent> key_down_sub_;
@@ -91,7 +92,16 @@ private:
 
 template<typename Api, typename... ApiArgs>
 void Scripting::add_api(ApiArgs&& ... api_args) {
-    apis_.emplace_back(new Api(std::forward<ApiArgs>(api_args)...));
+    auto api = std::make_unique<Api>(std::forward<ApiArgs>(api_args)...);
+
+    api->svc_ = svc_;
+    api->events_ = events_;
+
+    if (!api->initialize()) {
+        return;
+    }
+
+    apis_.push_back(std::move(api));
 }
 
 #endif

@@ -18,6 +18,18 @@ public:
     virtual void on_register(Script& script) = 0;
 
     /**
+     * @brief Initializes the api.
+     *
+     * Called after adding it to the api container.
+     * `svc_` and `events_` are set before initialize is called.
+     *
+     * @return True if the api was successfully initialized.
+     */
+    virtual bool initialize() {
+        return true;
+    }
+
+    /**
      * @brief Exposes the given api to lua under the given name.
      */
     template<typename Api>
@@ -30,6 +42,10 @@ public:
         }
         lua_setglobal(script, name);
     }
+protected:
+    friend class Scripting;
+    ServiceLocator* svc_ = nullptr;
+    EventManager* events_ = nullptr;
 };
 
 #endif

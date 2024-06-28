@@ -65,18 +65,20 @@ bool UiXray::render_hierarchy(UiNode* node) {
 }
 
 void UiXray::render() {
+    UiTree& tree = svc_->get<Ui>()->tree();
+
     ImGui::Begin("UI");
 
     if (ImGui::CollapsingHeader("Hierarchy")) {
-        render_hierarchy(Ui::tree().root());
+        render_hierarchy(tree.root());
     }
 
     if (ImGui::CollapsingHeader("Anchors")) {
-        render_anchor(Ui::tree().root());
+        render_anchor(tree.root());
     }
 
     if (!selected_node_id_.empty()) {
-        UiNode* n = Ui::tree().get_node_by_id(selected_node_id_);
+        UiNode* n = tree.get_node_by_id(selected_node_id_);
         if (n) {
             ImGui::Text("Id: %s", n->id().c_str());
             i32 size_buf[2] = {

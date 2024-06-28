@@ -1,6 +1,7 @@
 #include "scripts/scripting.hxx"
 
-Scripting::Scripting(EventManager* events) : events_(events) {
+Scripting::Scripting(ServiceLocator* services, EventManager* events) : svc_(services), events_(events) {
+    assert(svc_);
     assert(events_);
     key_down_sub_ = events_->on<KeyDownEvent>(this, &Scripting::on_key_down);
     script_loader_ = std::make_unique<ScriptLoader>();

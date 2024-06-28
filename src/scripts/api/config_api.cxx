@@ -1,11 +1,14 @@
 #include "scripts/api/config_api.hxx"
 #include "config/config_manager.hxx"
 
-ConfigApi::ConfigApi(ConfigManager* config_manager, EventManager* events) :
-    config_manager_(config_manager),
-    events_(events) {
-    assert(config_manager_);
-    assert(events_);
+bool ConfigApi::initialize() {
+    config_manager_ = svc_->get<ConfigManager>();
+    if (!config_manager_) {
+        LOG_ERROR("ConfigApi failed to initialize: failed to get ConfigManager");
+        return false;
+    }
+
+    return true;
 }
 
 void ConfigApi::on_register(Script& script) {

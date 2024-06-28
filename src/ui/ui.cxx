@@ -1,25 +1,24 @@
 #include "ui/ui.hxx"
+#include "ui_text.hxx"
+#include "ui/ui_tree.hxx"
+#include "ui/ui_window.hxx"
 #include "gfx/display.hxx"
+#include "gfx/renderer.hxx"
 
-void Ui::initialize(EventManager* events, Display* display) {
-    assert(events);
-    assert(display);
-
-    events_ = events;
-    display_ = display;
-
-    ui_tree_.create_root_node();
-
-    display_resized_sub_ = events_->on<DisplayResizedEvent>(&Ui::on_display_resized);
-    script_reset_sub_ = events_->on<ScriptResetEvent>(&Ui::on_script_reset);
+Ui::Ui(Renderer* renderer, EventManager* events) : events_(events), renderer_(renderer) {
+    assert(events_);
+    assert(renderer_);
 }
 
-void Ui::shutdown() {
-    display_ = nullptr;
-    ui_tree_.clear();
+bool Ui::initialize() {
+    ui_tree_.create_root_node();
 
-    display_resized_sub_.unsubscribe();
-    script_reset_sub_.unsubscribe();
+    display_resized_sub_ = events_->on<DisplayResizedEvent>(this, &Ui::on_display_resized);
+    script_reset_sub_ = events_->on<ScriptResetEvent>(this, &Ui::on_script_reset);
+
+    display_ = &renderer_->ui_layer();
+
+    return true;
 }
 
 void Ui::update() {
@@ -36,19 +35,19 @@ void Ui::update_node(UiNode* node) {
     }
     node->call_handler();
 
-    for (UiNode* node : node->children()) {
-        update_node(node);
+    for (UiNode* n : node->children()) {
+        update_node(n);
     }
 }
 
-EventResult Ui::on_display_resized(DisplayResizedEvent& e) {
+EventResult Ui::on_display_resized(const DisplayResizedEvent& e) {
     if (auto root = ui_tree_.root()) {
         root->resize(e.size);
     }
     return EventResult::Continue;
 }
 
-EventResult Ui::on_script_reset(ScriptResetEvent& e) {
+EventResult Ui::on_script_reset(const ScriptResetEvent&) {
     ui_tree_.reset();
     return EventResult::Continue;
 }

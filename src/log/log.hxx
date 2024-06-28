@@ -1,6 +1,8 @@
 #ifndef NOEDEN_LOG_HXX
 #define NOEDEN_LOG_HXX
 
+// TODO: std::source_location
+
 #ifdef NOEDEN_LOGGING
     #define LOG_DEBUG(message, ...) Log::debug(message, ##__VA_ARGS__)
     #define LOG_INFO(message, ...) Log::info(message, ##__VA_ARGS__)

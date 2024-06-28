@@ -1,4 +1,18 @@
 #include "ui_api.hxx"
+#include "ui/ui.hxx"
+#include "ui/ui_window.hxx"
+#include "ui/ui_text.hxx"
+
+bool UiApi::initialize() {
+    ui_ = svc_->get<Ui>();
+
+    if (!ui_) {
+        LOG_ERROR("UiApi failed to initialize: failed to get Ui");
+        return false;
+    }
+
+    return true;
+}
 
 void UiApi::on_register(Script& script) {
     script.define_enum(
@@ -134,16 +148,19 @@ void UiApi::on_register(Script& script) {
 }
 
 UiWindow* UiApi::create_window(const char* id) {
-    return create_node<UiWindow>(id);
+    if (!id) {
+        return nullptr;
+    }
+    return ui_->tree().create_node<UiWindow>(nullptr, id);
 }
 
 UiText* UiApi::create_text(const char* id) {
-    return create_node<UiText>(id);
+    return ui_->tree().create_node<UiText>(nullptr, id);
 }
 
 void UiApi::destroy_node(const char* id) {
     if (!id) {
         return;
     }
-    Ui::tree().remove_node(id);
+    ui_->tree().remove_node(id);
 }

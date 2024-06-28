@@ -7,16 +7,17 @@
 #include "component/behavior.hxx"
 #include "component/vision/vision.hxx"
 #include "entity/archetype.hxx"
-#include "world/tile_accessor.hxx"
 
 class IActionCreator;
 class IEntityReader;
 
-CatalogApi::CatalogApi(Catalog* catalog, ServiceLocator* services) : 
-    catalog_(catalog),
-    services_(services) {
-    assert(catalog_);
-    assert(services_);
+bool CatalogApi::initialize() {
+    catalog_ = svc_->get<Catalog>();
+    if (!catalog_) {
+        LOG_ERROR("CatalogApi failed to initialize: failed to get Catalog");
+        return false;
+    }
+    return true;
 }
 
 void CatalogApi::on_register(Script& script) {
@@ -106,7 +107,7 @@ void CatalogApi::create_archetype(luabridge::LuaRef ref) {
                     return add_behavior_component(*archetype, component_ref);
                 }
                 case ComponentType::Vision: {
-                    auto component_ptr = new Vision(services_->get<ITileReader>());
+                    auto component_ptr = new Vision(svc_->get<ITileReader>());
 
                     const auto vision_radius_ref = component_ref["radius"];
                     i32 radius = 1;
@@ -216,7 +217,7 @@ std::unique_ptr<AiNode> CatalogApi::create_behavior_node(const luabridge::LuaRef
             break;
         }
         case AiNodeType::ClosestEntity: {
-            base_node_ptr = std::make_unique<AiClosestEntity>(services_->get<IEntityReader>());
+            base_node_ptr = std::make_unique<AiClosestEntity>(svc_->get<IEntityReader>());
             auto node_ptr = static_cast<AiClosestEntity*>(base_node_ptr.get());
             const auto found_target_key_ref = ref["found_target_key"];
             if (found_target_key_ref.isString()) {
@@ -225,7 +226,7 @@ std::unique_ptr<AiNode> CatalogApi::create_behavior_node(const luabridge::LuaRef
             break;
         }
         case AiNodeType::Walk: {
-            base_node_ptr = std::make_unique<AiWalk>(services_->get<IActionCreator>(), services_->get<IEntityReader>());
+            base_node_ptr = std::make_unique<AiWalk>(svc_->get<IActionCreator>(), svc_->get<IEntityReader>());
             auto node_ptr = static_cast<AiWalk*>(base_node_ptr.get());
             const auto walk_target_key = ref["walk_target_key"];
             if (walk_target_key.isString()) {

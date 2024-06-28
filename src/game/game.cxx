@@ -16,14 +16,20 @@ bool Game::initialize() {
     config_manager_ = std::make_unique<ConfigManager>(events_.get());
     services_ = std::make_unique<ServiceLocator>();
     input_ = std::make_unique<Input>(events_.get());
-    scripting_ = std::make_unique<Scripting>(events_.get());
+    scripting_ = std::make_unique<Scripting>(services_.get(), events_.get());
     platform_ = std::make_unique<Platform>(events_.get(), input_.get());
     renderer_ = std::make_unique<Renderer>(events_.get());
+    ui_ = std::make_unique<Ui>(renderer_.get(), events_.get());
+
+    services_->provide<Ui>(ui_.get());
 
     if (!platform_->initialize()) {
         return false;
     }
     if (!renderer_->initialize()) {
+        return false;
+    }
+    if (!ui_->initialize()) {
         return false;
     }
 
@@ -88,8 +94,6 @@ bool Game::initialize() {
 
     renderer_->set_viewport(platform_->window_size());
 
-    Ui::initialize(events_.get(), &renderer_->ui_layer());
-
     // xray / engine ui
 #ifdef NOEDEN_XRAY
     xray_manager_ = std::make_unique<XrayManager>(services_.get(), events_.get());
@@ -102,10 +106,10 @@ bool Game::initialize() {
 
     // scripting
     scripting_->add_api<LogApi>();
-    scripting_->add_api<ConfigApi>(config_manager_.get(), events_.get());
-    scripting_->add_api<SceneApi>(entity_manager_.get());
+    scripting_->add_api<ConfigApi>();
+    scripting_->add_api<SceneApi>();
     scripting_->add_api<UiApi>();
-    scripting_->add_api<CatalogApi>(catalog_.get(), services_.get());
+    scripting_->add_api<CatalogApi>();
     scripting_->reload();
 
     events_->trigger<WorldReadyEvent>(world_spec_.get());
@@ -137,7 +141,7 @@ void Game::shutdown() {
     xray_manager_.reset();
 #endif
 
-    Ui::shutdown();
+    ui_.reset();
 
     renderer_.reset();
 
@@ -185,8 +189,6 @@ void Game::run() {
         if (!platform_->prepare()) {
             break;
         }
-        Ui::update();
-
         // TODO: temporary code
         Profiler::timer("Draw").start();
         auto& world_layer = renderer_->display();
@@ -271,7 +273,8 @@ void Game::run() {
 
             world_layer.put(DisplayCell(info.glyph, info.color), Vec2<u32>(pos.x, pos.z));
         }
-        Ui::draw();
+        ui_->update();
+        ui_->draw(); // condense into one?
         Profiler::timer("Draw").stop();
         Profiler::timer("Render").start();
         renderer_->render();

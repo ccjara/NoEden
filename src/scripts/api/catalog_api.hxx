@@ -10,15 +10,14 @@ class ServiceLocator;
 
 class CatalogApi : public LuaApi {
 public:
-    explicit CatalogApi(Catalog* catalog, ServiceLocator* services);
-
     void on_register(Script& script) override;
 
     void create_archetype(luabridge::LuaRef ref);
 
     void clear_archetypes();
+
+    bool initialize() override;
 private:
-    ServiceLocator* services_ = nullptr;
     Catalog* catalog_ = nullptr;
 
     std::unique_ptr<AiNode> create_behavior_node(const luabridge::LuaRef& ref);
