@@ -1,7 +1,7 @@
 #include "xray/xray_manager.hxx"
 #include "xray/xray.hxx"
 
-XrayManager::XrayManager(EventManager* events) : events_(events) {
+XrayManager::XrayManager(ServiceLocator* svc, EventManager* events) : svc_(svc), events_(events) {
     assert(events);
 
     mouse_down_sub_ = events->on<MouseDownEvent>(this, &XrayManager::on_mouse_down, 10000);
@@ -60,6 +60,8 @@ void XrayManager::render() {
 }
 
 void XrayManager::add_xray(std::unique_ptr<Xray>&& xray) {
+    xray->svc_ = svc_;
+    xray->events_ = events_;
     xrays_.push_back(std::move(xray));
 }
 

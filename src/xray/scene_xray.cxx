@@ -13,39 +13,10 @@
 #include "world/tile_accessor.hxx"
 #include "world/world_spec.hxx"
 
-SceneXray::SceneXray(
-    Renderer* renderer,
-    WorldSpec* world_spec,
-    ChunkManager* chunk_manager,
-    EntityManager* entity_manager,
-    TileAccessor* tile_accessor,
-    TileManager* tile_manager,
-    EventManager* events,
-    IInputReader* input,
-    Translator* translator
-) :
-    renderer_(renderer),
-    world_spec_(world_spec),
-    chunk_manager_(chunk_manager),
-    entity_manager_(entity_manager),
-    tile_accessor_(tile_accessor),
-    tile_manager_(tile_manager),
-    events_(events),
-    input_(input),
-    translator_(translator) {
-    assert(renderer_);
-    assert(world_spec_);
-    assert(chunk_manager_);
-    assert(entity_manager_);
-    assert(tile_accessor_);
-    assert(tile_manager_);
-    assert(input_);
-    assert(translator_);
-    assert(events_);
-
-
+bool SceneXray::initialize() {
     mouse_down_sub_ = events_->on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
     config_updated_sub_ = events_->on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
+    return true;
 }
 
 EventResult SceneXray::on_config_updated(const ConfigUpdatedEvent& e) {
@@ -89,10 +60,13 @@ void SceneXray::entity_window() {
     static std::optional<u64> entity_id = std::nullopt;
     static std::string combo_label = "Select entity";
 
+    auto entity_manager = svc_->get<EntityManager>();
+
+
     ImGui::Begin("Entities");
 
     if (ImGui::BeginCombo("Entity", combo_label.c_str())) {
-        for (auto& entity: entity_manager_->entities()) {
+        for (auto& entity: entity_manager->entities()) {
             const auto& entity_name_str = entity->name.c_str();
             const bool is_selected = entity_id.has_value() && entity_id.value() == entity->id;
             if (ImGui::Selectable(entity_name_str, is_selected)) {
@@ -149,18 +123,21 @@ void SceneXray::entity_panel(std::optional<u64> entity_id) {
     if (!entity_id.has_value()) {
         return;
     }
-    Entity* entity = entity_manager_->entity(entity_id.value());
+    auto entity_manager = svc_->get<EntityManager>();
+    auto translator = svc_->get<Translator>();
+
+    Entity* entity = entity_manager->entity(entity_id.value());
     if (entity == nullptr) {
         return;
     }
     entity_glyph(entity);
 
     i32 position_raw[3] = { entity->position.x, entity->position.y, entity->position.z };
-    bool is_player = entity_manager_->player() == entity;
+    bool is_player = entity_manager->player() == entity;
 
     ImGui::Text("Id: %lx", entity->id);
     if (ImGui::Checkbox("Player", &is_player)) {
-        entity_manager_->set_controlled_entity(is_player ? entity->id : null_id);
+        entity_manager->set_controlled_entity(is_player ? entity->id : null_id);
     }
     ImGui::PushItemWidth(ImGui::GetWindowWidth() / 4);
     if (ImGui::InputInt3("Position", position_raw, ImGuiInputTextFlags_None)) {
@@ -194,7 +171,7 @@ void SceneXray::entity_panel(std::optional<u64> entity_id) {
     Skills* skills_component = entity->component<Skills>();
     if (skills_component != nullptr) {
         for (auto& [id, skill]: skills_component->skills()) {
-            const auto label = translator_->translate(skill.label());
+            const auto label = translator->translate(skill.label());
             i32 progress = skill.progress;
             if (ImGui::InputInt(label.c_str(), &progress)) {
                 skills_component->set_progress(id, std::max(skill.progress, 0));
@@ -209,18 +186,19 @@ void SceneXray::entity_glyph(Entity* entity) {
     if (entity == nullptr) {
         return;
     }
+    auto renderer = svc_->get<Renderer>();
     auto rc = entity->component<Render>();
     if (!rc) {
         return;
     }
     const auto& display_info = rc->display_info();
-    const auto uvuv = renderer_->calculate_glyph_uv(display_info.glyph);
-    const auto texture = renderer_->text_texture();
+    const auto uvuv = renderer->calculate_glyph_uv(display_info.glyph);
+    const auto texture = renderer->text_texture();
     const auto& color = display_info.color;
     const float glyph_width = 32.0f;
     ImGui::Image(
         reinterpret_cast<void*>(static_cast<intptr_t>(texture)),
-        ImVec2(glyph_width, glyph_width / renderer_->glyph_aspect_ratio()),
+        ImVec2(glyph_width, glyph_width / renderer->glyph_aspect_ratio()),
         ImVec2(uvuv[0], uvuv[1]),
         ImVec2(uvuv[2], uvuv[3]),
         ImVec4(
@@ -233,9 +211,14 @@ void SceneXray::entity_glyph(Entity* entity) {
 }
 
 void SceneXray::mapgen_window() {
+    auto world_spec = svc_->get<WorldSpec>();
+    auto entity_manager = svc_->get<EntityManager>();
+    auto tile_accessor = svc_->get<TileAccessor>();
+    auto chunk_manager = svc_->get<ChunkManager>();
+
     ImGui::Begin("Mapgen");
 
-    static GenerateNoiseOptions world_mask_options = world_spec_->height_map_options();
+    static GenerateNoiseOptions world_mask_options = world_spec->height_map_options();
 
     auto generate_map = [&]() {
         const auto noise = generate_noise(world_mask_options);
@@ -283,13 +266,13 @@ void SceneXray::mapgen_window() {
 
     noise_texture_.draw();
 
-    if (entity_manager_->player() != nullptr) {
-        auto p = entity_manager_->player()->position;
-        auto local_index = tile_accessor_->to_local_index(p);
+    if (entity_manager->player() != nullptr) {
+        auto p = entity_manager->player()->position;
+        auto local_index = tile_accessor->to_local_index(p);
         auto text = fmt::format("Player pos: ({}, {}, {}) - index {} - height {}",
                                 p.x, p.y, p.z,
                                 local_index,
-                                chunk_manager_->get_chunk(p)->height_map[p.x % Chunk::CHUNK_SIDE_LENGTH + p.z % Chunk::CHUNK_SIDE_LENGTH * Chunk::CHUNK_SIDE_LENGTH]);
+                                chunk_manager->get_chunk(p)->height_map[p.x % Chunk::CHUNK_SIDE_LENGTH + p.z % Chunk::CHUNK_SIDE_LENGTH * Chunk::CHUNK_SIDE_LENGTH]);
 
         ImGui::TextUnformatted(text.c_str());
     }

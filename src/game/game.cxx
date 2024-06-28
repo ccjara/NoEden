@@ -83,16 +83,19 @@ bool Game::initialize() {
         .max_water = static_cast<i32>(0.4f * Chunk::CHUNK_DEPTH)
     });
 
+    services_->provide<WorldSpec>(world_spec_.get()); // temporary
+    services_->provide<ChunkManager>(chunk_manager_.get()); // temporary
+
     renderer_->set_viewport(platform_->window_size());
 
     Ui::initialize(events_.get(), &renderer_->ui_layer());
 
     // xray / engine ui
 #ifdef NOEDEN_XRAY
-    xray_manager_ = std::make_unique<XrayManager>(events_.get());
+    xray_manager_ = std::make_unique<XrayManager>(services_.get(), events_.get());
     xray_manager_->add_xray(std::make_unique<LogXray>());
-    xray_manager_->add_xray(std::make_unique<SceneXray>(renderer_.get(), world_spec_.get(), chunk_manager_.get(), entity_manager_.get(), tile_accessor_.get(), tile_manager_.get(), events_.get(), input_.get(), t_.get()));
-    xray_manager_->add_xray(std::make_unique<ScriptXray>(scripting_.get(), events_.get()));
+    xray_manager_->add_xray(std::make_unique<SceneXray>());
+    xray_manager_->add_xray(std::make_unique<ScriptXray>());
     xray_manager_->add_xray(std::make_unique<UiXray>());
     xray_manager_->add_xray(std::make_unique<PerfXray>());
 #endif

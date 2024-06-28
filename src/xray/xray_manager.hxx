@@ -5,7 +5,7 @@ class Xray;
 
 class XrayManager {
 public:
-    explicit XrayManager(EventManager* events);
+    explicit XrayManager(ServiceLocator* svc, EventManager* events);
 
     ~XrayManager();
 
@@ -30,6 +30,7 @@ private:
 
     std::vector<std::unique_ptr<Xray>> xrays_;
 
+    ServiceLocator* svc_ = nullptr;
     EventManager* events_ = nullptr;
 };
 

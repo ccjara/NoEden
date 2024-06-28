@@ -9,9 +9,9 @@ class Script;
 
 class ScriptXray : public Xray {
 public:
-    explicit ScriptXray(Scripting* scripting, EventManager* events);
-
     void render() override;
+
+    bool initialize() override;
 private:
     Scripting* scripting_ = nullptr;
 
