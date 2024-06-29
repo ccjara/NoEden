@@ -108,6 +108,12 @@ set(SOURCES
     platform/platform_event.hxx
     platform/platform.cxx
 
+    realm/main_menu.cxx
+    realm/main_menu_controller.cxx
+    realm/main_menu_realm.cxx
+    realm/realm.cxx
+    realm/realm_manager.cxx
+
     scripts/api/catalog_api.cxx
     scripts/api/config_api.cxx
     scripts/api/log_api.cxx

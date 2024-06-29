@@ -1,4 +1,5 @@
 #include "game.hxx"
+#include "realm/main_menu_realm.hxx"
 
 #ifdef NOEDEN_XRAY
 #include "xray/xray_manager.hxx"
@@ -9,6 +10,11 @@
 #include "xray/perf_xray.hxx"
 #endif
 
+
+bool Game::initialize_realms() {
+    return realms_->add_realm(std::make_unique<MainMenuRealm>());
+}
+
 bool Game::initialize() {
     Log::initialize();
 
@@ -18,6 +24,7 @@ bool Game::initialize() {
     input_ = std::make_unique<Input>(events_.get());
     scripting_ = std::make_unique<Scripting>(services_.get(), events_.get());
     platform_ = std::make_unique<Platform>(events_.get(), input_.get());
+    realms_ = std::make_unique<RealmManager>(services_.get(), events_.get());
     renderer_ = std::make_unique<Renderer>(events_.get());
     ui_ = std::make_unique<Ui>(renderer_.get(), events_.get());
 
@@ -30,6 +37,10 @@ bool Game::initialize() {
         return false;
     }
     if (!ui_->initialize()) {
+        return false;
+    }
+
+    if (!initialize_realms()) {
         return false;
     }
 

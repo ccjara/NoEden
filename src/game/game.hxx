@@ -1,46 +1,47 @@
 #ifndef NOEDEN_GAME_HXX
 #define NOEDEN_GAME_HXX
 
-#include "world/game_player_controller.hxx"
-#include "lang/translator.hxx"
-#include "lang/translation_loader.hxx"
 #include "action/action.hxx"
-#include "config/config_manager.hxx"
-#include "component/skills.hxx"
-#include "component/render.hxx"
-#include "catalog/catalog.hxx"
-#include "ai/ai_walk.hxx"
-#include "scripts/api/config_api.hxx"
-#include "scripts/api/catalog_api.hxx"
-#include "scripts/api/scene_api.hxx"
-#include "scripts/api/ui/ui_api.hxx"
-#include "scripts/api/log_api.hxx"
-#include "input/input.hxx"
-#include "map/vision_manager.hxx"
-#include "ui/ui.hxx"
-#include "scripts/script.hxx"
-#include "scripts/script_event.hxx"
-#include "platform/platform.hxx"
-#include "platform/platform_event.hxx"
-#include "gfx/renderer.hxx"
-#include "scripts/scripting.hxx"
 #include "action/action_queue.hxx"
+#include "ai/ai_walk.hxx"
+#include "catalog/catalog.hxx"
+#include "component/render.hxx"
+#include "component/skills.hxx"
+#include "config/config_manager.hxx"
+#include "entity/archetype.hxx"
 #include "entity/entity.hxx"
 #include "entity/entity_manager.hxx"
-#include "entity/archetype.hxx"
+#include "gfx/renderer.hxx"
+#include "input/input.hxx"
+#include "lang/translation_loader.hxx"
+#include "lang/translator.hxx"
+#include "map/vision_manager.hxx"
+#include "platform/platform.hxx"
+#include "platform/platform_event.hxx"
+#include "realm/realm_manager.hxx"
+#include "scripts/api/catalog_api.hxx"
+#include "scripts/api/config_api.hxx"
+#include "scripts/api/log_api.hxx"
+#include "scripts/api/scene_api.hxx"
+#include "scripts/api/ui/ui_api.hxx"
+#include "scripts/script.hxx"
+#include "scripts/script_event.hxx"
+#include "scripts/scripting.hxx"
 #include "tile/tile_manager.hxx"
+#include "ui/ui.hxx"
+#include "world/camera.hxx"
 #include "world/chunk.hxx"
 #include "world/chunk_generator.hxx"
 #include "world/chunk_manager.hxx"
+#include "world/game_player_controller.hxx"
 #include "world/tile_accessor.hxx"
 #include "world/world.hxx"
 #include "world/world_event.hxx"
 #include "world/world_spec.hxx"
 #include "world/world_spec_creator.hxx"
-#include "world/camera.hxx"
 
 #ifdef NOEDEN_XRAY
-    class XrayManager;
+class XrayManager;
 #endif
 
 class Game {
@@ -48,6 +49,7 @@ public:
     static int start();
 
     ~Game();
+
 private:
     /**
      * @brief Initializes the game and its subsystems
@@ -83,11 +85,14 @@ private:
     std::unique_ptr<ChunkManager> chunk_manager_ = nullptr;
     std::unique_ptr<WorldSpec> world_spec_ = nullptr;
     std::unique_ptr<Renderer> renderer_ = nullptr;
+    std::unique_ptr<RealmManager> realms_ = nullptr;
     std::unique_ptr<Ui> ui_ = nullptr;
 
 #ifdef NOEDEN_XRAY
     std::unique_ptr<XrayManager> xray_manager_ = nullptr;
 #endif
+
+    bool initialize_realms();
 };
 
 #endif
