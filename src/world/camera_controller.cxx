@@ -92,7 +92,7 @@ void CameraController::adjust(const WorldPos& position) {
         camera_pos.z = world_height_ - display_half_height;
     }
 
-    std::clamp(camera_pos.y, 0, Chunk::CHUNK_DEPTH - 1);
+    camera_pos.y = std::clamp(camera_pos.y, 0, Chunk::CHUNK_DEPTH - 1);
 
     camera_->position = camera_pos;
 }
