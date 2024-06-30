@@ -12,6 +12,7 @@ public:
     std::unordered_map<u64, std::unique_ptr<Script>>& scripts();
 
     Script* script(u64 id);
+    Script* script(std::string_view name);
 
     ~ScriptRegistry();
     ScriptRegistry() = default;
@@ -20,7 +21,8 @@ public:
     ScriptRegistry(ScriptRegistry&&) = delete;
     ScriptRegistry& operator=(ScriptRegistry&&) = delete;
 private:
-    std::unordered_map<u64, std::unique_ptr<Script>> scripts_;
+    std::unordered_map<u64, std::unique_ptr<Script>> scripts_ = {};
+    std::unordered_map<std::string, u64> script_names_ = {};
 };
 
 #endif

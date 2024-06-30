@@ -1,5 +1,8 @@
 #include "scripts/scripting.hxx"
 
+#include "scripts/script_loader.hxx"
+#include "scripts/script_registry.hxx"
+
 Scripting::Scripting(ServiceLocator* services, EventManager* events) : svc_(services), events_(events) {
     assert(svc_);
     assert(events_);
@@ -9,13 +12,10 @@ Scripting::Scripting(ServiceLocator* services, EventManager* events) : svc_(serv
 }
 
 Scripting::~Scripting() {
+    callbacks_by_script_id_.clear();
+    callbacks_by_event_type_.clear();
     script_registry_->reset();
     apis_.clear();
-}
-
-void Scripting::reset() {
-    events_->trigger<ScriptResetEvent>();
-    script_registry_->reset();
 }
 
 void Scripting::reload() {
@@ -32,8 +32,11 @@ void Scripting::reload() {
         script_registry_->reset();
         script_registry_->add(std::move(result.scripts));
     }
-    for (auto& kvp: script_registry_->scripts()) {
-        load(*kvp.second);
+
+    auto* scr_system = script_registry_->script("system");
+    if (scr_system) {
+        load(*scr_system);
+        run(*scr_system);
     }
 }
 
@@ -46,7 +49,7 @@ EventResult Scripting::on_key_down(KeyDownEvent& e) {
 }
 
 void Scripting::unload(Script& script) {
-    if (script.status() != ScriptStatus::Executed) {
+    if (script.status() != ScriptStatus::Called) {
         return;
     }
     {
@@ -65,6 +68,9 @@ void Scripting::unload(Script& script) {
             }
         }
     }
+
+    clear_callbacks(script.id);
+
     script.unload();
 }
 
@@ -80,25 +86,51 @@ void Scripting::load(Script& script) {
     events_->trigger<ScriptLoadedEvent>(&script);
     setup_script_env(script);
 
-    events_->trigger<ScriptEnvSetupEvent>(&script);
+    // `Script` does not know of the function based scripting architecture, it just knows
+    // that it can be called which in this case is the initial pcall into the loaded script.
+    // script.call() sets up the script (by defining functions) and scripting.run()
+    // invokes the on_run function in the script.
+    // therefore each script is only loaded and thus called once whereas the on_run() function
+    // can be called multiple times.
+    script.call();
     LOG_INFO("Script #{}: {} has been loaded", script.id, script.name());
-    if (!script.run()) {
-        return;
-    }
+}
 
-    auto on_load = luabridge::getGlobal(script, "on_load");
-    if (on_load.isFunction()) {
-        auto load_result = on_load();
-        if (!load_result) {
-            LOG_ERROR(
-                "Script #{}: {} error in on_load function: {} ({})",
-                script.id,
-                script.name(),
-                load_result.errorMessage(),
-                load_result.errorCode().value()
-            );
+bool Scripting::run(std::string_view name) {
+    auto script = script_registry_->script(name);
+    if (!script) {
+        LOG_ERROR("Could not run script {}: script not found", name);
+        return false;
+    }
+    return run(*script);
+}
+
+bool Scripting::run(Script& script) {
+    const auto& name = script.name();
+
+    if (script.status() == ScriptStatus::Unloaded) {
+        load(script);
+        if (script.status() != ScriptStatus::Called) {
+            LOG_ERROR("Could not run script {}: failed to panic-load script", name);
+            return false;
         }
     }
+    auto on_run = luabridge::getGlobal(script, "on_run");
+    if (!on_run.isFunction()) {
+        LOG_ERROR("Script {} does not have an on_run function", name);
+        return false;
+    }
+    auto run_result = on_run();
+    if (!run_result) {
+        LOG_ERROR(
+            "Script {} error in on_run function: {} ({})",
+            name,
+            run_result.errorMessage(),
+            run_result.errorCode().value()
+        );
+        return false;
+    }
+    return true;
 }
 
 const std::unordered_map<u64, std::unique_ptr<Script>>& Scripting::scripts() const {
@@ -111,6 +143,29 @@ std::unordered_map<u64, std::unique_ptr<Script>>& Scripting::scripts() {
 
 Script* Scripting::get_by_id(u64 id) {
     return script_registry_->script(id);
+}
+
+Script* Scripting::get_by_lua_ref(luabridge::LuaRef& ref) {
+    Id id = null_id;
+    auto state = ref.state();
+
+    lua_getglobal(state, "self");
+
+    if (lua_istable(state, -1)) {
+        lua_getfield(state, -1, "id");
+        if (lua_isinteger(state, -1)) {
+            id = lua_tointeger(state, -1);
+        }
+        lua_pop(state, 1);
+    }
+
+    lua_pop(state, 1);
+
+    if (id == null_id) {
+        return nullptr;
+    }
+
+    return get_by_id(id);
 }
 
 void Scripting::setup_script_env(Script& script) {
@@ -138,5 +193,47 @@ void Scripting::setup_script_env(Script& script) {
     });
     lua_settable(script, -3);
     lua_setmetatable(script, -2);
-    lua_setglobal(script, "script");
+    lua_setglobal(script, "self");
+
+    events_->trigger<ScriptEnvSetupEvent>(&script);
+}
+
+void Scripting::add_callback(EventType event_type, luabridge::LuaRef& callback) {
+    if (!callback.isFunction()) {
+        LOG_ERROR("Could not add callback for event {}: callback must be a function", static_cast<i32> (event_type));
+        return;
+    }
+    Script* script = get_by_lua_ref(callback);
+    if (script == nullptr) {
+        LOG_ERROR("Could not add callback for event {}: script not found", static_cast<i32> (event_type));
+        return;
+    }
+
+    callback.push();
+    const i32 callback_ref = luaL_ref(script->lua_state(), LUA_REGISTRYINDEX);
+
+    callbacks_by_event_type_[event_type].emplace_back(script, callback_ref);
+    callbacks_by_script_id_[script->id].emplace_back(script, callback_ref);
+}
+
+
+void Scripting::clear_callbacks(Id script_id) {
+    if (!callbacks_by_script_id_.contains(script_id)) {
+        return;
+    }
+    callbacks_by_script_id_[script_id].clear();
+}
+
+const std::vector<LuaCallback>& Scripting::callbacks_by_event_type(EventType event_type) const {
+    if (!callbacks_by_event_type_.contains(event_type)) {
+        return empty_callbacks_;
+    }
+    return callbacks_by_event_type_.at(event_type);
+}
+
+const std::vector<LuaCallback>& Scripting::callbacks_by_script_id(Id script_id) const {
+    if (!callbacks_by_script_id_.contains(script_id)) {
+        return empty_callbacks_;
+    }
+    return callbacks_by_script_id_.at(script_id);
 }

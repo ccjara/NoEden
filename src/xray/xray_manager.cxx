@@ -62,6 +62,7 @@ void XrayManager::render() {
 void XrayManager::add_xray(std::unique_ptr<Xray>&& xray) {
     xray->svc_ = svc_;
     xray->events_ = events_;
+    xray->initialize();
     xrays_.push_back(std::move(xray));
 }
 

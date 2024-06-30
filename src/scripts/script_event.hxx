@@ -23,6 +23,17 @@ struct ScriptLoadedEvent : public Event<EventType::ScriptLoaded> {
 };
 
 /**
+ * @brief Triggered before a script is unloaded
+ */
+struct ScriptUnloadedPreEvent : Event<EventType::ScriptUnloadedPre> {
+    Script* script = nullptr;
+
+    explicit ScriptUnloadedPreEvent(Script* script) : script(script) {
+        assert(this->script);
+    }
+};
+
+/**
  * @brief Triggered after a loaded script had its environment set up
  */
 struct ScriptEnvSetupEvent : public Event<EventType::ScriptEnvSetup> {

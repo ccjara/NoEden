@@ -113,11 +113,13 @@ set(SOURCES
     realm/main_menu_realm.cxx
     realm/realm.cxx
     realm/realm_manager.cxx
+    realm/realm_type.cxx
 
     scripts/api/catalog_api.cxx
     scripts/api/config_api.cxx
     scripts/api/log_api.cxx
     scripts/api/lua_api.hxx
+    scripts/api/realm_api.cxx
     scripts/api/scene_api.cxx
     scripts/api/script_api.cxx
     scripts/api/ui/ui_api.cxx

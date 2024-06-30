@@ -1,7 +1,7 @@
 #ifndef NOEDEN_REALM_HXX
 #define NOEDEN_REALM_HXX
 
-enum class RealmType;
+#include "realm/realm_type.hxx"
 
 /**
  * @brief Represents the abstract concept of a "scene", "level" or "world"

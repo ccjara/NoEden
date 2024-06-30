@@ -41,6 +41,7 @@ public:
             return;
         }
         lua_setglobal(script, name);
+        LOG_INFO("Exposed api {}", name);
     }
 protected:
     friend class Scripting;

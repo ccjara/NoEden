@@ -16,7 +16,7 @@ Script::operator lua_State* () const {
     return state_;
 }
 
-bool Script::run() {
+bool Script::call() {
     if (status_ == ScriptStatus::Unloaded) {
         LOG_ERROR("Cannot run script {}: script must be loaded", name_);
         return false;
@@ -25,7 +25,7 @@ bool Script::run() {
         fail(ScriptError::RuntimeError);
         return false;
     }
-    status_ = ScriptStatus::Executed;
+    status_ = ScriptStatus::Called;
     return true;
 }
 

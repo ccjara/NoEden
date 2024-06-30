@@ -5,7 +5,7 @@
 bool ScriptXray::initialize() {
     script_reset_sub_ = events_->on<ScriptResetEvent>(this, &ScriptXray::on_script_reset);
     scripting_ = svc_->get<Scripting>();
-    return true;
+    return !!scripting_;
 }
 
 EventResult ScriptXray::on_script_reset(ScriptResetEvent& e) {

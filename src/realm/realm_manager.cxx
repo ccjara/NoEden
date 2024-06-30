@@ -1,4 +1,5 @@
 #include "realm/realm_manager.hxx"
+#include "realm/realm_event.hxx"
 
 RealmManager::RealmManager(ServiceLocator* services, EventManager* events) :
     services_(services),
@@ -12,7 +13,7 @@ bool RealmManager::add_realm(std::unique_ptr<Realm>&& realm) {
     auto type = realm->type();
     auto result = realms.try_emplace(type, std::move(realm));
     if (!result.second) {
-        LOG_ERROR("Realm {} already exists", static_cast<i32>(type));
+        LOG_ERROR("Realm {} already exists", realm_type_to_string(type));
         return false;
     }
 
@@ -27,7 +28,7 @@ bool RealmManager::add_realm(std::unique_ptr<Realm>&& realm) {
 bool RealmManager::switch_realm(RealmType type) {
     auto it = realms.find(type);
     if (it == realms.end()) {
-        LOG_ERROR("Realm {} does not exist", static_cast<i32>(type));
+        LOG_ERROR("Realm {} does not exist", realm_type_to_string(type));
         return false;
     }
 
@@ -38,5 +39,10 @@ bool RealmManager::switch_realm(RealmType type) {
 
     current_realm_ = it->second.get();
     current_realm_->load();
+
+    events_->trigger<RealmLoadedEvent>(current_realm_);
+
+    LOG_INFO("Switched to realm {}", realm_type_to_string(type));
+
     return true;
 }

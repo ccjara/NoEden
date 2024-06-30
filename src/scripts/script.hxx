@@ -4,7 +4,7 @@
 enum class ScriptStatus {
     Unloaded,
     Loaded,
-    Executed,
+    Called,
 };
 
 enum class ScriptError {
@@ -40,11 +40,11 @@ public:
     operator lua_State* () const;
 
     /**
-     * @brief Runs the script by doing a lua pcall
+     * @brief Calls the script by doing a lua pcall
      *
      * Returns false if any error occurred during execution
      */
-    bool run();
+    bool call();
 
     /**
      * @brief Loads the script from its configured data source

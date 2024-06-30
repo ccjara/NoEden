@@ -1,5 +1,10 @@
 #include "game.hxx"
+
+#include <realm/realm_type_def.hxx>
+
 #include "realm/main_menu_realm.hxx"
+#include "scripts/api/realm_api.hxx"
+#include "scripts/api/script_api.hxx"
 
 #ifdef NOEDEN_XRAY
 #include "xray/xray_manager.hxx"
@@ -29,6 +34,9 @@ bool Game::initialize() {
     ui_ = std::make_unique<Ui>(renderer_.get(), events_.get());
 
     services_->provide<Ui>(ui_.get());
+    services_->provide<Scripting>(scripting_.get());
+    services_->provide<RealmManager>(realms_.get());
+
 
     if (!platform_->initialize()) {
         return false;
@@ -65,6 +73,7 @@ bool Game::initialize() {
     vision_manager_ = std::make_unique<VisionManager>(entity_manager_.get(), tile_manager_.get(), events_.get());
     catalog_ = std::make_unique<Catalog>();
 
+    services_->provide<Scripting>(scripting_.get());
     services_->provide<VisionManager>(vision_manager_.get());
     services_->provide<ConfigManager>(config_manager_.get());
     services_->provide<EventManager>(events_.get());
@@ -121,7 +130,11 @@ bool Game::initialize() {
     scripting_->add_api<SceneApi>();
     scripting_->add_api<UiApi>();
     scripting_->add_api<CatalogApi>();
+    scripting_->add_api<RealmApi>();
+    scripting_->add_api<ScriptApi>();
     scripting_->reload();
+
+    realms_->switch_realm(RealmType::MainMenu);
 
     events_->trigger<WorldReadyEvent>(world_spec_.get());
 

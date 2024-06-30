@@ -6,7 +6,6 @@
 class AiNode;
 class Archetype;
 class Catalog;
-class ServiceLocator;
 
 class CatalogApi : public LuaApi {
 public:
