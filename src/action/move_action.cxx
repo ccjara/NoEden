@@ -2,7 +2,7 @@
 #include "component/skills.hxx"
 #include "entity/entity.hxx"
 #include "entity/entity_event.hxx"
-#include "tile/tile.hxx"
+#include "world/tile.hxx"
 #include "world/tile_accessor.hxx"
 #include "world/world_context.hxx"
 

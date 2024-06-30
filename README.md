@@ -9,7 +9,7 @@ An early work in progress rogue-like survival game inspired by Rogue, Dungeon Cr
 * Language: C++
 * Rendering: OpenGL
 * Scripting: Lua
-* Custom Engine (currently being rewritten)
+* Engine: Custom (currently being rewritten)
 * Platform: Multiplatform
 
 # Features

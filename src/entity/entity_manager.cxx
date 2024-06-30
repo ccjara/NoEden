@@ -46,6 +46,7 @@ Entity& EntityManager::create_entity(const Archetype& archetype, const WorldPos&
         // copy common properties from archetype into entity
         entity->speed = archetype.speed;
         entity->name = archetype.name;
+        entity->world_context = world_context_;
 
         for (const auto& archetype_component : archetype.components) {
             entity->add_component(archetype_component->clone());

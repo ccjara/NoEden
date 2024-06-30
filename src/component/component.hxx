@@ -57,6 +57,8 @@ public:
      */
     virtual void on_player_detached();
 protected:
+    friend class EntityManager;
+
     /**
      * @brief Derive components from GenericComponent instead.
      */

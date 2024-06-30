@@ -125,12 +125,6 @@ set(SOURCES
     scripts/script_registry.cxx
     scripts/scripting.cxx
 
-    tile/tile.cxx
-    tile/tile_factory.cxx
-    tile/tile_manager.cxx
-    tile/tile_reader.hxx
-    tile/tile_writer.hxx
-
     ui/ui.cxx
     ui/ui_node.cxx
     ui/ui_text.cxx
@@ -143,6 +137,7 @@ set(SOURCES
     world/chunk_manager.cxx
     world/chunk_pos.cxx
     world/player_controller.cxx
+    world/tile.hxx
     world/tile_accessor.cxx
     world/world_context.hxx
     world/world_realm.cxx

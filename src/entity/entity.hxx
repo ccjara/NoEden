@@ -3,7 +3,7 @@
 
 #include "component/component.hxx"
 
-class Realm;
+struct WorldContext;
 
 class Entity {
 public:
@@ -17,6 +17,8 @@ public:
     std::string name = "";
 
     WorldPos position;
+
+    WorldContext* world_context = nullptr;
 
     bool player_attached_ = false;
 

@@ -1,5 +1,4 @@
 #include "component/vision/vision.hxx"
-#include "tile/tile_reader.hxx"
 
 void Vision::set_vision_radius(i32 radius) {
     fov_.set_vision_radius(std::max(radius, 1));

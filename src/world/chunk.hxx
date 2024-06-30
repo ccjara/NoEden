@@ -1,7 +1,7 @@
 #ifndef NOEDEN_CHUNK_HXX
 #define NOEDEN_CHUNK_HXX
 
-#include "tile/tile.hxx"
+#include "world/tile.hxx"
 
 struct Chunk {
     static constexpr i32 CHUNK_SIDE_LENGTH = 128;

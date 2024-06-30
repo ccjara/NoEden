@@ -10,7 +10,6 @@
 #include "framework/noise_generator.hxx"
 #include "gfx/renderer.hxx"
 #include "realm/realm_type_def.hxx"
-#include "tile/tile_manager.hxx"
 #include "world/chunk.hxx"
 #include "world/chunk_manager.hxx"
 #include "world/tile_accessor.hxx"
