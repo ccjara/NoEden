@@ -18,11 +18,6 @@ public:
 
     WorldPos position;
 
-    /**
-     * @brief The realm this entity belongs to.
-     */
-    Realm* realm = nullptr;
-
     bool player_attached_ = false;
 
     float speed = 0;

@@ -1,22 +1,16 @@
 #include "world/player_controller.hxx"
-#include "action/action_creator.hxx"
+#include "action/action_queue.hxx"
 #include "action/action_event.hxx"
 #include "action/move_action.hxx"
 #include "entity/entity.hxx"
-#include "entity/entity_reader.hxx"
+#include "entity/entity_manager.hxx"
+#include "world/world_context.hxx"
 
-PlayerController::PlayerController(
-    IEntityReader* entity_reader,
-    IActionCreator* action_creator,
-    EventManager* events
-) : entity_reader_(entity_reader),
-    action_creator_(action_creator),
-    events_(events) {
-    assert(entity_reader_);
-    assert(action_creator_);
-    assert(events_);
+void PlayerController::initialize(WorldContext* world_context) {
+    assert(world_context);
+    world_context_ = world_context;
 
-    key_down_sub_ = events_->on<KeyDownEvent>(this, &PlayerController::on_key_down);
+    key_down_sub_ = world_context_->events->on<KeyDownEvent>(this, &PlayerController::on_key_down);
 }
 
 EventResult PlayerController::on_key_down(KeyDownEvent& e) {
@@ -51,11 +45,11 @@ EventResult PlayerController::on_key_down(KeyDownEvent& e) {
 }
 
 bool PlayerController::move_relative(const WorldPos& direction) {
-    Entity* player = entity_reader_->player();
+    Entity* player = world_context_->entity_manager->player();
     if (!player) {
         return false;
     }
-    auto result = action_creator_->create_action(ActionType::Move, *player);
+    auto result = world_context_->action_queue->create_action(ActionType::Move, *player);
     if (result.failed()) {
         return false;
     }
@@ -63,6 +57,6 @@ bool PlayerController::move_relative(const WorldPos& direction) {
     move_action->destination = player->position + direction;
 
     // start the next world tick
-    events_->trigger<PlayerActionCommitted>(move_action);
+    world_context_->events->trigger<PlayerActionCommitted>(move_action);
     return true;
 }

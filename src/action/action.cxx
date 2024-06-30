@@ -15,3 +15,8 @@ float Action::speed() const {
 ActionType Action::type() const {
     return type_;
 }
+
+void Action::initialize() {
+}
+
+ Action::Action(ActionType type) : type_(type) {}

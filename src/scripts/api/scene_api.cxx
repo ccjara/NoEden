@@ -1,11 +1,11 @@
 #include "scene_api.hxx"
 #include "entity/entity.hxx"
-#include "entity/entity_reader.hxx"
+#include "entity/entity_manager.hxx"
 
 bool SceneApi::initialize() {
-    entity_reader_ = svc_->get<IEntityReader>();
+    entity_manager_ = svc_->get<EntityManager>();
 
-    if (!entity_reader_) {
+    if (!entity_manager_) {
         LOG_ERROR("SceneApi failed to initialize: failed to get IEntityReader");
         return false;
     }
@@ -25,7 +25,7 @@ void SceneApi::on_register(Script& script) {
 }
 
 const char* SceneApi::entity_name(u64 id) const {
-    Entity* entity = entity_reader_->entity(id);
+    Entity* entity = entity_manager_->entity(id);
     if (!entity) {
         return nullptr;
     }
@@ -33,7 +33,7 @@ const char* SceneApi::entity_name(u64 id) const {
 }
 
 u64 SceneApi::player_id() const {
-    Entity* player = entity_reader_->player();
+    Entity* player = entity_manager_->player();
     if (!player) {
         return null_id;
     }
@@ -41,7 +41,7 @@ u64 SceneApi::player_id() const {
 }
 
 const char* SceneApi::player_name() const {
-    Entity* player = entity_reader_->player();
+    Entity* player = entity_manager_->player();
     if (!player) {
         return nullptr;
     }

@@ -1,20 +1,21 @@
 #include "world/camera_controller.hxx"
 #include "world/camera.hxx"
 #include "world/world_spec.hxx"
-#include "entity/entity_reader.hxx"
 #include "entity/entity.hxx"
-#include "chunk.hxx"
+#include "world/chunk.hxx"
+#include "world/world_context.hxx"
+#include "entity/entity_manager.hxx"
 
-CameraController::CameraController(IEntityReader* entity_reader, EventManager* events) :
-    entity_reader_(entity_reader),
-    events_(events) {
-    assert(entity_reader_);
-    assert(events_);
+void CameraController::initialize(WorldContext* world_context) {
+    world_context_ = world_context;
+    assert(world_context);
 
-    world_updated_post_sub_ = events_->on<WorldUpdatedPostEvent>(this, &CameraController::on_world_updated_post);
-    key_down_sub_ = events_->on<KeyDownEvent>(this, &CameraController::on_key_down);
-    world_ready_sub_ = events_->on<WorldReadyEvent>(this, &CameraController::on_world_ready);
-    display_resized_sub_ = events_->on<DisplayResizedEvent>(this, &CameraController::on_display_resized);
+    auto* events = world_context->events;
+
+    world_updated_post_sub_ = events->on<WorldUpdatedPostEvent>(this, &CameraController::on_world_updated_post);
+    key_down_sub_ = events->on<KeyDownEvent>(this, &CameraController::on_key_down);
+    world_ready_sub_ = events->on<WorldReadyEvent>(this, &CameraController::on_world_ready);
+    display_resized_sub_ = events->on<DisplayResizedEvent>(this, &CameraController::on_display_resized);
 }
 
 EventResult CameraController::on_world_updated_post(const WorldUpdatedPostEvent&) {
@@ -53,7 +54,7 @@ EventResult CameraController::on_key_down(const KeyDownEvent& e) {
         adjust(camera_->position + WorldPos(10, 0, 0));
         LOG_DEBUG("Camera now at {}", camera_->position.to_string());
     } else if (e.key == Key::P) {
-        set_target(entity_reader_->player());
+        set_target(world_context_->entity_manager->player());
     } else if (e.key == Key::Plus) {
         target_ = nullptr;
         adjust(camera_->position + WorldPos(0, 1, 0));

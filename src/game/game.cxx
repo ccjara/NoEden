@@ -56,11 +56,16 @@ bool Game::initialize() {
     realms_ = std::make_unique<RealmManager>(services_.get(), events_.get());
     renderer_ = std::make_unique<Renderer>(events_.get());
     ui_ = std::make_unique<Ui>(renderer_.get(), events_.get());
+    catalog_ = std::make_unique<Catalog>();
 
     services_->provide<Ui>(ui_.get());
     services_->provide<Scripting>(scripting_.get());
     services_->provide<RealmManager>(realms_.get());
     services_->provide<Renderer>(renderer_.get());
+    services_->provide<Input>(input_.get());
+    services_->provide<ConfigManager>(config_manager_.get());
+    services_->provide<EventManager>(events_.get());
+    services_->provide<Catalog>(catalog_.get());
 
 
     if (!platform_->initialize()) {
@@ -72,7 +77,6 @@ bool Game::initialize() {
     if (!ui_->initialize()) {
         return false;
     }
-
     if (!initialize_realms()) {
         return false;
     }
@@ -86,12 +90,7 @@ bool Game::initialize() {
         t_ = std::make_unique<Translator>(std::move(result.dictionary));
     }
     services_->provide<Translator>(t_.get());
-    catalog_ = std::make_unique<Catalog>();
 
-    services_->provide<Scripting>(scripting_.get());
-    services_->provide<ConfigManager>(config_manager_.get());
-    services_->provide<EventManager>(events_.get());
-    services_->provide<Catalog>(catalog_.get());
     services_->provide<IInputReader>(input_.get());
 
     renderer_->set_viewport(platform_->window_size());

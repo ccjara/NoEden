@@ -57,8 +57,6 @@ protected:
     RealmType type_;
     ServiceLocator* services_ = nullptr;
     EventManager* events_ = nullptr;
-
-    std::unique_ptr<ServiceLocator> realm_services_ = nullptr;
 };
 
 #endif

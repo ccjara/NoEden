@@ -8,9 +8,9 @@
  */
 class NullAction : public Action {
 public:
-    ActionResult perform() override {
-        return ActionResult::Success;
-    }
+    NullAction() : Action(ActionType::None) {}
+
+    ActionResult perform() override { return ActionResult::Success; }
 };
 
 #endif

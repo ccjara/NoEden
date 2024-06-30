@@ -17,6 +17,7 @@
 #include "world/world_event.hxx"
 #include "world/world_spec_creator.hxx"
 #include "world/world_spec.hxx"
+#include "world/vision_manager.hxx"
 
 WorldRealm::WorldRealm() : Realm(RealmType::World) {}
 
@@ -27,28 +28,36 @@ bool WorldRealm::initialize() {
     if (!renderer_) {
         return false;
     }
+    world_context_ = std::make_unique<WorldContext>();
 
-    action_queue_ = std::make_unique<ActionQueue>(services_, events_);
-    chunk_generator_ = std::make_unique<ChunkGenerator>();
-    chunk_manager_ = std::make_unique<ChunkManager>(chunk_generator_.get(), events_);
-    entity_manager_ = std::make_unique<EntityManager>(this, events_);
-    player_controller_ =
-        std::make_unique<PlayerController>(entity_manager_.get(), action_queue_.get(), events_);
-
+    action_queue_ = std::make_unique<ActionQueue>();
+    chunk_manager_ = std::make_unique<ChunkManager>();
     camera_ = std::make_unique<Camera>();
-    camera_controller_ = std::make_unique<CameraController>(entity_manager_.get(), events_);
+    camera_controller_ = std::make_unique<CameraController>();
+    entity_manager_ = std::make_unique<EntityManager>();
+    player_controller_ =std::make_unique<PlayerController>();
+    tile_accessor_ = std::make_unique<TileAccessor>();
+    vision_manager_ = std::make_unique<VisionManager>();
 
-    tile_accessor_ = std::make_unique<TileAccessor>(chunk_manager_.get());
+    world_context_->action_queue = action_queue_.get();
+    world_context_->chunk_manager = chunk_manager_.get();
+    world_context_->camera = camera_.get();
+    world_context_->camera_controller = camera_controller_.get();
+    world_context_->entity_manager = entity_manager_.get();
+    world_context_->tile_accessor = tile_accessor_.get();
+    world_context_->events = events_;
+    world_context_->services = services_;
+    world_context_->vision_manager = vision_manager_.get();
 
-    realm_services_->provide<ActionQueue>(action_queue_.get());
-    realm_services_->provide<EntityManager>(entity_manager_.get());
-    realm_services_->provide<ChunkManager>(chunk_manager_.get());
-    realm_services_->provide<TileAccessor>(tile_accessor_.get());
-    realm_services_->provide<CameraController>(camera_controller_.get());
-    realm_services_->provide<Camera>(camera_.get());
+    action_queue_->initialize(world_context_.get());
+    chunk_manager_->initialize(world_context_.get());
+    camera_controller_->initialize(world_context_.get());
+    entity_manager_->initialize(world_context_.get());
+    player_controller_->initialize(world_context_.get());
+    tile_accessor_->initialize(world_context_.get());
+    vision_manager_->initialize(world_context_.get());
 
     player_action_committed_sub_ = events_->on<PlayerActionCommitted>(this, &WorldRealm::on_player_action_committed);
-
 
     return true;
 }
@@ -210,3 +219,5 @@ void WorldRealm::update() {
         world_layer.put(DisplayCell(info.glyph, info.color), Vec2<u32>(pos.x, pos.z));
     }
 }
+
+WorldContext& WorldRealm::world_context() { return *world_context_; }

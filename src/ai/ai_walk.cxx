@@ -3,16 +3,7 @@
 #include "action/move_action.hxx"
 #include "entity/entity.hxx"
 #include "entity/entity_manager.hxx"
-#include "realm/realm.hxx"
-
-void AiWalk::initialize(AiContext& context) {
-    auto& realm_services = context.entity->realm->services();
-    action_queue_ = realm_services.get<ActionQueue>();
-    entity_manager_ = realm_services.get<EntityManager>();
-
-    assert(action_queue_);
-    assert(entity_manager_);
-}
+#include "world/world_context.hxx"
 
 void AiWalk::clear() {
     mod_state(AiNodeState::Ready);
@@ -34,12 +25,12 @@ AiNodeState AiWalk::perform_walk_to_entity(AiContext& context) {
     if (!target_id) {
         return mod_state(AiNodeState::Failed);
     }
-    auto target = entity_manager_->entity(*target_id);
+    auto target = context.world_context->entity_manager->entity(*target_id);
     if (!target) {
         return mod_state(AiNodeState::Failed);
     }
 
-    auto create_action_result = action_queue_->create_action(ActionType::Move, *context.entity);
+    auto create_action_result = context.world_context->action_queue->create_action(ActionType::Move, *context.entity);
 
     if (create_action_result.failed()) {
         return mod_state(AiNodeState::Failed);
@@ -66,7 +57,7 @@ AiNodeState AiWalk::perform_walk_to_entity(AiContext& context) {
 }
 
 AiNodeState AiWalk::perform_walk_around(AiContext& context) {
-    auto create_action_result = action_queue_->create_action(ActionType::Move, *context.entity);
+    auto create_action_result = context.world_context->action_queue->create_action(ActionType::Move, *context.entity);
 
     if (create_action_result.failed()) {
         return mod_state(AiNodeState::Failed);

@@ -1,12 +1,12 @@
 #include "entity/entity_manager.hxx"
+#include "entity/archetype.hxx"
 #include "entity/entity.hxx"
 #include "entity/entity_event.hxx"
-#include "entity/archetype.hxx"
-#include "realm/realm.hxx"
+#include "world/world_context.hxx"
 
-EntityManager::EntityManager(Realm* realm, EventManager* events) : realm_(realm), events_(events) {
-    assert(realm_);
-    assert(events_);
+void EntityManager::initialize(WorldContext* world_context) {
+    assert(world_context);
+    world_context_ = world_context;
 }
 
 Entity* EntityManager::entity(Id id) {
@@ -46,7 +46,6 @@ Entity& EntityManager::create_entity(const Archetype& archetype, const WorldPos&
         // copy common properties from archetype into entity
         entity->speed = archetype.speed;
         entity->name = archetype.name;
-        entity->realm = realm_;
 
         for (const auto& archetype_component : archetype.components) {
             entity->add_component(archetype_component->clone());
@@ -59,7 +58,7 @@ Entity& EntityManager::create_entity(const Archetype& archetype, const WorldPos&
     Entity* entity = entities_.back().get();
     index_by_id_[entity->id] = entities_.size() - 1;
 
-    events_->trigger<EntityCreatedEvent>(entity);
+    world_context_->events->trigger<EntityCreatedEvent>(entity);
 
     return *entity;
 }

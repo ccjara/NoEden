@@ -3,16 +3,23 @@
 #include "world/chunk_generator.hxx"
 #include "world/chunk.hxx"
 #include "world/world_spec.hxx"
+#include "world/world_context.hxx"
 
-ChunkManager::ChunkManager(ChunkGenerator* chunk_generator, EventManager* events) :
-    chunk_generator_(chunk_generator),
-    events_(events) {
-    assert(events_);
-    assert(chunk_generator_);
+void ChunkManager::initialize(WorldContext* world_context) {
+    assert(world_context);
 
-    on_world_ready_sub_ = events_->on<WorldReadyEvent>(this, &ChunkManager::on_world_ready);
-    on_entity_created_sub_ = events_->on<EntityCreatedEvent>(this, &ChunkManager::on_entity_created);
-    on_player_moved_sub_ = events_->on<PlayerMovedEvent>(this, &ChunkManager::on_player_moved);
+    world_context_ = world_context;
+    chunk_generator_ = std::make_unique<ChunkGenerator>();
+
+    auto* events = world_context_->events;
+
+    on_world_ready_sub_ = events->on<WorldReadyEvent>(this, &ChunkManager::on_world_ready);
+    on_entity_created_sub_ = events->on<EntityCreatedEvent>(this, &ChunkManager::on_entity_created);
+    on_player_moved_sub_ = events->on<PlayerMovedEvent>(this, &ChunkManager::on_player_moved);
+
+    on_world_ready_sub_ = world_context->events->on<WorldReadyEvent>(this, &ChunkManager::on_world_ready);
+    on_entity_created_sub_ = world_context->events->on<EntityCreatedEvent>(this, &ChunkManager::on_entity_created);
+    on_player_moved_sub_ = world_context->events->on<PlayerMovedEvent>(this, &ChunkManager::on_player_moved);
 }
 
 constexpr std::size_t ChunkManager::ChunkPosHasher::operator()(const ChunkPos& pos) const {

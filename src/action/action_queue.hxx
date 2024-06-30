@@ -4,9 +4,11 @@
 #include "action/action_creator.hxx"
 #include "action/action_processor.hxx"
 
+struct WorldContext;
+
 class ActionQueue : public IActionCreator, public IActionProcessor {
 public:
-    explicit ActionQueue(ServiceLocator* services, EventManager* events);
+    void initialize(WorldContext* world_context);
 
     /**
      * @copydoc IActionCreator::create_action
@@ -40,8 +42,7 @@ private:
 
     std::vector<std::unique_ptr<Action>> actions_;
 
-    EventManager* events_ = nullptr;
-    ServiceLocator* services_ = nullptr;
+    WorldContext* world_context_ = nullptr;
 };
 
 #endif

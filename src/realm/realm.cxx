@@ -1,7 +1,6 @@
 #include "realm/realm.hxx"
 
-Realm::Realm(RealmType type) : type_(type), realm_services_(std::make_unique<ServiceLocator>()) {
-    assert(realm_services_);
+Realm::Realm(RealmType type) : type_(type) {
 }
 
 RealmType Realm::type() const {
@@ -19,12 +18,4 @@ void Realm::unload() {
 }
 
 void Realm::load() {
-}
-
-ServiceLocator& Realm::services() {
-    return *realm_services_;
-}
-
-const ServiceLocator& Realm::services() const {
-    return *realm_services_;
 }

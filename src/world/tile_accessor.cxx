@@ -1,9 +1,13 @@
 #include "world/tile_accessor.hxx"
 #include "world/chunk_manager.hxx"
 #include "world/chunk.hxx"
+#include "world/world_context.hxx"
 
-TileAccessor::TileAccessor(ChunkManager* chunk_manager) : chunk_manager_(chunk_manager) {
-    assert(chunk_manager_);
+void TileAccessor::initialize(WorldContext* world_context) {
+    assert(world_context);
+    world_context_ = world_context;
+    chunk_manager_ = world_context->chunk_manager;
+
 }
 
 Tile* TileAccessor::get_tile(const WorldPos& position) {

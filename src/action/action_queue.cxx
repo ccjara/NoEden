@@ -4,14 +4,11 @@
 #include "action/move_action.hxx"
 #include "action/null_action.hxx"
 #include "entity/entity.hxx"
-#include "entity/entity_reader.hxx"
-#include "world/tile_accessor.hxx"
+#include "world/world_context.hxx"
 
-ActionQueue::ActionQueue(ServiceLocator* services, EventManager* events) :
-    events_(events),
-    services_(services) {
-    assert(events_);
-    assert(services_);
+void ActionQueue::initialize(WorldContext* world_context) {
+    assert(world_context);
+    world_context_ = world_context;
 }
 
 CreateActionResult ActionQueue::create_action(ActionType type, Entity& actor) {
@@ -27,7 +24,11 @@ CreateActionResult ActionQueue::create_action(ActionType type, Entity& actor) {
     action->entity_ = &actor;
     action->speed_ = actor.speed;
     action->cost_ = cost;
+
+    action->world_context_ = world_context_;
     actor.energy_reserved += cost;
+
+    action->initialize();
 
     Action* action_raw_ptr = actions_.emplace_back(std::move(action)).get();
 
@@ -39,7 +40,7 @@ std::unique_ptr<Action> ActionQueue::instantiate_action(ActionType type) {
         case ActionType::None:
             return std::make_unique<NullAction>();
         case ActionType::Move:
-            return std::make_unique<MoveAction>(services_->get<IEntityReader>(), services_->get<TileAccessor>(), events_);
+            return std::make_unique<MoveAction>();
         default:
             return {};
     }
@@ -75,7 +76,7 @@ void ActionQueue::process_actions() {
     actions_.clear();
     Profiler::timer("ActionQueue").stop();
 
-    events_->trigger<ActionQueueProcessed>();
+    world_context_->events->trigger<ActionQueueProcessed>();
 }
 
 constexpr float ActionQueue::calculate_cost(ActionType type, float actor_speed) {

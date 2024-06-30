@@ -1,10 +1,11 @@
 #ifndef NOEDEN_ACTION_HXX
 #define NOEDEN_ACTION_HXX
 
-#include "action/action_type.hxx"
 #include "action/action_result.hxx"
+#include "action/action_type.hxx"
 
 class Entity;
+struct WorldContext;
 
 /**
  * @brief Base class for an action performed by entities.
@@ -17,6 +18,11 @@ public:
      * Returns true if the action was performed successfully.
      */
     virtual ActionResult perform() = 0;
+
+    /**
+     * @brief Extension point for subclasses to initialize the action.
+     */
+    virtual void initialize();
 
     /**
      * @brief Returns the type of this action.
@@ -39,8 +45,11 @@ public:
     float speed() const;
 
     virtual ~Action() = default;
+
 protected:
     friend class ActionQueue;
+
+    explicit Action(ActionType type);
 
     ActionType type_ = ActionType::None;
 
@@ -48,6 +57,11 @@ protected:
      * @brief Points to the Entity performing this action.
      */
     Entity* entity_ = nullptr;
+
+    /**
+     * @brief World context this action operates in
+     */
+    WorldContext* world_context_ = nullptr;
 
     /**
      * @brief Speed at which this action performs.

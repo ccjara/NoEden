@@ -3,7 +3,7 @@
 
 #include "lua_api.hxx"
 
-class IEntityReader;
+class EntityManager;
 
 class SceneApi : public LuaApi {
 public:
@@ -32,7 +32,7 @@ public:
 
     bool initialize() override;
 private:
-    IEntityReader* entity_reader_ = nullptr;
+    EntityManager* entity_manager_ = nullptr;
 };
 
 #endif

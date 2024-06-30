@@ -2,18 +2,12 @@
 #include "component/vision/vision.hxx"
 #include "entity/entity.hxx"
 #include "entity/entity_manager.hxx"
-#include "realm/realm.hxx"
-
-void AiClosestEntity::initialize(AiContext& context) {
-    entity_manager_ = context.entity->realm->services().get<EntityManager>();
-    assert(entity_manager_);
-}
+#include "world/world_context.hxx"
 
 AiNodeState AiClosestEntity::visit(AiContext& context) {
     if (!context.entity) {
         return mod_state(AiNodeState::Failed);
     }
-    auto* entity_manager = context.entity->realm->services().get<EntityManager>();
 
     // OPTIMIZE: could subscribe to a `VisionRadiusUpdated` event to then
     //           cache the radius in the blackboard
@@ -23,9 +17,10 @@ AiNodeState AiClosestEntity::visit(AiContext& context) {
         return mod_state(AiNodeState::Failed);
     }
     const auto radius = vision->vision_radius();
+    const auto& entities = context.world_context->entity_manager->entities();
 
     // OPTIMIZE: quadtree
-    for (const auto& entity : entity_manager->entities()) {
+    for (const auto& entity : entities) {
         if (entity->id == context.entity_id) {
             continue;
         }

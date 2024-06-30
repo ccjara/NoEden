@@ -1,18 +1,16 @@
 #ifndef NOEDEN_CAMERA_CONTROLLER_HXX
 #define NOEDEN_CAMERA_CONTROLLER_HXX
 
-#include "framework/event_type.hxx"
 #include "world/world_event.hxx"
 #include "gfx/gfx_event.hxx"
 
 struct Camera;
-class Events;
 class Entity;
-class IEntityReader;
+struct WorldContext;
 
 class CameraController {
 public:
-    explicit CameraController(IEntityReader* entity_reader, EventManager* events);
+    void initialize(WorldContext* world_context);
 
     /**
      * @brief Assigns camera to be controlled
@@ -42,9 +40,9 @@ private:
      */
     Entity* target_ = nullptr;
 
-    IEntityReader* entity_reader_ = nullptr;
     Camera* camera_ = nullptr;
-    EventManager* events_ = nullptr;
+
+    WorldContext* world_context_ = nullptr;
 
     i32 world_width_ = 0;
     i32 world_height_ = 0;

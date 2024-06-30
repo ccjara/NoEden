@@ -1,5 +1,7 @@
 #include "scene_xray.hxx"
 
+#include <realm/realm_event.hxx>
+
 #include "component/render.hxx"
 #include "component/skills.hxx"
 #include "component/vision/vision.hxx"
@@ -7,23 +9,28 @@
 #include "entity/entity_manager.hxx"
 #include "framework/noise_generator.hxx"
 #include "gfx/renderer.hxx"
-#include "input/input_reader.hxx"
 #include "realm/realm_type_def.hxx"
-#include "realm/realm_manager.hxx"
 #include "tile/tile_manager.hxx"
 #include "world/chunk.hxx"
 #include "world/chunk_manager.hxx"
 #include "world/tile_accessor.hxx"
+#include "world/world_realm.hxx"
 #include "world/world_spec.hxx"
 
 bool SceneXray::initialize() {
-    realm_manager_ = svc_->get<RealmManager>();
-    if (!realm_manager_) {
-        return false;
-    }
     mouse_down_sub_ = events_->on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
     config_updated_sub_ = events_->on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
+    realm_loaded_sub_ = events_->on<RealmLoadedEvent>(this, &SceneXray::on_realm_loaded, 9000);
     return true;
+}
+
+EventResult SceneXray::on_realm_loaded(const RealmLoadedEvent& e) {
+    if (e.realm->type() == RealmType::World) {
+        world_context_ = &static_cast<WorldRealm*>(e.realm)->world_context();
+    } else {
+        world_context_ = nullptr;
+    }
+    return EventResult::Continue;
 }
 
 EventResult SceneXray::on_config_updated(const ConfigUpdatedEvent& e) {
@@ -58,27 +65,22 @@ EventResult SceneXray::on_mouse_down(const MouseDownEvent& e) {
 }
 
 void SceneXray::render() {
-    auto* realm = realm_manager_->current_realm();
-    if (!realm || realm->type() != RealmType::World) {
+    if (!world_context_) {
         return;
     }
-
-    entity_window();
-    tile_window();
-    mapgen_window();
+    entity_window(*world_context_);
+    tile_window(*world_context_);
+    mapgen_window(*world_context_);
 }
 
-void SceneXray::entity_window() {
+void SceneXray::entity_window(WorldContext& world_context) {
     static std::optional<u64> entity_id = std::nullopt;
     static std::string combo_label = "Select entity";
-
-    auto realm_services = realm_manager_->current_realm()->services();
-    auto entity_manager = realm_services.get<EntityManager>();
 
     ImGui::Begin("Entities");
 
     if (ImGui::BeginCombo("Entity", combo_label.c_str())) {
-        for (auto& entity: entity_manager->entities()) {
+        for (auto& entity: world_context.entity_manager->entities()) {
             const auto& entity_name_str = entity->name.c_str();
             const bool is_selected = entity_id.has_value() && entity_id.value() == entity->id;
             if (ImGui::Selectable(entity_name_str, is_selected)) {
@@ -88,12 +90,12 @@ void SceneXray::entity_window() {
         }
         ImGui::EndCombo();
     }
-    entity_panel(entity_id);
+    entity_panel(entity_id, world_context);
 
     ImGui::End();
 }
 
-void SceneXray::tile_window() {
+void SceneXray::tile_window(WorldContext& world_context) {
     /*
     const static std::unordered_map<TileType, std::string> type_options = {
         { TileType::None, "None" },
@@ -131,13 +133,12 @@ void SceneXray::tile_window() {
     */
 }
 
-void SceneXray::entity_panel(std::optional<u64> entity_id) {
+void SceneXray::entity_panel(std::optional<u64> entity_id, WorldContext& world_context) {
     if (!entity_id.has_value()) {
         return;
     }
-    auto translator = svc_->get<Translator>();
-    auto realm_services = realm_manager_->current_realm()->services();
-    auto entity_manager = realm_services.get<EntityManager>();
+    auto* translator = svc_->get<Translator>();
+    auto* entity_manager = world_context.entity_manager;
 
     Entity* entity = entity_manager->entity(entity_id.value());
     if (entity == nullptr) {
@@ -223,12 +224,10 @@ void SceneXray::entity_glyph(Entity* entity) {
     );
 }
 
-void SceneXray::mapgen_window() {
-    auto realm_services = realm_manager_->current_realm()->services();
-
-    auto entity_manager = realm_services.get<EntityManager>();
-    auto tile_accessor = realm_services.get<TileAccessor>();
-    auto chunk_manager = realm_services.get<ChunkManager>();
+void SceneXray::mapgen_window(WorldContext& world_context) {
+    auto* entity_manager = world_context.entity_manager;
+    auto* tile_accessor = world_context.tile_accessor;
+    auto* chunk_manager = world_context.chunk_manager;
 
     ImGui::Begin("Mapgen");
 

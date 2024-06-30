@@ -3,16 +3,11 @@
 
 #include "world/player_controller.hxx"
 
-class IEntityReader;
-class IActionCreator;
+struct WorldContext;
 
 class PlayerController {
 public:
-    explicit PlayerController(
-        IEntityReader* entity_reader,
-        IActionCreator* action_creator,
-        EventManager* events
-    );
+    void initialize(WorldContext* world_context);
 private:
     EventResult on_key_down(KeyDownEvent& e);
     Subscription<KeyDownEvent> key_down_sub_;
@@ -24,10 +19,7 @@ private:
      */
     bool move_relative(const WorldPos& direction);
 
-    EventManager* events_ = nullptr;
-    IEntityReader* entity_reader_ = nullptr;
-    IActionCreator* action_creator_ = nullptr;
-
+    WorldContext* world_context_ = nullptr;
 };
 
 #endif

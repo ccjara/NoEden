@@ -3,9 +3,6 @@
 
 #include "ai/generic_ai_node.hxx"
 
-class ActionQueue;
-class EntityManager;
-
 enum class WalkTargetType {
     Random,
     Entity,
@@ -14,7 +11,6 @@ enum class WalkTargetType {
 class AiWalk : public GenericAiNode<AiWalk> {
 public:
     void clear() override;
-    void initialize(AiContext &context) override;
 
     AiNodeState visit(AiContext& context) override;
 
@@ -28,9 +24,6 @@ public:
      */
     void walk_around();
 private:
-    ActionQueue* action_queue_ = nullptr;
-    EntityManager* entity_manager_ = nullptr;
-
     static constexpr const char* default_target_key = "walk_target";
 
     inline AiNodeState perform_walk_to_entity(AiContext& context);

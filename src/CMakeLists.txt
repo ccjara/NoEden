@@ -57,8 +57,6 @@ set(SOURCES
     entity/entity.cxx
     entity/entity_event.hxx
     entity/entity_manager.cxx
-    entity/entity_reader.hxx
-    entity/entity_writer.hxx
 
     framework/concepts.hxx
     framework/event_type.hxx
@@ -93,8 +91,6 @@ set(SOURCES
     instrumentation/profiler.cxx
 
     log/log.cxx
-
-    map/vision_manager.cxx
 
     math/bresenham.hxx
     math/rect.hxx
@@ -148,11 +144,13 @@ set(SOURCES
     world/chunk_pos.cxx
     world/player_controller.cxx
     world/tile_accessor.cxx
+    world/world_context.hxx
     world/world_realm.cxx
     world/world_event.hxx
     world/world_spec_creator.cxx
     world/world_pos.cxx
     world/world_spec.cxx
+    world/vision_manager.cxx
 )
 
 if (NOT NOEDEN_RELEASE)

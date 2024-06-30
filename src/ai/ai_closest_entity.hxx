@@ -12,8 +12,6 @@ class AiClosestEntity : public GenericAiNode<AiClosestEntity> {
 public:
     AiNodeState visit(AiContext& context) override;
 
-    void initialize(AiContext &context) override;
-
     /**
      * @brief Sets (move) the blackboardkey to use when storing the closest entity found
      */
@@ -30,8 +28,6 @@ private:
      * @brief Blackboard key to use when storing the closest entity found
      */
     std::string found_target_key = "closest_entity";
-
-    EntityManager* entity_manager_ = nullptr;
 };
 
 #endif

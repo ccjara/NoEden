@@ -4,22 +4,18 @@
 #include "entity/entity_event.hxx"
 #include "tile/tile.hxx"
 #include "world/tile_accessor.hxx"
+#include "world/world_context.hxx"
 
-MoveAction::MoveAction(IEntityReader* entity_reader, TileAccessor* tile_accessor, EventManager* events) :
-    entity_reader_(entity_reader),
-    tile_accessor_(tile_accessor),
-    events_(events) {
-    assert(entity_reader_);
-    assert(tile_accessor_);
-    type_ = ActionType::Move;
+MoveAction::MoveAction() : Action(ActionType::Move) {
 }
 
 ActionResult MoveAction::perform() {
     if (!entity_) {
         return ActionResult::Failure;
     }
-    const Tile* current_tile = tile_accessor_->get_tile(entity_->position);
-    const Tile* dest_tile = tile_accessor_->get_tile(destination);
+    auto tile_accessor = world_context_->tile_accessor;
+    const Tile* current_tile = tile_accessor->get_tile(entity_->position);
+    const Tile* dest_tile = tile_accessor->get_tile(destination);
 
     if (dest_tile == nullptr || dest_tile->type == TileType::Empty) {
         return ActionResult::Failure;
@@ -33,7 +29,7 @@ ActionResult MoveAction::perform() {
         // unit is standing on a ramp and moving into a blocking tile.
         // only allow moving up if there is a corresponding down ramp one tile up
         const auto elevated_position = entity_->position + WorldPos(0, 1, 0);
-        const Tile* elevated_tile = tile_accessor_->get_tile(elevated_position);
+        const Tile* elevated_tile = tile_accessor->get_tile(elevated_position);
         if (!elevated_tile || !elevated_tile->flags.test(TileFlags::Ramp)) {
             return ActionResult::Failure;
         }
@@ -41,7 +37,7 @@ ActionResult MoveAction::perform() {
         // test whether the move into that direction would be blocked (for example when standing at the ramp and moving diagonally but after elevation and then
         // moving diagonally there would be a wall)
         const auto elevated_dest = destination + WorldPos(0, 1, 0);
-        const Tile* elevated_dest_tile = tile_accessor_->get_tile(elevated_dest);
+        const Tile* elevated_dest_tile = tile_accessor->get_tile(elevated_dest);
         if (!elevated_dest_tile || elevated_dest_tile->flags.test(TileFlags::Blocking)) {
             return ActionResult::Failure;
         }
@@ -49,7 +45,7 @@ ActionResult MoveAction::perform() {
     } else if (dest_tile->flags.test(TileFlags::Ramp)) {
         // unit is moving onto a ramp
         // if there is a down ramp below, teleport them down
-        const Tile* tile_below = tile_accessor_->get_tile(destination - WorldPos(0, 1, 0));
+        const Tile* tile_below = tile_accessor->get_tile(destination - WorldPos(0, 1, 0));
         if (tile_below && tile_below->flags.test(TileFlags::Ramp)) {
             --destination.y;
         }
@@ -65,7 +61,7 @@ ActionResult MoveAction::perform() {
     entity_->position = destination;
 
     if (entity_->player_attached_) {
-        events_->trigger<PlayerMovedEvent>(entity_->position);
+        world_context_->events->trigger<PlayerMovedEvent>(entity_->position);
     }
 
     return ActionResult::Success;

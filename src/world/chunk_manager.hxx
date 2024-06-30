@@ -6,10 +6,11 @@
 
 class Chunk;
 class ChunkGenerator;
+struct WorldContext;
 
 class ChunkManager {
 public:
-    explicit ChunkManager(ChunkGenerator* chunk_generator, EventManager* events);
+    void initialize(WorldContext* world_context);
 
     /**
      * @brief Returns the chunk at the given world position or nullptr if not existing
@@ -34,13 +35,13 @@ private:
      */
     ChunkPos to_chunk_pos(const WorldPos& position) const;
 
-    EventManager* events_ = nullptr;
-    ChunkGenerator* chunk_generator_ = nullptr;
+    std::unique_ptr<ChunkGenerator> chunk_generator_ = nullptr;
     WorldSpec* world_spec_ = nullptr;
+    WorldContext* world_context_ = nullptr;
 
-    Subscription<WorldReadyEvent> on_world_ready_sub_;
-    Subscription<EntityCreatedEvent> on_entity_created_sub_;
-    Subscription<PlayerMovedEvent> on_player_moved_sub_;
+    Subscription<WorldReadyEvent> on_world_ready_sub_ = {};
+    Subscription<EntityCreatedEvent> on_entity_created_sub_ = {};
+    Subscription<PlayerMovedEvent> on_player_moved_sub_ = {};
     EventResult on_world_ready(const WorldReadyEvent& e);
     EventResult on_entity_created(const EntityCreatedEvent& e);
     EventResult on_player_moved(const PlayerMovedEvent& e);

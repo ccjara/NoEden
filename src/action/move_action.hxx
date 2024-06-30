@@ -3,9 +3,6 @@
 
 #include "action/action.hxx"
 
-class IEntityReader;
-class TileAccessor;
-
 /**
  * @brief Action representing the movement of an entity.
  *
@@ -13,7 +10,7 @@ class TileAccessor;
  */
 class MoveAction : public Action {
 public:
-    explicit MoveAction(IEntityReader* entity_reader, TileAccessor* tile_accessor, EventManager* events);
+    MoveAction();
 
     ActionResult perform() override;
 
@@ -21,10 +18,6 @@ public:
      * @brief Destination this entity will arrive at if the action succeeds.
      */
     WorldPos destination;
-private:
-    EventManager* events_ = nullptr;
-    IEntityReader* entity_reader_ = nullptr;
-    TileAccessor* tile_accessor_ = nullptr;
 };
 
 #endif

@@ -1,18 +1,12 @@
 #include "vision_manager.hxx"
 #include "entity/entity.hxx"
-#include "entity/entity_reader.hxx"
-#include "component/vision/vision.hxx"
-#include "tile/tile.hxx"
-#include "tile/tile_reader.hxx"
+#include "entity/entity_manager.hxx"
+#include "world/world_context.hxx"
 
-VisionManager::VisionManager(
-    IEntityReader* entity_reader,
-    ITileReader* tile_reader,
-    EventManager* events
-) : entity_reader_(entity_reader), tile_reader_(tile_reader), events_(events) {
-    assert(entity_reader_);
-    assert(tile_reader_);
-    assert(events_);
+void VisionManager::initialize(WorldContext* world_context) {
+    assert(world_context);
+    world_context_ = world_context;
+    auto* events_ = world_context_->events;
 
     world_ready_sub_ = events_->on<WorldReadyEvent>(this, &VisionManager::on_world_ready);
     world_updated_pre_sub_ = events_->on<WorldUpdatedPreEvent>(this, &VisionManager::on_world_updated_pre);
@@ -27,10 +21,11 @@ EventResult VisionManager::on_world_ready(const WorldReadyEvent&) {
 
 EventResult VisionManager::on_world_updated_pre(const WorldUpdatedPreEvent&) {
     // reset fov
+    /* TODO
     tile_reader_->tiles().each([](Tile& tile) {
         tile.flags.set(TileFlags::FoV, false);
     });
-
+    */
     return EventResult::Continue;
 }
 

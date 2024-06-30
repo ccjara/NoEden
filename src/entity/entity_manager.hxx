@@ -1,59 +1,71 @@
 #ifndef NOEDEN_ENTITY_MANAGER_HXX
 #define NOEDEN_ENTITY_MANAGER_HXX
 
-#include "entity/entity_reader.hxx"
-#include "entity/entity_writer.hxx"
+struct WorldContext;
+class Entity;
+class Archetype;
 
-class Realm;
+enum class ControlEntityResult {
+    Success,
+    EntityAlreadyControlled,
+    EntityNotFound,
+    EntityNotControllable,
+};
 
-class EntityManager : public IEntityReader, public IEntityWriter {
+class EntityManager {
 public:
-    explicit EntityManager(Realm* realm, EventManager* events);
+    using EntityContainer = std::vector<std::unique_ptr<Entity>>;
+
+    void initialize(WorldContext* world_context);
 
     /**
-     * @copydoc IEntityReader::entity
+     * @brief Returns an entity by id or nullptr if not found
      */
-    Entity* entity(Id id) override;
+    Entity* entity(Id id);
 
     /**
-     * @copydoc IEntityReader::entity
+     * @brief Returns an entity by id or nullptr if not found
      */
-    const Entity* entity(Id id) const override;
+    const Entity* entity(Id id) const;
 
     /**
-     * @copydoc IEntityReader::entities
+     * @brief Provides write access to the entity container
      */
-    EntityContainer& entities() override;
+    EntityContainer& entities();
 
     /**
-     * @copydoc IEntityReader::entities
+     * @brief Provides read access to the entity container
      */
-    const EntityContainer& entities() const override;
+    const EntityContainer& entities() const;
 
     /**
-     * @copydoc IEntityReader::player
+     * @brief Returns the player entity or nullptr if not found
      */
-    Entity* player() override;
+    Entity* player();
 
     /**
-     * @copydoc IEntityReader::player
+     * @brief Returns the player entity or nullptr if not found
      */
-    const Entity* player() const override;
+    const Entity* player() const;
 
     /**
-     * @copydoc IEntityWriter::create_entity
+     * @brief Creates an Entity of the given archetype and returns it.
+     *
+     * The Entity can be further configured after creation.
      */
-    Entity& create_entity(const Archetype& archetype, const WorldPos& position) override;
+    Entity& create_entity(const Archetype& archetype, const WorldPos& position);
 
     /**
-     * @copydoc IEntityWriter::set_controlled_entity
+     * @brief Sets the player controlled entity
      */
-    ControlEntityResult set_controlled_entity(Entity* entity) override;
+    ControlEntityResult set_controlled_entity(Entity* entity);
 
     /**
-     * @copydoc IEntityWriter::set_controlled_entity
+     * @brief Sets the player controlled entity.
+     *
+     * Resolves the entity and then calls set_controlled_entity(Entity* entity)
      */
-    ControlEntityResult set_controlled_entity(Id id) override;
+    ControlEntityResult set_controlled_entity(Id id);
 
 private:
     /**
@@ -73,12 +85,7 @@ private:
      */
     Entity* controlled_entity_ = nullptr;
 
-    /**
-     * @brief Realm this entity manager operates in
-     */
-    Realm* realm_ = nullptr;
-
-    EventManager* events_ = nullptr;
+    WorldContext* world_context_ = nullptr;
 };
 
 #endif
