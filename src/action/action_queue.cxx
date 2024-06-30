@@ -7,7 +7,7 @@
 #include "entity/entity_reader.hxx"
 #include "world/tile_accessor.hxx"
 
-ActionQueue::ActionQueue(EventManager* events, ServiceLocator* services) :
+ActionQueue::ActionQueue(ServiceLocator* services, EventManager* events) :
     events_(events),
     services_(services) {
     assert(events_);

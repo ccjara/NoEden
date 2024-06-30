@@ -56,7 +56,6 @@ set(SOURCES
     entity/archetype.hxx
     entity/entity.cxx
     entity/entity_event.hxx
-    entity/entity_factory.cxx
     entity/entity_manager.cxx
     entity/entity_reader.hxx
     entity/entity_writer.hxx
@@ -147,10 +146,9 @@ set(SOURCES
     world/chunk_generator.cxx
     world/chunk_manager.cxx
     world/chunk_pos.cxx
-    world/game_player_controller.cxx
-    world/player_controller.hxx
+    world/player_controller.cxx
     world/tile_accessor.cxx
-    world/world.cxx
+    world/world_realm.cxx
     world/world_event.hxx
     world/world_spec_creator.cxx
     world/world_pos.cxx

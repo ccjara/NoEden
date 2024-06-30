@@ -7,6 +7,7 @@
 #include "xray/noise_texture.hxx"
 
 class Entity;
+class RealmManager;
 
 class SceneXray : public Xray {
 public:
@@ -30,6 +31,8 @@ private:
 
     Config config_;
     NoiseTexture noise_texture_;
+
+    RealmManager* realm_manager_ = nullptr;
 };
 
 #endif

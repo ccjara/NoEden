@@ -11,7 +11,7 @@ bool Entity::add_component(std::unique_ptr<Component>&& component) {
     const auto component_type = component->type();
 
     if (has_component(component_type)) {
-        LOG_ERROR("Cannot add component {} to entity {}: already exists", (u32) component_type, id);
+        LOG_ERROR("Cannot add component {} to entity {}: already exists", static_cast<u32> (component_type), id);
         return false; // as no move of component took place the resource will be freed
     }
 

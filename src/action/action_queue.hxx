@@ -6,7 +6,7 @@
 
 class ActionQueue : public IActionCreator, public IActionProcessor {
 public:
-    explicit ActionQueue(EventManager* events, ServiceLocator* services);
+    explicit ActionQueue(ServiceLocator* services, EventManager* events);
 
     /**
      * @copydoc IActionCreator::create_action

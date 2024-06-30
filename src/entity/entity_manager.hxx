@@ -4,9 +4,11 @@
 #include "entity/entity_reader.hxx"
 #include "entity/entity_writer.hxx"
 
+class Realm;
+
 class EntityManager : public IEntityReader, public IEntityWriter {
 public:
-    explicit EntityManager(EventManager* events);
+    explicit EntityManager(Realm* realm, EventManager* events);
 
     /**
      * @copydoc IEntityReader::entity
@@ -52,6 +54,7 @@ public:
      * @copydoc IEntityWriter::set_controlled_entity
      */
     ControlEntityResult set_controlled_entity(Id id) override;
+
 private:
     /**
      * @brief Primary (owning) container of all entities
@@ -60,7 +63,7 @@ private:
 
     /**
      * @brief Indexes entities by their ID.
-     * 
+     *
      * The value (index) points to the entity's position in the entities_ vector.
      */
     std::unordered_map<Id, size_t> index_by_id_;
@@ -69,6 +72,11 @@ private:
      * @brief Entity currently controlled by the player
      */
     Entity* controlled_entity_ = nullptr;
+
+    /**
+     * @brief Realm this entity manager operates in
+     */
+    Realm* realm_ = nullptr;
 
     EventManager* events_ = nullptr;
 };

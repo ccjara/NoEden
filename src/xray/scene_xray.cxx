@@ -1,19 +1,26 @@
 #include "scene_xray.hxx"
-#include "entity/entity.hxx"
-#include "component/vision/vision.hxx"
-#include "component/skills.hxx"
+
 #include "component/render.hxx"
-#include "input/input_reader.hxx"
-#include "gfx/renderer.hxx"
+#include "component/skills.hxx"
+#include "component/vision/vision.hxx"
+#include "entity/entity.hxx"
 #include "entity/entity_manager.hxx"
-#include "tile/tile_manager.hxx"
 #include "framework/noise_generator.hxx"
-#include "world/chunk_manager.hxx"
+#include "gfx/renderer.hxx"
+#include "input/input_reader.hxx"
+#include "realm/realm_type_def.hxx"
+#include "realm/realm_manager.hxx"
+#include "tile/tile_manager.hxx"
 #include "world/chunk.hxx"
+#include "world/chunk_manager.hxx"
 #include "world/tile_accessor.hxx"
 #include "world/world_spec.hxx"
 
 bool SceneXray::initialize() {
+    realm_manager_ = svc_->get<RealmManager>();
+    if (!realm_manager_) {
+        return false;
+    }
     mouse_down_sub_ = events_->on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
     config_updated_sub_ = events_->on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
     return true;
@@ -51,6 +58,11 @@ EventResult SceneXray::on_mouse_down(const MouseDownEvent& e) {
 }
 
 void SceneXray::render() {
+    auto* realm = realm_manager_->current_realm();
+    if (!realm || realm->type() != RealmType::World) {
+        return;
+    }
+
     entity_window();
     tile_window();
     mapgen_window();
@@ -60,8 +72,8 @@ void SceneXray::entity_window() {
     static std::optional<u64> entity_id = std::nullopt;
     static std::string combo_label = "Select entity";
 
-    auto entity_manager = svc_->get<EntityManager>();
-
+    auto realm_services = realm_manager_->current_realm()->services();
+    auto entity_manager = realm_services.get<EntityManager>();
 
     ImGui::Begin("Entities");
 
@@ -123,8 +135,9 @@ void SceneXray::entity_panel(std::optional<u64> entity_id) {
     if (!entity_id.has_value()) {
         return;
     }
-    auto entity_manager = svc_->get<EntityManager>();
     auto translator = svc_->get<Translator>();
+    auto realm_services = realm_manager_->current_realm()->services();
+    auto entity_manager = realm_services.get<EntityManager>();
 
     Entity* entity = entity_manager->entity(entity_id.value());
     if (entity == nullptr) {
@@ -211,14 +224,15 @@ void SceneXray::entity_glyph(Entity* entity) {
 }
 
 void SceneXray::mapgen_window() {
-    auto world_spec = svc_->get<WorldSpec>();
-    auto entity_manager = svc_->get<EntityManager>();
-    auto tile_accessor = svc_->get<TileAccessor>();
-    auto chunk_manager = svc_->get<ChunkManager>();
+    auto realm_services = realm_manager_->current_realm()->services();
+
+    auto entity_manager = realm_services.get<EntityManager>();
+    auto tile_accessor = realm_services.get<TileAccessor>();
+    auto chunk_manager = realm_services.get<ChunkManager>();
 
     ImGui::Begin("Mapgen");
 
-    static GenerateNoiseOptions world_mask_options = world_spec->height_map_options();
+    static GenerateNoiseOptions world_mask_options;
 
     auto generate_map = [&]() {
         const auto noise = generate_noise(world_mask_options);

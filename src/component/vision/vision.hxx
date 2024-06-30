@@ -4,15 +4,11 @@
 #include "component/generic_component.hxx"
 #include "component/vision/fov.hxx"
 
-class ITileReader;
-
 /**
  * @brief Represents the vision of an entity. Any entity with this component can see.
  */
 class Vision : public GenericComponent<Vision, ComponentType::Vision> {
 public:
-    explicit Vision(ITileReader* tile_reader);
-
     /**
      * @brief Provides a const reference to the contained FoV
      */
@@ -52,8 +48,6 @@ private:
      * @brief Whether the FoV should be applied to the map
      */
     bool apply_ = false;
-
-    ITileReader* tile_reader_ = nullptr;
 };
 
 #endif

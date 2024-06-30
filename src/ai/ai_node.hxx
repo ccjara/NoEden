@@ -29,6 +29,11 @@ class AiNode {
 public:
     AiNode* parent_ = nullptr;
 
+    /**
+     * @brief Initializes this node with the given context
+     */
+    virtual void initialize(AiContext& context);
+
     virtual ~AiNode() = default;
 
     /**

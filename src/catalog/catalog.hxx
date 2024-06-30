@@ -1,7 +1,7 @@
 #ifndef NOEDEN_CATALOG_HXX
 #define NOEDEN_CATALOG_HXX
 
-struct Archetype;
+#include "entity/archetype.hxx"
 
 class Catalog {
 public:
@@ -22,6 +22,8 @@ public:
      * @brief Removes all archetypes from the catalog
      */
     void clear_archetypes();
+
+    ~Catalog();
 protected:
     std::unordered_map<std::string, std::unique_ptr<Archetype>> archetypes_;
 };

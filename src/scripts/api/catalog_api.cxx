@@ -107,7 +107,7 @@ void CatalogApi::create_archetype(luabridge::LuaRef ref) {
                     return add_behavior_component(*archetype, component_ref);
                 }
                 case ComponentType::Vision: {
-                    auto component_ptr = new Vision(svc_->get<ITileReader>());
+                    auto vision = std::make_unique<Vision>();
 
                     const auto vision_radius_ref = component_ref["radius"];
                     i32 radius = 1;
@@ -122,8 +122,8 @@ void CatalogApi::create_archetype(luabridge::LuaRef ref) {
                         LOG_WARN("Invalid vision config in {}: vision radius not set. Defaulting to 1", archetype->name);
                     }
 
-                    component_ptr->set_vision_radius(radius);
-                    archetype->components.emplace_back(component_ptr);
+                    vision->set_vision_radius(radius);
+                    archetype->components.push_back(std::move(vision));
                     return;
                 }
                 default:
@@ -217,7 +217,7 @@ std::unique_ptr<AiNode> CatalogApi::create_behavior_node(const luabridge::LuaRef
             break;
         }
         case AiNodeType::ClosestEntity: {
-            base_node_ptr = std::make_unique<AiClosestEntity>(svc_->get<IEntityReader>());
+            base_node_ptr = std::make_unique<AiClosestEntity>();
             auto node_ptr = static_cast<AiClosestEntity*>(base_node_ptr.get());
             const auto found_target_key_ref = ref["found_target_key"];
             if (found_target_key_ref.isString()) {
@@ -226,7 +226,7 @@ std::unique_ptr<AiNode> CatalogApi::create_behavior_node(const luabridge::LuaRef
             break;
         }
         case AiNodeType::Walk: {
-            base_node_ptr = std::make_unique<AiWalk>(svc_->get<IActionCreator>(), svc_->get<IEntityReader>());
+            base_node_ptr = std::make_unique<AiWalk>();
             auto node_ptr = static_cast<AiWalk*>(base_node_ptr.get());
             const auto walk_target_key = ref["walk_target_key"];
             if (walk_target_key.isString()) {

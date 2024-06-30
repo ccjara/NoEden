@@ -1,36 +1,35 @@
 #include "ai/ai_closest_entity.hxx"
-#include "action/action.hxx"
-#include "entity/entity.hxx"
 #include "component/vision/vision.hxx"
-#include "entity/entity_reader.hxx"
+#include "entity/entity.hxx"
+#include "entity/entity_manager.hxx"
+#include "realm/realm.hxx"
 
-AiClosestEntity::AiClosestEntity(IEntityReader* entity_reader) : entity_reader_(entity_reader) {
-    assert(entity_reader_);
+void AiClosestEntity::initialize(AiContext& context) {
+    entity_manager_ = context.entity->realm->services().get<EntityManager>();
+    assert(entity_manager_);
 }
 
 AiNodeState AiClosestEntity::visit(AiContext& context) {
-    return mod_state(AiNodeState::Failed);
-    /* TODO
-
     if (!context.entity) {
         return mod_state(AiNodeState::Failed);
     }
+    auto* entity_manager = context.entity->realm->services().get<EntityManager>();
 
     // OPTIMIZE: could subscribe to a `VisionRadiusUpdated` event to then
     //           cache the radius in the blackboard
 
-    Vision* vision = context.entity->component<Vision>();
+    const auto* vision = context.entity->component<Vision>();
     if (vision == nullptr) {
         return mod_state(AiNodeState::Failed);
     }
     const auto radius = vision->vision_radius();
 
     // OPTIMIZE: quadtree
-    for (const auto& entity : entity_reader_->entities()) {
+    for (const auto& entity : entity_manager->entities()) {
         if (entity->id == context.entity_id) {
             continue;
         }
-        if (entity->position.manhattan_distance(context.entity->position) > radius) {
+        if (entity->position.manhattan_distance_to(context.entity->position) > radius) {
             continue;
         }
         context.blackboard.set(found_target_key, entity->id);
@@ -39,7 +38,6 @@ AiNodeState AiClosestEntity::visit(AiContext& context) {
 
     // no unit in range matching the filter found
     return mod_state(AiNodeState::Failed);
-    */
 }
 
 void AiClosestEntity::clear() {

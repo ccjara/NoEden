@@ -3,16 +3,16 @@
 
 #include "ai/generic_ai_node.hxx"
 
-class IEntityReader;
+class EntityManager;
 
 /**
  * @brief Scans the area in range and finds the closest entity if any
  */
 class AiClosestEntity : public GenericAiNode<AiClosestEntity> {
 public:
-    explicit AiClosestEntity(IEntityReader* entity_reader);
-
     AiNodeState visit(AiContext& context) override;
+
+    void initialize(AiContext &context) override;
 
     /**
      * @brief Sets (move) the blackboardkey to use when storing the closest entity found
@@ -31,7 +31,7 @@ private:
      */
     std::string found_target_key = "closest_entity";
 
-    IEntityReader* entity_reader_ = nullptr;
+    EntityManager* entity_manager_ = nullptr;
 };
 
 #endif

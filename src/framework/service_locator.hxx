@@ -7,9 +7,6 @@
  * The service locator does not take ownership of the services registered with
  * it. It is the responsibility of the caller to ensure the lifetime of the
  * services outlives the service locator.
- * 
- * This class is thread-safe beyond the point of registering all services
- * which should happen at engine startup.
  */
 class ServiceLocator {
 public:
@@ -28,11 +25,9 @@ public:
         return nullptr;
     }
 
-    friend class Game;
-private:
     /**
      * @brief Registers a service at the service locator
-     * 
+     *
      * @tparam Service Type of the service to register
      * @param service Service instance
      */
@@ -41,6 +36,8 @@ private:
         assert(service);
         service_map_[key<Service>()] = service;
     }
+private:
+
 
     /**
      * @brief Map of service keys to service instances

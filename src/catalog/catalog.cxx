@@ -1,6 +1,9 @@
 #include "catalog/catalog.hxx"
 #include "entity/archetype.hxx"
 
+Catalog::~Catalog() {
+}
+
 Archetype* Catalog::create_archetype(std::string_view name) {
     auto it = archetypes_.find(std::string(name));
     if (it != archetypes_.end()) {

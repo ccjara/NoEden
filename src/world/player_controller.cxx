@@ -1,23 +1,25 @@
-#include "world/game_player_controller.hxx"
+#include "world/player_controller.hxx"
 #include "action/action_creator.hxx"
 #include "action/action_event.hxx"
 #include "action/move_action.hxx"
 #include "entity/entity.hxx"
 #include "entity/entity_reader.hxx"
 
-GamePlayerController::GamePlayerController(
+PlayerController::PlayerController(
     IEntityReader* entity_reader,
     IActionCreator* action_creator,
     EventManager* events
 ) : entity_reader_(entity_reader),
     action_creator_(action_creator),
     events_(events) {
+    assert(entity_reader_);
+    assert(action_creator_);
     assert(events_);
 
-    key_down_sub_ = events_->on<KeyDownEvent>(this, &GamePlayerController::on_key_down);
+    key_down_sub_ = events_->on<KeyDownEvent>(this, &PlayerController::on_key_down);
 }
 
-EventResult GamePlayerController::on_key_down(KeyDownEvent& e) {
+EventResult PlayerController::on_key_down(KeyDownEvent& e) {
     WorldPos position;
 
     if (e.key == Key::W) {
@@ -48,7 +50,7 @@ EventResult GamePlayerController::on_key_down(KeyDownEvent& e) {
     return EventResult::Halt;
 }
 
-bool GamePlayerController::move_relative(const WorldPos& direction) {
+bool PlayerController::move_relative(const WorldPos& direction) {
     Entity* player = entity_reader_->player();
     if (!player) {
         return false;

@@ -68,7 +68,9 @@ protected:
     ComponentType type_ = ComponentType::Unknown;
 
     /**
-     * @brief Entity this component belongs to
+     * @brief Entity this component belongs to.
+     *
+     * Set by the entity manager when constructing the entity and its components from its archetype.
      */
     Entity* entity_ = nullptr;
 

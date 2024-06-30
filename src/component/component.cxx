@@ -1,4 +1,5 @@
 #include "component/component.hxx"
+#include "entity/entity.hxx"
 
 Component::Component(ComponentType type) : type_(type) {
 }

@@ -1,10 +1,26 @@
 #include "game.hxx"
 
-#include <realm/realm_type_def.hxx>
-
+#include "catalog/catalog.hxx"
+#include "config/config_manager.hxx"
+#include "gfx/renderer.hxx"
+#include "input/input.hxx"
 #include "main_menu/main_menu_realm.hxx"
+#include "platform/platform.hxx"
+
+#include "realm/realm_type_def.hxx"
+#include "realm/realm_manager.hxx"
+#include "scripts/api/catalog_api.hxx"
+#include "scripts/api/config_api.hxx"
+#include "scripts/api/log_api.hxx"
 #include "scripts/api/realm_api.hxx"
+#include "scripts/api/scene_api.hxx"
 #include "scripts/api/script_api.hxx"
+#include "scripts/api/ui/ui_api.hxx"
+#include "scripts/scripting.hxx"
+#include "lang/translator.hxx"
+#include "lang/translation_loader.hxx"
+#include "ui/ui.hxx"
+#include "world/world_realm.hxx"
 
 #ifdef NOEDEN_XRAY
 #include "xray/xray_manager.hxx"
@@ -17,7 +33,15 @@
 
 
 bool Game::initialize_realms() {
-    return realms_->add_realm(std::make_unique<MainMenuRealm>());
+    if (!realms_->add_realm(std::make_unique<MainMenuRealm>())) {
+        LOG_ERROR("Failed to add MainMenuRealm");
+        return false;
+    }
+    if (!realms_->add_realm(std::make_unique<WorldRealm>())) {
+        LOG_ERROR("Failed to add WorldRealm");
+        return false;
+    }
+    return true;
 }
 
 bool Game::initialize() {
@@ -36,6 +60,7 @@ bool Game::initialize() {
     services_->provide<Ui>(ui_.get());
     services_->provide<Scripting>(scripting_.get());
     services_->provide<RealmManager>(realms_.get());
+    services_->provide<Renderer>(renderer_.get());
 
 
     if (!platform_->initialize()) {
@@ -61,56 +86,13 @@ bool Game::initialize() {
         t_ = std::make_unique<Translator>(std::move(result.dictionary));
     }
     services_->provide<Translator>(t_.get());
-    entity_manager_ = std::make_unique<EntityManager>(events_.get());
-    tile_manager_ = std::make_unique<TileManager>();
-
-    chunk_generator_ = std::make_unique<ChunkGenerator>();
-    chunk_manager_ = std::make_unique<ChunkManager>(chunk_generator_.get(), events_.get());
-    tile_accessor_ = std::make_unique<TileAccessor>(chunk_manager_.get());
-
-    action_queue_ = std::make_unique<ActionQueue>(events_.get(), services_.get());
-    world_ = std::make_unique<World>(entity_manager_.get(), action_queue_.get(), events_.get());
-    vision_manager_ = std::make_unique<VisionManager>(entity_manager_.get(), tile_manager_.get(), events_.get());
     catalog_ = std::make_unique<Catalog>();
 
     services_->provide<Scripting>(scripting_.get());
-    services_->provide<VisionManager>(vision_manager_.get());
     services_->provide<ConfigManager>(config_manager_.get());
     services_->provide<EventManager>(events_.get());
-    services_->provide<World>(world_.get());
-    services_->provide<IEntityReader>(entity_manager_.get());
-    services_->provide<IEntityWriter>(entity_manager_.get());
-    services_->provide<EntityManager>(entity_manager_.get());
-    services_->provide<TileManager>(tile_manager_.get());
-    services_->provide<TileAccessor>(tile_accessor_.get());
-    services_->provide<ITileReader>(tile_manager_.get());
-    services_->provide<ITileWriter>(tile_manager_.get());
     services_->provide<Catalog>(catalog_.get());
-    services_->provide<ActionQueue>(action_queue_.get());
-    services_->provide<IActionCreator>(action_queue_.get());
-    services_->provide<IActionProcessor>(action_queue_.get());
     services_->provide<IInputReader>(input_.get());
-
-    player_controller_ = std::make_unique<GamePlayerController>(
-        entity_manager_.get(),
-        action_queue_.get(),
-        events_.get()
-    );
-    world_->bind_player_controller(player_controller_.get());
-
-    WorldSpecCreator world_spec_creator;
-
-    world_spec_ = world_spec_creator.create_world_spec(CreateWorldSpecOptions {
-        .seed = 0,
-        .chunks_x = 256,
-        .chunks_z = 256,
-        .max_vegetation = static_cast<i32>(0.8f * Chunk::CHUNK_DEPTH),
-        .max_shoreline = static_cast<i32>(0.45f * Chunk::CHUNK_DEPTH),
-        .max_water = static_cast<i32>(0.4f * Chunk::CHUNK_DEPTH)
-    });
-
-    services_->provide<WorldSpec>(world_spec_.get()); // temporary
-    services_->provide<ChunkManager>(chunk_manager_.get()); // temporary
 
     renderer_->set_viewport(platform_->window_size());
 
@@ -134,29 +116,8 @@ bool Game::initialize() {
     scripting_->add_api<ScriptApi>();
     scripting_->reload();
 
-    if (!realms_->switch_realm(RealmType::MainMenu)) {
+    if (!realms_->switch_realm(RealmType::World)) {
         return false;
-    }
-
-    events_->trigger<WorldReadyEvent>(world_spec_.get());
-
-    // post initialization experimentation
-    {
-        auto arch_troll = catalog_->archetype("TROLL");
-        auto arch_human = catalog_->archetype("HUMAN");
-        if (arch_troll) {
-            entity_manager_->create_entity(*arch_troll, WorldPos(3, 0, 3));
-        } else {
-            LOG_WARN("TROLL archetype not yet present");
-        }
-        if (arch_human) {
-            auto& human = entity_manager_->create_entity(*arch_human, WorldPos(1, 0, 1));
-            human.position.y = chunk_manager_->get_chunk(human.position)->height_map[human.position.x + human.position.z * Chunk::CHUNK_SIDE_LENGTH];
-            entity_manager_->set_controlled_entity(&human);
-            world_->get_camera_controller().set_target(&human);
-        } else {
-            LOG_WARN("HUMAN archetype not yet present");
-        }
     }
 
     return true;
@@ -168,19 +129,9 @@ void Game::shutdown() {
 #endif
 
     ui_.reset();
-
     renderer_.reset();
 
     catalog_.reset();
-    vision_manager_.reset();
-    world_.reset();
-    action_queue_.reset();
-    tile_accessor_.reset();
-    chunk_manager_.reset();
-    chunk_generator_.reset();
-    tile_manager_.reset();
-    entity_manager_.reset();
-    player_controller_.reset();
 
     scripting_.reset();
     input_.reset();
@@ -209,99 +160,28 @@ void Game::run() {
         return;
     }
 
+    if (!realms_->current_realm()) {
+        LOG_ERROR("No initial realm set, exiting");
+        DEBUG_TRAP();
+        return;
+    }
+
     while (true) {
         Profiler::start_frame();
 
         if (!platform_->prepare()) {
             break;
         }
-        // TODO: temporary code
-        Profiler::timer("Draw").start();
-        auto& world_layer = renderer_->display();
 
-        world_layer.reset();
+        Profiler::timer("Update").start();
+        realms_->current_realm()->update();
+        Profiler::timer("Update").stop();
 
-        const auto camera_pos = world_->get_camera().position;
-        i32 display_half_width = world_layer.dimensions().x / 2;
-        i32 display_half_height = world_layer.dimensions().y / 2;
-
-        const i32 left_bound = camera_pos.x - display_half_width;
-        const i32 right_bound = camera_pos.x + display_half_width;
-        const i32 top_bound = camera_pos.z - display_half_height;
-        const i32 bottom_bound = camera_pos.z + display_half_height;
-
-        for (i32 z = top_bound; z <= bottom_bound; ++z) {
-            for (i32 x = left_bound; x <= right_bound; ++x) {
-                Tile* tile = tile_accessor_->get_tile(WorldPos(x, camera_pos.y, z));
-                if (tile) {
-                    u32 screen_x = x - left_bound;
-                    u32 screen_z = z - top_bound;
-
-                    if (!tile->flags.test(TileFlags::Revealed)) {
-                        continue;
-                    }
-                    world_layer.put(tile->display_info, Vec2<u32>(screen_x, screen_z));
-                }
-            }
-        }
-
-        /*
-        Grid<Tile>& tiles { tile_manager_->tiles() };
-        const auto scene_dim { tiles.dimensions() };
-        const auto display_dim { world_layer.dimensions() };
-        const Vec2<u32> tile_render_dim (
-            std::min<u32>(scene_dim.x, display_dim.x),
-            std::min<u32>(scene_dim.y, display_dim.y)
-        );
-        for (u32 y = 0; y < tile_render_dim.y; ++y) {
-            for (u32 x = 0; x < tile_render_dim.x; ++x) {
-                const Vec2<u32> tile_pos { x, y };
-                const Tile* tile { tiles.at(tile_pos) };
-
-                auto cell = tile->display_info;
-
-                // logic does not work with mutliple layers (game + ui)
-                // the ui will be "burned in"
-                // TODO: draw world and ui into separate buffers and then merge them
-
-                if (tile->flags.test(TileFlags::FoV)) {
-                    world_layer.put(std::move(cell), tile_pos);
-                } else {
-                    world_layer.at(tile_pos)->color = Color::mono(128);
-                }
-            }
-        }
-        */
-        for (const auto& entity : entity_manager_->entities()) {
-            auto pos = entity->position - WorldPos(left_bound, 0, top_bound);
-
-            if (!world_layer.in_bounds(Vec2<u32>(pos.x, pos.z))) {
-                continue;
-            }
-
-            auto render_component = entity->component<Render>();
-            if (!render_component) {
-                continue;
-            }
-            const auto& info = render_component->display_info();
-            if (!info.visible) {
-                continue;
-            }
-
-            //const auto tile { tiles.at(entity->position) };
-            //if (!tile || !tile->flags.test(TileFlags::FoV)) {
-            //    continue;
-            //}
-
-            if (entity->position.y != camera_pos.y) {
-                continue;
-            }
-
-            world_layer.put(DisplayCell(info.glyph, info.color), Vec2<u32>(pos.x, pos.z));
-        }
+        Profiler::timer("Ui").start();
         ui_->update();
         ui_->draw(); // condense into one?
-        Profiler::timer("Draw").stop();
+        Profiler::timer("Ui").stop();
+
         Profiler::timer("Render").start();
         renderer_->render();
         Profiler::timer("Render").stop();

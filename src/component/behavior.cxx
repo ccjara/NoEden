@@ -28,12 +28,11 @@ void Behavior::update() {
 }
 
 void Behavior::on_owner_updated() {
-    if (!entity_) {
-        return;
-    }
+    assert(entity_);
     ai_context_.entity = entity_;
     ai_context_.entity_id = entity_->id;
     ai_context_.blackboard.clear();
+    root_->initialize(ai_context_);
 }
 
 void Behavior::set_root(std::unique_ptr<AiNode>&& root) {

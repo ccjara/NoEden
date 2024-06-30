@@ -3,6 +3,8 @@
 
 #include "component/component.hxx"
 
+class Realm;
+
 class Entity {
 public:
     friend class EntityFactory;
@@ -15,6 +17,11 @@ public:
     std::string name = "";
 
     WorldPos position;
+
+    /**
+     * @brief The realm this entity belongs to.
+     */
+    Realm* realm = nullptr;
 
     bool player_attached_ = false;
 

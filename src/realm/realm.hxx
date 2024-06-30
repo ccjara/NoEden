@@ -40,6 +40,16 @@ public:
     [[nodiscard]] RealmType type() const;
 
     virtual ~Realm() = default;
+
+    /**
+     * @return Returns the service locator for this realm.
+     */
+    ServiceLocator& services();
+
+    /**
+     * @return Returns the service locator for this realm.
+     */
+    const ServiceLocator& services() const;
 protected:
     friend class RealmManager;
     explicit Realm(RealmType type);
@@ -47,6 +57,8 @@ protected:
     RealmType type_;
     ServiceLocator* services_ = nullptr;
     EventManager* events_ = nullptr;
+
+    std::unique_ptr<ServiceLocator> realm_services_ = nullptr;
 };
 
 #endif

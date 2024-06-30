@@ -1,10 +1,6 @@
 #include "component/vision/vision.hxx"
 #include "tile/tile_reader.hxx"
 
-Vision::Vision(ITileReader* tile_reader) : tile_reader_(tile_reader) {
-    assert(tile_reader_);
-}
-
 void Vision::set_vision_radius(i32 radius) {
     fov_.set_vision_radius(std::max(radius, 1));
 }

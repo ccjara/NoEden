@@ -1,10 +1,11 @@
 #include "entity/entity_manager.hxx"
 #include "entity/entity.hxx"
-#include "entity/entity_factory.hxx"
 #include "entity/entity_event.hxx"
 #include "entity/archetype.hxx"
+#include "realm/realm.hxx"
 
-EntityManager::EntityManager(EventManager* events) : events_(events) {
+EntityManager::EntityManager(Realm* realm, EventManager* events) : realm_(realm), events_(events) {
+    assert(realm_);
     assert(events_);
 }
 
@@ -20,7 +21,14 @@ Entity* EntityManager::entity(Id id) {
 }
 
 const Entity* EntityManager::entity(Id id) const {
-    return entity(id);
+    const auto it = index_by_id_.find(id);
+    if (it == index_by_id_.cend()) {
+        return nullptr;
+    }
+    if (it->second >= entities_.size()) {
+        return nullptr;
+    }
+    return entities_[it->second].get();
 }
 
 EntityManager::EntityContainer& EntityManager::entities() {
@@ -32,16 +40,28 @@ const EntityManager::EntityContainer& EntityManager::entities() const {
 }
 
 Entity& EntityManager::create_entity(const Archetype& archetype, const WorldPos& position) {
-    entities_.push_back(EntityFactory::create(archetype));
-    auto& entity = entities_.back();
+    {
+        auto entity = std::make_unique<Entity>();
 
-    entity->position = position;
+        // copy common properties from archetype into entity
+        entity->speed = archetype.speed;
+        entity->name = archetype.name;
+        entity->realm = realm_;
 
+        for (const auto& archetype_component : archetype.components) {
+            entity->add_component(archetype_component->clone());
+        }
+
+        entity->position = position;
+        entities_.push_back(std::move(entity));
+    }
+
+    Entity* entity = entities_.back().get();
     index_by_id_[entity->id] = entities_.size() - 1;
 
-    events_->trigger<EntityCreatedEvent>(entity.get());
+    events_->trigger<EntityCreatedEvent>(entity);
 
-    return *entity.get();
+    return *entity;
 }
 
 Entity* EntityManager::player() {
