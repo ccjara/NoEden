@@ -108,9 +108,9 @@ set(SOURCES
     platform/platform_event.hxx
     platform/platform.cxx
 
-    realm/main_menu.cxx
-    realm/main_menu_controller.cxx
-    realm/main_menu_realm.cxx
+    main_menu/main_menu.cxx
+    main_menu/main_menu_controller.cxx
+    main_menu/main_menu_realm.cxx
     realm/realm.cxx
     realm/realm_manager.cxx
     realm/realm_type.cxx

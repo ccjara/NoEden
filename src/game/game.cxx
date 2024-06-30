@@ -2,7 +2,7 @@
 
 #include <realm/realm_type_def.hxx>
 
-#include "realm/main_menu_realm.hxx"
+#include "main_menu/main_menu_realm.hxx"
 #include "scripts/api/realm_api.hxx"
 #include "scripts/api/script_api.hxx"
 
@@ -134,7 +134,9 @@ bool Game::initialize() {
     scripting_->add_api<ScriptApi>();
     scripting_->reload();
 
-    realms_->switch_realm(RealmType::MainMenu);
+    if (!realms_->switch_realm(RealmType::MainMenu)) {
+        return false;
+    }
 
     events_->trigger<WorldReadyEvent>(world_spec_.get());
 

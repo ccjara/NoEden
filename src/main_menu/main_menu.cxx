@@ -1,4 +1,4 @@
-#include "realm/main_menu.hxx"
+#include "main_menu/main_menu.hxx"
 
 MainMenu::MainMenu() {
     add_item(std::make_unique<MenuItem>(ItemType::CreateWorld, "MAIN_MENU_CREATE_WORLD", true));

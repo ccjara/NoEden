@@ -1,5 +1,5 @@
-#include "realm/main_menu_controller.hxx"
-#include "realm/main_menu.hxx"
+#include "main_menu/main_menu_controller.hxx"
+#include "main_menu/main_menu.hxx"
 
 MainMenuController::MainMenuController(MainMenu* menu, EventManager* events) : menu_(menu), events_(events) {
     assert(events_);

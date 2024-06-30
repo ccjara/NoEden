@@ -10,24 +10,24 @@ RealmManager::RealmManager(ServiceLocator* services, EventManager* events) :
 
 
 bool RealmManager::add_realm(std::unique_ptr<Realm>&& realm) {
-    auto type = realm->type();
-    auto result = realms.try_emplace(type, std::move(realm));
-    if (!result.second) {
+    const RealmType type = realm->type();
+    if (realms_.contains(type)) {
         LOG_ERROR("Realm {} already exists", realm_type_to_string(type));
         return false;
     }
 
-    auto& inserted_realm = result.first->second;
-
-    inserted_realm->services_ = services_;
-    inserted_realm->events_ = events_;
-
-    return inserted_realm->initialize();
+    realm->services_ = services_;
+    realm->events_ = events_;
+    if (!realm->initialize()) {
+        return false;
+    }
+    realms_[type] = std::move(realm);
+    return true;
 }
 
 bool RealmManager::switch_realm(RealmType type) {
-    auto it = realms.find(type);
-    if (it == realms.end()) {
+    auto it = realms_.find(type);
+    if (it == realms_.end()) {
         LOG_ERROR("Realm {} does not exist", realm_type_to_string(type));
         return false;
     }
@@ -45,4 +45,16 @@ bool RealmManager::switch_realm(RealmType type) {
     LOG_INFO("Switched to realm {}", realm_type_to_string(type));
 
     return true;
+}
+
+const std::unordered_map<RealmType, std::unique_ptr<Realm>>& RealmManager::realms() const {
+    return realms_;
+}
+
+const Realm* RealmManager::current_realm() const {
+    return current_realm_;
+}
+
+Realm* RealmManager::current_realm() {
+    return current_realm_;
 }

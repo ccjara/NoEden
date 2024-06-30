@@ -1,6 +1,6 @@
-#include "realm/main_menu_realm.hxx"
+#include "main_menu/main_menu_realm.hxx"
 #include "realm/realm_type_def.hxx"
-#include "realm/main_menu.hxx"
+#include "main_menu/main_menu.hxx"
 
 MainMenuRealm::MainMenuRealm() : Realm(RealmType::MainMenu) {
 }

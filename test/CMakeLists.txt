@@ -16,6 +16,7 @@ add_executable(NoEdenTest
     input/input.cxx
     lang/translator.cxx
     lang/translation_loader.cxx
+    realm/realm_manager.cxx
 
     ${SRC}/framework/event_manager.hxx
     ${SRC}/input/input.cxx
@@ -26,6 +27,8 @@ add_executable(NoEdenTest
     ${SRC}/lang/translation_loader.cxx
     ${SRC}/lang/translator.cxx
     ${SRC}/lang/dictionary.cxx
+    ${SRC}/realm/realm_manager.cxx
+    ${SRC}/realm/realm.cxx
 )
 
 target_link_libraries(NoEdenTest PRIVATE Catch2::Catch2WithMain)

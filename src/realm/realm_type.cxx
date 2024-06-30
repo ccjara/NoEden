@@ -1,13 +1,16 @@
 #include "realm/realm_type_def.hxx"
 
+static constinit auto MAIN_MENU = "MAIN_MENU";
+static constinit auto WORLD = "WORLD";
+
 const std::unordered_map<std::string, RealmType> realm_type_map = {
-    {"MAIN_MENU", RealmType::MainMenu},
-    {"WORLD", RealmType::World},
+    {MAIN_MENU, RealmType::MainMenu},
+    {WORLD, RealmType::World},
 };
 
 const std::unordered_map<RealmType, std::string> realm_key_map = {
-    {RealmType::MainMenu, "MAIN_MENU"},
-    {RealmType::World, "WORLD"},
+    {RealmType::MainMenu, MAIN_MENU},
+    {RealmType::World, WORLD},
 };
 
 RealmType realm_type_from_string(const std::string& str) {
