@@ -10,7 +10,7 @@ Text& UiText::text() const {
 
 void UiText::resize(Vec2<u32> size) {
     size_ = size;
-    text_->set_clamp(size);
+    text_->set_region(size);
     text_->update();
 }
 

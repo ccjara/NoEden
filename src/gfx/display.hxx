@@ -2,6 +2,7 @@
 #define NOEDEN_DISPLAY_HXX
 
 #include "text.hxx"
+#include "display_cell.hxx"
 
 struct TextState {
     Color color { Color::white() };
@@ -102,7 +103,7 @@ public:
         }
     );
 
-    void text(const Text& t, Vec2<i32> position);
+    void text(const Text& t);
 
     /**
      * @brief Render a rectangle on the display

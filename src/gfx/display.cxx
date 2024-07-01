@@ -1,14 +1,16 @@
 #include "display.hxx"
 
-void Display::text(const Text& text, Vec2<i32> position) {
-    for (const auto& letter : text.letters()) {
-        auto pos = position + letter.offset;
-        if (!in_bounds(pos)) {
-            continue;
+void Display::text(const Text& text) {
+    const auto& ops = text.ops();
+
+    for (i32 op_index = 0; op_index <= text.ops().size(); ++op_index) {
+        const auto& op = ops[op_index];
+        const auto glyph_count = op.glyphs.size();
+        for (i32 i = 0; i < glyph_count; ++i) {
+            const i32 glyph = op.glyphs[i];
+            const Vec2<u32> pos = op.position + Vec2<i32>(i, 0);
+            put(DisplayCell{ glyph, op.color }, pos);
         }
-        auto& cell = cells_.at(to_index(pos));
-        cell.color = letter.color;
-        cell.glyph = letter.glyph;
     }
 }
 

@@ -75,7 +75,7 @@ void Ui::draw_node(UiNode* node) {
         display_->text(n->title(), pos);
     } else if (node->type() == UiNodeType::text) {
         auto n = static_cast<UiText*>(node);
-        display_->text(n->text(), n->absolute_position());
+        display_->text(n->text());
     }
     for (UiNode* child_node : node->children()) {
         draw_node(child_node);
