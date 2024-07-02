@@ -142,6 +142,12 @@ void UiApi::on_register(Script& script) {
                     n->text().update();
                 }
             )
+            .addFunction(
+                "set_color",
+                +[](UiText* n, i32 color) {
+                    n->text().set_color(Color(color));
+                }
+            )
         .endClass();
 
     expose(script, this, "ui");

@@ -16,7 +16,15 @@ void Text::set_region(Vec2<i32> region) {
     region_ = region;
 }
 
+void Text::set_color(Color color) {
+    dirty_ = color_ != color;
+    color_ = color;
+}
+
 void Text::update() {
+    if (!dirty_) {
+        return;
+    }
     ops_.clear();
     if (text_.empty() || !region_.x || !region_.y) {
         return;
@@ -27,6 +35,8 @@ void Text::update() {
     }
 
     TextOp* current_op = &ops_.emplace_back();
+    current_op->color = color_;
+
     const i32 max_index = static_cast<i32>(text_.length() - 1);
     std::stack<Color> color_stack;
 
@@ -42,6 +52,8 @@ void Text::update() {
         }
 
         // i is at the command char ($)
+        // continuing from a branch is used for inline commands and will not create a new op
+        // breaking from a branch will create a new op
         switch (text_[i + 1]) {
            case COMMAND_COLOR: {
                 // $cRRGGBB
@@ -94,8 +106,18 @@ void Text::update() {
                 continue;
         }
 
-        current_op = &ops_.emplace_back();
-        if (!color_stack.empty()) {
+        if (!current_op->glyphs.empty()) {
+            // no need to create a new op if the current one is empty
+            // this happens if a op-creating command is used at the beginning of the text or back to back
+            current_op = &ops_.emplace_back();
+        }
+
+        // problematic code placement: should go into the color command block later
+        // when the color command is placed in a way that it does not create
+        // a new op then the color command would be skipped if this code was not here
+        if (color_stack.empty()) {
+            current_op->color = color_;
+        } else {
             current_op->color = color_stack.top();
         }
     }
@@ -105,7 +127,7 @@ EXIT:
     i32 last_length = 0;
     for (auto& op : ops_) {
         op.position.x = last_length;
-        last_length += op.glyphs.size();
+        last_length += static_cast<i32> (op.glyphs.size());
     }
 }
 

@@ -3,7 +3,7 @@
 void Display::text(const Text& text) {
     const auto& ops = text.ops();
 
-    for (i32 op_index = 0; op_index <= text.ops().size(); ++op_index) {
+    for (i32 op_index = 0; op_index < ops.size(); ++op_index) {
         const auto& op = ops[op_index];
         const auto glyph_count = op.glyphs.size();
         for (i32 i = 0; i < glyph_count; ++i) {

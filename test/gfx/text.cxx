@@ -3,15 +3,13 @@
 
 std::string to_str(const TextOp& op) {
     std::string s(op.glyphs.size(), '\0');
-    std::ranges::transform(op.glyphs, s.begin(), [](const i32 glyph) {
-        return static_cast<char>(glyph);
-    });
+    std::ranges::transform(op.glyphs, s.begin(), [](const i32 glyph) { return static_cast<char>(glyph); });
     return s;
 }
 
 TEST_CASE("Text parsing", "[gfx][unit]") {
     Text text;
-    text.set_region({ 5000, 500 });
+    text.set_region({5000, 500});
 
     SECTION("Handles empty text") {
         text.set_text("");
@@ -100,29 +98,36 @@ TEST_CASE("Text parsing", "[gfx][unit]") {
         REQUIRE(to_str(ops[1]) == "b");
     }
 
-    SECTION("Removes color command string") {
-        text.set_text("a$cFF0000b");
-        text.update();
+    SECTION("Color command") {
+        SECTION("Is not included in text") {
+            text.set_text("a$cFF0000b");
+            text.update();
 
-        const auto& ops = text.ops();
+            const auto& ops = text.ops();
 
-        REQUIRE(ops.size() == 2);
-        REQUIRE(to_str(ops[0]) == "a");
-        REQUIRE(to_str(ops[1]) == "b");
-    }
+            REQUIRE(ops.size() == 2);
+            REQUIRE(to_str(ops[0]) == "a");
+            REQUIRE(to_str(ops[1]) == "b");
+        }
 
-    SECTION("Removes truncated color command at the end of the text") {
-        const auto strings = {
-            "a$cFF000",
-            "a$cFF00",
-            "a$cFF0",
-            "a$cFF",
-            "a$cF",
-            "a$c",
-        };
+        SECTION("Removes truncated color command at the end of the text") {
+            const auto strings = {
+                "a$cFF000", "a$cFF00", "a$cFF0", "a$cFF", "a$cF", "a$c",
+            };
 
-        for (auto& str : strings) {
-            text.set_text(str);
+            for (auto& str : strings) {
+                text.set_text(str);
+                text.update();
+
+                const auto& ops = text.ops();
+
+                REQUIRE(ops.size() == 1);
+                REQUIRE(to_str(ops[0]) == "a");
+            }
+        }
+
+        SECTION("Removes trailing color command at the end of the text") {
+            text.set_text("a$cAABBCC");
             text.update();
 
             const auto& ops = text.ops();
@@ -130,47 +135,60 @@ TEST_CASE("Text parsing", "[gfx][unit]") {
             REQUIRE(ops.size() == 1);
             REQUIRE(to_str(ops[0]) == "a");
         }
+
+        SECTION("Removes color command and restoration substring") {
+            text.set_text("a$cFF0000b$rc");
+            text.update();
+
+            const auto& ops = text.ops();
+
+            REQUIRE(ops.size() == 3);
+            REQUIRE(to_str(ops[0]) == "a");
+            REQUIRE(to_str(ops[1]) == "b");
+            REQUIRE(to_str(ops[2]) == "c");
+        }
+
+        SECTION("Restores previous color") {
+            text.set_text("White$cFF0000Red$c00FF00Green$rRed$rWhite");
+            text.update();
+
+            const auto& ops = text.ops();
+
+            REQUIRE(ops.size() == 5);
+            REQUIRE(to_str(ops[0]) == "White");
+            REQUIRE(ops[0].color == Color(0xFFFFFF));
+            REQUIRE(to_str(ops[1]) == "Red");
+            REQUIRE(ops[1].color == Color(0xFF0000));
+            REQUIRE(to_str(ops[2]) == "Green");
+            REQUIRE(ops[2].color == Color(0x00FF00));
+            REQUIRE(to_str(ops[3]) == "Red");
+            REQUIRE(ops[3].color == Color(0xFF0000));
+            REQUIRE(to_str(ops[4]) == "White");
+            REQUIRE(ops[4].color == Color(0xFFFFFF));
+        }
     }
 
-    SECTION("Removes trailing color command at the end of the text") {
-        text.set_text("a$cAABBCC");
-        text.update();
+    SECTION("Color restoration command") {
+        SECTION("Is not included in text") {
+            text.set_text("$cFF0000Text$r!");
+            text.update();
 
-        const auto& ops = text.ops();
+            const auto& ops = text.ops();
 
-        REQUIRE(ops.size() == 1);
-        REQUIRE(to_str(ops[0]) == "a");
-    }
+            REQUIRE(ops.size() == 2);
+            REQUIRE(to_str(ops[0]) == "Text");
+            REQUIRE(to_str(ops[1]) == "!");
+        }
 
-    SECTION("Removes color command and restoration substring") {
-        text.set_text("a$cFF0000b$rc");
-        text.update();
+        SECTION("Ignores pop on empty stack") {
+            text.set_text("$r$r$r!");
+            text.update();
 
-        const auto& ops = text.ops();
+            const auto& ops = text.ops();
 
-        REQUIRE(ops.size() == 3);
-        REQUIRE(to_str(ops[0]) == "a");
-        REQUIRE(to_str(ops[1]) == "b");
-        REQUIRE(to_str(ops[2]) == "c");
-    }
-
-    SECTION("Restores previous color") {
-        text.set_text("White$cFF0000Red$c00FF00Green$rRed$rWhite");
-        text.update();
-
-        const auto& ops = text.ops();
-
-        REQUIRE(ops.size() == 5);
-        REQUIRE(to_str(ops[0]) == "White");
-        REQUIRE(ops[0].color == Color(0xFFFFFF));
-        REQUIRE(to_str(ops[1]) == "Red");
-        REQUIRE(ops[1].color == Color(0xFF0000));
-        REQUIRE(to_str(ops[2]) == "Green");
-        REQUIRE(ops[2].color == Color(0x00FF00));
-        REQUIRE(to_str(ops[3]) == "Red");
-        REQUIRE(ops[3].color == Color(0xFF0000));
-        REQUIRE(to_str(ops[4]) == "White");
-        REQUIRE(ops[4].color == Color(0xFFFFFF));
+            REQUIRE(ops.size() == 1);
+            REQUIRE(to_str(ops[0]) == "!");
+        }
     }
 
     SECTION("Glyph command") {
@@ -249,6 +267,61 @@ TEST_CASE("Text parsing", "[gfx][unit]") {
 
             REQUIRE(ops.size() == 1);
             REQUIRE(to_str(ops[0]) == "H World");
+        }
+    }
+
+    SECTION("Base color (set_color)") {
+        SECTION("Uses white as base color when not overridden") {
+            text.set_text("Text");
+            text.update();
+
+            const auto& ops = text.ops();
+
+            REQUIRE(ops.size() == 1);
+            REQUIRE(to_str(ops[0]) == "Text");
+            REQUIRE(ops[0].color == Color(0xFFFFFF));
+        }
+
+        SECTION("Uses base color when not overridden by color command") {
+            constexpr auto color = Color(0xFF0000);
+            text.set_text("Text");
+            text.set_color(color);
+            text.update();
+
+            const auto& ops = text.ops();
+
+            REQUIRE(ops.size() == 1);
+            REQUIRE(to_str(ops[0]) == "Text");
+            REQUIRE(ops[0].color == color);
+        }
+
+        SECTION("Does not affect color stack") {
+            constexpr auto color = Color(0xFF0000);
+            // popping on empty stack should not crash and neither should the stack contain the color
+            text.set_text("$r$r$rText");
+            text.set_color(color);
+            text.update();
+
+            const auto& ops = text.ops();
+
+            REQUIRE(ops.size() == 1);
+            REQUIRE(to_str(ops[0]) == "Text");
+            REQUIRE(ops[0].color == color);
+        }
+
+        SECTION("Works with color commands") {
+            constexpr auto color = Color(0xFF0000);
+            text.set_color(color);
+            text.set_text("$cFF00FFHello$rWorld");
+            text.update();
+
+            const auto& ops = text.ops();
+
+            REQUIRE(ops.size() == 2);
+            REQUIRE(to_str(ops[0]) == "Hello");
+            REQUIRE(ops[0].color == Color(0xFF00FF));
+            REQUIRE(to_str(ops[1]) == "World");
+            REQUIRE(ops[1].color == color);
         }
     }
 }

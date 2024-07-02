@@ -26,6 +26,14 @@ struct TextOp {
 class Text {
 public:
     void set_text(std::string_view text);
+
+    /**
+     * @brief Sets the base color to use (defaults to white).
+     *
+     * Overridden by color commands in the text.
+     */
+    void set_color(Color color);
+
     void set_region(Vec2<i32> region);
     void update();
 
