@@ -25,3 +25,7 @@ void UiText::set_width(u32 width) {
 void UiText::set_height(u32 height) {
     resize(Vec2<u32>(size_.x, height));
 }
+
+void UiText::update() {
+    text_->update();
+}

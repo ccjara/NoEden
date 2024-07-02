@@ -178,7 +178,6 @@ void Game::run() {
 
         Profiler::timer("Ui").start();
         ui_->update();
-        ui_->draw(); // condense into one?
         Profiler::timer("Ui").stop();
 
         Profiler::timer("Render").start();

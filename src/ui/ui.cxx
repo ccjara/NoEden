@@ -23,9 +23,6 @@ bool Ui::initialize() {
 
 void Ui::update() {
     update_node(ui_tree_.root());
-}
-
-void Ui::draw() {
     draw_node(ui_tree_.root());
 }
 
@@ -75,6 +72,8 @@ void Ui::draw_node(UiNode* node) {
         display_->text(n->title(), pos);
     } else if (node->type() == UiNodeType::text) {
         auto n = static_cast<UiText*>(node);
+        // update text cache if necessary
+        n->update();
         display_->text(n->text());
     }
     for (UiNode* child_node : node->children()) {

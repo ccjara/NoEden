@@ -139,7 +139,6 @@ void UiApi::on_register(Script& script) {
                 "set_text",
                 +[](UiText* n, const char *text) {
                     n->text().set_text(text);
-                    n->text().update();
                 }
             )
             .addFunction(
