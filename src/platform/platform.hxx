@@ -2,10 +2,11 @@
 #define NOEDEN_PLATFORM_HXX
 
 class Input;
+class ExitManager;
 
 class Platform {
 public:
-    explicit Platform(EventManager* events, Input* input);
+    explicit Platform(EventManager* events, Input* input, ExitManager* exit_manager);
 
     /**
      * @brief Initializes the platform (SDL, OpenGL, ImGui, etc.)
@@ -16,10 +17,8 @@ public:
 
     /**
      * @brief Prepares a new loop iteration. Must be called at the beginning of the main loop.
-     * 
-     * @return false if the application should exit.
      */
-    bool prepare();
+    void prepare();
 
     /**
      * @brief Presents the current frame. 
@@ -45,13 +44,14 @@ private:
     /**
      * @brief Processes incoming OS events
      */
-    bool process_events();
+    void process_events();
 
     bool sdl_initialized_ = false;
     EventManager* events_ = nullptr;
     SDL_Window* sdl_window_ = nullptr;
     SDL_GLContext gl_context_ = nullptr;
     ImGuiContext* imgui_context_ = nullptr;
+    ExitManager* exit_manager_ = nullptr;
     Input* input_ = nullptr;
 };
 

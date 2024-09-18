@@ -1,5 +1,6 @@
 #include "game.hxx"
 
+#include "game/exit_manager.hxx"
 #include "catalog/catalog.hxx"
 #include "config/config_manager.hxx"
 #include "gfx/renderer.hxx"
@@ -11,6 +12,7 @@
 #include "realm/realm_manager.hxx"
 #include "scripts/api/catalog_api.hxx"
 #include "scripts/api/config_api.hxx"
+#include "scripts/api/game_api.hxx"
 #include "scripts/api/log_api.hxx"
 #include "scripts/api/realm_api.hxx"
 #include "scripts/api/scene_api.hxx"
@@ -47,12 +49,13 @@ bool Game::initialize_realms() {
 bool Game::initialize() {
     Log::initialize();
 
+    exit_manager_ = std::make_unique<ExitManager>();
     events_ = std::make_unique<EventManager>();
     config_manager_ = std::make_unique<ConfigManager>(events_.get());
     services_ = std::make_unique<ServiceLocator>();
     input_ = std::make_unique<Input>(events_.get());
     scripting_ = std::make_unique<Scripting>(services_.get(), events_.get());
-    platform_ = std::make_unique<Platform>(events_.get(), input_.get());
+    platform_ = std::make_unique<Platform>(events_.get(), input_.get(), exit_manager_.get());
     realms_ = std::make_unique<RealmManager>(services_.get(), events_.get());
     renderer_ = std::make_unique<Renderer>(events_.get());
     ui_ = std::make_unique<Ui>(renderer_.get(), events_.get());
@@ -66,6 +69,7 @@ bool Game::initialize() {
     services_->provide<ConfigManager>(config_manager_.get());
     services_->provide<EventManager>(events_.get());
     services_->provide<Catalog>(catalog_.get());
+    services_->provide<ExitManager>(exit_manager_.get());
 
 
     if (!platform_->initialize()) {
@@ -113,6 +117,7 @@ bool Game::initialize() {
     scripting_->add_api<CatalogApi>();
     scripting_->add_api<RealmApi>();
     scripting_->add_api<ScriptApi>();
+    scripting_->add_api<GameApi>();
     scripting_->reload();
 
     if (!realms_->switch_realm(RealmType::MainMenu)) {
@@ -165,12 +170,10 @@ void Game::run() {
         return;
     }
 
-    while (true) {
+    while (!exit_manager_->exit_requested()) {
         Profiler::start_frame();
 
-        if (!platform_->prepare()) {
-            break;
-        }
+        platform_->prepare();
 
         Profiler::timer("Update").start();
         realms_->current_realm()->update();

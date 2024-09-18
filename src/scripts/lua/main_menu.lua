@@ -1,5 +1,7 @@
 function on_keydown(key)
-    log:info("Key: " .. key);
+    if key == Key.Escape then
+        game:exit();
+    end
 end
 
 function on_run()

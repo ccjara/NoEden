@@ -67,6 +67,8 @@ set(SOURCES
     framework/service_locator.hxx
     framework/usings.hxx
 
+    game/exit_manager.cxx
+
     gfx/color.hxx
     gfx/display_cell.hxx
     gfx/display_info.hxx
@@ -112,6 +114,7 @@ set(SOURCES
 
     scripts/api/catalog_api.cxx
     scripts/api/config_api.cxx
+    scripts/api/game_api.cxx
     scripts/api/log_api.cxx
     scripts/api/lua_api.hxx
     scripts/api/realm_api.cxx

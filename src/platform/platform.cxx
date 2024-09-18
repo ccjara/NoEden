@@ -1,9 +1,14 @@
 #include "platform/platform.hxx"
 #include "platform/platform_event.hxx"
+#include "game/exit_manager.hxx"
 
-Platform::Platform(EventManager* events, Input *input) : events_(events), input_(input) {
+Platform::Platform(EventManager* events, Input *input, ExitManager* exit_manager) :
+    events_(events),
+    input_(input),
+    exit_manager_(exit_manager) {
     assert(events_);
     assert(input_);
+    assert(exit_manager_);
 }
 
 bool Platform::initialize() {
@@ -55,17 +60,14 @@ bool Platform::initialize() {
     return true;
 }
 
-bool Platform::prepare() {
-    if (!process_events()) {
-        return false;
-    }
+void Platform::prepare() {
+    process_events();
 
 #ifdef NOEDEN_XRAY
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(sdl_window_);
     ImGui::NewFrame();
 #endif
-    return true;
 }
 
 void Platform::present() {
@@ -112,7 +114,7 @@ Vec2<u32> Platform::window_size() const {
     return { static_cast<u32>(w), static_cast<u32>(h) };
 }
 
-bool Platform::process_events() {
+void Platform::process_events() {
     SDL_PumpEvents();
 
     SDL_Event e;
@@ -123,7 +125,8 @@ bool Platform::process_events() {
 
         switch (e.type) {
             case SDL_EventType::SDL_QUIT:
-                return false;
+                exit_manager_->request_exit(false);
+                break;
             case SDL_EventType::SDL_WINDOWEVENT:
                 if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
                     events_->trigger<ResizeEvent>(Vec2<i32> {
@@ -149,5 +152,4 @@ bool Platform::process_events() {
                 break;
         }
     }
-    return true;
 }

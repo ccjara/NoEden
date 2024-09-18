@@ -9,6 +9,7 @@ class Input;
 class Translator;
 class Renderer;
 class RealmManager;
+class ExitManager;
 class Ui;
 
 #ifdef NOEDEN_XRAY
@@ -37,6 +38,7 @@ private:
      */
     void shutdown();
 
+    std::unique_ptr<ExitManager> exit_manager_ = nullptr;
     std::unique_ptr<ConfigManager> config_manager_ = nullptr;
     std::unique_ptr<EventManager> events_ = nullptr;
     std::unique_ptr<Scripting> scripting_ = nullptr;
