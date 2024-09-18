@@ -44,10 +44,10 @@ AiNodeState AiWalk::perform_walk_to_entity(AiContext& context) {
     } else if (position.x > target_position.x) {
         --position.x;
     }
-    if (position.y < target_position.y) {
-        ++position.y;
-    } else if (position.y > target_position.y) {
-        --position.y;
+    if (position.z < target_position.z) {
+        ++position.z;
+    } else if (position.z > target_position.z) {
+        --position.z;
     }
 
     auto action = static_cast<MoveAction*>(create_action_result.action);

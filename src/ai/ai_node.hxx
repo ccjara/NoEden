@@ -14,7 +14,8 @@ enum class AiNodeType { // TODO integrate in C++ classes
     None = 0,
     Sequence = 1,
     Selector = 2,
-    ClosestEntity = 3,
+    Condition = 3,
+    ClosestEntity = 4,
 
     Walk = 1000,
 };

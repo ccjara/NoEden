@@ -33,7 +33,9 @@ void Behavior::on_owner_updated() {
     ai_context_.entity_id = entity_->id;
     ai_context_.world_context = entity_->world_context;
     ai_context_.blackboard.clear();
-    root_->initialize(ai_context_);
+    if (root_) {
+        root_->initialize(ai_context_);
+    }
 }
 
 void Behavior::set_root(std::unique_ptr<AiNode>&& root) {

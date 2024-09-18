@@ -22,6 +22,8 @@ public:
 
     bool player_attached_ = false;
 
+    bool alive = true;
+
     float speed = 0;
     float energy = 0;
     float energy_reserved = 0;

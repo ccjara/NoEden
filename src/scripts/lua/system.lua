@@ -45,15 +45,19 @@ function initialize_archetypes()
             {
                 type = ComponentType.Behavior,
                 root = {
-                    type = AiNodeType.Sequence,
-                    children = {
-                        {
-                            type = AiNodeType.ClosestEntity,
-                            found_target_key = "walk_target",
-                        },
-                        {
-                            type = AiNodeType.Walk,
-                            walk_target_key = "walk_target",
+                    type = AiNodeType.Condition,
+                    condition = AiConditionType.IsAlive,
+                    child = {
+                        type = AiNodeType.Sequence,
+                        children = {
+                            {
+                                type = AiNodeType.ClosestEntity,
+                                found_target_key = "walk_target",
+                            },
+                            {
+                                type = AiNodeType.Walk,
+                                walk_target_key = "walk_target",
+                            },
                         },
                     },
                 },

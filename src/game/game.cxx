@@ -1,5 +1,7 @@
 #include "game.hxx"
 
+#include "ai/conditions.hxx"
+#include "ai/condition_resolver.hxx"
 #include "game/exit_manager.hxx"
 #include "catalog/catalog.hxx"
 #include "config/config_manager.hxx"
@@ -33,7 +35,6 @@
 #include "xray/perf_xray.hxx"
 #endif
 
-
 bool Game::initialize_realms() {
     if (!realms_->add_realm(std::make_unique<MainMenuRealm>())) {
         LOG_ERROR("Failed to add MainMenuRealm");
@@ -49,6 +50,7 @@ bool Game::initialize_realms() {
 bool Game::initialize() {
     Log::initialize();
 
+    condition_resolver_ = std::make_unique<ConditionResolver>();
     exit_manager_ = std::make_unique<ExitManager>();
     events_ = std::make_unique<EventManager>();
     config_manager_ = std::make_unique<ConfigManager>(events_.get());
@@ -70,7 +72,7 @@ bool Game::initialize() {
     services_->provide<EventManager>(events_.get());
     services_->provide<Catalog>(catalog_.get());
     services_->provide<ExitManager>(exit_manager_.get());
-
+    services_->provide<ConditionResolver>(condition_resolver_.get());
 
     if (!platform_->initialize()) {
         return false;
@@ -84,6 +86,8 @@ bool Game::initialize() {
     if (!initialize_realms()) {
         return false;
     }
+
+    register_conditions(*condition_resolver_);
 
     {
         auto path = fs::absolute(fmt::format("dictionaries/en.toml")).string();
@@ -120,7 +124,7 @@ bool Game::initialize() {
     scripting_->add_api<GameApi>();
     scripting_->reload();
 
-    if (!realms_->switch_realm(RealmType::MainMenu)) {
+    if (!realms_->switch_realm(RealmType::World)) {
         return false;
     }
 

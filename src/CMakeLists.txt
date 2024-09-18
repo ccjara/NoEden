@@ -37,6 +37,7 @@ set(SOURCES
     ai/ai_script.cxx
     ai/ai_walk.cxx
     ai/blackboard.cxx
+    ai/condition_resolver.cxx
     ai/generic_ai_node.hxx
 
     catalog/catalog.cxx

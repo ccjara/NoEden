@@ -147,10 +147,14 @@ void SceneXray::entity_panel(std::optional<u64> entity_id, WorldContext& world_c
 
     i32 position_raw[3] = { entity->position.x, entity->position.y, entity->position.z };
     bool is_player = entity_manager->player() == entity;
+    bool is_alive = entity->alive;
 
     ImGui::Text("Id: %lx", entity->id);
     if (ImGui::Checkbox("Player", &is_player)) {
         entity_manager->set_controlled_entity(is_player ? entity->id : null_id);
+    }
+    if (ImGui::Checkbox("Alive", &is_alive)) {
+        entity->alive = is_alive;
     }
     ImGui::PushItemWidth(ImGui::GetWindowWidth() / 4);
     if (ImGui::InputInt3("Position", position_raw, ImGuiInputTextFlags_None)) {

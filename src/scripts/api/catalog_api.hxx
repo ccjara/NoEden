@@ -6,6 +6,7 @@
 class AiNode;
 class Archetype;
 class Catalog;
+class ConditionResolver;
 
 class CatalogApi : public LuaApi {
 public:
@@ -20,6 +21,8 @@ private:
     Catalog* catalog_ = nullptr;
 
     std::unique_ptr<AiNode> create_behavior_node(const luabridge::LuaRef& ref);
+
+    ConditionResolver* condition_resolver_ = nullptr;
 
     void add_behavior_component(Archetype& archetype, const luabridge::LuaRef& ref);
 };

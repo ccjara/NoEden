@@ -1,7 +1,10 @@
 #include "scripts/api/catalog_api.hxx"
 #include "ai/ai_closest_entity.hxx"
+#include "ai/ai_condition.hxx"
 #include "ai/ai_selector.hxx"
 #include "ai/ai_walk.hxx"
+#include "ai/condition_type.hxx"
+#include "ai/condition_resolver.hxx"
 #include "catalog/catalog.hxx"
 #include "component/render.hxx"
 #include "component/behavior.hxx"
@@ -15,6 +18,11 @@ bool CatalogApi::initialize() {
     catalog_ = svc_->get<Catalog>();
     if (!catalog_) {
         LOG_ERROR("CatalogApi failed to initialize: failed to get Catalog");
+        return false;
+    }
+    condition_resolver_ = svc_->get<ConditionResolver>();
+    if (!condition_resolver_) {
+        LOG_ERROR("CatalogApi failed to initialize: failed to get ConditionResolver");
         return false;
     }
     return true;
@@ -32,9 +40,17 @@ void CatalogApi::on_register(Script& script) {
     script.define_enum(
         "AiNodeType",
         std::make_tuple("Sequence", AiNodeType::Sequence),
+        std::make_tuple("Condition", AiNodeType::Condition),
         std::make_tuple("Selector", AiNodeType::Selector),
         std::make_tuple("ClosestEntity", AiNodeType::ClosestEntity),
         std::make_tuple("Walk", AiNodeType::Walk)
+    );
+
+    script.define_enum(
+        "AiConditionType",
+        std::make_tuple("AlwaysFalse", ConditionType::AlwaysFalse),
+        std::make_tuple("AlwaysTrue", ConditionType::AlwaysTrue),
+        std::make_tuple("IsAlive", ConditionType::IsAlive)
     );
 
     luabridge::getGlobalNamespace(script)
@@ -146,6 +162,7 @@ AiNodeType parse_node_type(const luabridge::LuaRef& ref) {
     switch (unsafe_value) {
         case AiNodeType::None:
         case AiNodeType::Selector:
+        case AiNodeType::Condition:
         case AiNodeType::Sequence:
         case AiNodeType::ClosestEntity:
         case AiNodeType::Walk:
@@ -234,6 +251,37 @@ std::unique_ptr<AiNode> CatalogApi::create_behavior_node(const luabridge::LuaRef
             } else {
                 node_ptr->walk_around();
             }
+            break;
+        }
+        case AiNodeType::Condition: {
+            const auto condition_type_ref = ref["condition"];
+            if (!condition_type_ref.isNumber()) {
+                LOG_ERROR("Invalid condition node configuration: must have a `condition` number property identifying its condition type");
+                return nullptr;
+            }
+            const auto condition_type_unsafe = condition_type_ref.cast<i32>();
+            const auto condition_type = static_cast<ConditionType>(condition_type_unsafe);
+
+            auto condition_fn = condition_resolver_->resolve_condition(condition_type);
+
+            if (!condition_fn) {
+                LOG_ERROR("Failed to resolve condition function for condition type {}", condition_type_unsafe);
+                return nullptr;
+            }
+
+            const auto child_ref = ref["child"];
+            if (!child_ref.isTable()) {
+                LOG_ERROR("Invalid condition node configuration: must have a `child` table property, specifying the child node to visit if the condition is true");
+                break;
+            }
+            auto child = create_behavior_node(child_ref);
+
+            if (!child) {
+                LOG_ERROR("Failed to create child node for condition node");
+                return nullptr;
+            }
+
+            base_node_ptr = std::make_unique<AiCondition>(std::move(condition_fn), std::move(child));
             break;
         }
         default:
