@@ -13,12 +13,17 @@ function configure()
     realm:on_load(
         function(realm)
             log:debug("[system.lua]: Realm loaded: " .. realm);
-
-            if realm == "MAIN_MENU" then
-                script:run("main_menu");
-            end
+            run_realm_scripts(realm);
         end
     );
+
+    run_realm_scripts(realm:current());
+end
+
+function run_realm_scripts(realm)
+    if realm == RealmType.MainMenu then
+        script:run("main_menu");
+    end
 end
 
 function initialize_archetypes()

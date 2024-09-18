@@ -1,4 +1,10 @@
+function on_keydown(key)
+    log:info("Key: " .. key);
+end
+
 function on_run()
+    setup_events();
+
     local text = ui:create_text("test");
 
     text:resize(20, 20);
@@ -8,4 +14,8 @@ end
 
 function on_unload()
     ui:destroy_node("test");
+end
+
+function setup_events()
+    script:subscribe(EventType.KeyDown, on_keydown);
 end

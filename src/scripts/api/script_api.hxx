@@ -19,6 +19,15 @@ private:
      */
     bool run(const char* name);
 
+    /**
+     * @brief Subscribes a script to an event
+     *
+     * @remarks Only supports select event types, see implementation for details
+     *
+     * @see EventType
+     */
+    bool subscribe(i32 event_type_raw, luabridge::LuaRef callback);
+
     Scripting* scripting_ = nullptr;
 };
 #endif

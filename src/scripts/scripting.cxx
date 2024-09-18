@@ -23,6 +23,8 @@ void Scripting::reload() {
     for (auto& script: script_registry_->scripts()) {
         unload(*script.second);
     }
+    callbacks_by_script_id_.clear();
+    callbacks_by_event_type_.clear();
 
     {
         auto result = script_loader_->load_from_directory(default_script_path);
@@ -41,11 +43,36 @@ void Scripting::reload() {
 }
 
 EventResult Scripting::on_key_down(KeyDownEvent& e) {
-    if (e.key != Key::F5) {
-        return EventResult::Continue;
+    if (e.key == Key::F5) {
+        reload();
+        return EventResult::Halt;
     }
-    reload();
-    return EventResult::Halt;
+
+    for (const auto& callback: callbacks_by_event_type(EventType::KeyDown)) {
+        auto& [script, callback_ref] = callback;
+
+        if (script->status() != ScriptStatus::Called) {
+            LOG_WARN("Script #{}: {} is not loaded, skipping key_down callback", script->id, script->name());
+            continue;
+        }
+
+        // invoke lua callback - interface: function key_down(key)
+        lua_rawgeti(script->lua_state(), LUA_REGISTRYINDEX, callback_ref);
+
+        if (lua_isnil(script->lua_state(), -1)) {
+            LOG_WARN("Script #{}: {} key_down callback not found in registry. Callback state is out of sync", script->id, script->name());
+            lua_pop(script->lua_state(), 1);
+            continue;
+        }
+
+        lua_pushinteger(script->lua_state(), static_cast<i32> (e.key));
+        if (lua_pcall(script->lua_state(), 1, 0, 0) != LUA_OK) {
+            LOG_ERROR("Script #{}: {} error in key_down callback: {}", script->id, script->name(), lua_tostring(script->lua_state(), -1));
+            lua_pop(script->lua_state(), 1);
+        }
+    }
+
+    return EventResult::Continue;
 }
 
 void Scripting::unload(Script& script) {

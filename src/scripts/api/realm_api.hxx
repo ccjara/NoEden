@@ -20,6 +20,13 @@ private:
      */
     void on_load(luabridge::LuaRef callback);
 
+    /**
+     * @brief Provides the current realm type to a lua script
+     *
+     * @return const char* Identifier of the currently active realm
+     */
+    i32 current();
+
     RealmManager* realm_manager_ = nullptr;
     Scripting* scripting_ = nullptr;
     Subscription<RealmLoadedEvent> realm_loaded_sub_;
