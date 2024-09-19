@@ -22,9 +22,9 @@ public:
 
     bool player_attached_ = false;
 
-    float speed = 0;
-    float energy = 0;
-    float energy_reserved = 0;
+    f32 speed = 0;
+    f32 energy = 0;
+    f32 energy_reserved = 0;
 
     /**
      * @brief Locates a component by the given template argument.

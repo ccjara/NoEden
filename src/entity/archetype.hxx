@@ -10,17 +10,12 @@ struct Archetype {
     /**
      * @brief Name defined in lua which can later be used for identification.
      */
-    std::string name;
+    std::string name = "";
 
     /**
      * @brief Base speed every Entity of this kind inherits.
      */
-    float speed;
-
-    /**
-     * @brief Vision radius every Entity of this kind inherits.
-     */
-    i32 vision_radius;
+    f32 speed = 0;
 
     /**
      * @brief Components which will be created for each Entity of this archetype

@@ -3,7 +3,7 @@
 
 struct WorldContext;
 class Entity;
-class Archetype;
+struct Archetype;
 
 enum class ControlEntityResult {
     Success,

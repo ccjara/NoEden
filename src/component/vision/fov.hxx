@@ -107,7 +107,7 @@ private:
      */
     Grid<VisionSpot> vision_spots_;
 
-    int vision_radius_;
+    i32 vision_radius_ = 0;
 
     enum class Quadrant { N, E, S, W };
 

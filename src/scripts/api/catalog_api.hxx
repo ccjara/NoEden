@@ -4,7 +4,7 @@
 #include "scripts/api/lua_api.hxx"
 
 class AiNode;
-class Archetype;
+struct  Archetype;
 class Catalog;
 class ConditionResolver;
 

@@ -83,11 +83,7 @@ void CatalogApi::create_archetype(const luabridge::LuaRef& ref) {
     }
     const auto speed_ref = ref["speed"];
     if (speed_ref.isNumber()) {
-        archetype->speed = speed_ref.cast<float>();
-    }
-    const auto vision_radius_ref = ref["vision_radius"];
-    if (vision_radius_ref.isNumber()) {
-        archetype->vision_radius = vision_radius_ref.cast<i32>();
+        archetype->speed = speed_ref.cast<f32>();
     }
     const auto components_ref = ref["components"];
     if (components_ref.isTable()) {
