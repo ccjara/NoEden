@@ -34,8 +34,12 @@ struct Color {
         return Color::mono(255);
     }
 
-    static constexpr Color green() {
+    static constexpr Color lime() {
         return Color(0, 255, 0);
+    }
+
+    static constexpr Color green() {
+        return Color(0, 127, 0);
     }
 
     static constexpr Color red() {

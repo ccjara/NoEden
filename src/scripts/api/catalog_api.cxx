@@ -8,6 +8,7 @@
 #include "catalog/catalog.hxx"
 #include "component/render.hxx"
 #include "component/behavior.hxx"
+#include "component/life.hxx"
 #include "component/vision/vision.hxx"
 #include "entity/archetype.hxx"
 
@@ -34,7 +35,8 @@ void CatalogApi::on_register(Script& script) {
         std::make_tuple("Behavior", ComponentType::Behavior),
         std::make_tuple("Render", ComponentType::Render),
         std::make_tuple("Skills", ComponentType::Skills),
-        std::make_tuple("Vision", ComponentType::Vision)
+        std::make_tuple("Vision", ComponentType::Vision),
+        std::make_tuple("Life", ComponentType::Life)
     );
 
     script.define_enum(
@@ -66,7 +68,7 @@ void CatalogApi::clear_archetypes() {
     catalog_->clear_archetypes();
 }
 
-void CatalogApi::create_archetype(luabridge::LuaRef ref) {
+void CatalogApi::create_archetype(const luabridge::LuaRef& ref) {
     if (!ref.isTable()) {
         LOG_ERROR("Expected archetype data to be a table");
         return;
@@ -91,7 +93,7 @@ void CatalogApi::create_archetype(luabridge::LuaRef ref) {
     if (components_ref.isTable()) {
         const auto length = components_ref.length();
 
-        auto parse_components = [this, archetype, &ref](const luabridge::LuaRef& component_ref) -> void {
+        auto parse_components = [this, archetype](const luabridge::LuaRef& component_ref) -> void {
             if (component_ref.isNil()) {
                 return;
             }
@@ -121,6 +123,10 @@ void CatalogApi::create_archetype(luabridge::LuaRef ref) {
                 }
                 case ComponentType::Behavior: {
                     return add_behavior_component(*archetype, component_ref);
+                }
+                case ComponentType::Life: {
+                    archetype->components.emplace_back(std::make_unique<Life>());
+                    break;
                 }
                 case ComponentType::Vision: {
                     auto vision = std::make_unique<Vision>();
@@ -157,9 +163,8 @@ AiNodeType parse_node_type(const luabridge::LuaRef& ref) {
     if (!ref.isNumber()) {
         return AiNodeType::None;
     }
-    const auto unsafe_value = static_cast<AiNodeType>(ref.cast<i32>());
 
-    switch (unsafe_value) {
+    switch (const auto unsafe_value = static_cast<AiNodeType>(ref.cast<i32>())) {
         case AiNodeType::None:
         case AiNodeType::Selector:
         case AiNodeType::Condition:
@@ -285,7 +290,7 @@ std::unique_ptr<AiNode> CatalogApi::create_behavior_node(const luabridge::LuaRef
             break;
         }
         default:
-            LOG_ERROR("Unknown node type id {}", (int) type);
+            LOG_ERROR("Unknown node type id {}", static_cast<i32>(type));
     }
     return base_node_ptr;
 }

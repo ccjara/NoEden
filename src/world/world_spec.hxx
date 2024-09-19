@@ -20,33 +20,11 @@ public:
 
     i32 max_water() const;
 
-    const GenerateNoiseOptions& height_map_options() const;
-
     /**
      * @brief Returns the height map value at the given chunk position
      */
     float height_at(const ChunkPos& chunk_pos) const;
-
-    /**
-     * @brief Returns the humidity value at the given chunk position
-     */
-    float humidity_at(const ChunkPos& chunk_pos) const;
 private:
-    /**
-     * @brief Height map of the world
-     */
-    std::vector<float> height_map_;
-
-    /**
-     * @brief Options used to generate the height map
-     */
-    GenerateNoiseOptions height_map_options_;
-
-    /**
-     * @brief Humidity map of the world
-     */
-    std::vector<float> humidity_map_;
-
     /**
      * @brief Width of the world in chunks
      */
@@ -66,12 +44,6 @@ private:
      * @brief Version of the world data
      */
     i32 version_;
-
-    i32 max_vegetation_;
-
-    i32 max_shoreline_;
-
-    i32 max_water_;
 };
 
 #endif

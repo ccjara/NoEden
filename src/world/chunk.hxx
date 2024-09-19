@@ -5,21 +5,9 @@
 
 struct Chunk {
     static constexpr i32 CHUNK_SIDE_LENGTH = 128;
-    static constexpr i32 CHUNK_DEPTH = 16;
+    static constexpr i32 CHUNK_DEPTH = 1;
     static constexpr i32 MAX_TILES = CHUNK_SIDE_LENGTH * CHUNK_SIDE_LENGTH * CHUNK_DEPTH;
     static constexpr i32 MAX_INDEX = MAX_TILES - 1;
-
-    /**
-     * @brief Base height as determined by the world generator
-     */
-    i32 base_height = 0;
-
-    /**
-     * @brief Base humidity as determined by the world generator
-     */
-    float base_humidity = 0;
-
-    std::array<i32, CHUNK_SIDE_LENGTH * CHUNK_SIDE_LENGTH> height_map = {0};
 
     std::array<Tile, MAX_TILES> tiles;
 

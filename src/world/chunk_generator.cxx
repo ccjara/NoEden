@@ -6,97 +6,47 @@
 std::unique_ptr<Chunk> ChunkGenerator::generate_chunk(const GenerateChunkOptions& options) {
     std::unique_ptr<Chunk> chunk = std::make_unique<Chunk>();
 
-    chunk->base_height = static_cast<i32>(options.world_spec.height_at(options.position) * Chunk::CHUNK_DEPTH);
-    LOG_DEBUG("Chunk at ({}, {}) has base height of {}", options.position.x, options.position.z, chunk->base_height);
-
-    GenerateNoiseOptions height_map_options = options.world_spec.height_map_options();
-    height_map_options.width = Chunk::CHUNK_SIDE_LENGTH;
-    height_map_options.height = Chunk::CHUNK_SIDE_LENGTH;
-    height_map_options.frequency = 3;
-    height_map_options.offset_x = options.position.x * Chunk::CHUNK_SIDE_LENGTH;
-    height_map_options.offset_y = options.position.z * Chunk::CHUNK_SIDE_LENGTH;
-    height_map_options.use_gradient = false;
-
-    std::vector<float> height_noise = generate_noise(height_map_options);
-
-    for (i32 i = 0; i < height_noise.size(); i++) {
-        // convert to y
-        i32 y = static_cast<i32>(chunk->base_height * (Chunk::CHUNK_DEPTH - 1));
-
-        // value = chunk_base_height + value * 0.002f;
-        y += -1.0f + height_noise[i] * (1.0f - -1.0f); // normalize to -1.0f to 1.0f (from 0.0f to 1.0f
-
-        chunk->height_map[i] = std::clamp(y, 0, Chunk::CHUNK_DEPTH - 1);
-    }
-
-    const i32 max_water = options.world_spec.max_water();
-    const i32 max_shoreline = options.world_spec.max_shoreline();
-    const i32 max_vegetation = options.world_spec.max_vegetation();
-
     for (i32 x = 0; x < Chunk::CHUNK_SIDE_LENGTH; ++x) {
         for (i32 z = 0; z < Chunk::CHUNK_SIDE_LENGTH; ++z) {
-            const auto height_value = chunk->height_map[x + z * Chunk::CHUNK_SIDE_LENGTH];
-
-            for (i32 y = 0; y < height_value; ++y) {
+            for (i32 y = 0; y < Chunk::CHUNK_DEPTH; ++y) {
                 Tile& tile = chunk->tile(x, y, z);
 
-                tile.type = TileType::Wall;
-                tile.flags.set(TileFlags::FoV, y == height_value);
-                tile.flags.set(TileFlags::Revealed, y == height_value);
+                tile.type = TileType::Floor;
+                tile.flags.set(FoV, true);
+                tile.flags.set(Revealed, true);
 
-                if (height_value <= max_water) {
-                    tile.display_info.glyph = 691;
-                    tile.display_info.color = Color::blue();
-                    tile.material = MaterialType::Water;
-                    tile.state = MaterialState::Liquid;
-                } else if (height_value <= max_shoreline) {
-                    tile.display_info.glyph = 748;
-                    tile.display_info.color = Color::yellow();
-                    tile.material = MaterialType::Stone;
-                    tile.state = MaterialState::Solid;
-                } else if (height_value <= max_vegetation) {
-                    switch (std::rand() % 5) {
-                        case 0:
-                            tile.display_info.glyph = 39; // '
-                            break;
-                        case 1:
-                            tile.display_info.glyph = 44; // ,
-                            break;
-                        case 2:
-                            tile.display_info.glyph = 46; // .
-                            break;
-                        case 3:
-                            tile.display_info.glyph = 96; // `
-                            break;
-                        case 4:
-                            tile.display_info.glyph = '"'; // "
-                            break;
-                    }
-                    tile.display_info.color = Color::green();
-                    tile.material = MaterialType::Vegetation;
-                    tile.state = MaterialState::Solid;
-                } else {
-                    tile.display_info.glyph = 679;
-                    tile.display_info.color = Color::mono(64);
-                    tile.material = MaterialType::Stone;
-                    tile.state = MaterialState::Solid;
+                switch (std::rand() % 5) {
+                    case 0:
+                        tile.display_info.glyph = 39; // '
+                        tile.display_info.color = Color::lime();
+                        break;
+                    case 1:
+                        tile.display_info.glyph = 44; // ,
+                        tile.display_info.color = Color::lime();
+                        break;
+                    case 2:
+                        tile.display_info.glyph = 46; // .
+                        tile.display_info.color = Color::green();
+                        break;
+                    case 3:
+                        tile.display_info.glyph = 96; // `
+                        tile.display_info.color = Color::green();
+                        break;
+                    case 4:
+                        tile.display_info.glyph = '"'; // "
+                        tile.display_info.color = Color::lime();
+                        break;
                 }
-            }
 
-            // flooring after reaching chunk height
-            if (height_value > 0 && height_value < Chunk::CHUNK_DEPTH) {
-                Tile* tile_below = &chunk->tile(x, height_value - 1, z);
-                Tile* tile = &chunk->tile(x, height_value, z);
-
-                *tile = *tile_below;
-                tile->type = TileType::Floor;
-                tile->flags.set(TileFlags::FoV, true);
-                tile->flags.set(TileFlags::Revealed, true);
+                tile.material = MaterialType::Vegetation;
+                tile.state = MaterialState::Solid;
             }
         }
     }
 
+
     // place ramps
+    /*
     for (i32 z = 1; z < Chunk::CHUNK_SIDE_LENGTH; ++z) {
         for (i32 x = 1; x < Chunk::CHUNK_SIDE_LENGTH; ++x) {
             const i32 height_value = chunk->height_map[x + z * Chunk::CHUNK_SIDE_LENGTH];
@@ -159,6 +109,7 @@ std::unique_ptr<Chunk> ChunkGenerator::generate_chunk(const GenerateChunkOptions
             }
         }
     }
+    */
 
     return chunk;
 }

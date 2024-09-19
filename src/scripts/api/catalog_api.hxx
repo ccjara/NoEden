@@ -12,7 +12,7 @@ class CatalogApi : public LuaApi {
 public:
     void on_register(Script& script) override;
 
-    void create_archetype(luabridge::LuaRef ref);
+    void create_archetype(const luabridge::LuaRef& ref);
 
     void clear_archetypes();
 

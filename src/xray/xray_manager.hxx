@@ -16,7 +16,7 @@ private:
     /**
        * @brief Whether the Xray UI is currently visible
        */
-    bool show_xray_ = true;
+    bool show_xray_ = false;
 
     Subscription<MouseDownEvent> mouse_down_sub_;
     Subscription<MouseUpEvent> mouse_up_sub_;

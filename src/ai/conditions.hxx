@@ -4,6 +4,7 @@
 #include "ai/ai_context.hxx"
 #include "ai/condition_resolver.hxx"
 #include "entity/entity.hxx"
+#include "component/life.hxx"
 
 inline void register_conditions(ConditionResolver& resolver) {
     ConditionRegistry conditions {
@@ -17,9 +18,14 @@ inline void register_conditions(ConditionResolver& resolver) {
         },
         {
             ConditionType::IsAlive,
-            std::make_shared<ConditionFn>([](AiContext& context) {
+            std::make_shared<ConditionFn>([](const AiContext& context) {
                 assert(context.entity);
-                return context.entity->alive;
+
+                if (const Life* life_component = context.entity->component<Life>(); life_component) {
+                    return life_component->alive;
+                }
+
+                return false;
             })
         },
     };

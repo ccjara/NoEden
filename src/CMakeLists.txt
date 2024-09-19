@@ -45,6 +45,7 @@ set(SOURCES
     component/behavior.cxx
     component/component.cxx
     component/generic_component.cxx
+    component/life.cxx
     component/render.cxx
     component/skills.cxx
     component/vision/vision.cxx

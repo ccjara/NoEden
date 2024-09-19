@@ -43,6 +43,9 @@ function initialize_archetypes()
                 radius = 10,
             },
             {
+                type = ComponentType.Life,
+            },
+            {
                 type = ComponentType.Behavior,
                 root = {
                     type = AiNodeType.Condition,
@@ -73,6 +76,9 @@ function initialize_archetypes()
                 type = ComponentType.Render,
                 glyph = 64, -- '@'
                 color = 0xFFFFFF,
+            },
+            {
+                type = ComponentType.Life,
             },
             {
                 type = ComponentType.Vision,

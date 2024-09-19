@@ -4,6 +4,7 @@
 
 #include "component/render.hxx"
 #include "component/skills.hxx"
+#include "component/life.hxx"
 #include "component/vision/vision.hxx"
 #include "entity/entity.hxx"
 #include "entity/entity_manager.hxx"
@@ -147,14 +148,10 @@ void SceneXray::entity_panel(std::optional<u64> entity_id, WorldContext& world_c
 
     i32 position_raw[3] = { entity->position.x, entity->position.y, entity->position.z };
     bool is_player = entity_manager->player() == entity;
-    bool is_alive = entity->alive;
 
     ImGui::Text("Id: %lx", entity->id);
     if (ImGui::Checkbox("Player", &is_player)) {
         entity_manager->set_controlled_entity(is_player ? entity->id : null_id);
-    }
-    if (ImGui::Checkbox("Alive", &is_alive)) {
-        entity->alive = is_alive;
     }
     ImGui::PushItemWidth(ImGui::GetWindowWidth() / 4);
     if (ImGui::InputInt3("Position", position_raw, ImGuiInputTextFlags_None)) {
@@ -172,7 +169,6 @@ void SceneXray::entity_panel(std::optional<u64> entity_id, WorldContext& world_c
         entity->energy_reserved = std::fmax(entity->energy_reserved, 0);
     }
 
-    // TODO: method on component? like component->draw_xray();
     Vision* vision_component = entity->component<Vision>();
     if (vision_component != nullptr) {
         auto radius = vision_component->vision_radius();
@@ -194,6 +190,10 @@ void SceneXray::entity_panel(std::optional<u64> entity_id, WorldContext& world_c
                 skills_component->set_progress(id, std::max(skill.progress, 0));
             }
         }
+    }
+
+    if (auto* life_component = entity->component<Life>(); life_component) {
+        ImGui::Checkbox("Alive", &life_component->alive);
     }
 
     ImGui::PopItemWidth();
@@ -285,10 +285,7 @@ void SceneXray::mapgen_window(WorldContext& world_context) {
     if (entity_manager->player() != nullptr) {
         auto p = entity_manager->player()->position;
         auto local_index = tile_accessor->to_local_index(p);
-        auto text = fmt::format("Player pos: ({}, {}, {}) - index {} - height {}",
-                                p.x, p.y, p.z,
-                                local_index,
-                                chunk_manager->get_chunk(p)->height_map[p.x % Chunk::CHUNK_SIDE_LENGTH + p.z % Chunk::CHUNK_SIDE_LENGTH * Chunk::CHUNK_SIDE_LENGTH]);
+        auto text = fmt::format("Player pos: ({}, {}, {}) - index {}", p.x, p.y, p.z, local_index);
 
         ImGui::TextUnformatted(text.c_str());
     }

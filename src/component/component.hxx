@@ -7,6 +7,7 @@ enum class ComponentType {
     Behavior = 2,
     Render = 3,
     Vision = 4,
+    Life = 5,
 };
 
 class Entity;

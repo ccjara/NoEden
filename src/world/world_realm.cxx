@@ -123,8 +123,6 @@ void WorldRealm::load() {
     }
     if (arch_human) {
         auto& human = entity_manager_->create_entity(*arch_human, WorldPos(1, 0, 1));
-        human.position.y = chunk_manager_->get_chunk(human.position)
-                               ->height_map[human.position.x + human.position.z * Chunk::CHUNK_SIDE_LENGTH];
         entity_manager_->set_controlled_entity(&human);
         camera_controller_->set_target(&human);
     }
