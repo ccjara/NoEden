@@ -23,7 +23,7 @@ void ConfigApi::on_register(Script& script) {
 void ConfigApi::on_configure(luabridge::LuaRef cfg) {
     Config new_config;
 
-    constexpr const auto report = [](std::string_view reason) -> void {
+    constexpr auto report = [](std::string_view reason) -> void {
         LOG_ERROR("Error in root config: {}", reason);
     };
 
@@ -34,12 +34,12 @@ void ConfigApi::on_configure(luabridge::LuaRef cfg) {
 
     // TODO: abstract runtime type checking and default value handling
     if (cfg["scaling"].isNumber()) {
-        new_config.scaling = cfg["scaling"].cast<float_t>();
+        new_config.scaling = cfg["scaling"].cast<u32>().value();
     } else {
         report("Expected gfx:scaling to be a number");
     }
     if (cfg["font_texture_path"].isString()) {
-        new_config.font_texture_path = cfg["font_texture_path"].cast<std::string>();
+        new_config.font_texture_path = cfg["font_texture_path"].cast<std::string>().value();
     } else {
         report("Expected gfx:font_texture_path to be a string");
     }

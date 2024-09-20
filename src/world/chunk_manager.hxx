@@ -4,7 +4,7 @@
 #include "entity/entity_event.hxx"
 #include "world/world_event.hxx"
 
-class Chunk;
+struct Chunk;
 class ChunkGenerator;
 struct WorldContext;
 

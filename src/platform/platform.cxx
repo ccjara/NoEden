@@ -65,7 +65,7 @@ void Platform::prepare() {
 
 #ifdef NOEDEN_XRAY
     ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(sdl_window_);
+    ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 #endif
 }

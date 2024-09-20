@@ -3,7 +3,7 @@
 #include "world/world_spec.hxx"
 #include "framework/noise_generator.hxx"
 
-std::unique_ptr<Chunk> ChunkGenerator::generate_chunk(const GenerateChunkOptions& options) {
+std::unique_ptr<Chunk> ChunkGenerator::generate_chunk(const GenerateChunkOptions&) {
     std::unique_ptr<Chunk> chunk = std::make_unique<Chunk>();
 
     for (i32 x = 0; x < Chunk::CHUNK_SIDE_LENGTH; ++x) {

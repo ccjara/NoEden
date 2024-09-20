@@ -1,6 +1,6 @@
 #include "world/world_spec.hxx"
 
-float WorldSpec::height_at(const ChunkPos& chunk_pos) const {
+float WorldSpec::height_at(const ChunkPos&) const {
     return 0;
 }
 

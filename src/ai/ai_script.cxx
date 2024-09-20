@@ -5,6 +5,6 @@ void AiScript::clear() {
     mod_state(AiNodeState::Ready);
 }
 
-AiNodeState AiScript::visit(AiContext& context) {
+AiNodeState AiScript::visit(AiContext&) {
     return mod_state(AiNodeState::Succeeded);
 }

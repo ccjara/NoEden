@@ -66,13 +66,13 @@ void XrayManager::add_xray(std::unique_ptr<Xray>&& xray) {
     xrays_.push_back(std::move(xray));
 }
 
-EventResult XrayManager::on_mouse_down(const MouseDownEvent& e) {
+EventResult XrayManager::on_mouse_down(const MouseDownEvent&) {
     return ImGui::GetIO().WantCaptureMouse
                ? EventResult::Halt
                : EventResult::Continue;
 }
 
-EventResult XrayManager::on_mouse_up(const MouseUpEvent& e) {
+EventResult XrayManager::on_mouse_up(const MouseUpEvent&) {
     return ImGui::GetIO().WantCaptureMouse
                ? EventResult::Halt
                : EventResult::Continue;
@@ -89,7 +89,7 @@ EventResult XrayManager::on_key_down(const KeyDownEvent& e) {
     return EventResult::Continue;
 }
 
-EventResult XrayManager::on_key_up(const KeyUpEvent& e) {
+EventResult XrayManager::on_key_up(const KeyUpEvent&) {
     return ImGui::GetIO().WantCaptureKeyboard
                ? EventResult::Halt
                : EventResult::Continue;

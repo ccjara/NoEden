@@ -35,7 +35,6 @@
 #include <utility>
 #include <type_traits>
 
-#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <fmt/chrono.h>
 
@@ -46,13 +45,15 @@
 
 #define TOML_COMPILER_HAS_EXCEPTIONS 0
 #define TOML_COMPILER_HAS_RTTI 0
-#include "tomlplusplus/toml.hpp"
+#include <toml++/toml.hpp>
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_sdl.h"
-#include "imgui/imgui_impl_opengl3.h"
+#ifdef NOEDEN_XRAY
+#include <imgui/imgui.h>
+#include <imgui/backends/imgui_impl_sdl2.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
+#endif
 
 #define SDL_MAIN_HANDLED
 

@@ -1,8 +1,8 @@
 #include "lang/translation_loader.hxx"
 
 LoadTranslationResult::LoadTranslationResult(Dictionary&& dictionary) :
-        dictionary(std::move(dictionary)),
-        error(LoadTranslationError::None) {
+        error(LoadTranslationError::None),
+        dictionary(std::move(dictionary)) {
 }
 
 LoadTranslationResult::LoadTranslationResult(LoadTranslationError error) :

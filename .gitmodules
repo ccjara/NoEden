@@ -1,0 +1,22 @@
+[submodule "external/fmt"]
+	path = external/fmt
+	url = https://github.com/fmtlib/fmt.git
+[submodule "external/glm"]
+	path = external/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "external/utf8cpp"]
+	path = external/utf8cpp
+	url = https://github.com/nemtrif/utfcpp
+[submodule "external/tomlplusplus"]
+	path = external/tomlplusplus
+	url = https://github.com/marzer/tomlplusplus
+[submodule "external/LuaBridge3"]
+	path = external/LuaBridge3
+	url = https://github.com/kunitoki/LuaBridge3
+[submodule "external/imgui"]
+	path = external/imgui
+	url = https://github.com/ocornut/imgui
+	branch = docking
+[submodule "external/stb"]
+	path = external/stb
+	url = https://github.com/nothings/stb

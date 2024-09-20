@@ -181,7 +181,7 @@ void LogXray::log_table() {
             follow_logs_ = false;
         }
 
-        if (follow_logs_ && is_at_bottom || follow_pressed_) {
+        if ((follow_logs_ && is_at_bottom) || follow_pressed_) {
             ImGui::SetScrollHereY(1.0f);
         }
 

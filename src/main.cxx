@@ -2,6 +2,6 @@
 
 static_assert(!LUABRIDGE_HAS_EXCEPTIONS);
 
-int main(int argc, char* argv[]) {
+int main() {
     return Game::start();
 }

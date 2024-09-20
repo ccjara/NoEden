@@ -38,7 +38,7 @@ EventResult SceneXray::on_config_updated(const ConfigUpdatedEvent& e) {
     return EventResult::Continue;
 }
 
-EventResult SceneXray::on_mouse_down(const MouseDownEvent& e) {
+EventResult SceneXray::on_mouse_down(const MouseDownEvent&) {
     /*
     TileType type_to_place;
     if (input_->is_mouse_pressed(MouseButton::Left)) {
@@ -95,7 +95,7 @@ void SceneXray::entity_window(WorldContext& world_context) {
     ImGui::End();
 }
 
-void SceneXray::tile_window(WorldContext& world_context) {
+void SceneXray::tile_window(WorldContext&) {
     /*
     const static std::unordered_map<TileType, std::string> type_options = {
         { TileType::None, "None" },
@@ -230,7 +230,6 @@ void SceneXray::entity_glyph(Entity* entity) {
 void SceneXray::mapgen_window(WorldContext& world_context) {
     auto* entity_manager = world_context.entity_manager;
     auto* tile_accessor = world_context.tile_accessor;
-    auto* chunk_manager = world_context.chunk_manager;
 
     ImGui::Begin("Mapgen");
 

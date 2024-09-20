@@ -50,9 +50,11 @@ private:
     EventManager* events_ = nullptr;
     SDL_Window* sdl_window_ = nullptr;
     SDL_GLContext gl_context_ = nullptr;
+ #ifdef NOEDEN_XRAY
     ImGuiContext* imgui_context_ = nullptr;
-    ExitManager* exit_manager_ = nullptr;
+ #endif
     Input* input_ = nullptr;
+    ExitManager* exit_manager_ = nullptr;
 };
 
 

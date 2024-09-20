@@ -22,8 +22,8 @@ void Fov::apply_blind_spots() {
     const auto center_pos = center();
     const auto dim = vision_spots_.dimensions();
 
-    for (i32 y = 0; y < dim.y; ++y) {
-        for (i32 x = 0; x < dim.x; ++x) {
+    for (i32 y = 0; y < static_cast<i32> (dim.y); ++y) {
+        for (i32 x = 0; x < static_cast<i32> (dim.x); ++x) {
             const Vec2<i32> spot_pos { x, y };
             VisionSpot* vision_spot = vision_spots_.at(spot_pos);
             if (!vision_spot) {

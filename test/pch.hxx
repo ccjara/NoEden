@@ -37,7 +37,7 @@
 
 #define TOML_COMPILER_HAS_EXCEPTIONS 0
 #define TOML_COMPILER_HAS_RTTI 0
-#include "tomlplusplus/toml.hpp"
+#include <toml++/toml.hpp>
 
 #include <SDL2/SDL.h>
 

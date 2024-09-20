@@ -13,5 +13,5 @@ bool AiNode::failed() const {
     return state_ == AiNodeState::Failed;
 }
 
-void AiNode::initialize(AiContext& context) {
+void AiNode::initialize(AiContext&) {
 }

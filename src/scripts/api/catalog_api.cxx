@@ -77,13 +77,13 @@ void CatalogApi::create_archetype(const luabridge::LuaRef& ref) {
         LOG_ERROR("Archetype specification has no name");
         return;
     }
-    auto archetype = catalog_->create_archetype(ref["name"].cast<const char*>());
+    auto archetype = catalog_->create_archetype(ref["name"].cast<const char*>().value());
     if (!archetype) {
         return;
     }
     const auto speed_ref = ref["speed"];
     if (speed_ref.isNumber()) {
-        archetype->speed = speed_ref.cast<f32>();
+        archetype->speed = speed_ref.cast<f32>().value();
     }
     const auto components_ref = ref["components"];
     if (components_ref.isTable()) {
@@ -97,7 +97,7 @@ void CatalogApi::create_archetype(const luabridge::LuaRef& ref) {
             if (!type_ref.isNumber()) {
                 LOG_ERROR("Invalid {} component: type must be a string", archetype->name);
             }
-            const auto component_type_unsafe = type_ref.cast<i32>();
+            const auto component_type_unsafe = type_ref.cast<i32>().value();
             switch (static_cast<ComponentType>(component_type_unsafe)) {
                 case ComponentType::Render: {
                     const auto glyph_ref = component_ref["glyph"];
@@ -109,11 +109,11 @@ void CatalogApi::create_archetype(const luabridge::LuaRef& ref) {
                         return;
                     }
                     const auto color_ref = component_ref["color"];
-                    info.glyph = glyph_ref.cast<i32>();
+                    info.glyph = glyph_ref.cast<i32>().value();
                     info.visible = true;
 
                     if (color_ref.isNumber()) {
-                        info.color = Color(color_ref.cast<i32>());
+                        info.color = Color(color_ref.cast<i32>().value());
                     }
                     return;
                 }
@@ -130,7 +130,7 @@ void CatalogApi::create_archetype(const luabridge::LuaRef& ref) {
                     const auto vision_radius_ref = component_ref["radius"];
                     i32 radius = 1;
                     if (vision_radius_ref.isNumber()) {
-                        radius = vision_radius_ref.cast<i32>();
+                        radius = vision_radius_ref.cast<i32>().value();
 
                         if (radius <= 0) {
                             LOG_WARN("Invalid vision config in {}: vision radius must be greater than 0", archetype->name);
@@ -160,7 +160,7 @@ AiNodeType parse_node_type(const luabridge::LuaRef& ref) {
         return AiNodeType::None;
     }
 
-    switch (const auto unsafe_value = static_cast<AiNodeType>(ref.cast<i32>())) {
+    switch (const auto unsafe_value = static_cast<AiNodeType>(ref.cast<i32>().value())) {
         case AiNodeType::None:
         case AiNodeType::Selector:
         case AiNodeType::Condition:
@@ -197,7 +197,7 @@ std::unique_ptr<AiNode> CatalogApi::create_behavior_node(const luabridge::LuaRef
                 const auto priority_ref= ref["priority"];
                 i32 priority;
                 if (priority_ref.isNumber()) {
-                    priority = priority_ref.cast<i32>();
+                    priority = priority_ref.cast<i32>().value();
                 } else {
                     priority = last_priority + 1;
                 }
@@ -224,7 +224,7 @@ std::unique_ptr<AiNode> CatalogApi::create_behavior_node(const luabridge::LuaRef
                 const auto priority_ref= ref["priority"];
                 i32 priority;
                 if (priority_ref.isNumber()) {
-                    priority = priority_ref.cast<i32>();
+                    priority = priority_ref.cast<i32>().value();
                 } else {
                     priority = last_priority + 1;
                 }
@@ -239,7 +239,7 @@ std::unique_ptr<AiNode> CatalogApi::create_behavior_node(const luabridge::LuaRef
             auto node_ptr = static_cast<AiClosestEntity*>(base_node_ptr.get());
             const auto found_target_key_ref = ref["found_target_key"];
             if (found_target_key_ref.isString()) {
-                node_ptr->set_found_target_key(found_target_key_ref.cast<std::string>());
+                node_ptr->set_found_target_key(found_target_key_ref.cast<std::string>().value());
             }
             break;
         }
@@ -248,7 +248,7 @@ std::unique_ptr<AiNode> CatalogApi::create_behavior_node(const luabridge::LuaRef
             auto node_ptr = static_cast<AiWalk*>(base_node_ptr.get());
             const auto walk_target_key = ref["walk_target_key"];
             if (walk_target_key.isString()) {
-                node_ptr->target_entity(walk_target_key.cast<std::string>());
+                node_ptr->target_entity(walk_target_key.cast<std::string>().value());
             } else {
                 node_ptr->walk_around();
             }
@@ -260,7 +260,7 @@ std::unique_ptr<AiNode> CatalogApi::create_behavior_node(const luabridge::LuaRef
                 LOG_ERROR("Invalid condition node configuration: must have a `condition` number property identifying its condition type");
                 return nullptr;
             }
-            const auto condition_type_unsafe = condition_type_ref.cast<i32>();
+            const auto condition_type_unsafe = condition_type_ref.cast<i32>().value();
             const auto condition_type = static_cast<ConditionType>(condition_type_unsafe);
 
             auto condition_fn = condition_resolver_->resolve_condition(condition_type);

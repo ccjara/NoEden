@@ -8,7 +8,7 @@ bool ScriptXray::initialize() {
     return !!scripting_;
 }
 
-EventResult ScriptXray::on_script_reset(ScriptResetEvent& e) {
+EventResult ScriptXray::on_script_reset(ScriptResetEvent&) {
     selected_script_id_ = std::nullopt;
     return EventResult::Continue;
 }

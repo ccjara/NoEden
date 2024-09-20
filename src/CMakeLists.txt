@@ -1,22 +1,3 @@
-include_directories(${PROJECT_SOURCE_DIR}/src)
-
-set(DEPS
-    "../deps/stb/stb_image_implementation.cxx"
-    "../deps/stb/stb_perlin_implementation.cxx"
-)
-
-if (NOT NOEDEN_RELEASE)
-    set(DEPS ${DEPS}
-        "../deps/imgui/imgui.cpp"
-        "../deps/imgui/imgui_demo.cpp"
-        "../deps/imgui/imgui_draw.cpp"
-        "../deps/imgui/imgui_impl_sdl.cpp"
-        "../deps/imgui/imgui_impl_opengl3.cpp"
-        "../deps/imgui/imgui_tables.cpp"
-        "../deps/imgui/imgui_widgets.cpp"
-    )
-endif()
-
 set(SOURCES
     action/action.cxx
     action/action_creator.hxx
@@ -167,20 +148,33 @@ if (NOT NOEDEN_RELEASE)
     )
 endif ()
 
-
-set(SOURCES ${DEPS} ${SOURCES})
-
 set(LIBRARIES
+    tomlplusplus::tomlplusplus
+    fmt::fmt
+    glm
+    stb_image
+    stb_perlin
     ${SDL2_LIBRARIES}
     ${OPENGL_LIBRARIES}
     ${LUA_LIBRARIES}
     ${GLEW_LIBRARIES}
 )
 
-add_executable(NoEden ${SOURCES} "game/game.cxx" "main.cxx")
-target_compile_options(NoEden PRIVATE ${CMAKE_CXX_FLAGS})
-target_link_libraries(NoEden ${LIBRARIES})
+if (NOT NOEDEN_RELEASE)
+    set(LIBRARIES ${LIBRARIES} imgui)
+endif()
 
+add_executable(NoEden ${SOURCES} "game/game.cxx" "main.cxx")
+
+if (NOEDEN_RELEASE)
+    target_compile_options(NoEden PRIVATE -Wno-unused-parameter -Wno-unused-variable)
+endif()
+
+set_target_properties(NoEden PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    INSTALL_RPATH "$ORIGIN"
+)
+target_link_libraries(NoEden PRIVATE ${LIBRARIES})
 target_precompile_headers(NoEden PRIVATE pch.hxx)
 
 # copy script sources to runtime dir

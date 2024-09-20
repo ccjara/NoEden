@@ -34,10 +34,9 @@ public:
      */
     template<typename Api>
     void expose(Script& script, Api* api, const char* name) {
-        std::error_code ec;
-        luabridge::push<Api*>(script, api, ec);
-        if (ec) {
-            LOG_ERROR("Could not expose api {}: {}", name, ec.message());
+        auto result = luabridge::push<Api*>(script, api);
+        if (!result) {
+            LOG_ERROR("Could not expose api {}: {}", name, result.message());
             return;
         }
         lua_setglobal(script, name);
