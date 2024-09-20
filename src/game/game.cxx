@@ -12,6 +12,7 @@
 
 #include "realm/realm_type_def.hxx"
 #include "realm/realm_manager.hxx"
+#include "resource/resource_manager.hxx"
 #include "scripts/api/catalog_api.hxx"
 #include "scripts/api/config_api.hxx"
 #include "scripts/api/game_api.hxx"
@@ -50,6 +51,7 @@ bool Game::initialize_realms() {
 bool Game::initialize() {
     Log::initialize();
 
+    res_ = std::make_unique<ResourceManager>();
     condition_resolver_ = std::make_unique<ConditionResolver>();
     exit_manager_ = std::make_unique<ExitManager>();
     events_ = std::make_unique<EventManager>();
@@ -59,7 +61,7 @@ bool Game::initialize() {
     scripting_ = std::make_unique<Scripting>(services_.get(), events_.get());
     platform_ = std::make_unique<Platform>(events_.get(), input_.get(), exit_manager_.get());
     realms_ = std::make_unique<RealmManager>(services_.get(), events_.get());
-    renderer_ = std::make_unique<Renderer>(events_.get());
+    renderer_ = std::make_unique<Renderer>(events_.get(), res_.get());
     ui_ = std::make_unique<Ui>(renderer_.get(), events_.get());
     catalog_ = std::make_unique<Catalog>();
 
@@ -75,6 +77,9 @@ bool Game::initialize() {
     services_->provide<ConditionResolver>(condition_resolver_.get());
 
     if (!platform_->initialize()) {
+        return false;
+    }
+    if (!res_->initialize()) {
         return false;
     }
     if (!renderer_->initialize()) {

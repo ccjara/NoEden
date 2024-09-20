@@ -4,15 +4,20 @@
 #include "config/config.hxx"
 #include "config/config_event.hxx"
 #include "gfx/display.hxx"
-#include "gfx/text_shader.hxx"
+#include "gfx/shader.hxx"
+#include "gfx/texture.hxx"
 #include "platform/platform_event.hxx"
+
+#include <resource/resource_manager.hxx>
+
+class ResourceManager;
 
 /**
  * @brief Executes GL rendering operations
  */
 class Renderer {
 public:
-    explicit Renderer(EventManager* events);
+    explicit Renderer(EventManager* events, ResourceManager* res);
 
     /**
      * @brief Initializes renderer resources
@@ -30,11 +35,6 @@ public:
      * Must be called if the user resized the game window.
      */
     void set_viewport(Vec2<u32> size);
-
-    /**
-     * @brief Sets the font texture used to display text.
-     */
-    void set_font(Texture* tex);
 
     /**
      * @brief Sets the font's glyph size
@@ -77,8 +77,10 @@ private:
     Texture text_texture_;
 
     Vec2<u32> view_port_;
+    Vec2<u32> glyph_size_;
     u32 scaling_ = 1;
-    std::unique_ptr<TextShader> text_shader_ = nullptr;
+
+    Shader* shader_ = nullptr;
 
     GLuint vbo = 0;
     GLuint vao = 0;
@@ -97,6 +99,7 @@ private:
     std::array<Display, 2> layers_;
 
     EventManager* events_ = nullptr;
+    ResourceManager* res_ = nullptr;
 
     bool initialized_ = false;
 };

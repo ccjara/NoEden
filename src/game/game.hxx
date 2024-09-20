@@ -11,6 +11,7 @@ class Translator;
 class Renderer;
 class RealmManager;
 class ExitManager;
+class ResourceManager;
 class Ui;
 
 #ifdef NOEDEN_XRAY
@@ -39,6 +40,7 @@ private:
      */
     void shutdown();
 
+    std::unique_ptr<ResourceManager> res_ = nullptr;
     std::unique_ptr<ConditionResolver> condition_resolver_ = nullptr;
     std::unique_ptr<ExitManager> exit_manager_ = nullptr;
     std::unique_ptr<ConfigManager> config_manager_ = nullptr;

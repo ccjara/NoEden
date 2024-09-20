@@ -1,8 +1,10 @@
 #include "gfx/renderer.hxx"
-#include "gfx_event.hxx"
+#include "gfx/gfx_event.hxx"
+#include "resource/resource_manager.hxx"
 
-Renderer::Renderer(EventManager* events) : events_(events) {
+Renderer::Renderer(EventManager* events, ResourceManager* res) : events_(events), res_(res) {
     assert(events_);
+    assert(res_);
 
     resize_sub_ = events_->on<ResizeEvent>(this, &Renderer::on_resize);
     config_updated_sub_ = events_->on<ConfigUpdatedEvent>(this, &Renderer::on_config_updated);
@@ -22,6 +24,13 @@ bool Renderer::initialize() {
         LOG_ERROR("Renderer already initialized");
         return false;
     }
+
+    shader_ = res_->shader("TEXT");
+
+    if (!shader_) {
+        return false;
+    }
+
     glGenVertexArrays(1, &vao);
 
     if (glGetError() != GL_NO_ERROR) {
@@ -52,8 +61,6 @@ bool Renderer::initialize() {
         return false;
     }
 
-    text_shader_ = std::make_unique<TextShader>();
-
     configure(Config());
 
     initialized_ = true;
@@ -63,7 +70,8 @@ bool Renderer::initialize() {
 void Renderer::render() {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    text_shader_->use();
+    shader_->use();
+    text_texture_.bind();
 
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -88,20 +96,18 @@ void Renderer::render() {
 void Renderer::set_viewport(Vec2<u32> size) {
     view_port_ = size;
     glViewport(0, 0, view_port_.x, view_port_.y);
-    text_shader_->use_resolution(view_port_ / scaling_);
-}
 
-void Renderer::set_font(Texture* tex) {
-    text_shader_->use_texture(tex);
+    shader_->set_uniform("u_resolution", view_port_ / scaling_);
 }
 
 void Renderer::set_glyph_size(Vec2<u32> glyph_size) {
-    text_shader_->use_glyph_size(glyph_size);
+    glyph_size_ = glyph_size;
+    shader_->set_uniform("u_glyph_size", glyph_size_);
 }
 
 void Renderer::set_scaling(u32 scaling) {
     scaling_ = scaling;
-    text_shader_->use_resolution(view_port_ / scaling);
+    shader_->set_uniform("u_resolution",  view_port_ / scaling_);
 }
 
 EventResult Renderer::on_resize(const ResizeEvent& e) {
@@ -112,6 +118,7 @@ EventResult Renderer::on_resize(const ResizeEvent& e) {
 
 bool Renderer::configure(const Config& cfg) {
     const auto path_str = cfg.font_texture_path.string();
+
     if (!fs::exists(cfg.font_texture_path)) {
         LOG_ERROR("Could not read text font at path {}", path_str);
         return false;
@@ -121,7 +128,8 @@ bool Renderer::configure(const Config& cfg) {
         return false;
     }
     cfg_ = cfg;
-    set_font(&text_texture_);
+    shader_->use();
+    shader_->set_uniform("u_tex_size", text_texture_.size());
     set_glyph_size(cfg.glyph_size);
     set_scaling(cfg.scaling);
     adjust_display();
@@ -152,12 +160,12 @@ void Renderer::adjust_display() {
 
 std::array<float, 4> Renderer::calculate_glyph_uv(u32 glyph) {
     const Vec2<float> glyph_size = {
-        static_cast<float>(text_shader_->glyph_size().x),
-        static_cast<float>(text_shader_->glyph_size().y)
+        static_cast<float>(glyph_size_.x),
+        static_cast<float>(glyph_size_.y)
     };
     const Vec2<float> tex_size = {
-        static_cast<float>(text_shader_->texture_size().x),
-        static_cast<float>(text_shader_->texture_size().y)
+        static_cast<float>(text_texture_.size().x),
+        static_cast<float>(text_texture_.size().y)
     };
     const int chars_per_row_in_texture = static_cast<i32>(tex_size.x / glyph_size.x);
 
@@ -179,13 +187,11 @@ GLuint Renderer::text_texture() const {
 }
 
 float Renderer::glyph_aspect_ratio() const {
-    const auto gz = text_shader_->glyph_size();
-
-    if (gz.y == 0) {
-      return 0;
+    if (glyph_size_.y == 0) {
+        return 0;
     }
 
-    return static_cast<float>(gz.x) / static_cast<float>(gz.y);
+    return static_cast<float>(glyph_size_.x) / static_cast<float>(glyph_size_.y);
 }
 
 Display& Renderer::display() {

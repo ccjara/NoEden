@@ -1,94 +1,64 @@
 #ifndef NOEDEN_SHADER_HXX
 #define NOEDEN_SHADER_HXX
 
-enum class ShaderType : GLenum {
-    vertex = GL_VERTEX_SHADER,
-    geometry = GL_GEOMETRY_SHADER,
-    fragment = GL_FRAGMENT_SHADER
+enum class ShaderStage {
+    Vertex,
+    Fragment,
+    Geometry,
 };
 
-/**
- * @brief Wrapper around a GL shader.
- *
- * Currently barely enough to provide an extension point
- * for the text_shader. There probably won't be any other shaders
- * in this game.
- */
 class Shader {
-private:
-    std::unordered_map<ShaderType, GLuint> stages_;
-
-    void clear_stages();
-protected:
-
-    GLuint program_ { 0 };
-
-    /**
-     * @brief Will be called before the shader program is used
-     *
-     * When a consumer of the shader use()s the shader, the prepare
-     * method can be used to set shader uniforms, bind textures
-     * to fragment shaders, etc.
-     *
-     * @see use()
-     */
-    virtual void prepare();
-
-    /**
-     * @brief Compiles and attaches a shader source of the given type.
-     *
-     * @returns true if compilation was successful.
-     */
-    bool compile(ShaderType type, std::string_view source);
-
-    /**
-     * @brief Links all shader stages into a shader program.
-     *
-     * Linker errors cause this shader to be a null-program
-     *
-     * @returns true if linkage was successful.
-     */
-    bool link();
 public:
-    /**
-     * @brief Creates the shader program resource
-     */
     Shader();
+    ~Shader();
 
-    /**
-     * @brief Unloads the program and leftover shader stages
-     */
-    virtual ~Shader();
+    bool add_stage(ShaderStage type, const std::string& source);
+    bool add_stage(ShaderStage type, const std::vector<u8>& data);
+    bool link_program();
+    void use() const;
 
-    /**
-     * @brief Unloads the shader program and resets its handle
-     *
-     * If you call use() after unloading the shader, the null-program will
-     * be used instead.
-     */
-    void unload();
-
-    /**
-     * @brief Returns whether a shader is currently loaded
-     */
-    bool is_loaded() const;
-
-    /**
-     * @brief Uses the currently loaded shader program during rendering
-     */
-    void use();
-
-    /**
-     * @brief Returns the id of the currently loaded shader
-     *
-     * Returns 0 if none is loaded
-     */
-    GLint id() const;
+    void set_uniform(const std::string& name, i32 value);
+    void set_uniform(const std::string& name, f32 value);
+    void set_uniform(const std::string& name, Vec2<u32> value);
+    //void set_uniform(const std::string& name, const glm::vec2& value);
+    //void set_uniform(const std::string& name, const glm::vec3& value);
+    //void set_uniform(const std::string& name, const glm::vec4& value);
+    //void set_uniform(const std::string& name, const glm::mat4& value);
 
     Shader(const Shader&) = delete;
-    Shader(Shader&&) = delete;
-    Shader& operator=(Shader&&) = delete;
-    const Shader& operator=(const Shader&) = delete;
+    Shader& operator=(const Shader&) = delete;
+
+private:
+    GLuint program_;
+    std::vector<GLuint> shaders_;
+    std::unordered_map<std::string, GLint> uniforms_;
+
+    GLuint compile_shader(ShaderStage type, const std::string& source);
+    GLint get_uniform_location(const std::string& name);
+
+    GLenum gl_shader_type(ShaderStage type) const;
+};
+
+template <>
+struct fmt::formatter<ShaderStage> : formatter<std::string> {
+    auto format(ShaderStage c, format_context& ctx) const {
+        std::string name;
+        switch (c) {
+        case ShaderStage::Vertex:
+            name = "Vertex";
+            break;
+        case ShaderStage::Fragment:
+            name = "Fragment";
+            break;
+        case ShaderStage::Geometry:
+            name = "Geometry";
+            break;
+        default:
+            name = std::to_string(static_cast<i32>(c));
+            break;
+        }
+        return formatter<std::string>::format(name, ctx);
+    }
 };
 
 #endif

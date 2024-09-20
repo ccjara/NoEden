@@ -61,7 +61,6 @@ set(SOURCES
     gfx/shader.cxx
     gfx/image.cxx
     gfx/text.cxx
-    gfx/text_shader.cxx
     gfx/texture.cxx
 
     input/input.cxx
@@ -91,9 +90,15 @@ set(SOURCES
     main_menu/main_menu.cxx
     main_menu/main_menu_controller.cxx
     main_menu/main_menu_realm.cxx
+
     realm/realm.cxx
     realm/realm_manager.cxx
     realm/realm_type.cxx
+
+    resource/plain_resource_repository.cxx
+    resource/resource_index.cxx
+    resource/resource_manager.cxx
+    resource/shader_resource.cxx
 
     scripts/api/catalog_api.cxx
     scripts/api/config_api.cxx
@@ -199,4 +204,11 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/src/lang/dictionaries
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dictionaries
+)
+
+# resources
+add_custom_command(TARGET NoEden POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/resources
+    $<TARGET_FILE_DIR:NoEden>/resources
 )
