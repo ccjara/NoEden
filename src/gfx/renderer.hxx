@@ -87,8 +87,8 @@ private:
 
     size_t last_size_ = 0;
 
-    EventResult on_resize(const ResizeEvent&);
-    Subscription<ResizeEvent> resize_sub_;
+    EventResult on_resize(const WindowResizedEvent&);
+    Subscription<WindowResizedEvent> resize_sub_;
     EventResult on_config_updated(const ConfigUpdatedEvent&);
     Subscription<ConfigUpdatedEvent> config_updated_sub_;
 

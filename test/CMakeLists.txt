@@ -21,11 +21,6 @@ add_executable(NoEdenTest
 
     ${SRC}/framework/event_manager.hxx
     ${SRC}/gfx/text.cxx
-    ${SRC}/input/input.cxx
-    ${SRC}/input/input_event.hxx
-    ${SRC}/input/keyboard_state.cxx
-    ${SRC}/input/mouse_button.hxx
-    ${SRC}/input/mouse_state.cxx
     ${SRC}/lang/translation_loader.cxx
     ${SRC}/lang/translator.cxx
     ${SRC}/lang/dictionary.cxx

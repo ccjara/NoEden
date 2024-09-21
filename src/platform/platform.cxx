@@ -1,11 +1,10 @@
 #include "platform/platform.hxx"
-#include "platform/platform_event.hxx"
 #include "game/exit_manager.hxx"
+#include "platform/platform_event.hxx"
+#include "platform/input_mapper.hxx"
 
-Platform::Platform(EventManager* events, Input *input, ExitManager* exit_manager) :
-    events_(events),
-    input_(input),
-    exit_manager_(exit_manager) {
+Platform::Platform(EventManager* events, InputState* input, ExitManager* exit_manager) :
+    events_(events), input_(input), exit_manager_(exit_manager) {
     assert(events_);
     assert(input_);
     assert(exit_manager_);
@@ -104,52 +103,74 @@ void Platform::shutdown() {
     }
 }
 
-Platform::~Platform() {
-    shutdown();
-}
+Platform::~Platform() { shutdown(); }
 
 Vec2<u32> Platform::window_size() const {
     i32 w, h;
     SDL_GetWindowSize(sdl_window_, &w, &h);
-    return { static_cast<u32>(w), static_cast<u32>(h) };
+    return {static_cast<u32>(w), static_cast<u32>(h)};
 }
 
 void Platform::process_events() {
     SDL_PumpEvents();
 
     SDL_Event e;
-    while (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_EventType::SDL_FIRSTEVENT, SDL_EventType::SDL_MOUSEWHEEL) != 0) {
+    while (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_MOUSEWHEEL) != 0) {
 #ifdef NOEDEN_XRAY
         ImGui_ImplSDL2_ProcessEvent(&e);
 #endif
-
         switch (e.type) {
-            case SDL_EventType::SDL_QUIT:
-                exit_manager_->request_exit(false);
+        case SDL_EventType::SDL_QUIT:
+            exit_manager_->request_exit(false);
+            break;
+        case SDL_WINDOWEVENT:
+            if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
+                events_->trigger<WindowResizedEvent>(glm::ivec2(e.window.data1, e.window.data2));
+            }
+            break;
+        case SDL_KEYDOWN: {
+            const Key key = InputMapper::map_sdl_key(e.key.keysym.scancode);
+            if (key == Key::Unknown) {
                 break;
-            case SDL_EventType::SDL_WINDOWEVENT:
-                if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
-                    events_->trigger<ResizeEvent>(Vec2<i32> {
-                        static_cast<i32> (e.window.data1),
-                        static_cast<i32> (e.window.data2)
-                    });
-                }
+            }
+            input_->keys[static_cast<size_t>(key)] = true;
+            events_->trigger<KeyDownEvent>(key, *input_);
+            break;
+        }
+        case SDL_KEYUP: {
+            const Key key = InputMapper::map_sdl_key(e.key.keysym.scancode);
+            if (key == Key::Unknown) {
                 break;
-            case SDL_EventType::SDL_KEYDOWN:
-                input_->set_key_pressed(static_cast<Key>(e.key.keysym.sym), true);
+            }
+            input_->keys[static_cast<size_t>(key)] = false;
+            events_->trigger<KeyUpEvent>(key, *input_);
+            break;
+        }
+        case SDL_MOUSEBUTTONDOWN: {
+            const auto button = InputMapper::map_sdl_mouse_button(e.button.button);
+            if (button == MouseButton::Unknown) {
                 break;
-            case SDL_EventType::SDL_KEYUP:
-                input_->set_key_pressed(static_cast<Key>(e.key.keysym.sym), false);
+            }
+            input_->mouse_buttons.set(static_cast<i32>(button), true);
+            events_->trigger<MouseButtonDownEvent>(button, *input_);
+            break;
+        }
+        case SDL_MOUSEBUTTONUP: {
+            const auto button = InputMapper::map_sdl_mouse_button(e.button.button);
+            if (button == MouseButton::Unknown) {
                 break;
-            case SDL_EventType::SDL_MOUSEBUTTONDOWN:
-                input_->set_mouse_button_pressed(static_cast<MouseButton>(e.button.button), true);
-                break;
-            case SDL_EventType::SDL_MOUSEBUTTONUP:
-                input_->set_mouse_button_pressed(static_cast<MouseButton>(e.button.button), false);
-                break;
-            case SDL_EventType::SDL_MOUSEMOTION:
-                input_->set_mouse_position({ e.motion.x, e.motion.y });
-                break;
+            }
+            input_->mouse_buttons.set(static_cast<i32>(button), false);
+            events_->trigger<MouseButtonUpEvent>(button, *input_);
+            break;
+        }
+        case SDL_MOUSEMOTION:
+            input_->mouse_position = {e.motion.x, e.motion.y};
+            input_->mouse_delta = {e.motion.xrel, e.motion.yrel};
+            events_->trigger<MouseMoveEvent>(input_->mouse_position, *input_);
+            break;
+        default:
+            break;
         }
     }
 }

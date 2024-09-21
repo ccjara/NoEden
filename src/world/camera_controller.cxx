@@ -55,11 +55,11 @@ EventResult CameraController::on_key_down(const KeyDownEvent& e) {
         LOG_DEBUG("Camera now at {}", camera_->position.to_string());
     } else if (e.key == Key::P) {
         set_target(world_context_->entity_manager->player());
-    } else if (e.key == Key::Plus) {
+    } else if (e.key == Key::KeyPadPlus) {
         target_ = nullptr;
         adjust(camera_->position + WorldPos(0, 1, 0));
         LOG_DEBUG("Camera now at {}", camera_->position.to_string());
-    } else if (e.key == Key::Minus) {
+    } else if (e.key == Key::KeyPadMinus) {
         target_ = nullptr;
         adjust(camera_->position + WorldPos(0, -1, 0));
         LOG_DEBUG("Camera now at {}", camera_->position.to_string());

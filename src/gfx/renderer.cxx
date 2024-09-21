@@ -6,7 +6,7 @@ Renderer::Renderer(EventManager* events, ResourceManager* res) : events_(events)
     assert(events_);
     assert(res_);
 
-    resize_sub_ = events_->on<ResizeEvent>(this, &Renderer::on_resize);
+    resize_sub_ = events_->on<WindowResizedEvent>(this, &Renderer::on_resize);
     config_updated_sub_ = events_->on<ConfigUpdatedEvent>(this, &Renderer::on_config_updated);
 }
 
@@ -110,7 +110,7 @@ void Renderer::set_scaling(u32 scaling) {
     shader_->set_uniform("u_resolution",  view_port_ / scaling_);
 }
 
-EventResult Renderer::on_resize(const ResizeEvent& e) {
+EventResult Renderer::on_resize(const WindowResizedEvent& e) {
     set_viewport(e.size);
     adjust_display();
     return EventResult::Continue;

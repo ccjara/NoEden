@@ -18,13 +18,13 @@ private:
        */
     bool show_xray_ = false;
 
-    Subscription<MouseDownEvent> mouse_down_sub_;
-    Subscription<MouseUpEvent> mouse_up_sub_;
+    Subscription<MouseButtonDownEvent> mouse_down_sub_;
+    Subscription<MouseButtonUpEvent> mouse_up_sub_;
     Subscription<KeyDownEvent> key_down_sub_;
     Subscription<KeyUpEvent> key_up_sub_;
 
-    EventResult on_mouse_down(const MouseDownEvent& event);
-    EventResult on_mouse_up(const MouseUpEvent& event);
+    EventResult on_mouse_down(const MouseButtonDownEvent& event);
+    EventResult on_mouse_up(const MouseButtonUpEvent& event);
     EventResult on_key_down(const KeyDownEvent& event);
     EventResult on_key_up(const KeyUpEvent& event);
 

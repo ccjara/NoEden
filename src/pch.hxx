@@ -35,6 +35,10 @@
 #include <utility>
 #include <type_traits>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <fmt/format.h>
 #include <fmt/chrono.h>
 
@@ -70,6 +74,9 @@
 
 #include "instrumentation/profiler.hxx"
 
+#include "input/input_state.hxx"
+#include "input/input_event.hxx"
+
 #include "log/log.hxx"
 #include "lang/translator.hxx"
 
@@ -85,8 +92,5 @@
 
 #include "world/world_pos.hxx"
 #include "world/chunk_pos.hxx"
-
-#include "input/input.hxx"
-#include "input/input_event.hxx"
 
 #endif

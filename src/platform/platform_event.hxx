@@ -6,10 +6,10 @@
 /**
  * @brief Triggered as the user resizes the window.
  */
-struct ResizeEvent : Event<EventType::Resize> {
+struct WindowResizedEvent : Event<EventType::WindowResized> {
     Vec2<i32> size = { 0, 0 };
 
-    explicit ResizeEvent(Vec2<i32> size) : size(size) {}
+    explicit WindowResizedEvent(Vec2<i32> size) : size(size) {}
 };
 
 #endif

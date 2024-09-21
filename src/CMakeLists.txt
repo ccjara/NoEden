@@ -63,14 +63,6 @@ set(SOURCES
     gfx/text.cxx
     gfx/texture.cxx
 
-    input/input.cxx
-    input/input_event.hxx
-    input/input_reader.hxx
-    input/key.hxx
-    input/keyboard_state.cxx
-    input/mouse_button.hxx
-    input/mouse_state.cxx
-
     instrumentation/perf_timer.cxx
     instrumentation/profiler.cxx
 

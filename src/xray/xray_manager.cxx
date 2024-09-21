@@ -4,8 +4,8 @@
 XrayManager::XrayManager(ServiceLocator* svc, EventManager* events) : svc_(svc), events_(events) {
     assert(events);
 
-    mouse_down_sub_ = events->on<MouseDownEvent>(this, &XrayManager::on_mouse_down, 10000);
-    mouse_up_sub_ = events->on<MouseUpEvent>(this, &XrayManager::on_mouse_up, 10000);
+    mouse_down_sub_ = events->on<MouseButtonDownEvent>(this, &XrayManager::on_mouse_down, 10000);
+    mouse_up_sub_ = events->on<MouseButtonUpEvent>(this, &XrayManager::on_mouse_up, 10000);
     key_down_sub_ = events->on<KeyDownEvent>(this, &XrayManager::on_key_down, 10000);
     key_up_sub_ = events->on<KeyUpEvent>(this, &XrayManager::on_key_up, 10000);
 
@@ -66,13 +66,13 @@ void XrayManager::add_xray(std::unique_ptr<Xray>&& xray) {
     xrays_.push_back(std::move(xray));
 }
 
-EventResult XrayManager::on_mouse_down(const MouseDownEvent&) {
+EventResult XrayManager::on_mouse_down(const MouseButtonDownEvent&) {
     return ImGui::GetIO().WantCaptureMouse
                ? EventResult::Halt
                : EventResult::Continue;
 }
 
-EventResult XrayManager::on_mouse_up(const MouseUpEvent&) {
+EventResult XrayManager::on_mouse_up(const MouseButtonUpEvent&) {
     return ImGui::GetIO().WantCaptureMouse
                ? EventResult::Halt
                : EventResult::Continue;

@@ -1,12 +1,10 @@
-#ifndef NOEDEN_PLATFORM_HXX
-#define NOEDEN_PLATFORM_HXX
+#pragma once
 
-class Input;
 class ExitManager;
 
 class Platform {
 public:
-    explicit Platform(EventManager* events, Input* input, ExitManager* exit_manager);
+    explicit Platform(EventManager* events, InputState* input, ExitManager* exit_manager);
 
     /**
      * @brief Initializes the platform (SDL, OpenGL, ImGui, etc.)
@@ -53,10 +51,6 @@ private:
  #ifdef NOEDEN_XRAY
     ImGuiContext* imgui_context_ = nullptr;
  #endif
-    Input* input_ = nullptr;
+    InputState* input_ = nullptr;
     ExitManager* exit_manager_ = nullptr;
 };
-
-
-
-#endif

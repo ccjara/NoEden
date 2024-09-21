@@ -18,7 +18,7 @@
 #include "world/world_spec.hxx"
 
 bool SceneXray::initialize() {
-    mouse_down_sub_ = events_->on<MouseDownEvent>(this, &SceneXray::on_mouse_down, 9000);
+    mouse_down_sub_ = events_->on<MouseButtonDownEvent>(this, &SceneXray::on_mouse_down, 9000);
     config_updated_sub_ = events_->on<ConfigUpdatedEvent>(this, &SceneXray::on_config_updated, 9000);
     realm_loaded_sub_ = events_->on<RealmLoadedEvent>(this, &SceneXray::on_realm_loaded, 9000);
     return true;
@@ -38,7 +38,7 @@ EventResult SceneXray::on_config_updated(const ConfigUpdatedEvent& e) {
     return EventResult::Continue;
 }
 
-EventResult SceneXray::on_mouse_down(const MouseDownEvent&) {
+EventResult SceneXray::on_mouse_down(const MouseButtonDownEvent&) {
     /*
     TileType type_to_place;
     if (input_->is_mouse_pressed(MouseButton::Left)) {

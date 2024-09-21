@@ -6,7 +6,7 @@
 #include "catalog/catalog.hxx"
 #include "config/config_manager.hxx"
 #include "gfx/renderer.hxx"
-#include "input/input.hxx"
+#include "input/input_state.hxx"
 #include "main_menu/main_menu_realm.hxx"
 #include "platform/platform.hxx"
 
@@ -57,7 +57,7 @@ bool Game::initialize() {
     events_ = std::make_unique<EventManager>();
     config_manager_ = std::make_unique<ConfigManager>(events_.get());
     services_ = std::make_unique<ServiceLocator>();
-    input_ = std::make_unique<Input>(events_.get());
+    input_ = std::make_unique<InputState>();
     scripting_ = std::make_unique<Scripting>(services_.get(), events_.get());
     platform_ = std::make_unique<Platform>(events_.get(), input_.get(), exit_manager_.get());
     realms_ = std::make_unique<RealmManager>(services_.get(), events_.get());
@@ -69,7 +69,7 @@ bool Game::initialize() {
     services_->provide<Scripting>(scripting_.get());
     services_->provide<RealmManager>(realms_.get());
     services_->provide<Renderer>(renderer_.get());
-    services_->provide<Input>(input_.get());
+    services_->provide<InputState>(input_.get());
     services_->provide<ConfigManager>(config_manager_.get());
     services_->provide<EventManager>(events_.get());
     services_->provide<Catalog>(catalog_.get());
@@ -104,7 +104,7 @@ bool Game::initialize() {
     }
     services_->provide<Translator>(t_.get());
 
-    services_->provide<IInputReader>(input_.get());
+    services_->provide<InputState>(input_.get());
 
     renderer_->set_viewport(platform_->window_size());
 

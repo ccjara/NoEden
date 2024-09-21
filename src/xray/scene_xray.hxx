@@ -23,8 +23,8 @@ private:
     void tile_window(WorldContext& world_context);
     void mapgen_window(WorldContext& world_context);
 
-    EventResult on_mouse_down(const MouseDownEvent& e);
-    Subscription<MouseDownEvent> mouse_down_sub_;
+    EventResult on_mouse_down(const MouseButtonDownEvent& e);
+    Subscription<MouseButtonDownEvent> mouse_down_sub_;
     EventResult on_config_updated(const ConfigUpdatedEvent& e);
     Subscription<ConfigUpdatedEvent> config_updated_sub_;
     EventResult on_realm_loaded(const RealmLoadedEvent& e);

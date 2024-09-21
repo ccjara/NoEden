@@ -6,7 +6,7 @@ class ConfigManager;
 class Scripting;
 class Catalog;
 class Platform;
-class Input;
+struct InputState;
 class Translator;
 class Renderer;
 class RealmManager;
@@ -49,7 +49,7 @@ private:
     std::unique_ptr<ServiceLocator> services_ = nullptr;
     std::unique_ptr<Catalog> catalog_ = nullptr;
     std::unique_ptr<Platform> platform_ = nullptr;
-    std::unique_ptr<Input> input_ = nullptr;
+    std::unique_ptr<InputState> input_ = nullptr;
     std::unique_ptr<Translator> t_ = nullptr;
     std::unique_ptr<Renderer> renderer_ = nullptr;
     std::unique_ptr<RealmManager> realms_ = nullptr;
