@@ -105,10 +105,10 @@ void Platform::shutdown() {
 
 Platform::~Platform() { shutdown(); }
 
-Vec2<u32> Platform::window_size() const {
+glm::ivec2 Platform::window_size() const {
     i32 w, h;
     SDL_GetWindowSize(sdl_window_, &w, &h);
-    return {static_cast<u32>(w), static_cast<u32>(h)};
+    return {w, h};
 }
 
 void Platform::process_events() {

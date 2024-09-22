@@ -15,7 +15,7 @@ struct TextOp {
     /**
      * @brief Position (offset) at which to render
      */
-    Vec2<i32> position = {0, 0};
+    glm::ivec2 position = {0, 0};
 
     /**
      * @brief Whether this text op will end with a new line
@@ -34,7 +34,7 @@ public:
      */
     void set_color(Color color);
 
-    void set_region(Vec2<i32> region);
+    void set_region(glm::ivec2 region);
     void update();
 
     const std::vector<TextOp>& ops() const;
@@ -44,7 +44,7 @@ private:
     std::vector<TextOp> ops_ = {};
     std::string text_ = "";
     Color color_ = Color::white();
-    Vec2<i32> region_ = {0, 0};
+    glm::ivec2 region_ = {0, 0};
 };
 
 #endif

@@ -24,7 +24,7 @@ void Fov::apply_blind_spots() {
 
     for (i32 y = 0; y < static_cast<i32> (dim.y); ++y) {
         for (i32 x = 0; x < static_cast<i32> (dim.x); ++x) {
-            const Vec2<i32> spot_pos { x, y };
+            const glm::ivec2 spot_pos { x, y };
             VisionSpot* vision_spot = vision_spots_.at(spot_pos);
             if (!vision_spot) {
                 continue;
@@ -41,8 +41,8 @@ i32 Fov::vision_radius() const {
     return vision_radius_;
 }
 
-Vec2<i32> Fov::center() const {
-    return Vec2<i32>{ vision_radius_, vision_radius_ };
+glm::ivec2 Fov::center() const {
+    return glm::ivec2{ vision_radius_, vision_radius_ };
 }
 
 const Grid<VisionSpot>& Fov::vision_spots() const {
@@ -86,16 +86,16 @@ void Fov::scan(Row& row,Quadrant q) {
     }
 }
 
-float Fov::slope(i32 depth, i32 column) {
-    return ((float) (2 * column - 1)) / ((float) 2 * depth);
+f32 Fov::slope(i32 depth, i32 column) {
+    return ((f32) (2 * column - 1)) / ((f32) 2 * depth);
 }
 
 bool Fov::symmetric(Row& row, i32 col) {
-    return ((float) col >= (float) row.depth * row.start_slope) &&
-            ((float) col <= (float) row.depth * row.end_slope);
+    return ((f32) col >= (f32) row.depth * row.start_slope) &&
+            ((f32) col <= (f32) row.depth * row.end_slope);
 }
 
-Vec2<i32> Fov::to_grid_coords(Quadrant q, Vec2<i32> start_pos, i32 depth, i32 col) {
+glm::ivec2 Fov::to_grid_coords(Quadrant q, glm::ivec2 start_pos, i32 depth, i32 col) {
     switch (q) {
         case Quadrant::N:
         default:

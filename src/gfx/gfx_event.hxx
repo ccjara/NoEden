@@ -9,13 +9,13 @@
  * The display is resized in the gfx system just after the low level event
  * ResizeEvent has been handled there (for example due to a window resize).
  */
-struct DisplayResizedEvent : public Event<EventType::DisplayResized> {
+struct DisplayResizedEvent : Event<EventType::DisplayResized> {
     /**
      * @brief The new display size in cell units
      */
-    Vec2<u32> size;
+    glm::ivec2 size = {0, 0};
 
-    explicit DisplayResizedEvent(const Vec2<u32>& size) : size(size) {
+    explicit DisplayResizedEvent(const glm::ivec2& size) : size(size) {
     }
 };
 

@@ -32,7 +32,7 @@ void UiNode::move_anchors() {
     }
 }
 
-void UiNode::move(Vec2<i32> position) {
+void UiNode::move(glm::ivec2 position) {
     relative_position_ = position;
     if (anchored_to_) {
         position += calc_anchor_offset(*this, *anchored_to_);
@@ -62,10 +62,10 @@ void UiNode::move(Vec2<i32> position) {
 }
 
 void UiNode::move(i32 x, i32 y) {
-    return move(Vec2<i32>(x, y));
+    return move(glm::ivec2(x, y));
 }
 
-void UiNode::move_abs(Vec2<i32> pos) {
+void UiNode::move_abs(glm::ivec2 pos) {
     absolute_position_ = pos;
     move_anchors();
 }
@@ -75,14 +75,14 @@ void UiNode::set_anchor_origin(AnchorOrigin origin) {
     move(relative_position_);
 }
 
-void UiNode::resize(Vec2<u32> size) {
+void UiNode::resize(glm::ivec2 size) {
     size_ = size;
     // anchored nodes may update their positions due to their anchor origin
     move_anchors();
 }
 
-void UiNode::resize(u32 width, u32 height) {
-    return resize(Vec2<u32>(width, height));
+void UiNode::resize(i32 width, i32 height) {
+    return resize(glm::ivec2(width, height));
 }
 
 void UiNode::anchor_to(UiNode* node) {
@@ -145,11 +145,11 @@ UiNodeType UiNode::type() const {
     return type_;
 }
 
-Vec2<i32> UiNode::relative_position() const {
+glm::ivec2 UiNode::relative_position() const {
     return relative_position_;
 }
 
-Vec2<i32> UiNode::absolute_position() const {
+glm::ivec2 UiNode::absolute_position() const {
     return absolute_position_;
 }
 
@@ -169,7 +169,7 @@ const std::vector<UiNode*>& UiNode::anchored_by() const {
     return anchored_by_;
 }
 
-Vec2<u32> UiNode::size() const {
+glm::ivec2 UiNode::size() const {
     return size_;
 }
 
@@ -203,11 +203,11 @@ void UiNode::set_align_y(AlignY align_y) {
     move(relative_position_);
 }
 
-void UiNode::set_width(u32 width) {
+void UiNode::set_width(i32 width) {
     size_.x = width;
 }
 
-void UiNode::set_height(u32 height) {
+void UiNode::set_height(i32 height) {
     size_.y = height;
 }
 
@@ -219,7 +219,7 @@ AlignY UiNode::align_y() const {
     return align_y_;
 }
 
-Vec2<i32> calc_anchor_offset(
+glm::ivec2 calc_anchor_offset(
     const UiNode& target,
     const UiNode& anchor
 ) {
@@ -243,7 +243,7 @@ Vec2<i32> calc_anchor_offset(
                 (anchor.absolute_position().y + static_cast<i32>(anchor.size().y)) / 2,
             };
         case AnchorOrigin::BottomRight:
-            return anchor.absolute_position() + Vec2<i32>(anchor.size());
+            return anchor.absolute_position() + glm::ivec2(anchor.size());
         case AnchorOrigin::Bottom:
             return {
                 (anchor.absolute_position().x + static_cast<i32>(anchor.size().x)) / 2,

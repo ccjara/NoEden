@@ -14,10 +14,10 @@ concept Indexable = requires(T a) {
  * @brief Generic implementation of a two-dimensional grid
  *
  * Most methods which access specific locations using a templatized `location_type`
- * accept either coordinates packed into a `Vec2<u32>` or an integral typed index
+ * accept either coordinates packed into a `glm::ivec2` or an integral typed index
  *
  * Grid is not suitable for very large dimensions, i.e. dimensions which would
- * produce indices larger than u32 could represent. (TODO: assertions)
+ * produce indices larger than i32 could represent. (TODO: assertions)
  */
 template<typename cell>
 class Grid {
@@ -25,8 +25,8 @@ public:
     using cell_type = cell;
     using container_type = std::vector<cell_type>;
 protected:
-    container_type cells_;
-    Vec2<u32> dimensions_;
+    container_type cells_ = {};
+    glm::ivec2 dimensions_ = {0, 0};
 
     /**
      * @brief Helper which guarantees an index location return type
@@ -49,7 +49,7 @@ protected:
      * otherwise the location is converted from the assumed index location.
      */
     template<typename location_type>
-    [[nodiscard]] constexpr Vec2<u32> ensure_coordinates(location_type location) const {
+    [[nodiscard]] constexpr glm::ivec2 ensure_coordinates(location_type location) const {
         if constexpr (std::is_integral_v<location_type>) {
             return to_coordinates(location);
         }
@@ -59,7 +59,7 @@ public:
     /**
      * @brief Resets and resizes the grid to the given cell dimensions
      */
-    constexpr void resize(const Vec2<u32>& dimensions) {
+    constexpr void resize(const glm::ivec2& dimensions) {
         cells_.resize(dimensions.x * dimensions.y);
         dimensions_ = dimensions;
         reset();
@@ -96,7 +96,7 @@ public:
     /**
      * @brief Returns the width and height in of the grid
      */
-    [[nodiscard]] constexpr Vec2<u32> dimensions() const {
+    [[nodiscard]] constexpr glm::ivec2 dimensions() const {
         return dimensions_;
     }
 
@@ -155,7 +155,7 @@ public:
     /**
      * @brief Returns whether the given location is contained by the grid
      *
-     * You may either pass a Vec2<u32> to indicate a cartesian coordinate
+     * You may either pass a glm::ivec2 to indicate a cartesian coordinate
      * or an index, in which case `location_type` must be integral.
      */
     [[nodiscard]] constexpr bool in_bounds(Indexable auto location) const {
@@ -180,13 +180,12 @@ public:
      *
      * This ensures that the coordinates are contained by the grid
      */
-    template<typename coord_type>
-    constexpr void clamp(Vec2<coord_type>& coord) const {
+    constexpr void clamp(glm::ivec2& coord) const {
         if (coord.x > dimensions_.x) {
-            coord.x = static_cast<coord_type>(dimensions_.x);
+            coord.x = static_cast<i32>(dimensions_.x);
         }
         if (coord.y > dimensions_.y) {
-            coord.y = static_cast<coord_type>(dimensions_.y);
+            coord.y = static_cast<i32>(dimensions_.y);
         }
     }
 
@@ -195,11 +194,8 @@ public:
      *
      * This does *not* verify the resulting coordinates.
      */
-    [[nodiscard]] constexpr Vec2<u32> to_coordinates(size_t index) const {
-        return Vec2<u32> {
-            static_cast<u32> (index) % dimensions_.x,
-            static_cast<u32> (index) / dimensions_.x
-        };
+    [[nodiscard]] constexpr glm::ivec2 to_coordinates(size_t index) const {
+        return glm::ivec2 { index % dimensions_.x, index / dimensions_.x };
     }
 
     /**
@@ -207,9 +203,8 @@ public:
      *
      * This method does *not* verify the resulting index.
      */
-    template<typename coord_type>
-    [[nodiscard]] constexpr size_t to_index(Vec2<coord_type> coord) const {
-        return static_cast<u32> (coord.y) * dimensions_.x + static_cast<u32> (coord.x);
+    [[nodiscard]] constexpr size_t to_index(glm::ivec2 coord) const {
+        return coord.y * dimensions_.x + coord.x;
     }
 };
 

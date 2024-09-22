@@ -3,9 +3,9 @@
 layout(points) in;
 layout(triangle_strip, max_vertices = 4) out;
 
-layout(location = 0) uniform uvec2 u_resolution;
-layout(location = 1) uniform uvec2 u_glyph_size;
-layout(location = 2) uniform uvec2 u_tex_size;
+layout(location = 0) uniform ivec2 u_resolution;
+layout(location = 1) uniform ivec2 u_glyph_size;
+layout(location = 2) uniform ivec2 u_tex_size;
 
 layout(location = 0) flat in int in_glyph[];
 layout(location = 1) in vec3 in_color[];

@@ -30,7 +30,7 @@ public:
      */
     void shutdown();
 
-    Vec2<u32> window_size() const;
+    glm::ivec2 window_size() const;
 
     ~Platform();
 

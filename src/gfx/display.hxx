@@ -96,10 +96,10 @@ public:
      */
     void text(
         std::string_view t,
-        Vec2<u32> position,
-        Vec2<u32> clamp = {
-            std::numeric_limits<u32>::max(),
-            std::numeric_limits<u32>::max()
+        glm::ivec2 position,
+        glm::ivec2 clamp = {
+            std::numeric_limits<i32>::max(),
+            std::numeric_limits<i32>::max()
         }
     );
 
@@ -113,7 +113,7 @@ public:
     /**
      * @brief Render a line on the display using bresenham's algorithm
      */
-    void line(Vec2<u32> from, Vec2<u32> to, u32 glyph = 750, Color color = Color());
+    void line(glm::ivec2 from, glm::ivec2 to, i32 glyph = 750, Color color = Color());
 };
 
 #endif

@@ -98,45 +98,24 @@ void Shader::use() const {
 
 void Shader::set_uniform(const std::string& name, i32 value) {
     glUniform1i(get_uniform_location(name), value);
-    auto x = glGetError();
-    if (x != GL_NO_ERROR) {
-        LOG_ERROR("Failed to set uniform: {}", x);
+    if (glGetError() != GL_NO_ERROR) {
+        LOG_ERROR("Failed to set uniform {}.", name);
     }
 }
 
 void Shader::set_uniform(const std::string& name, f32 value) {
     glUniform1f(get_uniform_location(name), value);
-    auto x = glGetError();
-    if (x != GL_NO_ERROR) {
-        LOG_ERROR("Failed to set uniform: {}", x);
+    if (glGetError() != GL_NO_ERROR) {
+        LOG_ERROR("Failed to set uniform {}.", name);
     }
 }
 
-void Shader::set_uniform(const std::string& name, Vec2<u32> value) {
-    glUniform2ui(get_uniform_location(name), value.x, value.y);
-    auto x = glGetError();
-    if (x != GL_NO_ERROR) {
-        LOG_ERROR("Failed to set uniform: {}", x);
+void Shader::set_uniform(const std::string& name, glm::ivec2 value) {
+    glUniform2i(get_uniform_location(name), value.x, value.y);
+    if (glGetError() != GL_NO_ERROR) {
+        LOG_ERROR("Failed to set uniform {}.", name);
     }
 }
-
-/*
-void Shader::set_uniform(const std::string& name, const glm::vec2& value) {
-    glUniform2fv(get_uniform_location(name), 1, glm::value_ptr(value));
-}
-
-void Shader::set_uniform(const std::string& name, const glm::vec3& value) {
-    glUniform3fv(get_uniform_location(name), 1, glm::value_ptr(value));
-}
-
-void Shader::set_uniform(const std::string& name, const glm::vec4& value) {
-    glUniform4fv(get_uniform_location(name), 1, glm::value_ptr(value));
-}
-
-void Shader::set_uniform(const std::string& name, const glm::mat4& value) {
-    glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, glm::value_ptr(value));
-}
-*/
 
 GLint Shader::get_uniform_location(const std::string& name) {
     auto it = uniforms_.find(name);

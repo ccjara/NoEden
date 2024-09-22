@@ -11,7 +11,7 @@ void Text::set_text(std::string_view text) {
     text_ = text;
 }
 
-void Text::set_region(Vec2<i32> region) {
+void Text::set_region(glm::ivec2 region) {
     dirty_ = region_ != region;
     region_ = region;
 }

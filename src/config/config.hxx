@@ -10,12 +10,12 @@ struct Config {
      * 
      * The size depends on the font texture and must be adjusted accordingly.
      */
-    Vec2<u32> glyph_size = { 8, 14 };
+    glm::ivec2 glyph_size = { 8, 14 };
 
     /**
      * @brief Multiplies the size of each rendered character
      */
-    u32 scaling = 1;
+    i32 scaling = 1;
 
     /**
      * Path to load the bitmap font texture from (currently only bmp is supported)

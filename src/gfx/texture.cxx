@@ -48,7 +48,7 @@ bool Texture::load(std::string_view path) {
 
     unbind();
 
-    size_ = { static_cast<u32> (image.width()), static_cast<u32> (image.height()) };
+    size_ = { image.width(), image.height() };
 
     return true;
 }
@@ -65,6 +65,6 @@ void Texture::unbind() const {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-Vec2<u32> Texture::size() const {
+glm::ivec2 Texture::size() const {
     return size_;
 }

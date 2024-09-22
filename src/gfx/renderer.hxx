@@ -34,17 +34,17 @@ public:
      *
      * Must be called if the user resized the game window.
      */
-    void set_viewport(Vec2<u32> size);
+    void set_viewport(glm::ivec2 size);
 
     /**
      * @brief Sets the font's glyph size
      */
-    void set_glyph_size(Vec2<u32> glyph_size);
+    void set_glyph_size(glm::ivec2 glyph_size);
 
     /**
      * @brief Sets the render scaling
      */
-    void set_scaling(u32 scaling);
+    void set_scaling(i32 scaling);
 
     /**
      * @brief Returns the result of dividing the glyph width by its height
@@ -61,7 +61,7 @@ public:
      *
      * The array will contain [u1, v1, u2, v2] in this order.
      */
-    std::array<float, 4> calculate_glyph_uv(u32 glyph);
+    std::array<f32, 4> calculate_glyph_uv(u32 glyph) const;
 
     /**
      * @brief Provides writable access to the Display
@@ -76,9 +76,9 @@ private:
     Config cfg_;
     Texture text_texture_;
 
-    Vec2<u32> view_port_;
-    Vec2<u32> glyph_size_;
-    u32 scaling_ = 1;
+    glm::ivec2 view_port_ = { 0, 0 };
+    glm::ivec2 glyph_size_ = { 0, 0 };
+    i32 scaling_ = 1;
 
     Shader* shader_ = nullptr;
 

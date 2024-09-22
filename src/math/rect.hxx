@@ -17,14 +17,14 @@ struct Rect {
         y2(y2) {
     }
 
-    Rect(Vec2<t> pos, Vec2<t> size) :
+    Rect(glm::vec<2, t> pos, glm::vec<2, t> size) :
         x1(pos.x),
         x2(pos.x + size.x),
         y1(pos.y),
         y2(pos.y + size.y) {
     }
 
-    bool has_corner_at(const Vec2<t> p) const {
+    bool has_corner_at(const glm::vec<2, t> p) const {
         return (p.x == x1 && p.y == y1)
             || (p.x == x2 && p.y == y1)
             || (p.x == x1 && p.y == y2)
@@ -38,7 +38,7 @@ struct Rect {
         x1 -= length;
     }
 
-    void scan(const std::function<void(Vec2<t> p)> callable) const {
+    void scan(const std::function<void(glm::vec<2, t> p)> callable) const {
         for (t y { y1 }; y <= y2; y++) {
             for (t x { x1 }; x <= x2; x++) {
                 callable({ x, y });
@@ -69,12 +69,12 @@ struct Rect {
             );
     }
 
-    [[nodiscard]] bool edges(const Vec2<t>& pos) const {
+    [[nodiscard]] bool edges(const glm::vec<2, t>& pos) const {
         return pos.x == x1 || pos.x == x2 || pos.y == y1 || pos.y == y2;
     }
 
-    [[nodiscard]] Vec2<t> center() const {
-        return Vec2<t> {
+    [[nodiscard]] glm::vec<2, t> center() const {
+        return glm::vec<2, t> {
             static_cast<t> (x1 + (x2 - x1) / 2),
                 static_cast<t> (y1 + (y2 - y1) / 2)
         };

@@ -71,14 +71,14 @@ public:
      *
      * Also recursively moves all anchored nodes based on their anchor settings.
      */
-    void move(Vec2<i32> position);
+    void move(glm::ivec2 position);
     void move(i32 x, i32 y);
 
     /**
      * @brief Writing accessor for the size_ attribute
      */
-    virtual void resize(Vec2<u32> size);
-    virtual void resize(u32 width, u32 height);
+    virtual void resize(glm::ivec2 size);
+    virtual void resize(i32 width, i32 height);
 
     /**
      * @brief Returns the position relative to its anchor
@@ -87,7 +87,7 @@ public:
      *
      * @see move()
      */
-    Vec2<i32> relative_position() const;
+    glm::ivec2 relative_position() const;
 
     /**
      * @brief Returns the translated position (as it will appear on screen)
@@ -97,7 +97,7 @@ public:
      *
      * @see move()
      */
-    Vec2<i32> absolute_position() const;
+    glm::ivec2 absolute_position() const;
 
     /**
      * @brief Anchors this node to the given node
@@ -150,7 +150,7 @@ public:
     /**
      * @brief Readonly accessor for the size_ attribute
      */
-    Vec2<u32> size() const;
+    glm::ivec2 size() const;
 
     /**
      * @brief Returns true if the node is the root node
@@ -174,14 +174,14 @@ public:
      *
      * @see resize()
      */
-    virtual void set_width(u32 width);
+    virtual void set_width(i32 width);
 
     /**
      * @brief Updates the height of the node
      *
      * @see resize()
      */
-    virtual void set_height(u32 height);
+    virtual void set_height(i32 height);
 
     /**
      * @brief Sets visibility to true
@@ -211,7 +211,7 @@ protected:
      * When accessing this list, check for nullptrs as the list is not
      * defragmented on every frame.
      */
-    std::vector<UiNode*> anchored_by_;
+    std::vector<UiNode*> anchored_by_ = {};
 
     /**
      * @brief A destination node this node is anchored to
@@ -219,7 +219,7 @@ protected:
      * If the destination node is removed and this node is not a child node
      * thereof this node will be re-anchored to the root node.
      */
-    UiNode* anchored_to_ { nullptr };
+    UiNode* anchored_to_ = nullptr;
 
     /**
      * @brief Origin used to calculate an absolute position
@@ -229,7 +229,7 @@ protected:
     /**
      * @brief Unique id referencing this node
      */
-    std::string id_;
+    std::string id_ = "";
 
     /**
      * @brief RTTI
@@ -241,12 +241,12 @@ protected:
      *
      * If a parent container is removed, all child containers are also removed.
      */
-    std::vector<UiNode*> children_;
+    std::vector<UiNode*> children_ = {};
 
     /**
      * @brief Containing parent node of this node, always set unless root
      */
-    UiNode* parent_ { nullptr };
+    UiNode* parent_ = nullptr;
 
     /**
      * @brief Pointer to the root node
@@ -254,7 +254,7 @@ protected:
      * Guaranteed to be non-null after initialization of the root node.
      * Points to itself if the instance is the root node.
      */
-    UiNode* root_ { nullptr };
+    UiNode* root_ = nullptr;
 
     /**
      * @brief Relative position as specified by the ui code
@@ -264,7 +264,7 @@ protected:
      * @see absolute_position
      * @see anchor
      */
-    Vec2<i32> relative_position_;
+    glm::ivec2 relative_position_ = {0, 0};
 
     /**
      * @brief Absolute position, used by the renderer
@@ -275,12 +275,12 @@ protected:
      *
      * @see relative_position
      */
-    Vec2<i32> absolute_position_;
+    glm::ivec2 absolute_position_ = {0, 0};
 
     /**
      * @brief Size of this node, affects positioning of anchored nodes
      */
-    Vec2<u32> size_;
+    glm::ivec2 size_ = {0, 0};
 
     /**
      * @brief Visibility behavior is node specific
@@ -300,7 +300,7 @@ protected:
     /**
      * @brief Lua handler that will be invoked to update this node
      */
-    std::optional<luabridge::LuaRef> handler_;
+    std::optional<luabridge::LuaRef> handler_ = std::nullopt;
 
     /**
      * @brief Horizontal alignment (requires known size)
@@ -322,10 +322,10 @@ private:
      * Note that this method assigns the position as-is so the given absolute
      * position must be verified.
      */
-    void move_abs(Vec2<i32> pos);
+    void move_abs(glm::ivec2 pos);
 };
 
-Vec2<i32> calc_anchor_offset(
+glm::ivec2 calc_anchor_offset(
     const UiNode& target,
     const UiNode& parent
 );

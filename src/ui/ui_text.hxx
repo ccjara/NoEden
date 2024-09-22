@@ -11,10 +11,10 @@ public:
      */
     Text& text() const;
 
-    void resize(Vec2<u32> size) final override;
-    void resize(u32 width, u32 height) final override;
-    void set_width(u32 width) final override;
-    void set_height(u32 height) final override;
+    void resize(glm::ivec2 size) final override;
+    void resize(i32 width, i32 height) final override;
+    void set_width(i32 width) final override;
+    void set_height(i32 height) final override;
 
     /**
      * @brief Forces an update of the text buffer

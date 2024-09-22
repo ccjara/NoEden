@@ -7,7 +7,7 @@
 class Texture {
 private:
     GLuint id_ { 0 };
-    Vec2<u32> size_;
+    glm::ivec2 size_ = { 0, 0 };
 public:
     GLuint id() const;
 
@@ -46,7 +46,7 @@ public:
     void unbind() const;
 
     bool is_loaded() const;
-    Vec2<u32> size() const;
+    glm::ivec2 size() const;
 };
 
 #endif

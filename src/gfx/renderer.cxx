@@ -93,19 +93,19 @@ void Renderer::render() {
     glBindVertexArray(0);
 }
 
-void Renderer::set_viewport(Vec2<u32> size) {
+void Renderer::set_viewport(glm::ivec2 size) {
     view_port_ = size;
     glViewport(0, 0, view_port_.x, view_port_.y);
 
     shader_->set_uniform("u_resolution", view_port_ / scaling_);
 }
 
-void Renderer::set_glyph_size(Vec2<u32> glyph_size) {
+void Renderer::set_glyph_size(glm::ivec2 glyph_size) {
     glyph_size_ = glyph_size;
     shader_->set_uniform("u_glyph_size", glyph_size_);
 }
 
-void Renderer::set_scaling(u32 scaling) {
+void Renderer::set_scaling(i32 scaling) {
     scaling_ = scaling;
     shader_->set_uniform("u_resolution",  view_port_ / scaling_);
 }
@@ -142,13 +142,7 @@ EventResult Renderer::on_config_updated(const ConfigUpdatedEvent& e) {
 }
 
 void Renderer::adjust_display() {
-    // calculate resolution
-    const auto scaled_size { view_port_ / cfg_.scaling };
-    // calculate how many cells will fit on the screen given that resolution
-    const Vec2<u32> display_size {
-        scaled_size.x / cfg_.glyph_size.x,
-        scaled_size.y / cfg_.glyph_size.y
-    };
+    const auto display_size { view_port_ / cfg_.scaling / cfg_.glyph_size };
     // resize and notify
     for (auto& layer : layers_) {
         layer.resize(display_size);
@@ -158,26 +152,26 @@ void Renderer::adjust_display() {
     LOG_DEBUG("Display resized to {}x{} cells", display_size.x, display_size.y);
 }
 
-std::array<float, 4> Renderer::calculate_glyph_uv(u32 glyph) {
-    const Vec2<float> glyph_size = {
-        static_cast<float>(glyph_size_.x),
-        static_cast<float>(glyph_size_.y)
+std::array<f32, 4> Renderer::calculate_glyph_uv(u32 glyph) const {
+    const glm::vec2 glyph_size = {
+        static_cast<f32>(glyph_size_.x),
+        static_cast<f32>(glyph_size_.y)
     };
-    const Vec2<float> tex_size = {
-        static_cast<float>(text_texture_.size().x),
-        static_cast<float>(text_texture_.size().y)
+    const glm::vec2 tex_size = {
+        static_cast<f32>(text_texture_.size().x),
+        static_cast<f32>(text_texture_.size().y)
     };
     const int chars_per_row_in_texture = static_cast<i32>(tex_size.x / glyph_size.x);
 
-    const Vec2<float> tex_origin {
-        static_cast<float>(glyph % chars_per_row_in_texture) * glyph_size.x,
-        static_cast<float>(std::floor(glyph / chars_per_row_in_texture)) * glyph_size.y
+    const glm::vec2 tex_origin {
+        static_cast<f32>(glyph % chars_per_row_in_texture) * glyph_size.x,
+        static_cast<f32>(std::floor(glyph / chars_per_row_in_texture)) * glyph_size.y
     };
 
-    const float u1 = 1.0f / tex_size.x * tex_origin.x;
-    const float u2 = 1.0f / tex_size.x * (tex_origin.x + glyph_size.x);
-    const float v1 = 1.0f / tex_size.y * tex_origin.y;
-    const float v2 = 1.0f / tex_size.y * (tex_origin.y + glyph_size.y);
+    const f32 u1 = 1.0f / tex_size.x * tex_origin.x;
+    const f32 u2 = 1.0f / tex_size.x * (tex_origin.x + glyph_size.x);
+    const f32 v1 = 1.0f / tex_size.y * tex_origin.y;
+    const f32 v2 = 1.0f / tex_size.y * (tex_origin.y + glyph_size.y);
 
     return std::array { u1, v1, u2, v2 };
 }

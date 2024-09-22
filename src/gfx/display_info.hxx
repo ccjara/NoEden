@@ -6,17 +6,17 @@
  */
 struct DisplayInfo {
     /**
-     * @brief The glyph to render
+     * @brief Glyph to render
      */
-    u32 glyph = 0U;
+    i32 glyph = 0U;
 
     /**
-     * @brief The color to use when rendering the glyph.
+     * @brief Color to use when rendering the glyph
      */
-    Color color;
+    Color color = Color::black();
 
     /**
-     * @brief Skips drawing this glyph if false.
+     * @brief Skips drawing this glyph if false
      */
     bool visible = false;
 };

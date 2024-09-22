@@ -8,16 +8,15 @@ void Display::text(const Text& text) {
         const auto glyph_count = op.glyphs.size();
         for (size_t i = 0; i < glyph_count; ++i) {
             const i32 glyph = op.glyphs[i];
-            const Vec2<u32> pos = op.position + Vec2<i32>(i, 0);
-            put(DisplayCell{ glyph, op.color }, pos);
+            put(DisplayCell{ glyph, op.color }, op.position + glm::ivec2(i, 0));
         }
     }
 }
 
-void Display::text(std::string_view t, Vec2<u32> position, Vec2<u32> clamp) {
+void Display::text(std::string_view t, glm::ivec2 position, glm::ivec2 clamp) {
     state_ = first_state_; // reset state stack
 
-    const Vec2<u32> limit {
+    const glm::ivec2 limit {
         std::min(clamp.x, dimensions_.x),
         std::min(clamp.y, dimensions_.y)
     };
@@ -147,7 +146,7 @@ void Display::text(std::string_view t, Vec2<u32> position, Vec2<u32> clamp) {
 }
 
 void Display::rectangle(const RectOptions& options) {
-    Vec2<i32> pos;
+    glm::ivec2 pos;
 
     for (pos.y = options.span.y1; pos.y <= options.span.y2; ++pos.y) {
         const bool y_min { pos.y == options.span.y1 };
@@ -197,13 +196,13 @@ void Display::rectangle(const RectOptions& options) {
     }
 }
 
-void Display::line(Vec2<u32> from, Vec2<u32> to, u32 glyph, Color color) {
+void Display::line(glm::ivec2 from, glm::ivec2 to, i32 glyph, Color color) {
     clamp(from);
     clamp(to);
     bresenham(
-        static_cast<Vec2<i32>>(from),
-        static_cast<Vec2<i32>>(to),
-        [&](Vec2<i32> pos) {
+        from,
+        to,
+        [&](glm::ivec2 pos) {
             auto& cell { cells_.at(to_index(pos)) };
 
             cell.glyph = glyph;

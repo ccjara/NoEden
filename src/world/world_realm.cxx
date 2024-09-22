@@ -150,14 +150,10 @@ void WorldRealm::update() {
     for (i32 z = top_bound; z <= bottom_bound; ++z) {
         for (i32 x = left_bound; x <= right_bound; ++x) {
             Tile* tile = tile_accessor_->get_tile(WorldPos(x, cam_pos.y, z));
-            if (tile) {
-                u32 screen_x = x - left_bound;
-                u32 screen_z = z - top_bound;
+            if (tile && tile->flags.test(Revealed)) {
+                auto tile_pos = glm::ivec2(x - left_bound, z - top_bound);
 
-                if (!tile->flags.test(TileFlags::Revealed)) {
-                    continue;
-                }
-                world_layer.put(tile->display_info, Vec2<u32>(screen_x, screen_z));
+                world_layer.put(tile->display_info, tile_pos);
             }
         }
     }
@@ -190,9 +186,9 @@ void WorldRealm::update() {
     }
     */
     for (const auto& entity : entity_manager_->entities()) {
-        auto pos = entity->position - WorldPos(left_bound, 0, top_bound);
+        const auto pos = entity->position - WorldPos(left_bound, 0, top_bound);
 
-        if (!world_layer.in_bounds(Vec2<u32>(pos.x, pos.z))) {
+        if (!world_layer.in_bounds(glm::ivec2(pos.x, pos.z))) {
             continue;
         }
 
@@ -214,7 +210,7 @@ void WorldRealm::update() {
             continue;
         }
 
-        world_layer.put(DisplayCell(info.glyph, info.color), Vec2<u32>(pos.x, pos.z));
+        world_layer.put(DisplayCell(info.glyph, info.color), glm::ivec2(pos.x, pos.z));
     }
 }
 

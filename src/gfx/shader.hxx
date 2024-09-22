@@ -19,11 +19,7 @@ public:
 
     void set_uniform(const std::string& name, i32 value);
     void set_uniform(const std::string& name, f32 value);
-    void set_uniform(const std::string& name, Vec2<u32> value);
-    //void set_uniform(const std::string& name, const glm::vec2& value);
-    //void set_uniform(const std::string& name, const glm::vec3& value);
-    //void set_uniform(const std::string& name, const glm::vec4& value);
-    //void set_uniform(const std::string& name, const glm::mat4& value);
+    void set_uniform(const std::string& name, glm::ivec2 value);
 
     Shader(const Shader&) = delete;
     Shader& operator=(const Shader&) = delete;

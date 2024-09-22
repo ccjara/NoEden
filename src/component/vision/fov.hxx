@@ -4,25 +4,25 @@
 namespace {
     struct Row {
         i32 depth;
-        float start_slope;
-        float end_slope;
+        f32 start_slope;
+        f32 end_slope;
         i32 min_col;
         i32 max_col;
 
-        Row(i32 depth, float start_slope, float end_slope) :
+        Row(i32 depth, f32 start_slope, f32 end_slope) :
             depth(depth) {
             set_start_slope(start_slope);
             set_end_slope(end_slope);
         }
 
-        void set_start_slope(float slope) {
+        void set_start_slope(f32 slope) {
             start_slope = slope;
-            min_col = std::round(((float) depth) * slope);
+            min_col = std::round(((f32) depth) * slope);
         }
 
-        void set_end_slope(float slope) {
+        void set_end_slope(f32 slope) {
             end_slope = slope;
-            max_col = std::round(((float) depth) * slope);
+            max_col = std::round(((f32) depth) * slope);
         }
 
         Row next() const {
@@ -75,7 +75,7 @@ public:
     /**
      * @brief Returns the center of the vision spots grid
      */
-    Vec2<i32> center() const;
+    glm::ivec2 center() const;
 
     /**
      * @brief Returns an immutable reference to the vision spots grid
@@ -113,11 +113,11 @@ private:
 
     inline void scan(Row& row, Quadrant q);
 
-    inline Vec2<i32> static to_grid_coords(Quadrant q, Vec2<i32> start_pos, i32 depth, i32 col);
+    inline glm::ivec2 static to_grid_coords(Quadrant q, glm::ivec2 start_pos, i32 depth, i32 col);
 
     inline void apply_blind_spots();
 
-    static inline float slope(i32 depth, i32 column);
+    static inline f32 slope(i32 depth, i32 column);
 
     static inline bool symmetric(Row& row, i32 col);
 };

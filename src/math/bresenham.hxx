@@ -5,32 +5,27 @@
 
 /**
  * @brief Walks a line between two points and calls back on each step
- *
- * Todo: Not sure if the compiler is smart enough for the algorithm to be inlined
- * completely, including the callback. I don't think we will render many lines
- * in this game though.
  */
-template<typename t, typename callable>
-inline void bresenham(Vec2<t> p0, Vec2<t> p1, callable&& cb) {
+template<typename callable>
+void bresenham(glm::ivec2 p0, glm::ivec2 p1, callable&& cb) {
     const bool swap_xy { std::abs(p1.y - p0.y) > std::abs(p1.x - p0.x) };
     if (swap_xy) {
         std::swap(p0.x, p0.y);
         std::swap(p1.x, p1.y);
     }
 
-    const auto plot = [swap_xy, &cb](Vec2<t> p) {
+    const auto plot = [swap_xy, &cb](glm::ivec2 p) {
         if (swap_xy) {
-            cb(Vec2<t> { p.y, p.x });
+            cb(glm::ivec2 { p.y, p.x });
         } else {
             cb(p);
         }
     };
 
-    const Vec2<t> delta { p1 - p0 };
+    const glm::ivec2 delta { p1 - p0 };
     const auto dx_abs { std::abs(delta.x) };
     const auto step_y { delta.y < 0 ? -1 : 1 };
     const auto step_x { delta.x < 0 ? -1 : 1 };
-    auto current { p0 };
 
     for (auto current { p0 }; current.x != p1.x; current.x += step_x) {
         bool skip { false };
