@@ -14,7 +14,6 @@ include_directories(NoEdenTest PRIVATE ${CMAKE_SOURCE_DIR}/test)
 add_executable(NoEdenTest
     framework/event_manager.cxx
     gfx/text.cxx
-    input/input.cxx
     lang/translator.cxx
     lang/translation_loader.cxx
     realm/realm_manager.cxx

@@ -66,11 +66,8 @@ set(SOURCES
     instrumentation/perf_timer.cxx
     instrumentation/profiler.cxx
 
-    log/log.cxx
-
     math/bresenham.hxx
     math/rect.hxx
-    math/vec2.hxx
 
     lang/dictionary.cxx
     lang/translator.cxx
@@ -133,7 +130,6 @@ set(SOURCES
 
 if (NOT NOEDEN_RELEASE)
     set(SOURCES ${SOURCES}
-        xray/log_xray.cxx
         xray/noise_texture.cxx
         xray/perf_xray.cxx
         xray/scene_xray.cxx
@@ -148,6 +144,7 @@ endif ()
 set(LIBRARIES
     tomlplusplus::tomlplusplus
     fmt::fmt
+    spdlog::spdlog
     glm
     stb_image
     stb_perlin
@@ -166,6 +163,8 @@ add_executable(NoEden ${SOURCES} "game/game.cxx" "main.cxx")
 if (NOEDEN_RELEASE)
     target_compile_options(NoEden PRIVATE -Wno-unused-parameter -Wno-unused-variable)
 endif()
+
+target_compile_definitions(NoEden PRIVATE NOEDEN_LOGGING)
 
 set_target_properties(NoEden PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}

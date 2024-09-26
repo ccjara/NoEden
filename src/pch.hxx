@@ -3,7 +3,7 @@
 
 #ifndef NOEDEN_RELEASE
 #define NOEDEN_XRAY
-#define NOEDEN_LOGGING
+#define IMGUI_IMPL_OPENGL_LOADER_GLEW
 #endif
 
 #define NOMINMAX
@@ -51,8 +51,6 @@
 #define TOML_COMPILER_HAS_RTTI 0
 #include <toml++/toml.hpp>
 
-#define IMGUI_IMPL_OPENGL_LOADER_GLEW
-
 #ifdef NOEDEN_XRAY
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_sdl2.h>
@@ -63,6 +61,13 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
+
+#define SPDLOG_FMT_EXTERNAL 1
+#define SPDLOG_COMPILED_LIB 1
+
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 #include "stb/stb_image.h"
 #include "stb/stb_perlin.h"

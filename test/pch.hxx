@@ -48,7 +48,6 @@
 #include "log/log.hxx"
 #include "lang/translator.hxx"
 
-#include "math/vec2.hxx"
 #include "math/bresenham.hxx"
 #include "math/rect.hxx"
 

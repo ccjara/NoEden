@@ -24,7 +24,7 @@ public:
         }
 
         if (nodes_by_id_.find(std::string(id)) != nodes_by_id_.end()) {
-            LOG_ERROR("Cannot create node #{}: a node with this id already exists");
+            LOG_ERROR("Cannot create node #{}: a node with this id already exists", id);
             return nullptr;
         }
 

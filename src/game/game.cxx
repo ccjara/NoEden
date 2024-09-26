@@ -29,7 +29,6 @@
 
 #ifdef NOEDEN_XRAY
 #include "xray/xray_manager.hxx"
-#include "xray/log_xray.hxx"
 #include "xray/scene_xray.hxx"
 #include "xray/script_xray.hxx"
 #include "xray/ui_xray.hxx"
@@ -49,8 +48,6 @@ bool Game::initialize_realms() {
 }
 
 bool Game::initialize() {
-    Log::initialize();
-
     res_ = std::make_unique<ResourceManager>();
     condition_resolver_ = std::make_unique<ConditionResolver>();
     exit_manager_ = std::make_unique<ExitManager>();
@@ -111,7 +108,6 @@ bool Game::initialize() {
     // xray / engine ui
 #ifdef NOEDEN_XRAY
     xray_manager_ = std::make_unique<XrayManager>(services_.get(), events_.get());
-    xray_manager_->add_xray(std::make_unique<LogXray>());
     xray_manager_->add_xray(std::make_unique<SceneXray>());
     xray_manager_->add_xray(std::make_unique<ScriptXray>());
     xray_manager_->add_xray(std::make_unique<UiXray>());
@@ -160,23 +156,22 @@ Game::~Game() {
     shutdown();
 }
 
-int Game::start() {
+bool Game::start() {
     Game game;
-    game.run();
-    return 0;
+    return game.run();
 }
 
-void Game::run() {
+bool Game::run() {
     if (!initialize()) {
         LOG_ERROR("Failed to initialize, exiting");
         DEBUG_TRAP();
-        return;
+        return false;
     }
 
     if (!realms_->current_realm()) {
         LOG_ERROR("No initial realm set, exiting");
         DEBUG_TRAP();
-        return;
+        return false;
     }
 
     while (!exit_manager_->exit_requested()) {
@@ -205,4 +200,5 @@ void Game::run() {
     }
 
     shutdown();
+    return true;
 }

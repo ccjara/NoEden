@@ -20,7 +20,7 @@ class XrayManager;
 
 class Game {
 public:
-    static int start();
+    static bool start();
 
     ~Game();
 
@@ -32,8 +32,10 @@ private:
 
     /**
      * @brief Starts the game
+     *
+     * @return True if the game exited gracefully
      */
-    void run();
+    bool run();
 
     /**
      * @brief Shuts down the game and its subsystems
