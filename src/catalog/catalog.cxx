@@ -30,3 +30,7 @@ void Catalog::clear_archetypes() {
     archetypes_.clear();
     LOG_INFO("Archetypes cleared");
 }
+
+void Catalog::set_materials(std::unordered_map<std::string, std::unique_ptr<Material>>&& materials) {
+    materials_ = std::move(materials);
+}

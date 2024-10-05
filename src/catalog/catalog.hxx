@@ -1,6 +1,7 @@
 #ifndef NOEDEN_CATALOG_HXX
 #define NOEDEN_CATALOG_HXX
 
+#include "catalog/material.hxx"
 #include "entity/archetype.hxx"
 
 class Catalog {
@@ -23,9 +24,16 @@ public:
      */
     void clear_archetypes();
 
+    /**
+     * @brief Replaces the current material catalog with the given one
+     */
+    void set_materials(std::unordered_map<std::string, std::unique_ptr<Material>>&& materials);
+
     ~Catalog();
 protected:
-    std::unordered_map<std::string, std::unique_ptr<Archetype>> archetypes_;
+    std::unordered_map<std::string, std::unique_ptr<Archetype>> archetypes_ = {};
+
+    std::unordered_map<std::string, std::unique_ptr<Material>> materials_ = {};
 };
 
 #endif

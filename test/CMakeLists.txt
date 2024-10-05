@@ -13,6 +13,7 @@ include_directories(NoEdenTest PRIVATE ${CMAKE_SOURCE_DIR}/test)
 
 add_executable(NoEdenTest
     framework/event_manager.cxx
+    framework/topological_sort.cxx
     gfx/text.cxx
     lang/translator.cxx
     lang/translation_loader.cxx

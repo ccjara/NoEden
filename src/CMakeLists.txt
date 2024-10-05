@@ -22,6 +22,7 @@ set(SOURCES
     ai/generic_ai_node.hxx
 
     catalog/catalog.cxx
+    catalog/catalog_reader.cxx
 
     component/behavior.cxx
     component/component.cxx
@@ -48,6 +49,7 @@ set(SOURCES
     framework/grid.hxx
     framework/noise_generator.cxx
     framework/service_locator.hxx
+    framework/thread_pool.cxx
     framework/usings.hxx
 
     game/exit_manager.cxx
@@ -160,8 +162,15 @@ endif()
 
 add_executable(NoEden ${SOURCES} "game/game.cxx" "main.cxx")
 
-if (NOEDEN_RELEASE)
-    target_compile_options(NoEden PRIVATE -Wno-unused-parameter -Wno-unused-variable)
+if (NOT NOEDEN_RELEASE)
+    target_compile_options(NoEden PRIVATE
+        -Wno-unused-variable
+        -Wno-unused-parameter
+        -Wno-unused-function
+        -Wno-unused-label
+        -Wno-unused-but-set-variable
+        -Wno-unused-private-field
+    )
 endif()
 
 target_compile_definitions(NoEden PRIVATE NOEDEN_LOGGING)

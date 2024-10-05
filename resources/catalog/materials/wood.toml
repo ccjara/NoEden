@@ -1,0 +1,10 @@
+[file]
+type = "material"
+
+[material]
+id = "WOOD"
+categories = ["WOOD"]
+extends = "PLANT"
+
+[material.thermal]
+ignites_at = 400

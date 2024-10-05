@@ -1,0 +1,9 @@
+[file]
+type = "material"
+
+[material]
+id = "OAK"
+extends = "WOOD"
+
+[material.thermal]
+ignites_at = 450

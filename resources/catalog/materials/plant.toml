@@ -1,0 +1,9 @@
+[file]
+type = "material"
+
+[material]
+id = "PLANT"
+categories = ["PLANT", "ORGANIC"]
+
+[material.thermal]
+ignites_at = 300

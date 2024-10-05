@@ -1,3 +1,6 @@
+[catalog]
+path = "resources/catalog"
+
 [shaders]
 TEXT = [
     { path = "resources/shaders/text.vert.spv", stage = "vertex" },

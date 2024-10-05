@@ -41,6 +41,8 @@
 
 #include <SDL2/SDL.h>
 
+#include <glm/glm.hpp>
+
 #include "framework/usings.hxx"
 #include "framework/concepts.hxx"
 #include "framework/event.hxx"

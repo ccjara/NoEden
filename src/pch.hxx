@@ -20,20 +20,25 @@
 #include <cstdint>
 #include <cstdlib>
 #include <deque>
+#include <experimental/scope>
 #include <filesystem>
 #include <fstream>
 #include <functional>
+#include <future>
 #include <iterator>
 #include <memory>
+#include <mutex>
 #include <optional>
+#include <queue>
 #include <random>
+#include <shared_mutex>
 #include <source_location>
-#include <string>
 #include <stack>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
-#include <utility>
 #include <type_traits>
+#include <utility>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -76,6 +81,7 @@
 #include "framework/usings.hxx"
 #include "framework/concepts.hxx"
 #include "framework/event.hxx"
+#include "framework/thread_pool.hxx"
 
 #include "instrumentation/profiler.hxx"
 
