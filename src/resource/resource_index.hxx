@@ -1,5 +1,4 @@
-#ifndef NOEDEN_RESOURCE_INDEX_HXX
-#define NOEDEN_RESOURCE_INDEX_HXX
+#pragma once
 
 #include "resource/resource.hxx"
 #include "resource/resource_traits.hxx"
@@ -31,8 +30,7 @@ private:
     */
     std::unordered_map<std::string, std::unique_ptr<Resource>> resources_;
 
-    void index_shaders(const toml::table& table);
-    void index_shader(std::string_view key, const toml::array& stage_array);
+    bool index_catalog(const toml::table& table);
+    bool index_shaders(const toml::table& table);
+    bool index_shader(std::string_view key, const toml::array& stage_array);
 };
-
-#endif

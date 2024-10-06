@@ -1,5 +1,4 @@
-#ifndef NOEDEN_RESOURCE_REPOSITORY_HXX
-#define NOEDEN_RESOURCE_REPOSITORY_HXX
+#pragma once
 
 class ResourceRepository {
 public:
@@ -8,7 +7,15 @@ public:
      */
     [[nodiscard]] virtual std::optional<std::vector<u8>> load_from_path(std::string_view path) = 0;
 
+    /**
+     * @brief Lists all files in the given path
+     */
+    [[nodiscard]] virtual std::vector<std::string> list_files(std::string_view path) const = 0;
+
+    /**
+     * @brief Lists all files in the given path having the specified ending
+     */
+    [[nodiscard]] virtual std::vector<std::string> list_files(std::string_view path, std::string_view ending) const = 0;
+
     virtual ~ResourceRepository() = default;
 };
-
-#endif

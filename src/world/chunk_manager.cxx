@@ -1,4 +1,5 @@
 #include "entity/entity.hxx"
+#include "resource/resource_manager.hxx"
 #include "world/chunk_manager.hxx"
 #include "world/chunk_generator.hxx"
 #include "world/chunk.hxx"
@@ -7,11 +8,24 @@
 
 class Catalog;
 
-void ChunkManager::initialize(WorldContext* world_context) {
+bool ChunkManager::initialize(WorldContext* world_context) {
     assert(world_context);
 
     world_context_ = world_context;
-    chunk_generator_ = std::make_unique<ChunkGenerator>(*world_context_->services->get<Catalog>());
+
+    auto res_ = world_context_->services->get<ResourceManager>();
+    if (!res_) {
+        LOG_ERROR("Could not get ResourceManager");
+        return false;
+    }
+
+    auto catalog_ = res_->catalog();
+    if (!catalog_) {
+        LOG_ERROR("Could not get Catalog");
+        return false;
+    }
+
+    chunk_generator_ = std::make_unique<ChunkGenerator>(*catalog_);
 
     auto* events = world_context_->events;
 
@@ -22,6 +36,7 @@ void ChunkManager::initialize(WorldContext* world_context) {
     on_world_ready_sub_ = world_context->events->on<WorldReadyEvent>(this, &ChunkManager::on_world_ready);
     on_entity_created_sub_ = world_context->events->on<EntityCreatedEvent>(this, &ChunkManager::on_entity_created);
     on_player_moved_sub_ = world_context->events->on<PlayerMovedEvent>(this, &ChunkManager::on_player_moved);
+    return true;
 }
 
 constexpr std::size_t ChunkManager::ChunkPosHasher::operator()(const ChunkPos& pos) const {

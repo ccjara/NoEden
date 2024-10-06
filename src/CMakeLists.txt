@@ -22,7 +22,6 @@ set(SOURCES
     ai/generic_ai_node.hxx
 
     catalog/catalog.cxx
-    catalog/catalog_reader.cxx
 
     component/behavior.cxx
     component/component.cxx

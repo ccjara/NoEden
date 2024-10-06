@@ -1,5 +1,4 @@
-#ifndef NOEDEN_PLAIN_RESOURCE_REPOSITORY_HXX
-#define NOEDEN_PLAIN_RESOURCE_REPOSITORY_HXX
+#pragma once
 
 #include "resource/resource_repository.hxx"
 
@@ -8,10 +7,7 @@
  */
 class PlainResourceRepository : public ResourceRepository {
 public:
-    /**
-     * @brief Loads a file from the specified file system path
-     */
     [[nodiscard]] std::optional<std::vector<u8>> load_from_path(std::string_view path) override;
+    [[nodiscard]] std::vector<std::string> list_files(std::string_view path) const override;
+    [[nodiscard]] std::vector<std::string> list_files(std::string_view path, std::string_view ending) const override;
 };
-
-#endif

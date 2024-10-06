@@ -1,7 +1,7 @@
 #include "gfx/shader.hxx"
 #include "resource/shader_resource.hxx"
 
-ShaderResource::ShaderResource(std::string_view id) : Resource(ResourceType::Shader, id, "") {
+ShaderResource::ShaderResource(std::string_view id) : Resource(ResourceType::Shader, id, std::string_view("")) {
 }
 
 void ShaderResource::add_stage_path(ShaderStage stage, const std::string& path) {

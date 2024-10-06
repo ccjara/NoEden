@@ -3,8 +3,6 @@
 #include "ai/conditions.hxx"
 #include "ai/condition_resolver.hxx"
 #include "game/exit_manager.hxx"
-#include "catalog/catalog.hxx"
-#include "catalog/catalog_reader.hxx"
 #include "config/config_manager.hxx"
 #include "gfx/renderer.hxx"
 #include "input/input_state.hxx"
@@ -51,28 +49,27 @@ bool Game::initialize_realms() {
 
 bool Game::initialize() {
     tasks_ = std::make_unique<ThreadPool>(std::min(std::thread::hardware_concurrency(), 4U));
-    res_ = std::make_unique<ResourceManager>();
+    services_ = std::make_unique<ServiceLocator>();
+    res_ = std::make_unique<ResourceManager>(*services_);
     condition_resolver_ = std::make_unique<ConditionResolver>();
     exit_manager_ = std::make_unique<ExitManager>();
     events_ = std::make_unique<EventManager>();
     config_manager_ = std::make_unique<ConfigManager>(events_.get());
-    services_ = std::make_unique<ServiceLocator>();
     input_ = std::make_unique<InputState>();
     scripting_ = std::make_unique<Scripting>(services_.get(), events_.get());
     platform_ = std::make_unique<Platform>(events_.get(), input_.get(), exit_manager_.get());
     realms_ = std::make_unique<RealmManager>(services_.get(), events_.get());
     renderer_ = std::make_unique<Renderer>(events_.get(), res_.get());
     ui_ = std::make_unique<Ui>(renderer_.get(), events_.get());
-    catalog_ = std::make_unique<Catalog>();
 
     services_->provide<Ui>(ui_.get());
     services_->provide<Scripting>(scripting_.get());
     services_->provide<RealmManager>(realms_.get());
+    services_->provide<ResourceManager>(res_.get());
     services_->provide<Renderer>(renderer_.get());
     services_->provide<InputState>(input_.get());
     services_->provide<ConfigManager>(config_manager_.get());
     services_->provide<EventManager>(events_.get());
-    services_->provide<Catalog>(catalog_.get());
     services_->provide<ExitManager>(exit_manager_.get());
     services_->provide<ConditionResolver>(condition_resolver_.get());
     services_->provide<ThreadPool>(tasks_.get());
@@ -129,10 +126,6 @@ bool Game::initialize() {
     scripting_->add_api<GameApi>();
     scripting_->reload();
 
-    CatalogReader catalog_reader(*tasks_);
-
-    catalog_reader.read("resources/catalog");
-
     if (!realms_->switch_realm(RealmType::World)) {
         return false;
     }
@@ -147,8 +140,6 @@ void Game::shutdown() {
 
     ui_.reset();
     renderer_.reset();
-
-    catalog_.reset();
 
     scripting_.reset();
     input_.reset();

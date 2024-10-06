@@ -5,27 +5,41 @@ enum EnqueueResult {
     ErrStopping
 };
 
+class TaskGroup {
+    friend class ThreadPool;
+public:
+    /**
+     * @brief Blocks until all tasks in the group have completed or the group is aborted.
+     *
+     * Returns true if all tasks completed, false if a task failed to complete or the group was aborted.
+     */
+    [[nodiscard]] bool await();
+private:
+    i32 num_tasks_ = 0;
+    bool aborted_ = false;
+    std::mutex mutex_ = {};
+    std::condition_variable task_cv_ = {};
+};
+
 class ThreadPool {
+    using Task = std::function<void()>;
 public:
     explicit ThreadPool(size_t num_threads);
 
     ~ThreadPool();
 
-    template<typename Fn>
-    [[nodiscard]] EnqueueResult run(Fn&& fn) {
-        {
-            std::unique_lock lock(queue_mutex_);
-            if (stop_) {
-                return ErrStopping;
-            }
-            tasks_.emplace(std::forward<Fn>(fn));
-        }
-        condition_.notify_one();
-        return Ok;
-    }
+    /**
+     * @brief Schedules the given task
+     */
+    [[nodiscard]] EnqueueResult run(Task&& task);
+
+    /**
+     * @brief Schedules the given task and adds it to the given task group
+     */
+    [[nodiscard]] EnqueueResult run(TaskGroup& task_group, Task&& task);
 private:
     std::vector<std::thread> workers_;
-    std::queue<std::function<void()>> tasks_;
+    std::queue<Task> tasks_;
     std::mutex queue_mutex_;
     std::condition_variable condition_;
     bool stop_ = false;

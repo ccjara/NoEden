@@ -50,7 +50,12 @@ bool WorldRealm::initialize() {
     world_context_->vision_manager = vision_manager_.get();
 
     action_queue_->initialize(world_context_.get());
-    chunk_manager_->initialize(world_context_.get());
+
+    if (!chunk_manager_->initialize(world_context_.get())) {
+        LOG_ERROR("Could not initialize ChunkManager");
+        return false;
+    }
+
     camera_controller_->initialize(world_context_.get());
     entity_manager_->initialize(world_context_.get());
     player_controller_->initialize(world_context_.get());
@@ -109,10 +114,9 @@ void WorldRealm::load() {
 
     events_->trigger<WorldReadyEvent>(world_spec_.get());
 
-
     camera_controller_->control(camera_.get());
 
-    auto* catalog = services_->get<Catalog>();
+    auto* catalog = services_->get<ResourceManager>()->catalog();
     auto arch_troll = catalog->archetype("TROLL");
     auto arch_human = catalog->archetype("HUMAN");
     if (arch_troll) {

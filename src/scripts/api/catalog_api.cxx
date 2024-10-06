@@ -1,4 +1,5 @@
 #include "scripts/api/catalog_api.hxx"
+
 #include "ai/ai_closest_entity.hxx"
 #include "ai/ai_condition.hxx"
 #include "ai/ai_selector.hxx"
@@ -11,12 +12,13 @@
 #include "component/life.hxx"
 #include "component/vision/vision.hxx"
 #include "entity/archetype.hxx"
+#include "resource/resource_manager.hxx"
 
 class IActionCreator;
 class IEntityReader;
 
 bool CatalogApi::initialize() {
-    catalog_ = svc_->get<Catalog>();
+    catalog_ = svc_->get<ResourceManager>()->catalog();
     if (!catalog_) {
         LOG_ERROR("CatalogApi failed to initialize: failed to get Catalog");
         return false;

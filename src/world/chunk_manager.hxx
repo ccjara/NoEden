@@ -1,5 +1,4 @@
-#ifndef NOEDEN_CHUNK_MANAGER_HXX
-#define NOEDEN_CHUNK_MANAGER_HXX
+#pragma once
 
 #include "entity/entity_event.hxx"
 #include "world/world_event.hxx"
@@ -10,7 +9,7 @@ struct WorldContext;
 
 class ChunkManager {
 public:
-    void initialize(WorldContext* world_context);
+    bool initialize(WorldContext* world_context);
 
     /**
      * @brief Returns the chunk at the given world position or nullptr if not existing
@@ -46,5 +45,3 @@ private:
     EventResult on_entity_created(const EntityCreatedEvent& e);
     EventResult on_player_moved(const PlayerMovedEvent& e);
 };
-
-#endif

@@ -1,8 +1,6 @@
-#ifndef CORE_RESOURCE_TYPE_HXX
-#define CORE_RESOURCE_TYPE_HXX
+#pragma once
 
 enum class ResourceType {
     Shader,
+    Catalog,
 };
-
-#endif

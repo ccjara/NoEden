@@ -1,16 +1,16 @@
-#ifndef NOEDEN_RESOURCE_MANAGER_HXX
-#define NOEDEN_RESOURCE_MANAGER_HXX
+#pragma once
 
 #include "resource/resource.hxx"
 #include "resource/resource_traits.hxx"
 
+class Catalog;
 class ResourceIndex;
 class ResourceRepository;
 class Shader;
 
 class ResourceManager {
 public:
-    ResourceManager();
+    explicit ResourceManager(ServiceLocator& svc);
 
     bool initialize();
 
@@ -20,6 +20,11 @@ public:
      * Loads the shader if not already loaded.
      */
     [[nodiscard]] Shader* shader(std::string_view key);
+
+    /**
+     * @brief Loads the catalog when necessary and returns it.
+     */
+    [[nodiscard]] Catalog* catalog();
 
     ~ResourceManager();
 private:
@@ -48,6 +53,17 @@ private:
      * @brief Index of resources
      */
     std::unique_ptr<ResourceIndex> index_ = nullptr;
-};
 
-#endif
+    /**
+    * @brief Current catalog instance
+    */
+    std::unique_ptr<Catalog> catalog_ = nullptr;
+
+    /**
+     * @brief Loads the toml file from the resource repository and returns it as a parsed toml table
+     */
+    std::optional<toml::table> toml_from_path(std::string_view path) const;
+
+    ServiceLocator& svc_;
+    ThreadPool *tp_ = nullptr;
+};

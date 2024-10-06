@@ -1,14 +1,14 @@
 #include "gfx/shader.hxx"
+#include "catalog/catalog.hxx"
+#include "catalog/material_reader.hxx"
 #include "resource/resource_index.hxx"
 #include "resource/resource_manager.hxx"
+#include "resource/catalog_resource.hxx"
 #include "resource/plain_resource_repository.hxx"
 #include "resource/shader_resource.hxx"
 
-ResourceManager::ResourceManager() :
-    repository_(std::make_unique<PlainResourceRepository>()),
-    index_(std::make_unique<ResourceIndex>()) {
-    assert(repository_);
-    assert(index_);
+ResourceManager::ResourceManager(ServiceLocator& svc) : svc_(svc) {
+
 }
 
 ResourceManager::~ResourceManager() {
@@ -16,7 +16,17 @@ ResourceManager::~ResourceManager() {
 }
 
 bool ResourceManager::initialize() {
+    tp_ = svc_.get<ThreadPool>();
+
+    if (!tp_) {
+        LOG_ERROR("Could not get ThreadPool");
+        return false;
+    }
+
     constexpr auto INDEX_TOML_PATH = "resources/index.toml";
+
+    repository_ = std::make_unique<PlainResourceRepository>();
+    index_ = std::make_unique<ResourceIndex>();
 
     auto file = std::ifstream(INDEX_TOML_PATH);
     if (!file) {
@@ -91,4 +101,92 @@ std::unique_ptr<Shader> ResourceManager::load_shader(const ShaderResource& shade
     }
 
     return shader;
+}
+
+std::optional<toml::table> ResourceManager::toml_from_path(std::string_view path) const {
+    const auto catalog_file_raw = repository_->load_from_path(path);
+
+    if (!catalog_file_raw) {
+        LOG_ERROR("Could not load toml file {}", path);
+        return std::nullopt;
+    }
+
+    const std::string_view toml(
+        reinterpret_cast<const char*>(catalog_file_raw->data()),
+        catalog_file_raw->size()
+    );
+
+    auto parse_result = toml::parse(toml);
+
+    if (!parse_result) {
+        LOG_ERROR("Failed to parse loaded toml file {}: {}", path, parse_result.error().description());
+        return std::nullopt;
+    }
+
+    return parse_result.table();
+}
+
+Catalog* ResourceManager::catalog() {
+    if (catalog_) {
+        return catalog_.get();
+    }
+
+    const auto* resource = index_->resource<CatalogResource>(CatalogResource::compound_id);
+
+    if (!resource) {
+        LOG_ERROR("Could not access resource {} at resource index", CatalogResource::compound_id);
+        return nullptr;
+    }
+
+    const auto catalog_file_paths = repository_->list_files(resource->path(), ".toml");
+
+    MaterialReader material_reader;
+    std::mutex material_reader_mutex;
+
+    TaskGroup tg_load_catalog_files;
+
+    for (const auto& catalog_file_path : catalog_file_paths) {
+        const auto result = tp_->run(tg_load_catalog_files, [&] {
+            const auto catalog_file_table = toml_from_path(catalog_file_path);
+
+            if (!catalog_file_table) {
+                return;
+            }
+
+            auto root = catalog_file_table.value();
+
+            // determine file type
+            const auto file_table = root["file"].as_table();
+            if (!file_table) {
+                LOG_ERROR("Catalog file {} does not contain a 'file' table", catalog_file_path);
+                return;
+            }
+            const auto type = file_table->get("type")->as_string();
+            if (!type) {
+                LOG_ERROR("File table of catalog file {} does not contain a 'type' field", catalog_file_path);
+                return;
+            }
+            if (*type == "material") {
+                std::lock_guard lock(material_reader_mutex);
+                material_reader.add(catalog_file_path, std::move(root));
+            }
+        });
+
+        if (result != EnqueueResult::Ok) {
+            LOG_ERROR("Could not enqueue loading task for catalog file {}", catalog_file_path);
+            return nullptr;
+        }
+    }
+
+    if (!tg_load_catalog_files.await()) {
+        LOG_ERROR("At least one catalog file loading task failed");
+        return nullptr;
+    }
+
+    catalog_ = std::make_unique<Catalog>();
+    catalog_->set_materials(material_reader.read_materials());
+
+    LOG_INFO("Catalog loaded");
+
+    return catalog_.get();
 }

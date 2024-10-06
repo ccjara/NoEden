@@ -1,12 +1,11 @@
-#ifndef NOEDEN_RESOURCE_HXX
-#define NOEDEN_RESOURCE_HXX
+#pragma once
 
 #include "resource/resource_type.hxx"
 
 class Resource {
 public:
     Resource(ResourceType type, std::string_view id, std::string&& path) : id_(id), path_(std::move(path)), type_(type) {}
-    Resource(ResourceType type, std::string_view id, const std::string& path) : id_(id), path_(path), type_(type) {}
+    Resource(ResourceType type, std::string_view id, std::string_view path) : id_(id), path_(path), type_(type) {}
 
     [[nodiscard]] std::string_view id() const {
         return id_;
@@ -29,5 +28,3 @@ protected:
 
 template<typename T>
 concept ResourceLike = std::is_base_of_v<Resource, T>;
-
-#endif

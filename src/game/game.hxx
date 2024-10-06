@@ -1,10 +1,8 @@
-#ifndef NOEDEN_GAME_HXX
-#define NOEDEN_GAME_HXX
+#pragma once
 
 class ConditionResolver;
 class ConfigManager;
 class Scripting;
-class Catalog;
 class Platform;
 struct InputState;
 class Translator;
@@ -49,7 +47,6 @@ private:
     std::unique_ptr<EventManager> events_ = nullptr;
     std::unique_ptr<Scripting> scripting_ = nullptr;
     std::unique_ptr<ServiceLocator> services_ = nullptr;
-    std::unique_ptr<Catalog> catalog_ = nullptr;
     std::unique_ptr<Platform> platform_ = nullptr;
     std::unique_ptr<InputState> input_ = nullptr;
     std::unique_ptr<Translator> t_ = nullptr;
@@ -64,5 +61,3 @@ private:
 
     bool initialize_realms();
 };
-
-#endif
