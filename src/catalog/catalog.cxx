@@ -34,3 +34,23 @@ void Catalog::clear_archetypes() {
 void Catalog::set_materials(std::unordered_map<std::string, std::unique_ptr<Material>>&& materials) {
     materials_ = std::move(materials);
 }
+
+Material* Catalog::material(std::string_view id) const {
+    const auto iter = materials_.find(std::string(id));
+    if (iter == materials_.end()) {
+        return nullptr;
+    }
+    return iter->second.get();
+}
+
+std::vector<Material*> Catalog::materials_by_category(std::string_view category) const {
+    // optimize
+    std::vector<Material*> result;
+    const std::string cat = std::string(category);
+    for (const auto& [_, material] : materials_) {
+        if (material->categories.contains(cat)) {
+            result.push_back(material.get());
+        }
+    }
+    return result;
+}

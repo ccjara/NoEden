@@ -29,6 +29,16 @@ public:
      */
     void set_materials(std::unordered_map<std::string, std::unique_ptr<Material>>&& materials);
 
+    /**
+     * @brief Returns all materials having the given category
+     */
+    std::vector<Material*> materials_by_category(std::string_view category) const;
+
+    /**
+     * @brief Returns a material by its id or nullptr if not found
+     */
+    Material* material(std::string_view id) const;
+
     ~Catalog();
 protected:
     std::unordered_map<std::string, std::unique_ptr<Archetype>> archetypes_ = {};

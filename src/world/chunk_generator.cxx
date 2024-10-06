@@ -1,10 +1,17 @@
+#include "catalog/catalog.hxx"
 #include "world/chunk_generator.hxx"
 #include "world/chunk.hxx"
 #include "world/world_spec.hxx"
 #include "framework/noise_generator.hxx"
 
+ChunkGenerator::ChunkGenerator(Catalog& catalog) : catalog_(catalog) {
+}
+
+
 std::unique_ptr<Chunk> ChunkGenerator::generate_chunk(const GenerateChunkOptions&) {
     std::unique_ptr<Chunk> chunk = std::make_unique<Chunk>();
+
+    auto grass = catalog_.material("GRASS");
 
     for (i32 x = 0; x < Chunk::CHUNK_SIDE_LENGTH; ++x) {
         for (i32 z = 0; z < Chunk::CHUNK_SIDE_LENGTH; ++z) {
@@ -38,7 +45,7 @@ std::unique_ptr<Chunk> ChunkGenerator::generate_chunk(const GenerateChunkOptions
                         break;
                 }
 
-                tile.material = MaterialType::Vegetation;
+                tile.material = grass;
                 tile.state = MaterialState::Solid;
             }
         }

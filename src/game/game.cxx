@@ -4,6 +4,7 @@
 #include "ai/condition_resolver.hxx"
 #include "game/exit_manager.hxx"
 #include "catalog/catalog.hxx"
+#include "catalog/catalog_reader.hxx"
 #include "config/config_manager.hxx"
 #include "gfx/renderer.hxx"
 #include "input/input_state.hxx"
@@ -22,6 +23,7 @@
 #include "scripts/api/script_api.hxx"
 #include "scripts/api/ui/ui_api.hxx"
 #include "scripts/scripting.hxx"
+#include "framework/thread_pool.hxx" // TODO: remove when in PCH
 #include "lang/translator.hxx"
 #include "lang/translation_loader.hxx"
 #include "ui/ui.hxx"
@@ -48,6 +50,7 @@ bool Game::initialize_realms() {
 }
 
 bool Game::initialize() {
+    tasks_ = std::make_unique<ThreadPool>(std::min(std::thread::hardware_concurrency(), 4U));
     res_ = std::make_unique<ResourceManager>();
     condition_resolver_ = std::make_unique<ConditionResolver>();
     exit_manager_ = std::make_unique<ExitManager>();
@@ -72,6 +75,7 @@ bool Game::initialize() {
     services_->provide<Catalog>(catalog_.get());
     services_->provide<ExitManager>(exit_manager_.get());
     services_->provide<ConditionResolver>(condition_resolver_.get());
+    services_->provide<ThreadPool>(tasks_.get());
 
     if (!platform_->initialize()) {
         return false;
@@ -125,6 +129,10 @@ bool Game::initialize() {
     scripting_->add_api<GameApi>();
     scripting_->reload();
 
+    CatalogReader catalog_reader(*tasks_);
+
+    catalog_reader.read("resources/catalog");
+
     if (!realms_->switch_realm(RealmType::World)) {
         return false;
     }
@@ -145,6 +153,8 @@ void Game::shutdown() {
     scripting_.reset();
     input_.reset();
     config_manager_.reset();
+
+    tasks_.reset();
 
     platform_->shutdown();
 

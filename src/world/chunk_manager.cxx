@@ -5,11 +5,13 @@
 #include "world/world_spec.hxx"
 #include "world/world_context.hxx"
 
+class Catalog;
+
 void ChunkManager::initialize(WorldContext* world_context) {
     assert(world_context);
 
     world_context_ = world_context;
-    chunk_generator_ = std::make_unique<ChunkGenerator>();
+    chunk_generator_ = std::make_unique<ChunkGenerator>(*world_context_->services->get<Catalog>());
 
     auto* events = world_context_->events;
 

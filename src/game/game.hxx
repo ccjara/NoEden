@@ -55,6 +55,7 @@ private:
     std::unique_ptr<Translator> t_ = nullptr;
     std::unique_ptr<Renderer> renderer_ = nullptr;
     std::unique_ptr<RealmManager> realms_ = nullptr;
+    std::unique_ptr<ThreadPool> tasks_ = nullptr;
     std::unique_ptr<Ui> ui_ = nullptr;
 
 #ifdef NOEDEN_XRAY

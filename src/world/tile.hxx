@@ -2,19 +2,12 @@
 #define NOEDEN_TILE_HXX
 
 #include "gfx/display_cell.hxx"
+#include "catalog/material.hxx"
 
 enum class TileType : unsigned char {
     Empty,
     Floor,
     Wall,
-};
-
-enum class MaterialType : unsigned char {
-    None,
-    Stone,
-    Wood,
-    Vegetation,
-    Water,
 };
 
 enum class MaterialState : unsigned char {
@@ -53,11 +46,11 @@ enum TileFlags {
 struct Tile {
     TileType type = TileType::Empty;
 
-    MaterialType material = MaterialType::None;
+    Material* material = nullptr;
 
     MaterialState state = MaterialState::Void;
 
-    std::bitset<8> flags;
+    std::bitset<8> flags = TileFlags::None;
     
     DisplayCell display_info; // needs to be moved out later and determined based on tile type etc.
 };

@@ -51,12 +51,14 @@ ActionResult MoveAction::perform() {
         }
     }
 
+    /*
     if (dest_tile->material == MaterialType::Water) {
         Skills* skills = entity_->component<Skills>();
         if (skills) {
             skills->increase_progress(SkillId::Swim, 1);
         }
     }
+    */
 
     entity_->position = destination;
 
