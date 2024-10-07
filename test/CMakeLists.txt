@@ -28,7 +28,7 @@ add_executable(NoEdenTest
     ${SRC}/realm/realm.cxx
 )
 
-target_link_libraries(NoEdenTest PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(NoEdenTest PRIVATE NoEden_core_includes Catch2::Catch2WithMain)
 target_precompile_headers(NoEdenTest PRIVATE pch.hxx)
 
 catch_discover_tests(NoEdenTest)

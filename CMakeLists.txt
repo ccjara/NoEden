@@ -12,18 +12,6 @@ find_package(GLEW REQUIRED)
 set(SPDLOG_FMT_EXTERNAL ON)
 set(SPDLOG_NO_EXCEPTIONS ON)
 
-include_directories(${LUA_INCLUDE_DIR})
-include_directories(${PROJECT_SOURCE_DIR}/)
-include_directories(${PROJECT_SOURCE_DIR}/external)
-include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${PROJECT_SOURCE_DIR}/external/fmt/include)
-include_directories(${PROJECT_SOURCE_DIR}/external/spdlog/include)
-include_directories(${PROJECT_SOURCE_DIR}/external/glm)
-include_directories(${PROJECT_SOURCE_DIR}/external/utf8cpp/source)
-include_directories(${PROJECT_SOURCE_DIR}/external/tomlplusplus/include)
-include_directories(${PROJECT_SOURCE_DIR}/external/LuaBridge3/Source)
-include_directories(${PROJECT_SOURCE_DIR}/external/imgui)
-
 add_subdirectory(test)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/$<$<CONFIG:Debug>:/bin>$<$<CONFIG:Release>:/rel>")

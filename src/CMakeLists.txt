@@ -172,13 +172,26 @@ if (NOT NOEDEN_RELEASE)
     )
 endif()
 
+add_library(NoEden_core_includes INTERFACE)
+target_include_directories(NoEden_core_includes INTERFACE
+    ${LUA_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/external/fmt/include
+    ${PROJECT_SOURCE_DIR}/external/spdlog/include
+    ${PROJECT_SOURCE_DIR}/external/glm
+    ${PROJECT_SOURCE_DIR}/external/utf8cpp/source
+    ${PROJECT_SOURCE_DIR}/external/tomlplusplus/include
+    ${PROJECT_SOURCE_DIR}/external/LuaBridge3/Source
+    ${PROJECT_SOURCE_DIR}/external/imgui
+)
+
 target_compile_definitions(NoEden PRIVATE NOEDEN_LOGGING)
 
 set_target_properties(NoEden PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     INSTALL_RPATH "$ORIGIN"
 )
-target_link_libraries(NoEden PRIVATE ${LIBRARIES})
+target_link_libraries(NoEden PRIVATE ${LIBRARIES} NoEden_core_includes)
 target_precompile_headers(NoEden PRIVATE pch.hxx)
 
 # copy script sources to runtime dir
