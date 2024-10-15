@@ -1,8 +1,0 @@
-CATALOG = "resources/catalog"
-
-[shaders]
-TEXT = [
-    { path = "resources/shaders/text.vert.spv", stage = "vertex" },
-    { path = "resources/shaders/text.geom.spv", stage = "geometry" },
-    { path = "resources/shaders/text.frag.spv", stage = "fragment" }
-]

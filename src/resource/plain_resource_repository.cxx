@@ -27,17 +27,17 @@ std::optional<std::vector<u8>> PlainResourceRepository::load_from_path(std::stri
     return buffer;
 }
 
-std::vector<std::string> PlainResourceRepository::list_files(std::string_view path) const {
+std::vector<std::string> PlainResourceRepository::list_files(std::string_view path, std::string_view ending) const {
     std::vector<std::string> files;
     for (const auto& entry : fs::recursive_directory_iterator(path)) {
-        if (entry.is_regular_file() && entry.path().extension() == ".toml") {
+        if (entry.is_regular_file() && entry.path().extension() == ending) {
             files.push_back(entry.path().string());
         }
     }
     return files;
 }
 
-std::vector<std::string> PlainResourceRepository::list_files(std::string_view path, std::string_view ending) const {
+std::vector<std::string> PlainResourceRepository::list_files(std::string_view path) const {
     std::vector<std::string> files;
     for (const auto& entry : fs::recursive_directory_iterator(path)) {
         if (entry.is_regular_file()) {

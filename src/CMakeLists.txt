@@ -149,6 +149,7 @@ set(LIBRARIES
     glm
     stb_image
     stb_perlin
+    edenjson
     ${SDL2_LIBRARIES}
     ${OPENGL_LIBRARIES}
     ${LUA_LIBRARIES}
@@ -181,8 +182,10 @@ target_include_directories(NoEden_core_includes INTERFACE
     ${PROJECT_SOURCE_DIR}/external/glm
     ${PROJECT_SOURCE_DIR}/external/utf8cpp/source
     ${PROJECT_SOURCE_DIR}/external/tomlplusplus/include
+    ${PROJECT_SOURCE_DIR}/external/edenjson/include
     ${PROJECT_SOURCE_DIR}/external/LuaBridge3/Source
     ${PROJECT_SOURCE_DIR}/external/imgui
+    ${PROJECT_SOURCE_DIR}/deps/json
 )
 
 target_compile_definitions(NoEden PRIVATE NOEDEN_LOGGING)

@@ -15,20 +15,20 @@ public:
 
             material->source = file;
 
-            const auto material_table = table["material"].as_table();
+            const auto& material_spec = table["material"];
 
-            if (!material_table) {
-                LOG_ERROR("Material table not found in material catalog file {}", file);
+            if (!material_spec.is_object()) {
+                LOG_ERROR("Material object not found in material catalog file {}", file);
                 continue;
             }
 
-            material->id = (*material_table)["id"].value_or("");
+            material->id = material_spec["id"].as_string().value_or("");
             if (material->id.empty()) {
                 LOG_ERROR("ID of material catalog file {} must be a non-empty string", file);
                 continue;
             }
 
-            material->extends = (*material_table)["extends"].value_or("");
+            material->extends = material_spec["extends"].as_string().value_or("");
 
             if (!material->extends.empty()) {
                 dependencies[material->extends].push_back(material->id);
@@ -57,8 +57,10 @@ public:
                 return {};
             }
 
-            const auto root_table = tables_[material->source];
-            const auto material_table = root_table["material"].as_table();
+            const auto root = tables_[material->source];
+            const auto material_spec = root["material"];
+
+            assert(material_spec.is_object()); // validated in the first pass
 
             // inherit properties from parent material
             if (!material->extends.empty()) {
@@ -70,41 +72,35 @@ public:
             }
 
             // categories
-            if (const auto categories_array = (*material_table)["categories"].as_array()) {
-                i32 index = 0;
-                for (const auto& element : *categories_array) {
-                    auto category = element.value_or(std::string(""));
-                    if (category.empty()) {
-                        LOG_ERROR(
-                            "Material category at index {} in material catalog file {} must be a non-empty string",
-                            index,
-                            material_id
-                        );
-                        continue;
-                    }
-
-                    if (std::ranges::find(material->categories, category) != material->categories.end()) {
-                        continue;
-                    }
-
-                    ++index;
-                    material->categories.emplace(std::move(category));
+            for (const auto& element : material_spec["categories"].as_array().value_or(edenjson::json_array{})) {
+                const auto& category = element.as_string().value_or("");
+                if (category.empty()) {
+                    LOG_WARN("Material category in material catalog file {} must be a non-empty string", material_id);
+                    continue;
                 }
+
+                if (std::ranges::find(material->categories, category) != material->categories.end()) {
+                    continue;
+                }
+
+                material->categories.emplace(category);
             }
 
             // thermal properties
-            if (const auto thermal_properties_table = (*material_table)["thermal"].as_table()) {
-                material->thermal_properties.ignites_at = (*thermal_properties_table)["ignites_at"].value_or(0);
+            const auto& thermal_properties = material_spec["thermal"];
+
+            if (thermal_properties.is_object()) {
+                material->thermal_properties.ignites_at = thermal_properties["ignites_at"].as_number().value_or(0);
             }
         }
 
         return materials;
     }
 
-    void add(const std::string& file, toml::table&& table) {
-        tables_[file] = table;
+    void add(const std::string& file, edenjson::json_value&& root) {
+        tables_[file] = std::move(root);
     }
 
 private:
-    std::unordered_map<std::string, toml::table> tables_;
+    std::unordered_map<std::string, edenjson::json_value> tables_;
 };

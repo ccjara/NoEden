@@ -30,38 +30,37 @@ bool ResourceIndex::load(std::istream& stream) {
         LOG_ERROR("Could not load resource index: bad stream");
     }
 
-    const auto parse_result = toml::parse(stream);
+    std::string json((std::istreambuf_iterator(stream)), std::istreambuf_iterator<char>());
+    const auto parse_result = edenjson::parse(json);
 
     if (!parse_result) {
-        LOG_ERROR("Could not parse resource index: {}", parse_result.error().description());
+        LOG_ERROR("Could not parse resource index: {} (#{})", parse_result.error.message, parse_result.error.line);
         return false;
     }
 
-    const auto& root = parse_result.table();
-
-    if (!index_catalog(root)) {
+    if (!index_catalog(parse_result.document)) {
         return false;
     }
 
-    if (!index_shaders(root)) {
+    if (!index_shaders(parse_result.document)) {
         return false;
     }
 
     return true;
 }
 
-bool ResourceIndex::index_catalog(const toml::table& table) {
-    const auto catalog_path = table[CatalogResource::compound_id].value_or(std::string(""));
+bool ResourceIndex::index_catalog(const edenjson::json_value& root) {
+    const auto path = root[CatalogResource::compound_id].as_string().value_or("");
 
-    if (catalog_path.empty()) {
-        LOG_ERROR("Could not index catalog: missing catalog entry in resource index");
+    if (path.empty()) {
+        LOG_ERROR("Corrupted resource index: `catalog` must have a non-empty `path` string property");
         return false;
     }
 
     const auto [_, inserted] = resources_.try_emplace(
         std::string(CatalogResource::compound_id),
-        std::make_unique<CatalogResource>(catalog_path)
-    );
+        std::make_unique<CatalogResource>(path)
+        );
 
     if (!inserted) {
         LOG_ERROR("Catalog is already indexed");
@@ -72,18 +71,12 @@ bool ResourceIndex::index_catalog(const toml::table& table) {
 }
 
 
-bool ResourceIndex::index_shaders(const toml::table& table) {
-    auto shaders_table = table.get_as<toml::table>("shaders");
-    if (!shaders_table) {
-        return false;
-    }
+bool ResourceIndex::index_shaders(const edenjson::json_value& root) {
+    const auto& shaders = root["shaders"].as_object().value_or(edenjson::json_object{});
 
-    for (const auto& [k, v] : *shaders_table) {
-        if (auto* stage_array = v.as_array(); stage_array) {
-            index_shader(k, *stage_array);
-        }
-        else {
-            LOG_ERROR("Corrupted shader index entry {}: Value must be an array of shader stages", k.str());
+    for (const auto& [k, v] : shaders) {
+        if (!index_shader(k, v)) {
+            LOG_ERROR("Failed to index shader {}", k);
             return false;
         }
     }
@@ -91,58 +84,31 @@ bool ResourceIndex::index_shaders(const toml::table& table) {
     return true;
 }
 
-bool ResourceIndex::index_shader(std::string_view resource_id, const toml::array& stage_array) {
-    const auto size = stage_array.size();
-    std::unique_ptr<ShaderResource> shader = std::make_unique<ShaderResource>(resource_id);
+bool ResourceIndex::index_shader(std::string_view resource_id, const edenjson::json_value& shader_entry) {
+    assert(shader_entry.is_object());
+    auto shader = std::make_unique<ShaderResource>(resource_id);
 
-    for (size_t i = 0; i < size; ++i) {
-        const auto& table = stage_array[i].as_table();
-
-        if (!table) {
-            LOG_ERROR(
-                "Corrupted stage entry {} in shader resource index entry {}: Array element must be a table",
-                i, resource_id);
-            return false;
-        }
-
-        const auto path_property = table->get_as<std::string>("path");
-        if (!path_property) {
-            LOG_ERROR(
-                "Corrupted stage entry {} in shader resource index entry {}: Stage table must have a `path` string property",
-                i, resource_id);
-            return false;
-        }
-
-        auto path_str = path_property->as_string()->get();
-        if (path_str.empty()) {
-            LOG_ERROR("Corrupted stage entry {} in shader resource index entry {}: Path is empty", i, resource_id);
-            return false;
-        }
-
-        const auto stage_property = table->get_as<std::string>("stage");
-        if (!stage_property) {
-            LOG_ERROR(
-                "Corrupted stage entry {} in shader resource index entry {}: Stage table must have a `stage` string property",
-                i, resource_id);
-            return false;
-        }
-
-        const auto stage_str = stage_property->as_string()->get();
-
+    for (const auto& [stage_key, v] : shader_entry.as_object().value()) {
         ShaderStage stage;
-        if (stage_str == "vertex") {
+        if (stage_key == "vertex") {
             stage = ShaderStage::Vertex;
-        } else if (stage_str == "fragment") {
+        } else if (stage_key == "fragment") {
             stage = ShaderStage::Fragment;
-        } else if (stage_str == "geometry") {
+        } else if (stage_key == "geometry") {
             stage = ShaderStage::Geometry;
         } else {
-            LOG_ERROR("Corrupted resource index entry {} in stage element {}: unsupported stage {}", resource_id, i,
-                stage_str);
+            LOG_ERROR("Unsupported stage {}", stage_key);
             return false;
         }
 
-        shader->add_stage_path(stage, std::move(path_str));
+        std::string stage_source = v.as_string().value_or("");
+
+        if (stage_source.empty()) {
+            LOG_ERROR("Shader source must be a non-empty string");
+            return false;
+        }
+
+        shader->add_stage_path(stage, std::move(stage_source));
     }
 
     const auto [_, inserted] = resources_.try_emplace(std::string(resource_id), std::move(shader));

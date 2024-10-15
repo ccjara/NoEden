@@ -1,0 +1,10 @@
+{
+  "catalog": "resources/catalog",
+  "shaders": {
+    "TEXT": {
+      "vertex": "resources/shaders/text.vert.spv",
+      "geometry": "resources/shaders/text.geom.spv",
+      "fragment": "resources/shaders/text.frag.spv"
+    }
+  }
+}

@@ -60,9 +60,9 @@ private:
     std::unique_ptr<Catalog> catalog_ = nullptr;
 
     /**
-     * @brief Loads the toml file from the resource repository and returns it as a parsed toml table
+     * @brief Loads the json file from the resource repository and returns it as a json_value on success
      */
-    std::optional<toml::table> toml_from_path(std::string_view path) const;
+    std::optional<edenjson::json_value> json_from_path(std::string_view path) const;
 
     ServiceLocator& svc_;
     ThreadPool *tp_ = nullptr;

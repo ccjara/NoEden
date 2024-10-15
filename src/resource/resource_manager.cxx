@@ -23,14 +23,14 @@ bool ResourceManager::initialize() {
         return false;
     }
 
-    constexpr auto INDEX_TOML_PATH = "resources/index.toml";
+    constexpr auto INDEX_JSON_PATH = "resources/index.json";
 
     repository_ = std::make_unique<PlainResourceRepository>();
     index_ = std::make_unique<ResourceIndex>();
 
-    auto file = std::ifstream(INDEX_TOML_PATH);
+    auto file = std::ifstream(INDEX_JSON_PATH);
     if (!file) {
-        LOG_ERROR("Could not load resource index from path {}: could not open file for reading", INDEX_TOML_PATH);
+        LOG_ERROR("Could not load resource index from path {}: could not open file for reading", INDEX_JSON_PATH);
         return false;
     }
 
@@ -103,27 +103,27 @@ std::unique_ptr<Shader> ResourceManager::load_shader(const ShaderResource& shade
     return shader;
 }
 
-std::optional<toml::table> ResourceManager::toml_from_path(std::string_view path) const {
-    const auto catalog_file_raw = repository_->load_from_path(path);
+std::optional<edenjson::json_value> ResourceManager::json_from_path(std::string_view path) const {
+    const auto json_buffer = repository_->load_from_path(path);
 
-    if (!catalog_file_raw) {
-        LOG_ERROR("Could not load toml file {}", path);
+    if (!json_buffer) {
+        LOG_ERROR("Could not load json file {}", path);
         return std::nullopt;
     }
 
-    const std::string_view toml(
-        reinterpret_cast<const char*>(catalog_file_raw->data()),
-        catalog_file_raw->size()
+    const std::string_view json(
+        reinterpret_cast<const char*>(json_buffer->data()),
+        json_buffer->size()
     );
 
-    auto parse_result = toml::parse(toml);
+    auto result = edenjson::parse(json);
 
-    if (!parse_result) {
-        LOG_ERROR("Failed to parse loaded toml file {}: {}", path, parse_result.error().description());
+    if (!result) {
+        LOG_ERROR("Failed to parse loaded json file {}: {} (#{})", path, result.error.message, result.error.line);
         return std::nullopt;
     }
 
-    return parse_result.table();
+    return std::move(result.document);
 }
 
 Catalog* ResourceManager::catalog() {
@@ -138,7 +138,7 @@ Catalog* ResourceManager::catalog() {
         return nullptr;
     }
 
-    const auto catalog_file_paths = repository_->list_files(resource->path(), ".toml");
+    const auto catalog_file_paths = repository_->list_files(resource->path(), ".json");
 
     MaterialReader material_reader;
     std::mutex material_reader_mutex;
@@ -147,26 +147,21 @@ Catalog* ResourceManager::catalog() {
 
     for (const auto& catalog_file_path : catalog_file_paths) {
         const auto result = tp_->run(tg_load_catalog_files, [&] {
-            const auto catalog_file_table = toml_from_path(catalog_file_path);
+            auto root_opt = json_from_path(catalog_file_path);
 
-            if (!catalog_file_table) {
+            if (!root_opt) {
                 return;
             }
 
-            auto root = catalog_file_table.value();
+            auto root = std::move(root_opt.value());
 
             // determine file type
-            const auto file_table = root["file"].as_table();
-            if (!file_table) {
-                LOG_ERROR("Catalog file {} does not contain a 'file' table", catalog_file_path);
+            const auto& file_type = root["file"]["type"].as_string().value_or("");
+            if (file_type.empty()) {
+                LOG_ERROR("File type of catalog file {} is not specified", catalog_file_path);
                 return;
             }
-            const auto type = file_table->get("type")->as_string();
-            if (!type) {
-                LOG_ERROR("File table of catalog file {} does not contain a 'type' field", catalog_file_path);
-                return;
-            }
-            if (*type == "material") {
+            if (file_type == "material") {
                 std::lock_guard lock(material_reader_mutex);
                 material_reader.add(catalog_file_path, std::move(root));
             }

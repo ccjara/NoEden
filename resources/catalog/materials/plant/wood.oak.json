@@ -1,0 +1,12 @@
+{
+  "file": {
+    "type": "material"
+  },
+  "material": {
+    "id": "OAK",
+    "extends": "WOOD",
+    "thermal": {
+      "ignites_at": 450
+    }
+  }
+}

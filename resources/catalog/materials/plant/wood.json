@@ -1,0 +1,15 @@
+{
+  "file": {
+    "type": "material"
+  },
+  "material": {
+    "id": "WOOD",
+    "categories": [
+      "WOOD"
+    ],
+    "extends": "PLANT",
+    "thermal": {
+      "ignites_at": 400
+    }
+  }
+}

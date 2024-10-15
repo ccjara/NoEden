@@ -1,0 +1,15 @@
+{
+  "file": {
+    "type": "material"
+  },
+  "material": {
+    "id": "PLANT",
+    "categories": [
+      "PLANT",
+      "ORGANIC"
+    ],
+    "thermal": {
+      "ignites_at": 300
+    }
+  }
+}

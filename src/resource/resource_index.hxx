@@ -30,7 +30,7 @@ private:
     */
     std::unordered_map<std::string, std::unique_ptr<Resource>> resources_;
 
-    bool index_catalog(const toml::table& table);
-    bool index_shaders(const toml::table& table);
-    bool index_shader(std::string_view key, const toml::array& stage_array);
+    bool index_catalog(const edenjson::json_value& root);
+    bool index_shaders(const edenjson::json_value& root);
+    bool index_shader(std::string_view key, const edenjson::json_value& shader_entry);
 };

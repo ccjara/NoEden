@@ -1,0 +1,9 @@
+{
+  "file": {
+    "type": "material"
+  },
+  "material": {
+    "id": "GRASS",
+    "extends": "PLANT"
+  }
+}

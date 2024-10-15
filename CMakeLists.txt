@@ -11,6 +11,7 @@ find_package(GLEW REQUIRED)
 
 set(SPDLOG_FMT_EXTERNAL ON)
 set(SPDLOG_NO_EXCEPTIONS ON)
+set(EDENJSON_TESTS OFF)
 
 add_subdirectory(test)
 
@@ -38,5 +39,6 @@ add_subdirectory(external/spdlog)
 add_subdirectory(external/utf8cpp)
 add_subdirectory(external/tomlplusplus)
 add_subdirectory(external/LuaBridge3)
+add_subdirectory(external/edenjson)
 
 enable_testing()

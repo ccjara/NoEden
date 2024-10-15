@@ -52,6 +52,8 @@
 #include <lua.hpp>
 #include <LuaBridge/LuaBridge.h>
 
+#include <edenjson.hxx>
+
 #define TOML_COMPILER_HAS_EXCEPTIONS 0
 #define TOML_COMPILER_HAS_RTTI 0
 #include <toml++/toml.hpp>
