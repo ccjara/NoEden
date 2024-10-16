@@ -1,0 +1,19 @@
+{
+  "file": {
+    "type": "entity_template"
+  },
+  "entity_template": {
+    "id": "HUMAN",
+    "speed": 1,
+    "components": {
+      "render": {
+        "glyph": 64,
+        "color": 16777215
+      },
+      "life": {},
+      "vision": {
+        "radius": 4
+      }
+    }
+  }
+}

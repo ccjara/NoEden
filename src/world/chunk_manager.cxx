@@ -87,7 +87,7 @@ EventResult ChunkManager::on_world_ready(const WorldReadyEvent& e) {
 }
 
 EventResult ChunkManager::on_entity_created(const EntityCreatedEvent& e) {
-    LOG_DEBUG("Ensuring chunk for entity {} at {}", e.entity->name, e.entity->position.to_string());
+    LOG_DEBUG("Ensuring chunk for entity {} at {}", e.entity->id, e.entity->position.to_string());
     create_chunk(to_chunk_pos(e.entity->position));
     return EventResult::Continue;
 }

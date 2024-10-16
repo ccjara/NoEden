@@ -1,38 +1,42 @@
 #include "catalog/catalog.hxx"
-#include "entity/archetype.hxx"
+#include "entity/entity_template.hxx"
 
 Catalog::~Catalog() {
 }
 
-Archetype* Catalog::create_archetype(std::string_view name) {
-    auto it = archetypes_.find(std::string(name));
-    if (it != archetypes_.end()) {
-        LOG_ERROR("Could not create archetype: {} already exists", name);
+EntityTemplate* Catalog::create_entity_template(std::string_view id) {
+    auto it = entity_templates_.find(std::string(id));
+    if (it != entity_templates_.end()) {
+        LOG_ERROR("Could not create entity template {}: already exists", id);
         return nullptr;
     }
-    auto archetype = std::make_unique<Archetype>();
-    Archetype* raw_ptr = archetype.get();
-    archetype->name = name;
-    archetypes_[archetype->name] = std::move(archetype);
-    LOG_INFO("Archetype {} created", raw_ptr->name);
+    auto entity_template = std::make_unique<EntityTemplate>();
+    EntityTemplate* raw_ptr = entity_template.get();
+    entity_template->id = id;
+    entity_templates_[entity_template->id] = std::move(entity_template);
+    LOG_INFO("Entity template {} created", raw_ptr->id);
     return raw_ptr;
 }
 
-const Archetype* Catalog::archetype(std::string_view name) const {
-    auto iter = archetypes_.find(std::string(name));
-    if (iter == archetypes_.end()) {
+const EntityTemplate* Catalog::entity_template(std::string_view name) const {
+    auto iter = entity_templates_.find(std::string(name));
+    if (iter == entity_templates_.end()) {
         return nullptr;
     }
     return iter->second.get();
 }
 
-void Catalog::clear_archetypes() {
-    archetypes_.clear();
-    LOG_INFO("Archetypes cleared");
+void Catalog::clear_entity_templates() {
+    entity_templates_.clear();
+    LOG_INFO("Entity templates cleared");
 }
 
 void Catalog::set_materials(std::unordered_map<std::string, std::unique_ptr<Material>>&& materials) {
     materials_ = std::move(materials);
+}
+
+void Catalog::set_entity_templates(std::unordered_map<std::string, std::unique_ptr<EntityTemplate>>&& templates) {
+    entity_templates_ = std::move(templates);
 }
 
 Material* Catalog::material(std::string_view id) const {

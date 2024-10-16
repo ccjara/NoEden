@@ -1,5 +1,4 @@
-#ifndef NOEDEN_CONDITIONS_HXX
-#define NOEDEN_CONDITIONS_HXX
+#pragma once
 
 #include "ai/ai_context.hxx"
 #include "ai/condition_resolver.hxx"
@@ -32,5 +31,3 @@ inline void register_conditions(ConditionResolver& resolver) {
 
     resolver.register_conditions(std::move(conditions));
 }
-
-#endif

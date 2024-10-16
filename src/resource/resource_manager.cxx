@@ -1,6 +1,7 @@
 #include "gfx/shader.hxx"
 #include "catalog/catalog.hxx"
-#include "catalog/material_reader.hxx"
+#include "catalog/entity_template_parser.hxx"
+#include "catalog/material_parser.hxx"
 #include "resource/resource_index.hxx"
 #include "resource/resource_manager.hxx"
 #include "resource/catalog_resource.hxx"
@@ -140,8 +141,10 @@ Catalog* ResourceManager::catalog() {
 
     const auto catalog_file_paths = repository_->list_files(resource->path(), ".json");
 
-    MaterialReader material_reader;
-    std::mutex material_reader_mutex;
+    std::unordered_map<std::string, edenjson::json_value> entity_template_files, material_files;
+
+    std::mutex material_files_mutex;
+    std::mutex entity_template_files_mutex;
 
     TaskGroup tg_load_catalog_files;
 
@@ -162,8 +165,13 @@ Catalog* ResourceManager::catalog() {
                 return;
             }
             if (file_type == "material") {
-                std::lock_guard lock(material_reader_mutex);
-                material_reader.add(catalog_file_path, std::move(root));
+                std::lock_guard lock(material_files_mutex);
+                material_files.emplace(catalog_file_path, std::move(root));
+            } else if (file_type == "entity_template") {
+                std::lock_guard lock(entity_template_files_mutex);
+                entity_template_files.emplace(catalog_file_path, std::move(root));
+            } else {
+                LOG_ERROR("Unknown file type {} in catalog file {}", file_type, catalog_file_path);
             }
         });
 
@@ -179,7 +187,8 @@ Catalog* ResourceManager::catalog() {
     }
 
     catalog_ = std::make_unique<Catalog>();
-    catalog_->set_materials(material_reader.read_materials());
+    catalog_->set_materials(parse_materials(material_files));
+    catalog_->set_entity_templates(parse_entity_templates({ *svc_.get<ConditionResolver>(), entity_template_files }));
 
     LOG_INFO("Catalog loaded");
 

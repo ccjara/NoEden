@@ -1,5 +1,4 @@
-#ifndef NOEDEN_AI_NODE_HXX
-#define NOEDEN_AI_NODE_HXX
+#pragma once
 
 #include "ai/ai_context.hxx"
 
@@ -11,7 +10,7 @@ enum class AiNodeState {
 };
 
 enum class AiNodeType { // TODO integrate in C++ classes
-    None = 0,
+    Invalid = 0,
     Sequence = 1,
     Selector = 2,
     Condition = 3,
@@ -63,4 +62,9 @@ private:
     AiNodeState state_ = AiNodeState::Ready; // use mod_state() to modify
 };
 
-#endif
+/**
+ * \brief Parses an AiNodeType from a string
+ *
+ * \returns A parsed AiNodeType != `Invalid` on success, `Invalid` otherwise.
+ */
+[[nodiscard]] AiNodeType parse_node_type(std::string_view type);

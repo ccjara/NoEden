@@ -86,11 +86,12 @@ bool Game::initialize() {
     if (!ui_->initialize()) {
         return false;
     }
+
+    register_conditions(*condition_resolver_);
+
     if (!initialize_realms()) {
         return false;
     }
-
-    register_conditions(*condition_resolver_);
 
     {
         auto path = fs::absolute(fmt::format("dictionaries/en.toml")).string();

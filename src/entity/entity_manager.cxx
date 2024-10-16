@@ -1,5 +1,5 @@
 #include "entity/entity_manager.hxx"
-#include "entity/archetype.hxx"
+#include "entity/entity_template.hxx"
 #include "entity/entity.hxx"
 #include "entity/entity_event.hxx"
 #include "world/world_context.hxx"
@@ -39,17 +39,18 @@ const EntityManager::EntityContainer& EntityManager::entities() const {
     return entities_;
 }
 
-Entity& EntityManager::create_entity(const Archetype& archetype, const WorldPos& position) {
+Entity& EntityManager::create_entity(const EntityTemplate& entity_template, const WorldPos& position) {
     {
         auto entity = std::make_unique<Entity>();
 
-        // copy common properties from archetype into entity
-        entity->speed = archetype.speed;
-        entity->name = archetype.name;
+        // copy common properties from entity_template into entity
+        entity->speed = entity_template.speed;
         entity->world_context = world_context_;
+        entity->name = entity_template.id; // placeholder until entities get names
+        entity->entity_template = &entity_template;
 
-        for (const auto& archetype_component : archetype.components) {
-            entity->add_component(archetype_component->clone());
+        for (const auto& entity_template_component : entity_template.components) {
+            entity->add_component(entity_template_component->clone());
         }
 
         entity->position = position;

@@ -1,20 +1,20 @@
-#ifndef NOEDEN_ACTOR_HXX
-#define NOEDEN_ACTOR_HXX
+#pragma once
 
 #include "component/component.hxx"
 
+struct EntityTemplate;
 struct WorldContext;
 
 class Entity {
 public:
-    friend class EntityFactory;
-
     Entity();
+
+    std::string name = "";
 
     Id id;
     static inline Id next_id_ = 1U;
 
-    std::string name = "";
+    const EntityTemplate* entity_template = nullptr;
 
     WorldPos position;
 
@@ -33,7 +33,7 @@ public:
      */
     template<ComponentDerived Comp>
     Comp* component() const {
-        static_assert(Comp::static_type() != ComponentType::Unknown);
+        static_assert(Comp::static_type() != ComponentType::Invalid);
         auto iter = components_by_type_.find(Comp::static_type());
         if (iter == components_by_type_.end()) {
             return nullptr;
@@ -83,5 +83,3 @@ private:
     std::vector<std::unique_ptr<Component>> components_;
     std::unordered_map<ComponentType, Component*> components_by_type_;
 };
-
-#endif

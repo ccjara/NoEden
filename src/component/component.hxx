@@ -1,8 +1,7 @@
-#ifndef NOEDEN_COMPONENT_HXX
-#define NOEDEN_COMPONENT_HXX
+#pragma once
 
 enum class ComponentType {
-    Unknown = 0,
+    Invalid = 0,
     Skills = 1,
     Behavior = 2,
     Render = 3,
@@ -68,12 +67,12 @@ protected:
     /**
      * @brief Runtime type of this component used to downcast Component pointers
      */
-    ComponentType type_ = ComponentType::Unknown;
+    ComponentType type_ = ComponentType::Invalid;
 
     /**
      * @brief Entity this component belongs to.
      *
-     * Set by the entity manager when constructing the entity and its components from its archetype.
+     * Set by the entity manager when constructing the entity and its components from its entity_template.
      */
     Entity* entity_ = nullptr;
 
@@ -86,4 +85,9 @@ protected:
 template<typename T>
 concept ComponentDerived = std::derived_from<T, Component>;
 
-#endif
+/**
+* \brief Parses a component type from a string.
+*
+* \return A component type != `Invalid` on success, `Invalid` otherwise.
+*/
+[[nodiscard]] ComponentType parse_component_type(std::string_view value);

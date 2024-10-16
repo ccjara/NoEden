@@ -117,13 +117,13 @@ void WorldRealm::load() {
     camera_controller_->control(camera_.get());
 
     auto* catalog = services_->get<ResourceManager>()->catalog();
-    auto arch_troll = catalog->archetype("TROLL");
-    auto arch_human = catalog->archetype("HUMAN");
+    auto arch_troll = catalog->entity_template("TROLL");
+    auto arch_human = catalog->entity_template("HUMAN");
     if (arch_troll) {
         entity_manager_->create_entity(*arch_troll, WorldPos(3, 0, 3));
     }
     else {
-        LOG_WARN("TROLL archetype not yet present");
+        LOG_WARN("TROLL entity_template not yet present");
     }
     if (arch_human) {
         auto& human = entity_manager_->create_entity(*arch_human, WorldPos(1, 0, 1));
@@ -131,7 +131,7 @@ void WorldRealm::load() {
         camera_controller_->set_target(&human);
     }
     else {
-        LOG_WARN("HUMAN archetype not yet present");
+        LOG_WARN("HUMAN entity_template not yet present");
     }
 }
 

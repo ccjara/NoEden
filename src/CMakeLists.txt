@@ -19,9 +19,13 @@ set(SOURCES
     ai/ai_walk.cxx
     ai/blackboard.cxx
     ai/condition_resolver.cxx
+    ai/condition_type.cxx
     ai/generic_ai_node.hxx
 
+    catalog/behavior_parser.cxx
     catalog/catalog.cxx
+    catalog/entity_template_parser.cxx
+    catalog/material_parser.cxx
 
     component/behavior.cxx
     component/component.cxx
@@ -36,7 +40,6 @@ set(SOURCES
     config/config_event.hxx
     config/config_manager.cxx
 
-    entity/archetype.hxx
     entity/entity.cxx
     entity/entity_event.hxx
     entity/entity_manager.cxx

@@ -3,7 +3,7 @@
 
 struct WorldContext;
 class Entity;
-struct Archetype;
+struct EntityTemplate;
 
 enum class ControlEntityResult {
     Success,
@@ -49,11 +49,11 @@ public:
     const Entity* player() const;
 
     /**
-     * @brief Creates an Entity of the given archetype and returns it.
+     * @brief Creates an Entity of the given entity_template and returns it.
      *
      * The Entity can be further configured after creation.
      */
-    Entity& create_entity(const Archetype& archetype, const WorldPos& position);
+    Entity& create_entity(const EntityTemplate& entity_template, const WorldPos& position);
 
     /**
      * @brief Sets the player controlled entity
@@ -78,7 +78,7 @@ private:
      *
      * The value (index) points to the entity's position in the entities_ vector.
      */
-    std::unordered_map<Id, size_t> index_by_id_;
+    std::unordered_map<Id, size_t> index_by_id_ = {};
 
     /**
      * @brief Entity currently controlled by the player

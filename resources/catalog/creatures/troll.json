@@ -1,0 +1,40 @@
+{
+  "file": {
+    "type": "entity_template"
+  },
+  "entity_template": {
+    "id": "TROLL",
+    "speed": 0.75,
+    "components": {
+      "render": {
+        "glyph": 84,
+        "color": 16711680
+      },
+      "vision": {
+        "radius": 10
+      },
+      "life": {},
+      "behavior": {
+        "root": {
+          "type": "condition",
+          "condition": "is_alive",
+          "child": {
+            "type": "sequence",
+            "children": [
+              {
+                "type": "closest_entity",
+                "priority": 2,
+                "found_target_key": "walk_target"
+              },
+              {
+                "type": "walk",
+                "priority": 1,
+                "walk_target_key": "walk_target"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
